@@ -2,8 +2,10 @@ import * as THREE from "three";
 import "./style.css";
 import { createWorld } from "./scene/world";
 import { createCar } from "./scene/car";
-import { updateCamera } from "./scene/camera";
+import { updateCamera, resetCamera } from "./scene/camera";
 import { createMarkers, createDeliveryAnimation } from "./scene/markers";
+import { createSkidmarks } from "./scene/skidmarks";
+import { createParticles } from "./scene/particles";
 import { createInput } from "./game/input";
 import { stepVehicle, resetVehicle } from "./game/vehicle";
 import { resolveCollision } from "./game/collision";
@@ -55,6 +57,8 @@ export function startGame(app: HTMLElement) {
   const pedestrians = createPedestrians();
   scene.add(pedestrians.group);
   const deliveryAnimation = createDeliveryAnimation(scene);
+  const skidmarks = createSkidmarks(scene);
+  const particles = createParticles(scene);
   const camera = new THREE.PerspectiveCamera(
     40,
     innerWidth / innerHeight,
@@ -78,8 +82,8 @@ export function startGame(app: HTMLElement) {
     soundEnabled = preferences.soundEnabled,
     cameraShake = 0;
   sound.setEnabled(soundEnabled);
-  camera.position.set(vehicle.position.x, 27, vehicle.position.z + 21);
-  updateCamera(camera, vehicle.position, 1);
+  resetCamera(vehicle.position, vehicle.heading);
+  updateCamera(camera, vehicle, 1);
   const ui = document.createElement("div");
   ui.className = "ui";
   app.append(ui);
@@ -88,6 +92,9 @@ export function startGame(app: HTMLElement) {
       void sound.unlock();
       started = true;
       vehicle = resetVehicle(world.depot);
+      resetCamera(vehicle.position, vehicle.heading);
+      skidmarks.reset();
+      particles.reset();
       delivery = createDeliveryState(
         progression.upgrades.cargo,
         progression.companyLevel,
@@ -98,6 +105,9 @@ export function startGame(app: HTMLElement) {
     },
     recover() {
       vehicle = resetVehicle(world.depot);
+      resetCamera(vehicle.position, vehicle.heading);
+      skidmarks.reset();
+      particles.reset();
       delivery = { ...delivery, holdSeconds: 0 };
       cameraShake = 0;
       contactDamage.reset();
@@ -117,6 +127,12 @@ export function startGame(app: HTMLElement) {
       storage.save({ ...progression, soundEnabled });
       hud.update(delivery, progression, soundEnabled);
     },
+    setHandbrake(on: boolean) {
+      input.setHandbrake(on);
+    },
+    setNitro(on: boolean) {
+      input.setNitro(on);
+    },
   });
   const input = createInput(document.querySelector<HTMLElement>("#joystick")!);
   function resize() {
@@ -131,6 +147,9 @@ export function startGame(app: HTMLElement) {
   pause.textContent = "Kısa bir mola · oyun duraklatıldı";
   pause.hidden = true;
   app.append(pause);
+  let currentThrottle = 0;
+  let currentNitro = false;
+
   const loop = createLoop(
     (dt) => {
       if (started && delivery.phase !== "result") {
@@ -140,6 +159,8 @@ export function startGame(app: HTMLElement) {
           Math.hypot(vehicle.velocity.x, vehicle.velocity.z),
           dt,
         );
+        currentThrottle = drive.throttle;
+        currentNitro = drive.nitro;
         vehicle = stepVehicle(vehicle, drive, dt, progression.upgrades);
         const proposed = vehicle.position;
         const preVelocity = { ...vehicle.velocity };
@@ -209,6 +230,9 @@ export function startGame(app: HTMLElement) {
           storage.save({ ...progression, soundEnabled });
           input.reset();
         }
+      } else {
+        currentThrottle = 0;
+        currentNitro = false;
       }
       cameraShake *= Math.exp(-8 * dt);
       const target =
@@ -219,7 +243,18 @@ export function startGame(app: HTMLElement) {
       marker.update(target, delivery.phase === "delivering", dt);
       car.update(vehicle, delivery.phase === "delivering", dt);
       deliveryAnimation.update(dt);
-      updateCamera(camera, vehicle.position, dt, vehicle.velocity, cameraShake);
+      updateCamera(camera, vehicle, dt, vehicle.velocity, cameraShake);
+
+      const speed = Math.hypot(vehicle.velocity.x, vehicle.velocity.z);
+      if (started && delivery.phase !== "result") {
+        skidmarks.update(vehicle, dt);
+        const isBoosting = currentNitro && vehicle.nitro > 0 && currentThrottle > 0.1;
+        particles.update(vehicle, isBoosting, dt);
+        sound.updateMotor(speed, currentThrottle, currentNitro, vehicle.drifting);
+      } else {
+        sound.updateMotor(0, 0, false, false);
+      }
+
       hud.update(delivery, progression, soundEnabled);
       hud.setNitro(vehicle.nitro);
       hud.setNavigation(
@@ -238,6 +273,7 @@ export function startGame(app: HTMLElement) {
   function visibility() {
     loop.setPaused(document.hidden);
     sound.setPaused(document.hidden);
+    if (document.hidden) sound.updateMotor(0, 0, false, false);
     pause.hidden = !document.hidden;
     input.reset();
   }
@@ -253,6 +289,8 @@ export function startGame(app: HTMLElement) {
       input.dispose();
       hud.dispose();
       sound.dispose();
+      skidmarks.dispose();
+      particles.dispose();
       renderer.dispose();
     },
     { once: true },

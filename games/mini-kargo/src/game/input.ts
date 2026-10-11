@@ -195,7 +195,7 @@ export function createInput(joystick: HTMLElement): InputController {
     if (
       e.pointerType === "touch" &&
       e.target instanceof Element &&
-      e.target.closest(".sheet, .toolbar")
+      e.target.closest(".sheet, .toolbar, .mobile-actions")
     )
       return;
     if (
