@@ -16,7 +16,9 @@ export const INPUT_TUNING = {
   steerFollow: 12, // klavye direksiyon yumuşatma hızı (1/sn)
   throttleFollow: 20, // klavye gaz yumuşatma hızı (1/sn)
   joystickDeadzone: 0.06,
-  joystickFullSteerAngle: Math.PI / 4, // bu açı farkında tam direksiyon
+  joystickFullSteerAngle: Math.PI / 4, // bu açı farkında tam direksiyon (yavaşken, 45°)
+  joystickFullSteerAngleFast: Math.PI / 2, // yüksek hızda tam direksiyon açısı (90°)
+  joystickSteerDeadzone: (4 * Math.PI) / 180, // titremeyi azaltan açı ölü bölgesi (< ~4°)
   uTurnAngle: (100 * Math.PI) / 180, // bundan büyük farkta U dönüşü
   uTurnSpeed: 2, // U dönüşü için hız eşiği
 };
@@ -30,6 +32,8 @@ const idleDrive = (): DriveInput => ({
 const clamp = (v: number, lo: number, hi: number) =>
   Math.max(lo, Math.min(hi, v));
 
+let reversing = false;
+
 /**
  * Joystick yönünü (ekran/dünya x,z) otomatik direksiyona çevirir.
  * heading: aracın yönü (ileri = sin h, cos h); speed: mevcut hız büyüklüğü.
@@ -42,21 +46,48 @@ export function joystickToDrive(
 ): DriveInput {
   const T = INPUT_TUNING;
   const magnitude = Math.min(1, Math.hypot(joystick.x, joystick.z));
-  if (magnitude < T.joystickDeadzone) return idleDrive();
+  if (magnitude < T.joystickDeadzone) {
+    reversing = false;
+    return idleDrive();
+  }
   const target = Math.atan2(joystick.x, joystick.z);
   const difference = Math.atan2(
     Math.sin(target - heading),
     Math.cos(target - heading),
   );
-  let steer = clamp(-difference / T.joystickFullSteerAngle, -1, 1);
-  let throttle = magnitude;
-  if (Math.abs(difference) > T.uTurnAngle) {
-    // Geri vites yok: hızlıyken fren, yavaşken gaz + tam direksiyon.
-    steer = difference > 0 ? -1 : 1;
-    throttle = Math.abs(speed) < T.uTurnSpeed ? magnitude : -magnitude;
+
+  const speedFactor = clamp((Math.abs(speed) - 3) / (14 - 3), 0, 1);
+  const fullSteer =
+    T.joystickFullSteerAngle +
+    (T.joystickFullSteerAngleFast - T.joystickFullSteerAngle) * speedFactor;
+
+  let steer = clamp(-difference / fullSteer, -1, 1);
+  if (Math.abs(difference) < T.joystickSteerDeadzone) {
+    steer = 0;
   }
+
+  let throttle = magnitude;
+
+  if (Math.abs(difference) > T.uTurnAngle) {
+    throttle = -magnitude;
+    if (speed < T.uTurnSpeed || reversing) {
+      reversing = true;
+      steer = difference > 0 ? 1 : -1;
+    } else {
+      steer = difference > 0 ? -1 : 1;
+    }
+  } else if (reversing) {
+    if (Math.abs(difference) > (15 * Math.PI) / 180) {
+      throttle = -magnitude;
+      steer = difference > 0 ? 1 : -1;
+    } else {
+      reversing = false;
+    }
+  }
+
   return { throttle, steer, handbrake: false, nitro: false };
 }
+
 
 const movementKeys = new Set([
   "w",

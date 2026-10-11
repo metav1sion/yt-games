@@ -81,8 +81,8 @@ describe("static collision contacts", () => {
 
   it.each([30, 60, 120])("uses pre-collision speed rather than displacement at %i Hz", steps => {
     const contacts = staticCollisionContacts(
-      { x: 9.35 + 5 / steps, z: 0 }, { x: 9.35, z: 0 },
-      { x: 5, z: 0 }, obstacles, bounds,
+      { x: 9.35 + 10 / steps, z: 0 }, { x: 9.35, z: 0 },
+      { x: 10, z: 0 }, obstacles, bounds,
     );
     expect(contacts).toEqual([{ id: "obstacle:0", severity: 0.5 }]);
   });
@@ -92,6 +92,20 @@ describe("static collision contacts", () => {
       { x: 30, z: 0 }, { x: 29.35, z: 0 },
       { x: 20, z: 0 }, obstacles, bounds,
     )).toEqual([{ id: "boundary:right", severity: 1 }]);
+  });
+
+  it("produces lower damage for tangential sliding compared to head-on impact", () => {
+    const headOn = staticCollisionContacts(
+      { x: 9.5, z: 0 }, { x: 9.35, z: 0 },
+      { x: 14, z: 0 }, obstacles, bounds,
+    );
+    const tangential = staticCollisionContacts(
+      { x: 9.5, z: 0 }, { x: 9.35, z: 0 },
+      { x: 0, z: 14 }, obstacles, bounds,
+    );
+    expect(headOn[0].severity).toBeCloseTo(14 / 20); // 0.7
+    expect(tangential[0].severity).toBeLessThan(headOn[0].severity);
+    expect(tangential[0].severity).toBeCloseTo((0.15 * 14) / 20); // 0.105
   });
 
   it("does not emit an impact for unobstructed movement", () => {

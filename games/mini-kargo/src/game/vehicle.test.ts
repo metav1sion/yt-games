@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { stepVehicle, resetVehicle, TUNING } from "./vehicle";
+import { joystickToDrive } from "./input";
 import type { DriveInput, VehicleState } from "./types";
 
 const car = (): VehicleState => ({
@@ -278,3 +279,126 @@ describe("resetVehicle", () => {
     });
   });
 });
+
+describe("joystick drive integration", () => {
+  it("completes U-turn simulation from east to west within 4 seconds", () => {
+    // 1. "Simülasyon" testi: stepVehicle + joystickToDrive ile duvar OLMADAN, araç doğuya giderken joystick'i batıya çek.
+    // Araç makul sürede (< 4 sn) batıya dönmüş ve hedefe yönelmiş olsun (U dönüşü tamamlanıyor).
+    let s: VehicleState = {
+      ...car(),
+      heading: Math.PI / 2, // Doğu (+x)
+      velocity: { x: 10, z: 0 },
+    };
+    const joy = { x: -1, z: 0 }; // Batı (-x)
+    const target = -Math.PI / 2; // Batı hedef açısı
+    const dt = 1 / 60;
+    for (let i = 0; i < 4 * 60; i++) {
+      const drive = joystickToDrive(
+        joy,
+        s.heading,
+        Math.hypot(s.velocity.x, s.velocity.z),
+      );
+      s = stepVehicle(s, drive, dt);
+    }
+    const diff = Math.atan2(Math.sin(target - s.heading), Math.cos(target - s.heading));
+    expect(Math.abs(diff)).toBeLessThan((5 * Math.PI) / 180);
+  });
+
+  it("stationary car reverses and turns to face target when joystick points behind", () => {
+    // 2. Duran araç (hız 0), joystick arkayı gösteriyor: araç geri gitmeye başlar (ileri hız < 0)
+    // ve heading hedefe doğru ilerler. Sonunda araç hedef yöne bakar.
+    let s: VehicleState = {
+      ...car(),
+      heading: 0, // +z
+      velocity: { x: 0, z: 0 },
+    };
+    const joy = { x: 0, z: -1 }; // Arka (-z)
+    const target = Math.PI;
+    const dt = 1 / 60;
+    let startedReversing = false;
+    let headingMovedTowardsTarget = false;
+
+    for (let i = 0; i < 4 * 60; i++) {
+      const drive = joystickToDrive(
+        joy,
+        s.heading,
+        Math.hypot(s.velocity.x, s.velocity.z),
+      );
+      s = stepVehicle(s, drive, dt);
+      const vf =
+        s.velocity.x * Math.sin(s.heading) + s.velocity.z * Math.cos(s.heading);
+      if (vf < -0.1) startedReversing = true;
+      if (Math.abs(s.heading) > 0.1) headingMovedTowardsTarget = true;
+    }
+
+    expect(startedReversing).toBe(true);
+    expect(headingMovedTowardsTarget).toBe(true);
+    const diff = Math.atan2(Math.sin(target - s.heading), Math.cos(target - s.heading));
+    expect(Math.abs(diff)).toBeLessThan((5 * Math.PI) / 180);
+  });
+
+  it("vehicle facing wall moves away within 1 second when pulling joystick back", () => {
+    let s: VehicleState = {
+      ...car(),
+      heading: 0,
+      position: { x: 0, z: 0 },
+      velocity: { x: 0, z: 0 },
+    };
+    const joy = { x: 0, z: -1 };
+    const dt = 1 / 60;
+    for (let i = 0; i < 60; i++) {
+      const drive = joystickToDrive(
+        joy,
+        s.heading,
+        Math.hypot(s.velocity.x, s.velocity.z),
+      );
+      s = stepVehicle(s, drive, dt);
+    }
+    expect(s.position.z).toBeLessThan(-1);
+  });
+
+  it("avoids steering oscillation at high speed with 30 degree offset", () => {
+    // 3. Salınım testi: araç 12 hızla gidiyor, joystick 30° sapmış sabit bir yönü gösteriyor. 5 sn simüle et.
+    // Son 2 saniyede heading ile hedef arasındaki fark sürekli küçük (< 5°) kalmalı
+    // ve işareti (steer yönü) en fazla 2 kez değişmeli (titreme/salınım yok).
+    const targetAngle = (30 * Math.PI) / 180;
+    const joy = { x: Math.sin(targetAngle), z: Math.cos(targetAngle) };
+    let s: VehicleState = {
+      ...car(),
+      heading: 0,
+      velocity: { x: 0, z: 12 },
+    };
+    const dt = 1 / 60;
+    let lastSteerSign: number | null = null;
+    let signChangesInLast2s = 0;
+
+    for (let i = 0; i < 5 * 60; i++) {
+      const drive = joystickToDrive(
+        joy,
+        s.heading,
+        Math.hypot(s.velocity.x, s.velocity.z),
+      );
+      s = stepVehicle(s, drive, dt);
+
+      // Son 2 saniye (i >= 3 * 60)
+      if (i >= 3 * 60) {
+        const diff = Math.atan2(
+          Math.sin(targetAngle - s.heading),
+          Math.cos(targetAngle - s.heading),
+        );
+        expect(Math.abs(diff)).toBeLessThan((5 * Math.PI) / 180);
+
+        const currentSign = drive.steer > 0.001 ? 1 : drive.steer < -0.001 ? -1 : 0;
+        if (currentSign !== 0) {
+          if (lastSteerSign !== null && currentSign !== lastSteerSign) {
+            signChangesInLast2s++;
+          }
+          lastSteerSign = currentSign;
+        }
+      }
+    }
+
+    expect(signChangesInLast2s).toBeLessThanOrEqual(2);
+  });
+});
+

@@ -6,7 +6,7 @@ import { updateCamera } from "./scene/camera";
 import { createMarkers, createDeliveryAnimation } from "./scene/markers";
 import { createInput } from "./game/input";
 import { stepVehicle, resetVehicle } from "./game/vehicle";
-import { resolveMovement } from "./game/collision";
+import { resolveCollision } from "./game/collision";
 import { createLoop } from "./game/loop";
 import { createDeliveryState, stepDelivery } from "./game/delivery";
 import { createContactDamageTracker, staticCollisionContacts } from "./game/contact-damage";
@@ -142,19 +142,28 @@ export function startGame(app: HTMLElement) {
         );
         vehicle = stepVehicle(vehicle, drive, dt, progression.upgrades);
         const proposed = vehicle.position;
-        const resolved = resolveMovement(
+        const preVelocity = { ...vehicle.velocity };
+        const collision = resolveCollision(
           previous,
           proposed,
-          0.65,
           world.obstacles,
           world.bounds,
+          {
+            heading: vehicle.heading,
+            velocity: preVelocity,
+          },
         );
         const staticContacts = staticCollisionContacts(
-          proposed, resolved, vehicle.velocity, world.obstacles, world.bounds,
+          proposed,
+          collision.position,
+          preVelocity,
+          world.obstacles,
+          world.bounds,
+          0.65,
+          vehicle.heading,
         );
-        if (Math.abs(resolved.x - proposed.x) > 0.001) vehicle.velocity.x = 0;
-        if (Math.abs(resolved.z - proposed.z) > 0.001) vehicle.velocity.z = 0;
-        vehicle.position = resolved;
+        vehicle.position = collision.position;
+        vehicle.velocity = collision.velocity;
         const old = delivery;
         const trafficContacts = traffic.update(dt, vehicle.position);
         const pedestrianContacts = pedestrians.update(

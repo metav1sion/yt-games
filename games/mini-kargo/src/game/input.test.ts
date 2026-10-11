@@ -239,15 +239,27 @@ describe("joystickToDrive", () => {
     expect(Math.abs(d.steer)).toBeGreaterThan(0);
     expect(Math.abs(d.steer)).toBeLessThan(0.5);
   });
-  it("uses gas with full steering for a slow U-turn instead of reversing", () => {
+  it("reverses with inverted steering for a slow U-turn", () => {
     const d = joystickToDrive({ x: 0, z: -1 }, 0, 0.5);
-    expect(d.throttle).toBeGreaterThan(0);
-    expect(Math.abs(d.steer)).toBe(1);
+    expect(d.throttle).toBeLessThan(0);
+    expect(d.steer).toBe(1);
   });
   it("brakes instead of reversing when behind the car at speed", () => {
     const d = joystickToDrive({ x: 0, z: -1 }, 0, 8);
     expect(d.throttle).toBeLessThan(0);
     expect(Math.abs(d.steer)).toBe(1);
+  });
+  it("zeros steer in small angle deadzone (< 4 degrees)", () => {
+    const inside = joystickToDrive({ x: Math.sin(deg(2)), z: Math.cos(deg(2)) }, 0, 5);
+    expect(inside.steer).toBe(0);
+    const outside = joystickToDrive({ x: Math.sin(deg(6)), z: Math.cos(deg(6)) }, 0, 5);
+    expect(Math.abs(outside.steer)).toBeGreaterThan(0);
+  });
+  it("scales full steer angle between low and high speed", () => {
+    const slow = joystickToDrive({ x: Math.sin(deg(45)), z: Math.cos(deg(45)) }, 0, 1);
+    expect(slow.steer).toBeCloseTo(-1, 2);
+    const fast = joystickToDrive({ x: Math.sin(deg(45)), z: Math.cos(deg(45)) }, 0, 14);
+    expect(fast.steer).toBeCloseTo(-0.5, 2);
   });
   it("releases throttle when the joystick is released", () => {
     expect(joystickToDrive({ x: 0, z: 0 }, 1, 9)).toEqual({
