@@ -63,9 +63,31 @@ export function createInput(joystick: HTMLElement): InputController {
     knob.style.transform = `translate(${x * radius}px,${z * radius}px)`;
   }
   function down(e: PointerEvent) {
+    if (
+      e.pointerType === "touch" &&
+      e.target instanceof Element &&
+      e.target.closest(".sheet, .toolbar")
+    )
+      return;
+    if (e.pointerType !== "touch" && e.target !== joystick) return;
     if (pointer !== null) return;
     e.preventDefault();
     pointer = e.pointerId;
+    if (e.pointerType === "touch") {
+      const size = joystick.getBoundingClientRect().width,
+        margin = 8;
+      const left = Math.min(
+        Math.max(margin, e.clientX - size / 2),
+        innerWidth - size - margin,
+      );
+      const top = Math.min(
+        Math.max(margin, e.clientY - size / 2),
+        innerHeight - size - margin,
+      );
+      joystick.style.left = `${left}px`;
+      joystick.style.top = `${top}px`;
+      joystick.style.bottom = "auto";
+    }
     joystick.setPointerCapture(pointer);
     joystick.classList.add("active");
     move(e);
@@ -91,6 +113,7 @@ export function createInput(joystick: HTMLElement): InputController {
   window.addEventListener("keyup", keyup);
   window.addEventListener("blur", reset);
   document.addEventListener("visibilitychange", visibility);
+  document.addEventListener("pointerdown", down);
   joystick.addEventListener("pointerdown", down);
   joystick.addEventListener("pointermove", move);
   for (const event of ["pointerup", "pointercancel", "lostpointercapture"])
@@ -104,6 +127,7 @@ export function createInput(joystick: HTMLElement): InputController {
       window.removeEventListener("keyup", keyup);
       window.removeEventListener("blur", reset);
       document.removeEventListener("visibilitychange", visibility);
+      document.removeEventListener("pointerdown", down);
       joystick.removeEventListener("pointerdown", down);
       joystick.removeEventListener("pointermove", move);
       for (const event of ["pointerup", "pointercancel", "lostpointercapture"])

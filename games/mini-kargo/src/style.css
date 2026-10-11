@@ -172,6 +172,14 @@ p {
   color: #6b8272;
 }
 @media (max-width: 600px) {
+  .ui #joystick {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .ui #joystick.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
   .topbar {
     top: max(16px, env(safe-area-inset-top));
     left: 18px;
@@ -777,17 +785,95 @@ h1 {
   display: none;
 }
 @media (max-width: 600px) {
+  .topbar {
+    top: calc(10px + env(safe-area-inset-top));
+  }
+  .brand {
+    gap: 8px;
+    font-size: 18px;
+    letter-spacing: -0.8px;
+  }
+  .brand-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    font-size: 20px;
+  }
+  .brand small {
+    font-size: 5px;
+    letter-spacing: 1.2px;
+  }
+  .district {
+    padding: 7px 8px;
+    font-size: 7px;
+    letter-spacing: 0.3px;
+  }
+  .district i {
+    width: 5px;
+    height: 5px;
+  }
+  .task-card {
+    top: calc(54px + env(safe-area-inset-top));
+    padding: 10px 12px;
+    border-radius: 14px;
+  }
+  .eyebrow {
+    font-size: 7px;
+    letter-spacing: 1px;
+  }
+  .task-heading {
+    gap: 10px;
+  }
+  #trip-count {
+    font-size: 8px;
+  }
+  .destination {
+    gap: 9px;
+    margin: 7px 0;
+  }
+  .destination-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 19px;
+  }
+  .destination h2 {
+    font-size: 14px;
+    letter-spacing: -0.3px;
+  }
+  .destination p {
+    font-size: 9px;
+  }
+  .task-footer {
+    gap: 8px;
+    margin-top: 7px;
+    font-size: 8px;
+  }
+  .package-status {
+    font-size: 7px;
+  }
   .score-card {
+    top: calc(158px + env(safe-area-inset-top));
     display: grid;
     grid-template-columns: 1fr 1fr;
-    width: 154px;
-    gap: 0 8px;
+    width: 138px;
+    padding: 9px 11px;
+    border-radius: 13px;
+    gap: 0 6px;
   }
   .score-card .timer-track {
     grid-column: 1/-1;
+    margin-top: 7px;
   }
   .score-card .eyebrow {
     letter-spacing: 0.5px;
-    font-size: 6.5px;
+    font-size: 6px;
+  }
+  .score-card strong {
+    font-size: 19px;
+    margin-top: 2px;
+  }
+  .score-card .bonus-column strong {
+    font-size: 16px;
+    margin-top: 4px;
   }
 }
