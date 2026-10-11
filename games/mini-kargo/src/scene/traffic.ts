@@ -31,10 +31,10 @@ export function createTraffic() {
       const contacts: DamageContact[] = [];
       for (const [index, car] of cars.entries()) {
         car.position[car.axis] += car.direction * car.speed * dt;
-        if (car.axis === "x" && Math.abs(car.position.x) > 30)
-          car.position.x = -car.direction * 30;
-        if (car.axis === "z" && Math.abs(car.position.z) > 25)
-          car.position.z = -car.direction * 25;
+        if (car.axis === "x" && Math.abs(car.position.x) > 90)
+          car.position.x = -car.direction * 90;
+        if (car.axis === "z" && Math.abs(car.position.z) > 90)
+          car.position.z = -car.direction * 90;
         car.group.position.set(car.position.x, 0.08, car.position.z);
         car.group.rotation.y =
           car.axis === "x"

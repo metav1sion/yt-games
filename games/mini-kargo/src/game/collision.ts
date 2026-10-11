@@ -172,6 +172,14 @@ export function resolveCollision(
       // Engeller (Obstacles)
       for (let oIdx = 0; oIdx < obstacles.length; oIdx++) {
         const rect = obstacles[oIdx];
+        if (
+          cx + col.radius < rect.minX ||
+          cx - col.radius > rect.maxX ||
+          cz + col.radius < rect.minZ ||
+          cz - col.radius > rect.maxZ
+        ) {
+          continue;
+        }
         const test = testCircleVsRect(cx, cz, col.radius, rect);
         if (test.hit) {
           const px = test.normal.x * test.depth;

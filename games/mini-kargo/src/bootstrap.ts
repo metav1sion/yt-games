@@ -18,6 +18,7 @@ import { createSound } from "./audio/sound";
 import { tryPurchaseUpgrade, type UpgradeKind } from "./game/upgrades";
 import { createTraffic } from "./scene/traffic";
 import { createPedestrians } from "./scene/pedestrians";
+import { districtById } from "./game/districts";
 export function startGame(app: HTMLElement) {
   app.innerHTML =
     '<canvas id="game" aria-label="Mini Kargo oyun alanı"></canvas>';
@@ -33,16 +34,18 @@ export function startGame(app: HTMLElement) {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog("#c9dec0", 48, 85);
+  scene.fog = new THREE.Fog("#c9dec0", 80, 180);
   scene.add(new THREE.HemisphereLight("#ffefd5", "#739282", 2.4));
   const sun = new THREE.DirectionalLight("#fff1d7", 3);
-  sun.position.set(-18, 30, 14);
+  sun.position.set(-24, 38, 18);
   sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048);
-  sun.shadow.camera.left = -40;
-  sun.shadow.camera.right = 40;
-  sun.shadow.camera.top = 40;
-  sun.shadow.camera.bottom = -40;
+  sun.shadow.camera.left = -35;
+  sun.shadow.camera.right = 35;
+  sun.shadow.camera.top = 35;
+  sun.shadow.camera.bottom = -35;
+  sun.shadow.camera.near = 1;
+  sun.shadow.camera.far = 120;
   sun.shadow.normalBias = 0.04;
   scene.add(sun);
   scene.add(sun.target);
@@ -81,6 +84,7 @@ export function startGame(app: HTMLElement) {
     progression = { ...preferences },
     soundEnabled = preferences.soundEnabled,
     cameraShake = 0;
+  world.updateUnlockedDistricts(progression.companyLevel);
   sound.setEnabled(soundEnabled);
   resetCamera(vehicle.position, vehicle.heading);
   updateCamera(camera, vehicle, 1);
@@ -204,6 +208,7 @@ export function startGame(app: HTMLElement) {
           world.homes,
           dt,
           impact,
+          progression.companyLevel,
         );
         if (delivery.completed > old.completed) {
           deliveryAnimation.play(
@@ -215,19 +220,29 @@ export function startGame(app: HTMLElement) {
         if (old.phase !== "delivering" && delivery.phase === "delivering")
           sound.pickup();
         if (delivery.phase === "result") {
+          const oldLevel = progression.companyLevel;
+          const totalDeliveries =
+            progression.completedDeliveries + delivery.completed;
+          const newLevel = Math.floor(totalDeliveries / 10) + 1;
           progression = {
             ...progression,
             bestScore: Math.max(progression.bestScore, delivery.score),
             money: progression.money + delivery.earnings,
             reputation: progression.reputation + delivery.reputation,
-            completedDeliveries:
-              progression.completedDeliveries + delivery.completed,
-            companyLevel:
-              Math.floor(
-                (progression.completedDeliveries + delivery.completed) / 10,
-              ) + 1,
+            completedDeliveries: totalDeliveries,
+            companyLevel: newLevel,
           };
           storage.save({ ...progression, soundEnabled });
+          if (newLevel > oldLevel) {
+            const newlyUnlocked = world.updateUnlockedDistricts(newLevel);
+            if (newlyUnlocked.length > 0) {
+              const names = newlyUnlocked
+                .map((id) => districtById(id).name)
+                .join(", ");
+              hud.showToast(`🎉 YENİ BÖLGE AÇILDI: ${names}!`, 4500);
+              sound.delivery();
+            }
+          }
           input.reset();
         }
       } else {
@@ -244,6 +259,10 @@ export function startGame(app: HTMLElement) {
       car.update(vehicle, delivery.phase === "delivering", dt);
       deliveryAnimation.update(dt);
       updateCamera(camera, vehicle, dt, vehicle.velocity, cameraShake);
+
+      // Güneş ışığı ve dinamik gölge arabayı takip eder
+      sun.position.set(vehicle.position.x - 24, 38, vehicle.position.z + 18);
+      sun.target.position.set(vehicle.position.x, 0, vehicle.position.z);
 
       const speed = Math.hypot(vehicle.velocity.x, vehicle.velocity.z);
       if (started && delivery.phase !== "result") {

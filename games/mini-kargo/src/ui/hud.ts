@@ -1,4 +1,5 @@
 import { packageInfo, type DeliveryState } from "../game/delivery";
+import { districtById } from "../game/districts";
 import {
   canPurchaseUpgrade,
   upgradeCost,
@@ -38,6 +39,15 @@ export function createHud(
   let begun = false,
     lastCompleted = 0,
     toastTimer: ReturnType<typeof setTimeout> | undefined;
+
+  function showToast(message: string, duration = 3000) {
+    el("toast").textContent = message;
+    el("toast").hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      el("toast").hidden = true;
+    }, duration);
+  }
 
   function begin() {
     if (!begun)
@@ -181,7 +191,7 @@ export function createHud(
       el("safe-bonus").textContent = `+${s.safeDrivingBonus} ₺`;
       el("company-money").textContent = `${progression.money} ₺`;
       el("company-level").textContent = String(progression.companyLevel);
-      el("district-name").innerHTML = `${s.district === "industrial" ? "SANAYİ BÖLGESİ" : s.district === "market" ? "ÇARŞI BÖLGESİ" : "GÜNEŞ MAHALLESİ"} <i></i>`;
+      el("district-name").innerHTML = `${districtById(s.district).name} <i></i>`;
       for (const kind of ["engine", "brakes", "cargo"] as UpgradeKind[]) {
         const level = progression.upgrades[kind];
         el(`${kind}-upgrade`).textContent =
@@ -194,16 +204,11 @@ export function createHud(
         );
       }
       if (s.completed > lastCompleted && s.phase !== "result") {
-        el("toast").textContent =
-          "✓ Paket teslim edildi. Sıradaki için depoya!";
-        el("toast").hidden = false;
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => {
-          el("toast").hidden = true;
-        }, 3000);
+        showToast("✓ Paket teslim edildi. Sıradaki için depoya!", 3000);
       }
       lastCompleted = s.completed;
     },
+    showToast,
     setNitro(level: number) {
       const percent = Math.max(0, Math.min(1, level)) * 100;
       el("nitro-fill").style.width = `${percent}%`;
