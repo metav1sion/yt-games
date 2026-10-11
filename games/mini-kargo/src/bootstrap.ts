@@ -13,6 +13,8 @@ import { createHud } from "./ui/hud";
 import { createLocalStorageAdapter } from "./platform/storage";
 import { createSound } from "./audio/sound";
 import { upgradeCost, type UpgradeKind } from "./game/upgrades";
+import { createTraffic } from "./scene/traffic";
+import { createPedestrians } from "./scene/pedestrians";
 export function startGame(app: HTMLElement) {
   app.innerHTML =
     '<canvas id="game" aria-label="Mini Kargo oyun alanı"></canvas>';
@@ -47,6 +49,10 @@ export function startGame(app: HTMLElement) {
   scene.add(car.group);
   const marker = createMarkers();
   scene.add(marker.group);
+  const traffic = createTraffic();
+  scene.add(traffic.group);
+  const pedestrians = createPedestrians();
+  scene.add(pedestrians.group);
   const deliveryAnimation = createDeliveryAnimation(scene);
   const camera = new THREE.PerspectiveCamera(
     40,
@@ -61,10 +67,15 @@ export function startGame(app: HTMLElement) {
   const preferences = storage.load(),
     sound = createSound();
   let vehicle = resetVehicle(world.depot),
-    delivery = createDeliveryState(preferences.upgrades.cargo),
+    delivery = createDeliveryState(
+      preferences.upgrades.cargo,
+      preferences.companyLevel,
+    ),
     started = false,
     progression = { ...preferences },
-    soundEnabled = preferences.soundEnabled;
+    soundEnabled = preferences.soundEnabled,
+    cameraShake = 0,
+    lastTrafficDamage = 0;
   sound.setEnabled(soundEnabled);
   camera.position.set(vehicle.position.x, 27, vehicle.position.z + 21);
   updateCamera(camera, vehicle.position, 1);
@@ -76,12 +87,19 @@ export function startGame(app: HTMLElement) {
       void sound.unlock();
       started = true;
       vehicle = resetVehicle(world.depot);
-      delivery = createDeliveryState(progression.upgrades.cargo);
+      delivery = createDeliveryState(
+        progression.upgrades.cargo,
+        progression.companyLevel,
+      );
+      cameraShake = 0;
+      lastTrafficDamage = 0;
       input.reset();
     },
     recover() {
       vehicle = resetVehicle(world.depot);
       delivery = { ...delivery, holdSeconds: 0 };
+      cameraShake = 0;
+      lastTrafficDamage = 0;
       input.reset();
     },
     toggleSound() {
@@ -132,16 +150,31 @@ export function startGame(app: HTMLElement) {
           world.obstacles,
           world.bounds,
         );
+        const collisionDistance = Math.hypot(
+          proposed.x - resolved.x,
+          proposed.z - resolved.z,
+        );
         if (Math.abs(resolved.x - proposed.x) > 0.001) vehicle.velocity.x = 0;
         if (Math.abs(resolved.z - proposed.z) > 0.001) vehicle.velocity.z = 0;
         vehicle.position = resolved;
         const old = delivery;
+        const trafficDamage = traffic.update(dt, vehicle.position);
+        const pedestrianRisk = pedestrians.update(
+          dt,
+          vehicle.position,
+          Math.hypot(vehicle.velocity.x, vehicle.velocity.z),
+        );
+        const impact = trafficDamage + pedestrianRisk;
+        if (impact > 0.15 && lastTrafficDamage <= 0.15) sound.collision();
+        cameraShake = Math.max(cameraShake, impact);
+        lastTrafficDamage = impact;
         delivery = stepDelivery(
           delivery,
           vehicle,
           world.depot,
           world.homes,
           dt,
+          collisionDistance + trafficDamage + pedestrianRisk,
         );
         if (delivery.completed > old.completed) {
           deliveryAnimation.play(
@@ -169,6 +202,7 @@ export function startGame(app: HTMLElement) {
           input.reset();
         }
       }
+      cameraShake *= Math.exp(-8 * dt);
       const target =
         delivery.phase === "delivering"
           ? world.homes[delivery.targetIndex]
@@ -177,7 +211,7 @@ export function startGame(app: HTMLElement) {
       marker.update(target, delivery.phase === "delivering", dt);
       car.update(vehicle, delivery.phase === "delivering", dt);
       deliveryAnimation.update(dt);
-      updateCamera(camera, vehicle.position, dt);
+      updateCamera(camera, vehicle.position, dt, vehicle.velocity, cameraShake);
       hud.update(delivery, progression, soundEnabled);
       hud.setNavigation(
         Math.hypot(

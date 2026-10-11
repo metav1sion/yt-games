@@ -55,7 +55,7 @@ describe("delivery tour", () => {
     s = wait(s, homes[0]);
     expect(s.completed).toBe(1);
     expect(s.score).toBe(100);
-    expect(s.earnings).toBe(100);
+    expect(s.earnings).toBe(125);
     expect(s.reputation).toBe(1);
   });
   it("deliveryScoresOnce", () => {
@@ -74,7 +74,7 @@ describe("delivery tour", () => {
     expect(s.completed).toBe(3);
     expect(s.phase).toBe("result");
     expect(s.score).toBeGreaterThan(300);
-    expect(s.earnings).toBe(s.score);
+    expect(s.earnings).toBeGreaterThan(s.score);
     expect(s.reputation).toBeGreaterThan(0);
     const frozen = stepDelivery(s, car(depot), depot, homes, 1);
     expect(frozen.score).toBe(s.score);
@@ -95,6 +95,21 @@ describe("delivery tour", () => {
     expect(s.phase).toBe("delivering");
     expect(s.targetIndex).toBe(1);
     expect(s.packageSlot).toBe(2);
+  });
+  it("collisionDamagesFragilePackage", () => {
+    let s = wait(createDeliveryState(), depot);
+    s = stepDelivery(s, car(homes[0]), depot, homes, 0.1, 0.5);
+    expect(s.packageDamage).toBeGreaterThan(0);
+    expect(s.vehicleDamage).toBeGreaterThan(0);
+  });
+  it("companyLevelUnlocksDistrictReward", () => {
+    const starter = createDeliveryState(0, 1);
+    const market = createDeliveryState(0, 2);
+    expect(starter.district).toBe("sunny");
+    expect(market.district).toBe("market");
+    let s = wait(market, depot);
+    s = wait(s, homes[0]);
+    expect(s.earnings).toBeGreaterThan(125);
   });
   it("restartClearsTour", () => {
     const s = createDeliveryState();

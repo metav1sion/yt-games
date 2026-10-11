@@ -17,6 +17,7 @@ export function createCar() {
     box(body, [0.2, 0.14, 0.035], [x, 0.67, -1.09], "#bc594a");
   }
   const wheels: THREE.Mesh[] = [];
+  const frontWheels: THREE.Mesh[] = [];
   for (const x of [-0.65, 0.65])
     for (const z of [-0.65, 0.7]) {
       const w = new THREE.Mesh(
@@ -28,6 +29,7 @@ export function createCar() {
       w.castShadow = true;
       body.add(w);
       wheels.push(w);
+      if (z > 0) frontWheels.push(w);
       const hub = new THREE.Mesh(
         new THREE.CylinderGeometry(0.14, 0.14, 0.2, 10),
         new THREE.MeshStandardMaterial({ color: "#dce3cf" }),
@@ -64,8 +66,17 @@ export function createCar() {
         1 - Math.exp(-8 * dt),
       );
       body.position.y = Math.sin(time * 15) * Math.min(speed / 8, 1) * 0.015;
+      body.rotation.x = THREE.MathUtils.lerp(
+        body.rotation.x,
+        Math.max(-0.035, Math.min(0.035, -speed * 0.004)),
+        1 - Math.exp(-7 * dt),
+      );
       wheels.forEach((w) => {
         w.rotation.x = wheelSpin;
+      });
+      const steering = Math.max(-0.28, Math.min(0.28, turn * 5));
+      frontWheels.forEach((w) => {
+        w.rotation.y = steering;
       });
       cargo.visible = hasPackage;
       cargo.rotation.z = Math.sin(time * 6) * speed * 0.006 - turn * 2;

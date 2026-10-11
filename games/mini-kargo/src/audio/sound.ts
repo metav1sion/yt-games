@@ -56,6 +56,10 @@ export function createSound() {
       note(659, 0.09, 0.13);
       note(784, 0.18, 0.2);
     },
+    collision() {
+      note(110, 0, 0.12);
+      note(75, 0.08, 0.18);
+    },
     dispose() {
       void context?.close().catch(() => {});
       context = null;

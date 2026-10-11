@@ -557,6 +557,21 @@ h1 {
   letter-spacing: 0.7px;
   font-weight: 750;
 }
+.quality-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: -8px 0 14px;
+  padding: 9px 12px;
+  border-radius: 11px;
+  background: #f1e7c8;
+  color: #8b987b;
+  font-size: 8px;
+  font-weight: 750;
+}
+.quality-summary b {
+  color: #4b9470;
+}
 .company-summary strong {
   color: #255a4a;
   font-size: 17px;
@@ -781,6 +796,10 @@ h1 {
     margin-bottom: 14px;
     padding: 9px 10px;
     font-size: 7px;
+  }
+  .quality-summary {
+    font-size: 7px;
+    padding: 8px;
   }
   .company-summary strong,
   .company-summary b {

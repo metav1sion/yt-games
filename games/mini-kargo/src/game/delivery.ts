@@ -1,5 +1,6 @@
 import type { VehicleState, Vec2 } from "./types";
 import type { VehicleUpgrades } from "./upgrades";
+import { districtById, districtForLevel, type DistrictId } from "./districts";
 export type PackageType = "standard" | "urgent" | "fragile";
 export const packageInfo: Record<
   PackageType,
@@ -38,8 +39,12 @@ export type DeliveryState = {
   packageType: PackageType;
   packageSlot: number;
   capacity: number;
+  packageDamage: number;
+  vehicleDamage: number;
+  safeDrivingBonus: number;
+  district: DistrictId;
 };
-export function createDeliveryState(cargoLevel = 0): DeliveryState {
+export function createDeliveryState(cargoLevel = 0, companyLevel = 1): DeliveryState {
   return {
     phase: "loading",
     completed: 0,
@@ -52,6 +57,10 @@ export function createDeliveryState(cargoLevel = 0): DeliveryState {
     packageType: packageFor(0),
     packageSlot: 0,
     capacity: Math.min(2, 1 + cargoLevel),
+    packageDamage: 0,
+    vehicleDamage: 0,
+    safeDrivingBonus: 0,
+    district: districtForLevel(companyLevel).id,
   };
 }
 export function stepDelivery(
@@ -60,9 +69,18 @@ export function stepDelivery(
   depot: Vec2,
   homes: Vec2[],
   dt: number,
+  collisionDamage = 0,
 ): DeliveryState {
   if (state.phase === "result") return state;
   const s = { ...state };
+  if (s.phase === "delivering" && collisionDamage > 0) {
+    s.vehicleDamage = Math.min(100, s.vehicleDamage + collisionDamage * 22);
+    s.packageDamage = Math.min(
+      100,
+      s.packageDamage +
+        collisionDamage * (s.packageType === "fragile" ? 32 : 12),
+    );
+  }
   const target = s.phase === "delivering" ? homes[s.targetIndex] : depot;
   if (s.phase === "delivering") s.secondsLeft = Math.max(0, s.secondsLeft - dt);
   const inZone =
@@ -74,12 +92,19 @@ export function stepDelivery(
     s.holdSeconds = 0;
     if (s.phase === "delivering") {
       const info = packageInfo[s.packageType];
+      const districtMultiplier = districtById(s.district).rewardMultiplier;
       const reward = Math.floor(
-        (100 + Math.floor(s.secondsLeft * 2)) * info.multiplier,
+        (100 + Math.floor(s.secondsLeft * 2)) *
+          info.multiplier *
+          districtMultiplier,
       );
+      const qualityMultiplier = Math.max(0.35, 1 - s.packageDamage / 220);
+      const safeBonus = s.packageDamage === 0 ? 25 : 0;
+      const qualityReward = Math.floor(reward * qualityMultiplier) + safeBonus;
       s.score += reward;
-      s.earnings += reward;
+      s.earnings += qualityReward;
       s.reputation += s.secondsLeft > 20 ? 2 : 1;
+      s.safeDrivingBonus += safeBonus;
       s.completed++;
       if (s.completed === 3) {
         s.phase = "result";

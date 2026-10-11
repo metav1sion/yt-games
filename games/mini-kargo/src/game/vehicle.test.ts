@@ -43,4 +43,12 @@ describe("driving", () => {
       Math.hypot(base.velocity.x, base.velocity.z),
     );
   });
+  it("coastsToStopWhenInputIsReleased", () => {
+    let s = car();
+    for (let i = 0; i < 120; i++) s = stepVehicle(s, { x: 0, z: 1 }, 1 / 60);
+    const distanceAtRelease = s.position.z;
+    for (let i = 0; i < 60; i++) s = stepVehicle(s, { x: 0, z: 0 }, 1 / 60);
+    expect(s.position.z).toBeGreaterThan(distanceAtRelease);
+    expect(Math.hypot(s.velocity.x, s.velocity.z)).toBeLessThan(1.5);
+  });
 });

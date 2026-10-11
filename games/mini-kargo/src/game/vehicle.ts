@@ -8,19 +8,22 @@ export function stepVehicle(
 ): VehicleState {
   const amount = Math.min(1, Math.hypot(input.x, input.z));
   let heading = state.heading;
+  const speed = Math.hypot(state.velocity.x, state.velocity.z);
   if (amount > 0.06) {
     const target = Math.atan2(input.x, input.z);
     const difference = Math.atan2(
       Math.sin(target - heading),
       Math.cos(target - heading),
     );
-    const speed = Math.hypot(state.velocity.x, state.velocity.z);
-    const maxTurn = (3.8 - speed * 0.09) * dt;
+    const maxTurn = (4.4 - Math.min(speed, 8) * 0.12) * dt;
     heading += Math.max(-maxTurn, Math.min(maxTurn, difference));
   }
-  const desired = amount * (8 + upgrades.engine * 0.7);
+  const maxSpeed = 8 + upgrades.engine * 0.7;
+  const desired = amount * maxSpeed;
+  const acceleration = 3.8 + upgrades.engine * 0.35;
+  const braking = 4.8 + upgrades.brakes * 1.2;
   const follow = 1 - Math.exp(
-    -((amount > 0.06 ? 3.2 : 5.2) + upgrades.brakes * (amount > 0.06 ? 0 : 1.2)) * dt,
+    -(amount > 0.06 ? acceleration : braking) * dt,
   );
   const vx =
     state.velocity.x +
@@ -31,7 +34,10 @@ export function stepVehicle(
   return {
     heading,
     velocity: { x: vx, z: vz },
-    position: { x: state.position.x + vx * dt, z: state.position.z + vz * dt },
+    position: {
+      x: state.position.x + vx * dt,
+      z: state.position.z + vz * dt,
+    },
   };
 }
 export function resetVehicle(depot: Vec2): VehicleState {
