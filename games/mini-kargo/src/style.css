@@ -543,6 +543,29 @@ h1 {
   margin-top: 7px;
   letter-spacing: -1px;
 }
+.company-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin: -8px 0 24px;
+  padding: 12px 14px;
+  border-radius: 13px;
+  background: #e5ecd4;
+  color: #789078;
+  font-size: 8px;
+  letter-spacing: 0.7px;
+  font-weight: 750;
+}
+.company-summary strong {
+  color: #255a4a;
+  font-size: 17px;
+  letter-spacing: -0.5px;
+}
+.company-summary b {
+  color: #255a4a;
+  font-size: 17px;
+}
 .toast {
   position: absolute;
   bottom: 105px;
@@ -694,6 +717,15 @@ h1 {
   }
   .result-scores strong {
     font-size: 25px;
+  }
+  .company-summary {
+    margin-bottom: 14px;
+    padding: 9px 10px;
+    font-size: 7px;
+  }
+  .company-summary strong,
+  .company-summary b {
+    font-size: 14px;
   }
   .result-card .primary-button {
     padding: 11px 18px;

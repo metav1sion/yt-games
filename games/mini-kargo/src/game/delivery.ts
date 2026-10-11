@@ -6,6 +6,8 @@ export type DeliveryState = {
   holdSeconds: number;
   secondsLeft: number;
   score: number;
+  earnings: number;
+  reputation: number;
 };
 export function createDeliveryState(): DeliveryState {
   return {
@@ -15,6 +17,8 @@ export function createDeliveryState(): DeliveryState {
     holdSeconds: 0,
     secondsLeft: 45,
     score: 0,
+    earnings: 0,
+    reputation: 0,
   };
 }
 export function stepDelivery(
@@ -36,7 +40,10 @@ export function stepDelivery(
   if (s.holdSeconds + 1e-9 >= 1) {
     s.holdSeconds = 0;
     if (s.phase === "delivering") {
-      s.score += 100 + Math.floor(s.secondsLeft * 2);
+      const reward = 100 + Math.floor(s.secondsLeft * 2);
+      s.score += reward;
+      s.earnings += reward;
+      s.reputation += s.secondsLeft > 20 ? 2 : 1;
       s.completed++;
       s.phase = s.completed === 3 ? "result" : "returning";
       if (s.phase !== "result") s.targetIndex = s.completed;

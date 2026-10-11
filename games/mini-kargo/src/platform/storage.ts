@@ -1,9 +1,23 @@
-export type Preferences = { bestScore: number; soundEnabled: boolean };
+export type Preferences = {
+  bestScore: number;
+  soundEnabled: boolean;
+  money: number;
+  reputation: number;
+  companyLevel: number;
+  completedDeliveries: number;
+};
 export type StorageAdapter = {
   load(): Preferences;
-  save(value: Preferences): void;
+  save(value: Partial<Preferences>): void;
 };
-const defaults = (): Preferences => ({ bestScore: 0, soundEnabled: true });
+const defaults = (): Preferences => ({
+  bestScore: 0,
+  soundEnabled: true,
+  money: 0,
+  reputation: 0,
+  companyLevel: 1,
+  completedDeliveries: 0,
+});
 function valid(value: unknown): Preferences {
   if (!value || typeof value !== "object") return defaults();
   const record = value as Record<string, unknown>;
@@ -16,7 +30,16 @@ function valid(value: unknown): Preferences {
         : 0,
     soundEnabled:
       typeof record.soundEnabled === "boolean" ? record.soundEnabled : true,
+    money: nonNegativeInteger(record.money),
+    reputation: nonNegativeInteger(record.reputation),
+    companyLevel: Math.max(1, nonNegativeInteger(record.companyLevel) || 1),
+    completedDeliveries: nonNegativeInteger(record.completedDeliveries),
   };
+}
+function nonNegativeInteger(value: unknown) {
+  return typeof value === "number" && Number.isFinite(value) && value >= 0
+    ? Math.floor(value)
+    : 0;
 }
 export function createLocalStorageAdapter(
   storage: Pick<Storage, "getItem" | "setItem">,
@@ -31,8 +54,8 @@ export function createLocalStorageAdapter(
   return {
     load,
     save(value) {
-      const incoming = valid(value),
-        current = load();
+      const current = load();
+      const incoming = valid({ ...current, ...value });
       try {
         storage.setItem(
           "mini-kargo:v1",

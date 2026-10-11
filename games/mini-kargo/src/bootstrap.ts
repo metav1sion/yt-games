@@ -62,7 +62,7 @@ export function startGame(app: HTMLElement) {
   let vehicle = resetVehicle(world.depot),
     delivery = createDeliveryState(),
     started = false,
-    bestScore = preferences.bestScore,
+    progression = { ...preferences },
     soundEnabled = preferences.soundEnabled;
   sound.setEnabled(soundEnabled);
   camera.position.set(vehicle.position.x, 27, vehicle.position.z + 21);
@@ -87,8 +87,8 @@ export function startGame(app: HTMLElement) {
       soundEnabled = !soundEnabled;
       sound.setEnabled(soundEnabled);
       void sound.unlock();
-      storage.save({ bestScore, soundEnabled });
-      hud.update(delivery, bestScore, soundEnabled);
+      storage.save({ ...progression, soundEnabled });
+      hud.update(delivery, progression, soundEnabled);
     },
   });
   const input = createInput(document.querySelector<HTMLElement>("#joystick")!);
@@ -138,8 +138,19 @@ export function startGame(app: HTMLElement) {
         if (old.phase !== "delivering" && delivery.phase === "delivering")
           sound.pickup();
         if (delivery.phase === "result") {
-          bestScore = Math.max(bestScore, delivery.score);
-          storage.save({ bestScore, soundEnabled });
+          progression = {
+            ...progression,
+            bestScore: Math.max(progression.bestScore, delivery.score),
+            money: progression.money + delivery.earnings,
+            reputation: progression.reputation + delivery.reputation,
+            completedDeliveries:
+              progression.completedDeliveries + delivery.completed,
+            companyLevel:
+              Math.floor(
+                (progression.completedDeliveries + delivery.completed) / 10,
+              ) + 1,
+          };
+          storage.save({ ...progression, soundEnabled });
           input.reset();
         }
       }
@@ -152,7 +163,7 @@ export function startGame(app: HTMLElement) {
       car.update(vehicle, delivery.phase === "delivering", dt);
       deliveryAnimation.update(dt);
       updateCamera(camera, vehicle.position, dt);
-      hud.update(delivery, bestScore, soundEnabled);
+      hud.update(delivery, progression, soundEnabled);
       hud.setNavigation(
         Math.hypot(
           target.x - vehicle.position.x,
@@ -174,7 +185,7 @@ export function startGame(app: HTMLElement) {
   }
   document.addEventListener("visibilitychange", visibility);
   visibility();
-  hud.update(delivery, bestScore, soundEnabled);
+  hud.update(delivery, progression, soundEnabled);
   loop.start();
 
   window.addEventListener(

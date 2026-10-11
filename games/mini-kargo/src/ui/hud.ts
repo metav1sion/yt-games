@@ -9,7 +9,7 @@ export function createHud(
   <div class="toolbar"><button id="sound" class="icon-button" aria-label="Sesi kapat" title="Ses"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="sound-waves" d="M16 8c3 2 3 6 0 8m3-11c5 4 5 10 0 14"/><path class="sound-slash" d="M4 3l17 18"/></svg></button><button id="recover" class="recovery-button" title="Takılırsan depoya dön">↶ <span>Depoya dön</span></button></div>
   <div id="joystick" role="group" aria-label="Sürüş joystick"><span class="stick-ring"></span><span class="stick-knob"></span></div><div class="control-hint">W A S D <span>veya ok tuşları · bırakınca yavaşla</span></div>
   <div class="sheet welcome" id="welcome"><div class="intro-card"><span class="eyebrow">KÜÇÜK ARABA. BÜYÜK İŞLER.</span><h1>Mahallenin<br>yeni kargocusu.</h1><p>Paketini al, sokaklara çık.<br>Üç teslimatla mahalleyi mutlu et.</p><div class="intro-rules"><span><b>01</b> Depodan paket al</span><span><b>02</b> İşaretli evde dur</span><span><b>03</b> Hızlı teslim et, bonus kazan</span></div><button class="primary-button" id="start">Hadi yola çık <span>→</span></button><small class="intro-controls">WASD / OK TUŞLARI · MOBİLDE JOYSTICK</small></div></div>
-  <div class="sheet result" id="result" hidden><div class="result-card"><span class="result-badge">✓</span><span class="eyebrow">BUGÜNLÜK İŞLER TAMAM</span><h1>Eline sağlık,<br>kargocu!</h1><p>Üç paket, üç mutlu komşu.</p><div class="result-scores"><div><span>TUR PUANI</span><strong id="result-score">0</strong></div><div><span>EN İYİ TUR</span><strong id="best-score">0</strong></div></div><button class="primary-button" id="restart">Bir tur daha <span>↗</span></button></div></div>
+  <div class="sheet result" id="result" hidden><div class="result-card"><span class="result-badge">✓</span><span class="eyebrow">BUGÜNLÜK İŞLER TAMAM</span><h1>Eline sağlık,<br>kargocu!</h1><p>Üç paket, üç mutlu komşu.</p><div class="result-scores"><div><span>TUR PUANI</span><strong id="result-score">0</strong></div><div><span>EN İYİ TUR</span><strong id="best-score">0</strong></div><div><span>KAZANÇ</span><strong id="result-earnings">0 ₺</strong></div><div><span>İTİBAR</span><strong id="result-reputation">+0</strong></div></div><div class="company-summary"><span>ŞİRKET BAKİYESİ</span><strong id="company-money">0 ₺</strong><span>ŞİRKET SEVİYESİ <b id="company-level">1</b></span></div><button class="primary-button" id="restart">Bir tur daha <span>↗</span></button></div></div>
   <div class="toast" id="toast" role="status" hidden></div>`;
   const el = <T extends HTMLElement = HTMLElement>(id: string) =>
     root.querySelector<T>(`#${id}`)!;
@@ -42,7 +42,16 @@ export function createHud(
   el("recover").addEventListener("click", recover);
   el("sound").addEventListener("click", toggle);
   return {
-    update(s: DeliveryState, bestScore: number, soundEnabled: boolean) {
+    update(
+      s: DeliveryState,
+      progression: {
+        bestScore: number;
+        money: number;
+        reputation: number;
+        companyLevel: number;
+      },
+      soundEnabled: boolean,
+    ) {
       const delivering = s.phase === "delivering";
       el("trip-count").textContent =
         `${String(Math.min(s.completed + 1, 3)).padStart(2, "0")} / 03`;
@@ -83,7 +92,11 @@ export function createHud(
       el("sound").setAttribute("aria-pressed", String(!soundEnabled));
       el("result").hidden = !(begun && s.phase === "result");
       el("result-score").textContent = String(s.score);
-      el("best-score").textContent = String(bestScore);
+      el("best-score").textContent = String(progression.bestScore);
+      el("result-earnings").textContent = `${s.earnings} ₺`;
+      el("result-reputation").textContent = `+${s.reputation}`;
+      el("company-money").textContent = `${progression.money} ₺`;
+      el("company-level").textContent = String(progression.companyLevel);
       if (s.completed > lastCompleted && s.phase !== "result") {
         el("toast").textContent =
           "✓ Paket teslim edildi. Sıradaki için depoya!";

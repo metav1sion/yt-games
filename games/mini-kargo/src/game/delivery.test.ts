@@ -55,6 +55,8 @@ describe("delivery tour", () => {
     s = wait(s, homes[0]);
     expect(s.completed).toBe(1);
     expect(s.score).toBe(100);
+    expect(s.earnings).toBe(100);
+    expect(s.reputation).toBe(1);
   });
   it("deliveryScoresOnce", () => {
     let s = wait(wait(createDeliveryState(), depot), homes[0]);
@@ -72,6 +74,8 @@ describe("delivery tour", () => {
     expect(s.completed).toBe(3);
     expect(s.phase).toBe("result");
     expect(s.score).toBeGreaterThan(300);
+    expect(s.earnings).toBe(s.score);
+    expect(s.reputation).toBeGreaterThan(0);
     const frozen = stepDelivery(s, car(depot), depot, homes, 1);
     expect(frozen.score).toBe(s.score);
   });

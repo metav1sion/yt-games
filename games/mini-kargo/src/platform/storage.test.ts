@@ -14,17 +14,32 @@ describe("safe preferences", () => {
     expect(createLocalStorageAdapter(memory("{broken")).load()).toEqual({
       bestScore: 0,
       soundEnabled: true,
+      money: 0,
+      reputation: 0,
+      companyLevel: 1,
+      completedDeliveries: 0,
     }));
   it("invalidFieldsUseDefaults", () =>
     expect(
       createLocalStorageAdapter(
         memory('{"bestScore":-2,"soundEnabled":"yes"}'),
       ).load(),
-    ).toEqual({ bestScore: 0, soundEnabled: true }));
+    ).toEqual({
+      bestScore: 0,
+      soundEnabled: true,
+      money: 0,
+      reputation: 0,
+      companyLevel: 1,
+      completedDeliveries: 0,
+    }));
   it("nullRecordUsesDefaults", () =>
     expect(createLocalStorageAdapter(memory("null")).load()).toEqual({
       bestScore: 0,
       soundEnabled: true,
+      money: 0,
+      reputation: 0,
+      companyLevel: 1,
+      completedDeliveries: 0,
     }));
   it("storageReadFailureUsesDefaults", () =>
     expect(
@@ -34,7 +49,14 @@ describe("safe preferences", () => {
         },
         setItem() {},
       }).load(),
-    ).toEqual({ bestScore: 0, soundEnabled: true }));
+    ).toEqual({
+      bestScore: 0,
+      soundEnabled: true,
+      money: 0,
+      reputation: 0,
+      companyLevel: 1,
+      completedDeliveries: 0,
+    }));
   it("storageWriteFailureDoesNotThrow", () =>
     expect(() =>
       createLocalStorageAdapter({
@@ -49,7 +71,14 @@ describe("safe preferences", () => {
       memory('{"bestScore":500,"soundEnabled":true}'),
     );
     s.save({ bestScore: 100, soundEnabled: false });
-    expect(s.load()).toEqual({ bestScore: 500, soundEnabled: false });
+    expect(s.load()).toEqual({
+      bestScore: 500,
+      soundEnabled: false,
+      money: 0,
+      reputation: 0,
+      companyLevel: 1,
+      completedDeliveries: 0,
+    });
   });
   it("newRecordAndSoundPreferencePersist", () => {
     const backing = memory(null);
@@ -60,6 +89,10 @@ describe("safe preferences", () => {
     expect(createLocalStorageAdapter(backing).load()).toEqual({
       bestScore: 600,
       soundEnabled: false,
+      money: 0,
+      reputation: 0,
+      companyLevel: 1,
+      completedDeliveries: 0,
     });
   });
 });
