@@ -1,0 +1,17 @@
+import * as THREE from 'three';
+import './style.css';
+import {createWorld} from './scene/world';
+import {createCar} from './scene/car';
+import {updateCamera} from './scene/camera';
+import {createInput} from './game/input';
+import {stepVehicle,resetVehicle} from './game/vehicle';
+const app=document.querySelector<HTMLDivElement>('#app')!;
+app.innerHTML=`<canvas id="game" aria-label="Mini Kargo oyun alanı"></canvas><header class="topbar"><div class="brand"><span class="brand-icon">▣</span><div>mini kargo<small>MAHALLE TESLİMATLARI</small></div></div><span class="district">GÜNEŞ MAHALLESİ <i></i></span></header><div class="task-card"><span class="eyebrow">SÜRÜŞ PROTOTİPİ</span><h2>Mahalleye hoş geldin.</h2><p>Küçük araba, büyük işler.</p></div><div id="joystick" role="group" aria-label="Sürüş joystick"><span class="stick-ring"></span><span class="stick-knob"></span></div><div class="control-hint">W A S D <span>veya ok tuşları · sürmek için</span></div>`;
+const renderer=new THREE.WebGLRenderer({canvas:document.querySelector<HTMLCanvasElement>('#game')!,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;renderer.setClearColor('#c9dec0');renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+const scene=new THREE.Scene();scene.fog=new THREE.Fog('#c9dec0',48,85);scene.add(new THREE.HemisphereLight('#ffefd5','#739282',2.4));
+const sun=new THREE.DirectionalLight('#fff1d7',3);sun.position.set(-18,30,14);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-40;sun.shadow.camera.right=40;sun.shadow.camera.top=40;sun.shadow.camera.bottom=-40;sun.shadow.normalBias=0.04;scene.add(sun);scene.add(sun.target);
+const world=createWorld();scene.add(world.group);const car=createCar();scene.add(car.group);
+const camera=new THREE.PerspectiveCamera(40,innerWidth/innerHeight,0.1,150);let vehicle=resetVehicle(world.depot);camera.position.set(vehicle.position.x,23,vehicle.position.z+18);updateCamera(camera,vehicle.position,1);
+const input=createInput(document.querySelector<HTMLElement>('#joystick')!);
+function resize(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();}window.addEventListener('resize',resize);resize();
+let last=performance.now();function frame(now:number){const dt=Math.min((now-last)/1000,0.05);last=now;if(!document.hidden){vehicle=stepVehicle(vehicle,input.read(),dt);car.update(vehicle,true,dt);updateCamera(camera,vehicle.position,dt);renderer.render(scene,camera);}requestAnimationFrame(frame);}requestAnimationFrame(frame);
