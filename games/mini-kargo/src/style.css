@@ -814,7 +814,9 @@ h1 {
   }
   .task-card {
     top: calc(54px + env(safe-area-inset-top));
-    padding: 10px 12px;
+    right: 164px;
+    width: auto;
+    padding: 9px 10px;
     border-radius: 14px;
   }
   .eyebrow {
@@ -842,17 +844,19 @@ h1 {
   }
   .destination p {
     font-size: 9px;
+    line-height: 1.15;
   }
   .task-footer {
+    justify-content: flex-start;
     gap: 8px;
     margin-top: 7px;
     font-size: 8px;
   }
   .package-status {
-    font-size: 7px;
+    display: none;
   }
   .score-card {
-    top: calc(158px + env(safe-area-inset-top));
+    top: calc(54px + env(safe-area-inset-top));
     display: grid;
     grid-template-columns: 1fr 1fr;
     width: 138px;
@@ -875,5 +879,13 @@ h1 {
   .score-card .bonus-column strong {
     font-size: 16px;
     margin-top: 4px;
+  }
+}
+@media (max-width: 360px) {
+  .task-card {
+    right: 140px;
+  }
+  .score-card {
+    width: 114px;
   }
 }
