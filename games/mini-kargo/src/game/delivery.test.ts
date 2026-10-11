@@ -79,6 +79,23 @@ describe("delivery tour", () => {
     const frozen = stepDelivery(s, car(depot), depot, homes, 1);
     expect(frozen.score).toBe(s.score);
   });
+  it("packageTypesChangeAcrossStops", () => {
+    let s = wait(createDeliveryState(), depot);
+    expect(s.packageType).toBe("standard");
+    s = wait(s, homes[0]);
+    s = wait(s, depot);
+    expect(s.packageType).toBe("urgent");
+    s = wait(s, homes[1]);
+    s = wait(s, depot);
+    expect(s.packageType).toBe("fragile");
+  });
+  it("cargoUpgradeCarriesIntoNextDelivery", () => {
+    let s = wait(createDeliveryState(1), depot);
+    s = wait(s, homes[0]);
+    expect(s.phase).toBe("delivering");
+    expect(s.targetIndex).toBe(1);
+    expect(s.packageSlot).toBe(2);
+  });
   it("restartClearsTour", () => {
     const s = createDeliveryState();
     expect(s.completed).toBe(0);

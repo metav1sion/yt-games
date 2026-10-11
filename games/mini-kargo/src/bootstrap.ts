@@ -61,7 +61,7 @@ export function startGame(app: HTMLElement) {
   const preferences = storage.load(),
     sound = createSound();
   let vehicle = resetVehicle(world.depot),
-    delivery = createDeliveryState(),
+    delivery = createDeliveryState(preferences.upgrades.cargo),
     started = false,
     progression = { ...preferences },
     soundEnabled = preferences.soundEnabled;
@@ -76,7 +76,7 @@ export function startGame(app: HTMLElement) {
       void sound.unlock();
       started = true;
       vehicle = resetVehicle(world.depot);
-      delivery = createDeliveryState();
+      delivery = createDeliveryState(progression.upgrades.cargo);
       input.reset();
     },
     recover() {
