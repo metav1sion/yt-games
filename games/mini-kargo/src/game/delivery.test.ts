@@ -4,6 +4,7 @@ import {
   stepDelivery,
   type DeliveryState,
 } from "./delivery";
+import { getAvailableHomeIndices, getDistrictForHome } from "./districts";
 import { createContactDamageTracker } from "./contact-damage";
 import type { VehicleState, Vec2 } from "./types";
 const depot = { x: 0, z: 0 },
@@ -114,6 +115,46 @@ describe("delivery tour", () => {
     let s = wait(market, depot);
     s = wait(s, homes[0]);
     expect(s.earnings).toBeGreaterThan(125);
+  });
+  it("only selects Sunny homes for company level 1", () => {
+    const available = getAvailableHomeIndices(1);
+    expect(available).toEqual([0, 1, 2, 3]);
+    let state = createDeliveryState(0, 1);
+    expect(available).toContain(state.targetIndex);
+    expect(getDistrictForHome(state.targetIndex)).toBe("sunny");
+
+    // Check consecutive deliveries across the tour
+    for (let completed = 0; completed < 3; completed++) {
+      state = stepDelivery(state, car(depot), depot, homes, 1, 0, 1);
+      expect(available).toContain(state.targetIndex);
+      expect(getDistrictForHome(state.targetIndex)).toBe("sunny");
+    }
+  });
+  it("includes unlocked district homes as company level increases", () => {
+    const level1Homes = getAvailableHomeIndices(1);
+    const level2Homes = getAvailableHomeIndices(2);
+    const level3Homes = getAvailableHomeIndices(3);
+    const level4Homes = getAvailableHomeIndices(4);
+
+    expect(level1Homes).toHaveLength(4);
+    expect(level2Homes).toHaveLength(8);
+    expect(level3Homes).toHaveLength(12);
+    expect(level4Homes).toHaveLength(16);
+
+    const stateL1 = createDeliveryState(0, 1);
+    expect(level1Homes).toContain(stateL1.targetIndex);
+
+    const stateL2 = createDeliveryState(0, 2);
+    expect(level2Homes).toContain(stateL2.targetIndex);
+    expect(getDistrictForHome(stateL2.targetIndex)).toBe("market");
+
+    const stateL3 = createDeliveryState(0, 3);
+    expect(level3Homes).toContain(stateL3.targetIndex);
+    expect(getDistrictForHome(stateL3.targetIndex)).toBe("industrial");
+
+    const stateL4 = createDeliveryState(0, 4);
+    expect(level4Homes).toContain(stateL4.targetIndex);
+    expect(getDistrictForHome(stateL4.targetIndex)).toBe("coastal");
   });
   it("restartClearsTour", () => {
     const s = createDeliveryState();
