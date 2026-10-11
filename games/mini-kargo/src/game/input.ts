@@ -1,4 +1,4 @@
-import type { Vec2 } from "./types";
+import type { DriveInput, Vec2 } from "./types";
 export function createInputState() {
   let value: Vec2 = { x: 0, z: 0 };
   return {
@@ -12,43 +12,140 @@ export function createInputState() {
     },
   };
 }
-export type InputController = { read(): Vec2; reset(): void; dispose(): void };
+export const INPUT_TUNING = {
+  steerFollow: 12, // klavye direksiyon yumuşatma hızı (1/sn)
+  throttleFollow: 20, // klavye gaz yumuşatma hızı (1/sn)
+  joystickDeadzone: 0.06,
+  joystickFullSteerAngle: Math.PI / 4, // bu açı farkında tam direksiyon
+  uTurnAngle: (100 * Math.PI) / 180, // bundan büyük farkta U dönüşü
+  uTurnSpeed: 2, // U dönüşü için hız eşiği
+};
+
+const idleDrive = (): DriveInput => ({
+  throttle: 0,
+  steer: 0,
+  handbrake: false,
+  nitro: false,
+});
+const clamp = (v: number, lo: number, hi: number) =>
+  Math.max(lo, Math.min(hi, v));
+
+/**
+ * Joystick yönünü (ekran/dünya x,z) otomatik direksiyona çevirir.
+ * heading: aracın yönü (ileri = sin h, cos h); speed: mevcut hız büyüklüğü.
+ * steer > 0 sağ; heading azalınca araç sağa döner.
+ */
+export function joystickToDrive(
+  joystick: Vec2,
+  heading: number,
+  speed: number,
+): DriveInput {
+  const T = INPUT_TUNING;
+  const magnitude = Math.min(1, Math.hypot(joystick.x, joystick.z));
+  if (magnitude < T.joystickDeadzone) return idleDrive();
+  const target = Math.atan2(joystick.x, joystick.z);
+  const difference = Math.atan2(
+    Math.sin(target - heading),
+    Math.cos(target - heading),
+  );
+  let steer = clamp(-difference / T.joystickFullSteerAngle, -1, 1);
+  let throttle = magnitude;
+  if (Math.abs(difference) > T.uTurnAngle) {
+    // Geri vites yok: hızlıyken fren, yavaşken gaz + tam direksiyon.
+    steer = difference > 0 ? -1 : 1;
+    throttle = Math.abs(speed) < T.uTurnSpeed ? magnitude : -magnitude;
+  }
+  return { throttle, steer, handbrake: false, nitro: false };
+}
+
+const movementKeys = new Set([
+  "w",
+  "a",
+  "s",
+  "d",
+  "arrowup",
+  "arrowdown",
+  "arrowleft",
+  "arrowright",
+]);
+const driveKeys = new Set([...movementKeys, "space", "shift"]);
+export function normalizeKey(key: string) {
+  return key === " " ? "space" : key.toLowerCase();
+}
+
+export function createKeyboardState() {
+  const keys = new Set<string>();
+  let throttle = 0,
+    steer = 0;
+  const follow = (value: number, target: number, rate: number, dt: number) => {
+    const next = value + (target - value) * (1 - Math.exp(-rate * dt));
+    return Math.abs(next - target) < 0.01 ? target : next;
+  };
+  const held = (...names: string[]) => names.some((name) => keys.has(name));
+  return {
+    press(key: string) {
+      const k = normalizeKey(key);
+      if (driveKeys.has(k)) keys.add(k);
+    },
+    release(key: string) {
+      keys.delete(normalizeKey(key));
+    },
+    /** Yumuşatmayı dt kadar ilerletip güncel sürüş girdisini verir. */
+    step(dt: number): DriveInput {
+      const throttleTarget =
+        Number(held("w", "arrowup")) - Number(held("s", "arrowdown"));
+      const steerTarget =
+        Number(held("d", "arrowright")) - Number(held("a", "arrowleft"));
+      throttle = follow(throttle, throttleTarget, INPUT_TUNING.throttleFollow, dt);
+      steer = follow(steer, steerTarget, INPUT_TUNING.steerFollow, dt);
+      return {
+        throttle,
+        steer,
+        handbrake: keys.has("space"),
+        nitro: keys.has("shift"),
+      };
+    },
+    /** Hareket tuşu basılı ya da değerler henüz sönmediyse true. */
+    active() {
+      return (
+        [...keys].some((k) => movementKeys.has(k)) ||
+        throttle !== 0 ||
+        steer !== 0
+      );
+    },
+    reset() {
+      keys.clear();
+      throttle = 0;
+      steer = 0;
+    },
+  };
+}
+
+export type InputController = {
+  /** Klavye öncelikli; yoksa joystick otomatik direksiyonu. */
+  read(heading: number, speed: number, dt: number): DriveInput;
+  readJoystick(): Vec2;
+  setNitro(on: boolean): void;
+  setHandbrake(on: boolean): void;
+  reset(): void;
+  dispose(): void;
+};
 export function createInput(joystick: HTMLElement): InputController {
   const state = createInputState();
-  const keys = new Set<string>();
+  const keyboard = createKeyboardState();
+  let externalNitro = false,
+    externalHandbrake = false;
   const knob = joystick.querySelector<HTMLElement>(".stick-knob")!;
   let pointer: number | null = null;
-  const directionKeys = new Set([
-    "w",
-    "a",
-    "s",
-    "d",
-    "arrowup",
-    "arrowdown",
-    "arrowleft",
-    "arrowright",
-  ]);
-  function keyboard() {
-    state.set({
-      x:
-        Number(keys.has("d") || keys.has("arrowright")) -
-        Number(keys.has("a") || keys.has("arrowleft")),
-      z:
-        Number(keys.has("s") || keys.has("arrowdown")) -
-        Number(keys.has("w") || keys.has("arrowup")),
-    });
-  }
   function keydown(e: KeyboardEvent) {
-    const k = e.key.toLowerCase();
-    if (!directionKeys.has(k)) return;
+    const k = normalizeKey(e.key);
+    if (!driveKeys.has(k)) return;
     if ((e.target as HTMLElement)?.closest("button,input")) return;
     e.preventDefault();
-    keys.add(k);
-    keyboard();
+    keyboard.press(k);
   }
   function keyup(e: KeyboardEvent) {
-    keys.delete(e.key.toLowerCase());
-    if (pointer === null) keyboard();
+    keyboard.release(e.key);
   }
   function move(e: PointerEvent) {
     if (e.pointerId !== pointer) return;
@@ -101,7 +198,9 @@ export function createInput(joystick: HTMLElement): InputController {
     reset();
   }
   function reset() {
-    keys.clear();
+    keyboard.reset();
+    externalNitro = false;
+    externalHandbrake = false;
     const capturedPointer = pointer;
     pointer = null;
     if (capturedPointer !== null && joystick.hasPointerCapture(capturedPointer))
@@ -130,7 +229,24 @@ export function createInput(joystick: HTMLElement): InputController {
   for (const event of ["pointerup", "pointercancel", "lostpointercapture"])
     joystick.addEventListener(event, release as EventListener);
   return {
-    read: state.read,
+    read(heading, speed, dt) {
+      const kb = keyboard.step(dt);
+      const drive = keyboard.active()
+        ? kb
+        : joystickToDrive(state.read(), heading, speed);
+      return {
+        ...drive,
+        nitro: kb.nitro || externalNitro,
+        handbrake: kb.handbrake || externalHandbrake,
+      };
+    },
+    readJoystick: state.read,
+    setNitro(on) {
+      externalNitro = on;
+    },
+    setHandbrake(on) {
+      externalHandbrake = on;
+    },
     reset,
     dispose() {
       reset();

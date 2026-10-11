@@ -62,7 +62,10 @@ export function createCar() {
       group.rotation.y = state.heading;
       body.rotation.z = THREE.MathUtils.lerp(
         body.rotation.z,
-        Math.max(-0.08, Math.min(0.08, -turn * speed)),
+        Math.max(
+          state.drifting ? -0.14 : -0.08,
+          Math.min(state.drifting ? 0.14 : 0.08, -turn * speed * (state.drifting ? 1.6 : 1)),
+        ),
         1 - Math.exp(-8 * dt),
       );
       body.position.y = Math.sin(time * 15) * Math.min(speed / 8, 1) * 0.015;
@@ -74,7 +77,7 @@ export function createCar() {
       wheels.forEach((w) => {
         w.rotation.x = wheelSpin;
       });
-      const steering = Math.max(-0.28, Math.min(0.28, turn * 5));
+      const steering = -state.steerAngle;
       frontWheels.forEach((w) => {
         w.rotation.y = steering;
       });

@@ -16,6 +16,9 @@ const car = (position: Vec2, speed = 0): VehicleState => ({
   position,
   velocity: { x: speed, z: 0 },
   heading: 0,
+  nitro: 1,
+  drifting: false,
+  steerAngle: 0,
 });
 function wait(state: DeliveryState, position: Vec2, seconds = 1.1) {
   for (let i = 0; i < Math.ceil(seconds * 60); i++)

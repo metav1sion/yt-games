@@ -135,7 +135,12 @@ export function startGame(app: HTMLElement) {
     (dt) => {
       if (started && delivery.phase !== "result") {
         const previous = vehicle.position;
-        vehicle = stepVehicle(vehicle, input.read(), dt, progression.upgrades);
+        const drive = input.read(
+          vehicle.heading,
+          Math.hypot(vehicle.velocity.x, vehicle.velocity.z),
+          dt,
+        );
+        vehicle = stepVehicle(vehicle, drive, dt, progression.upgrades);
         const proposed = vehicle.position;
         const resolved = resolveMovement(
           previous,
@@ -207,6 +212,7 @@ export function startGame(app: HTMLElement) {
       deliveryAnimation.update(dt);
       updateCamera(camera, vehicle.position, dt, vehicle.velocity, cameraShake);
       hud.update(delivery, progression, soundEnabled);
+      hud.setNitro(vehicle.nitro);
       hud.setNavigation(
         Math.hypot(
           target.x - vehicle.position.x,

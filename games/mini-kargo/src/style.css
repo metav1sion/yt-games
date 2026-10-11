@@ -165,6 +165,41 @@ p {
   border-radius: 20px;
   padding: 12px 16px;
 }
+.nitro-bar {
+  position: absolute;
+  bottom: max(28px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff9e8cc;
+  border-radius: 20px;
+  padding: 8px 14px;
+  pointer-events: none;
+}
+.nitro-bar .eyebrow {
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: #244a40;
+}
+.nitro-track {
+  width: 96px;
+  height: 5px;
+  background: #244a4029;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.nitro-track span {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: #f3b544;
+  border-radius: 4px;
+}
+.nitro-track span.low {
+  background: #bc594a;
+}
 .control-hint span {
   font-weight: 500;
   letter-spacing: 0;
