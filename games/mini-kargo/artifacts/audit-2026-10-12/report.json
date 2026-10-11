@@ -1,0 +1,54 @@
+{
+  "oneSecondDamage": 100,
+  "newPackageDamage": 40,
+  "capacities": [
+    {
+      "level": 0,
+      "capacity": 1,
+      "nextCost": 220
+    },
+    {
+      "level": 1,
+      "capacity": 2,
+      "nextCost": 440
+    },
+    {
+      "level": 2,
+      "capacity": 2,
+      "nextCost": 660
+    },
+    {
+      "level": 3,
+      "capacity": 2,
+      "nextCost": 880
+    }
+  ],
+  "mouseKnobActivates": false,
+  "layouts": [
+    {
+      "height": 844,
+      "card": {
+        "y": 62.375,
+        "height": 719.25,
+        "bottom": 781.625
+      },
+      "restart": {
+        "y": 693.625,
+        "bottom": 753.625
+      }
+    },
+    {
+      "height": 390,
+      "card": {
+        "y": -39.84375,
+        "height": 469.6875,
+        "bottom": 429.84375
+      },
+      "restart": {
+        "y": 365.84375,
+        "bottom": 411.84375
+      }
+    }
+  ],
+  "errors": []
+}

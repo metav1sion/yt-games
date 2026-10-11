@@ -63,13 +63,17 @@ export function createInput(joystick: HTMLElement): InputController {
     knob.style.transform = `translate(${x * radius}px,${z * radius}px)`;
   }
   function down(e: PointerEvent) {
+    if (document.querySelector(".sheet:not([hidden])")) return;
     if (
       e.pointerType === "touch" &&
       e.target instanceof Element &&
       e.target.closest(".sheet, .toolbar")
     )
       return;
-    if (e.pointerType !== "touch" && e.target !== joystick) return;
+    if (
+      e.pointerType !== "touch" &&
+      (!(e.target instanceof Node) || !joystick.contains(e.target))
+    ) return;
     if (pointer !== null) return;
     e.preventDefault();
     pointer = e.pointerId;
@@ -94,17 +98,23 @@ export function createInput(joystick: HTMLElement): InputController {
   }
   function release(e: PointerEvent) {
     if (e.pointerId !== pointer) return;
+    reset();
+  }
+  function reset() {
+    keys.clear();
+    const capturedPointer = pointer;
     pointer = null;
+    if (capturedPointer !== null && joystick.hasPointerCapture(capturedPointer))
+      joystick.releasePointerCapture(capturedPointer);
     state.reset();
     knob.style.transform = "";
     joystick.classList.remove("active");
   }
-  function reset() {
-    keys.clear();
-    pointer = null;
-    state.reset();
-    knob.style.transform = "";
-    joystick.classList.remove("active");
+  function resize() {
+    reset();
+    joystick.style.left = "";
+    joystick.style.top = "";
+    joystick.style.bottom = "";
   }
   function visibility() {
     if (document.hidden) reset();
@@ -112,6 +122,7 @@ export function createInput(joystick: HTMLElement): InputController {
   window.addEventListener("keydown", keydown);
   window.addEventListener("keyup", keyup);
   window.addEventListener("blur", reset);
+  window.addEventListener("resize", resize);
   document.addEventListener("visibilitychange", visibility);
   document.addEventListener("pointerdown", down);
   joystick.addEventListener("pointerdown", down);
@@ -126,6 +137,7 @@ export function createInput(joystick: HTMLElement): InputController {
       window.removeEventListener("keydown", keydown);
       window.removeEventListener("keyup", keyup);
       window.removeEventListener("blur", reset);
+      window.removeEventListener("resize", resize);
       document.removeEventListener("visibilitychange", visibility);
       document.removeEventListener("pointerdown", down);
       joystick.removeEventListener("pointerdown", down);

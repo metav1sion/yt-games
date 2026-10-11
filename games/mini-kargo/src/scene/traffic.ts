@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { box } from "./world";
 import type { Vec2 } from "../game/types";
+import type { DamageContact } from "../game/contact-damage";
 
 type TrafficCar = {
   group: THREE.Group;
@@ -27,8 +28,8 @@ export function createTraffic() {
   return {
     group,
     update(dt: number, player: Vec2) {
-      let collision = 0;
-      for (const car of cars) {
+      const contacts: DamageContact[] = [];
+      for (const [index, car] of cars.entries()) {
         car.position[car.axis] += car.direction * car.speed * dt;
         if (car.axis === "x" && Math.abs(car.position.x) > 30)
           car.position.x = -car.direction * 30;
@@ -41,10 +42,11 @@ export function createTraffic() {
             : car.direction > 0
               ? 0
               : Math.PI;
-        if (Math.hypot(player.x - car.position.x, player.z - car.position.z) < 1.7)
-          collision = Math.max(collision, 1 - Math.hypot(player.x - car.position.x, player.z - car.position.z) / 1.7);
+        const distance = Math.hypot(player.x - car.position.x, player.z - car.position.z);
+        if (distance < 1.7)
+          contacts.push({ id: `traffic:${index}`, severity: 1 - distance / 1.7 });
       }
-      return collision;
+      return contacts;
     },
   };
 }

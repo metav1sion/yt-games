@@ -9,10 +9,11 @@ import { stepVehicle, resetVehicle } from "./game/vehicle";
 import { resolveMovement } from "./game/collision";
 import { createLoop } from "./game/loop";
 import { createDeliveryState, stepDelivery } from "./game/delivery";
+import { createContactDamageTracker, staticCollisionContacts } from "./game/contact-damage";
 import { createHud } from "./ui/hud";
 import { createLocalStorageAdapter } from "./platform/storage";
 import { createSound } from "./audio/sound";
-import { upgradeCost, type UpgradeKind } from "./game/upgrades";
+import { tryPurchaseUpgrade, type UpgradeKind } from "./game/upgrades";
 import { createTraffic } from "./scene/traffic";
 import { createPedestrians } from "./scene/pedestrians";
 export function startGame(app: HTMLElement) {
@@ -66,6 +67,7 @@ export function startGame(app: HTMLElement) {
   });
   const preferences = storage.load(),
     sound = createSound();
+  const contactDamage = createContactDamageTracker();
   let vehicle = resetVehicle(world.depot),
     delivery = createDeliveryState(
       preferences.upgrades.cargo,
@@ -74,8 +76,7 @@ export function startGame(app: HTMLElement) {
     started = false,
     progression = { ...preferences },
     soundEnabled = preferences.soundEnabled,
-    cameraShake = 0,
-    lastTrafficDamage = 0;
+    cameraShake = 0;
   sound.setEnabled(soundEnabled);
   camera.position.set(vehicle.position.x, 27, vehicle.position.z + 21);
   updateCamera(camera, vehicle.position, 1);
@@ -92,14 +93,14 @@ export function startGame(app: HTMLElement) {
         progression.companyLevel,
       );
       cameraShake = 0;
-      lastTrafficDamage = 0;
+      contactDamage.reset();
       input.reset();
     },
     recover() {
       vehicle = resetVehicle(world.depot);
       delivery = { ...delivery, holdSeconds: 0 };
       cameraShake = 0;
-      lastTrafficDamage = 0;
+      contactDamage.reset();
       input.reset();
     },
     toggleSound() {
@@ -110,16 +111,9 @@ export function startGame(app: HTMLElement) {
       hud.update(delivery, progression, soundEnabled);
     },
     buyUpgrade(kind: UpgradeKind) {
-      const cost = upgradeCost(kind, progression.upgrades[kind]);
-      if (progression.money < cost) return;
-      progression = {
-        ...progression,
-        money: progression.money - cost,
-        upgrades: {
-          ...progression.upgrades,
-          [kind]: progression.upgrades[kind] + 1,
-        },
-      };
+      const purchased = tryPurchaseUpgrade(progression, kind);
+      if (purchased === progression) return;
+      progression = purchased;
       storage.save({ ...progression, soundEnabled });
       hud.update(delivery, progression, soundEnabled);
     },
@@ -150,31 +144,31 @@ export function startGame(app: HTMLElement) {
           world.obstacles,
           world.bounds,
         );
-        const collisionDistance = Math.hypot(
-          proposed.x - resolved.x,
-          proposed.z - resolved.z,
+        const staticContacts = staticCollisionContacts(
+          proposed, resolved, vehicle.velocity, world.obstacles, world.bounds,
         );
         if (Math.abs(resolved.x - proposed.x) > 0.001) vehicle.velocity.x = 0;
         if (Math.abs(resolved.z - proposed.z) > 0.001) vehicle.velocity.z = 0;
         vehicle.position = resolved;
         const old = delivery;
-        const trafficDamage = traffic.update(dt, vehicle.position);
-        const pedestrianRisk = pedestrians.update(
+        const trafficContacts = traffic.update(dt, vehicle.position);
+        const pedestrianContacts = pedestrians.update(
           dt,
           vehicle.position,
           Math.hypot(vehicle.velocity.x, vehicle.velocity.z),
         );
-        const impact = trafficDamage + pedestrianRisk;
-        if (impact > 0.15 && lastTrafficDamage <= 0.15) sound.collision();
+        const impact = contactDamage.update(
+          [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
+        );
+        if (impact > 0.15) sound.collision();
         cameraShake = Math.max(cameraShake, impact);
-        lastTrafficDamage = impact;
         delivery = stepDelivery(
           delivery,
           vehicle,
           world.depot,
           world.homes,
           dt,
-          collisionDistance + trafficDamage + pedestrianRisk,
+          impact,
         );
         if (delivery.completed > old.completed) {
           deliveryAnimation.play(

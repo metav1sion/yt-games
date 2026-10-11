@@ -1,5 +1,10 @@
 import { packageInfo, type DeliveryState } from "../game/delivery";
-import { upgradeCost, type UpgradeKind, type VehicleUpgrades } from "../game/upgrades";
+import {
+  canPurchaseUpgrade,
+  upgradeCost,
+  type UpgradeKind,
+  type VehicleUpgrades,
+} from "../game/upgrades";
 export function createHud(
   root: HTMLElement,
   actions: {
@@ -120,10 +125,12 @@ export function createHud(
       for (const kind of ["engine", "brakes", "cargo"] as UpgradeKind[]) {
         const level = progression.upgrades[kind];
         el(`${kind}-upgrade`).textContent =
-          `Seviye ${level + 1} · ${upgradeCost(kind, level)} ₺`;
+          kind === "cargo" && level >= 1
+            ? "Maksimum · 2 paket"
+            : `Seviye ${level + 1} · ${upgradeCost(kind, level)} ₺`;
         el(`${kind}-upgrade`).parentElement?.parentElement?.toggleAttribute(
           "disabled",
-          progression.money < upgradeCost(kind, level),
+          !canPurchaseUpgrade(kind, level, progression.money),
         );
       }
       if (s.completed > lastCompleted && s.phase !== "result") {

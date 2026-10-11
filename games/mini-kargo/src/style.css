@@ -495,11 +495,24 @@ h1 {
   color: #8c9d82;
 }
 .result {
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
+  max-height: 100dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  padding: calc(18px + env(safe-area-inset-top))
+    calc(18px + env(safe-area-inset-right))
+    calc(18px + env(safe-area-inset-bottom))
+    calc(18px + env(safe-area-inset-left));
   background: #244a4066;
   backdrop-filter: blur(7px);
 }
 .result-card {
+  flex: none;
+  margin-block: auto;
+  max-width: 100%;
   background: #fff9e8;
   border-radius: 28px;
   width: 390px;
@@ -705,8 +718,7 @@ h1 {
     margin: 25px 0;
   }
   .result-card {
-    margin: 18px;
-    width: calc(100% - 36px);
+    width: 100%;
     padding: 28px;
   }
   .result-scores {

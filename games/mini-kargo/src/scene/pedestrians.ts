@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { box } from "./world";
 import type { Vec2 } from "../game/types";
+import type { DamageContact } from "../game/contact-damage";
 
 type Pedestrian = {
   group: THREE.Group;
@@ -35,8 +36,8 @@ export function createPedestrians() {
   return {
     group,
     update(dt: number, player: Vec2, playerSpeed: number) {
-      let risk = 0;
-      for (const pedestrian of pedestrians) {
+      const contacts: DamageContact[] = [];
+      for (const [index, pedestrian] of pedestrians.entries()) {
         pedestrian.position[pedestrian.axis] +=
           pedestrian.direction * pedestrian.speed * dt;
         if (Math.abs(pedestrian.position[pedestrian.axis]) > pedestrian.limit) {
@@ -56,9 +57,9 @@ export function createPedestrians() {
           player.z - pedestrian.position.z,
         );
         if (distance < 1.35 && playerSpeed > 3.5)
-          risk = Math.max(risk, (1 - distance / 1.35) * 0.45);
+          contacts.push({ id: `pedestrian:${index}`, severity: (1 - distance / 1.35) * 0.45 });
       }
-      return risk;
+      return contacts;
     },
   };
 }

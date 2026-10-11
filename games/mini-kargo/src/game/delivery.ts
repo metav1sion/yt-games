@@ -114,6 +114,7 @@ export function stepDelivery(
         s.targetIndex = s.completed;
         s.packageType = packageFor(s.targetIndex);
         s.secondsLeft = packageInfo[s.packageType].seconds;
+        s.packageDamage = 0;
       } else {
         s.phase = "returning";
         s.targetIndex = s.completed;
@@ -123,6 +124,7 @@ export function stepDelivery(
       s.packageSlot = 1;
       s.packageType = packageFor(s.targetIndex);
       s.secondsLeft = packageInfo[s.packageType].seconds;
+      s.packageDamage = 0;
     }
   }
   return s;

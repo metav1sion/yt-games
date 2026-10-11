@@ -4,6 +4,7 @@ import {
   stepDelivery,
   type DeliveryState,
 } from "./delivery";
+import { createContactDamageTracker } from "./contact-damage";
 import type { VehicleState, Vec2 } from "./types";
 const depot = { x: 0, z: 0 },
   homes = [
@@ -116,5 +117,80 @@ describe("delivery tour", () => {
     expect(s.completed).toBe(0);
     expect(s.score).toBe(0);
     expect(s.phase).toBe("loading");
+  });
+});
+
+
+describe("package damage across deliveries", () => {
+  it.each(["loading", "returning"] as const)("clears a new depot package during %s while retaining vehicle damage", phase => {
+    const state = { ...createDeliveryState(), phase, packageDamage: 40, vehicleDamage: 27 };
+    const loaded = stepDelivery(state, car(depot), depot, homes, 1);
+    expect(loaded.phase).toBe("delivering");
+    expect(loaded.packageDamage).toBe(0);
+    expect(loaded.vehicleDamage).toBe(27);
+    expect(state.packageDamage).toBe(40);
+  });
+
+  it("rewards the damaged package before clearing the next cargo slot", () => {
+    const state: DeliveryState = {
+      ...createDeliveryState(1), phase: "delivering", packageSlot: 1,
+      secondsLeft: 0, packageDamage: 44, vehicleDamage: 27,
+    };
+    const next = stepDelivery(state, car(homes[0]), depot, homes, 1);
+    expect(next.earnings).toBe(80);
+    expect(next.safeDrivingBonus).toBe(0);
+    expect(next.completed).toBe(1);
+    expect(next.packageSlot).toBe(2);
+    expect(next.packageType).toBe("urgent");
+    expect(next.packageDamage).toBe(0);
+    expect(next.vehicleDamage).toBe(27);
+    expect(state.packageDamage).toBe(44);
+  });
+
+  it("retains the last package damage for the result screen", () => {
+    const state: DeliveryState = {
+      ...createDeliveryState(1), phase: "delivering", completed: 2,
+      targetIndex: 2, packageSlot: 1, packageType: "fragile",
+      secondsLeft: 0, packageDamage: 44, vehicleDamage: 27,
+    };
+    const result = stepDelivery(state, car(homes[2]), depot, homes, 1);
+    expect(result.phase).toBe("result");
+    expect(result.packageDamage).toBe(44);
+    expect(result.vehicleDamage).toBe(27);
+    expect(result.earnings).toBe(96);
+    expect(result.safeDrivingBonus).toBe(0);
+    expect(stepDelivery(result, car(depot), depot, homes, 1, 1)).toBe(result);
+  });
+});
+
+
+describe("contact events applied to delivery damage", () => {
+  it.each([30, 60, 120])("applies constant contact damage once at %i Hz", steps => {
+    const tracker = createContactDamageTracker();
+    let state: DeliveryState = { ...createDeliveryState(), phase: "delivering" };
+    for (let i = 0; i < steps; i++) {
+      const impact = tracker.update([{ id: "traffic:0", severity: 0.5 }], 1 / steps);
+      state = stepDelivery(state, car({ x: 5, z: 0 }), depot, homes, 1 / steps, impact);
+    }
+    expect(state.packageDamage).toBeCloseTo(6);
+    expect(state.vehicleDamage).toBeCloseTo(11);
+  });
+
+  it("applies peak increases and a separated second impact with fragile coefficients", () => {
+    const tracker = createContactDamageTracker();
+    let state: DeliveryState = {
+      ...createDeliveryState(), phase: "delivering", packageType: "fragile",
+    };
+    for (const severity of [0.2, 0.6, 0.6]) {
+      state = stepDelivery(state, car({ x: 5, z: 0 }), depot, homes, 0.01,
+        tracker.update([{ id: "traffic:0", severity }], 0.01));
+    }
+    expect(state.packageDamage).toBeCloseTo(19.2);
+    expect(state.vehicleDamage).toBeCloseTo(13.2);
+    tracker.update([], 0.15);
+    state = stepDelivery(state, car({ x: 5, z: 0 }), depot, homes, 0.01,
+      tracker.update([{ id: "traffic:0", severity: 0.5 }], 0.01));
+    expect(state.packageDamage).toBeCloseTo(35.2);
+    expect(state.vehicleDamage).toBeCloseTo(24.2);
   });
 });
