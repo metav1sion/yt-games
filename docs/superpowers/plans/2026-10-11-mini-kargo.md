@@ -1,6 +1,6 @@
 # Mini Kargo Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Renkli bir 3D mahallede serbest sürüş ve üç teslimatlık turlar sunan, mobil ve masaüstünde oynanabilir bir prototip oluşturmak.
 
@@ -60,13 +60,13 @@
 - `createCar(): { group: THREE.Group; update(state: VehicleState, hasPackage: boolean, dt: number): void }`.
 - `updateCamera(camera: THREE.PerspectiveCamera, position: Vec2, dt: number): void`.
 
-- [ ] Scaffold package with `dev`, `build`, `typecheck`, `test` scripts. Root is a simple project directory; do not introduce a monorepo framework. Set Vite `base: './'`, TypeScript strict mode, and Vitest node environment. If Git is absent, initialize it at execution time with ignore rules for `node_modules` and `dist`.
-- [ ] Write failing tests: `normalizesDiagonalInput` asserts magnitude ≤ 1; `resetClearsHeldDirection` asserts zero input after reset; `releaseSlowsVehicle` asserts lower speed after one second without input; `turnIsGradual` asserts an opposite direction does not instantly reverse heading.
-- [ ] Run `npm test -- src/game/input.test.ts src/game/vehicle.test.ts` from the game folder and confirm the missing implementation fails.
-- [ ] Implement the interfaces above. Input direction is camera-relative mapped to the horizontal world plane. Normalize diagonal keys; joystick distance controls speed. Reset input on blur, visibility loss, pointer cancellation and pointer release. Use pointer capture for dragging.
-- [ ] Build the world with six homes and a depot placed beside connected roads. Use primitive geometries and shared materials; add delivery marker anchors. Add wheels and a visible package to the car; use time-based animation. The fixed-angle camera smoothly follows the vehicle.
-- [ ] Run the two test files, typecheck and build. In a browser, confirm WASD, arrows and joystick move the car in the expected screen directions; release/blur/cancel stops acceleration. Capture an initial gameplay screenshot.
-- [ ] Commit the independently playable driving scene if Git is available.
+- [x] Scaffold package with `dev`, `build`, `typecheck`, `test` scripts. Root is a simple project directory; do not introduce a monorepo framework. Set Vite `base: './'`, TypeScript strict mode, and Vitest node environment. If Git is absent, initialize it at execution time with ignore rules for `node_modules` and `dist`.
+- [x] Write failing tests: `normalizesDiagonalInput` asserts magnitude ≤ 1; `resetClearsHeldDirection` asserts zero input after reset; `releaseSlowsVehicle` asserts lower speed after one second without input; `turnIsGradual` asserts an opposite direction does not instantly reverse heading.
+- [x] Run `npm test -- src/game/input.test.ts src/game/vehicle.test.ts` from the game folder and confirm the missing implementation fails.
+- [x] Implement the interfaces above. Input direction is camera-relative mapped to the horizontal world plane. Normalize diagonal keys; joystick distance controls speed. Reset input on blur, visibility loss, pointer cancellation and pointer release. Use pointer capture for dragging.
+- [x] Build the world with six homes and a depot placed beside connected roads. Use primitive geometries and shared materials; add delivery marker anchors. Add wheels and a visible package to the car; use time-based animation. The fixed-angle camera smoothly follows the vehicle.
+- [x] Run the two test files, typecheck and build. In a browser, confirm WASD, arrows and joystick move the car in the expected screen directions; release/blur/cancel stops acceleration. Capture an initial gameplay screenshot.
+- [x] Commit the independently playable driving scene if Git is available.
 
 ## Task 2: Çarpışma ve güvenilir oyun döngüsü
 
@@ -78,12 +78,12 @@
 - `createLoop(step: (dt: number) => void, render: () => void, scheduler?: FrameScheduler): { start(): void; setPaused(paused: boolean): void; dispose(): void }`. The default scheduler uses browser animation frames; tests inject controlled frames.
 - Loop invokes game updates at 1/60 second; clamps visible frame delta to 0.1 second and resets its accumulator on pause transitions.
 
-- [ ] Write failing tests: `buildingBlocksMovement` keeps the car outside a rectangle; `wallAllowsSliding` permits tangential movement; `boundsContainVehicle` keeps the full vehicle inside the world. Loop tests use controlled timestamps: `longFrameIsClamped` permits at most six steps; `resumeIgnoresHiddenElapsedTime` has no catch-up after a sixty-second hidden interval.
-- [ ] Run `npm test -- src/game/collision.test.ts src/game/loop.test.ts` and confirm failure.
-- [ ] Implement movement resolution in small/axis-separated increments with vehicle radius 0.65 world units. Feed the resolved position back into vehicle state, reducing blocked velocity. Obstacles cover houses and scenery that intersects roads; world bounds remain navigable.
-- [ ] Implement loop and connect document visibility, input reset and pause overlay. Reuse this loop for the delivery timer in Task 3.
-- [ ] Run tests, typecheck and build; manually drive into a corner, slide along walls and return after hiding the tab. Confirm no tunneling or unexpected movement.
-- [ ] Commit collision and lifecycle support.
+- [x] Write failing tests: `buildingBlocksMovement` keeps the car outside a rectangle; `wallAllowsSliding` permits tangential movement; `boundsContainVehicle` keeps the full vehicle inside the world. Loop tests use controlled timestamps: `longFrameIsClamped` permits at most six steps; `resumeIgnoresHiddenElapsedTime` has no catch-up after a sixty-second hidden interval.
+- [x] Run `npm test -- src/game/collision.test.ts src/game/loop.test.ts` and confirm failure.
+- [x] Implement movement resolution in small/axis-separated increments with vehicle radius 0.65 world units. Feed the resolved position back into vehicle state, reducing blocked velocity. Obstacles cover houses and scenery that intersects roads; world bounds remain navigable.
+- [x] Implement loop and connect document visibility, input reset and pause overlay. Reuse this loop for the delivery timer in Task 3.
+- [x] Run tests, typecheck and build; manually drive into a corner, slide along walls and return after hiding the tab. Confirm no tunneling or unexpected movement.
+- [x] Commit collision and lifecycle support.
 
 ## Task 3: Tam teslimat turu ve puan
 
@@ -96,12 +96,12 @@
 - `resetVehicle(depot: Vec2): VehicleState` creates a stationary car at the depot; recovery preserves delivery state and resets only `holdSeconds`.
 - `createHud(root: HTMLElement, actions: { restart(): void; recover(): void; toggleSound(): void }): { update(state: DeliveryState, bestScore: number, soundEnabled: boolean): void; dispose(): void }`.
 
-- [ ] Write failing tests: `depotRequiresOneSecondStop`; `leavingZoneResetsHold`; `wrongHouseDoesNotDeliver`; `expiredBonusStillAllowsDelivery`; `deliveryScoresOnce`; `thirdDeliveryEndsTour`; `restartClearsTour`. Use delivery radius 2 world units and stopped speed ≤ 0.5 units/second. A delivery earns 100 base points plus `floor(max(0, secondsLeft) * 2)`.
-- [ ] Run `npm test -- src/game/delivery.test.ts` and confirm failure.
-- [ ] Implement the pure state machine. Each pickup resets remaining time to 45 seconds. Decrease time during delivery only; after completion return to depot, advancing target through distinct houses. Stop at result after three deliveries. Leaving the correct zone or moving too fast resets the one-second hold. Do not award points in returning/result phases.
-- [ ] Connect state to marker visibility, package visibility, pickup/delivery progress and HUD. Add start screen, one-time control hint, result screen and restart. Animate package moving toward the door on delivery. Recovery resets the car at depot, clears the hold, and preserves package, target and remaining time.
-- [ ] Run tests, typecheck and build. Play all three deliveries; deliberately let a bonus expire and confirm progression. Verify restart and recovery using both input methods.
-- [ ] Commit the full game loop.
+- [x] Write failing tests: `depotRequiresOneSecondStop`; `leavingZoneResetsHold`; `wrongHouseDoesNotDeliver`; `expiredBonusStillAllowsDelivery`; `deliveryScoresOnce`; `thirdDeliveryEndsTour`; `restartClearsTour`. Use delivery radius 2 world units and stopped speed ≤ 0.5 units/second. A delivery earns 100 base points plus `floor(max(0, secondsLeft) * 2)`.
+- [x] Run `npm test -- src/game/delivery.test.ts` and confirm failure.
+- [x] Implement the pure state machine. Each pickup resets remaining time to 45 seconds. Decrease time during delivery only; after completion return to depot, advancing target through distinct houses. Stop at result after three deliveries. Leaving the correct zone or moving too fast resets the one-second hold. Do not award points in returning/result phases.
+- [x] Connect state to marker visibility, package visibility, pickup/delivery progress and HUD. Add start screen, one-time control hint, result screen and restart. Animate package moving toward the door on delivery. Recovery resets the car at depot, clears the hold, and preserves package, target and remaining time.
+- [x] Run tests, typecheck and build. Play all three deliveries; deliberately let a bonus expire and confirm progression. Verify restart and recovery using both input methods.
+- [x] Commit the full game loop.
 
 ## Task 4: Kayıt, ses ve teslim edilebilir prototip
 
@@ -112,14 +112,14 @@
 - `StorageAdapter = { load(): Preferences; save(value: Preferences): void }`; `createLocalStorageAdapter(storage: Pick<Storage, 'getItem' | 'setItem'>): StorageAdapter`.
 - `createSound(): { unlock(): Promise<void>; setEnabled(enabled: boolean): void; pickup(): void; delivery(): void; dispose(): void }`.
 
-- [ ] Write failing tests: `invalidJsonUsesDefaults`; `invalidFieldsUseDefaults`; `storageReadFailureUsesDefaults`; `storageWriteFailureDoesNotThrow`; `bestScoreNeverDecreases`. Defaults are score 0 and sound enabled; only finite nonnegative scores and boolean sound values are accepted. Best score comparison occurs when a tour finishes.
-- [ ] Run `npm test -- src/platform/storage.test.ts` and confirm failure.
-- [ ] Implement local storage with a versioned key `mini-kargo:v1`; isolate access behind the adapter. Future SDK implementation can replace it. Load preferences at startup; save on tour completion and mute changes; catch storage exceptions. Save the maximum of the existing valid score and the incoming valid score, retaining the incoming sound preference.
-- [ ] Implement lightweight synthesized pickup/delivery sounds after user interaction. Catch unlock errors and retain a fully playable silent game. Wire mute control and visibility pause into audio lifecycle.
-- [ ] Make HUD and joystick responsive with safe-area padding, a capped renderer pixel ratio and resize handling. Prevent canvas gestures from scrolling the page. On WebGL initialization failure show “Oyun başlatılamadı. Yeniden deneyebilirsin.” and a reload button.
-- [ ] Verify viewport sizes 390×844, 844×390 and 1280×800. Check joystick drag/cancellation, safe-area layout and restart. Simulate renderer initialization failure to verify the fallback; check muted/unavailable audio remains playable. Inspect browser errors and capture the final gameplay screenshot.
-- [ ] Run `npm test`, `npm run typecheck`, `npm run build` from `games/mini-kargo`; verify built asset paths are relative. Serve the production build and complete one tour. Record bundle size and observed load behavior; do not infer Android/iOS YouTube compatibility from desktop emulation.
-- [ ] Write README commands, controls, game rules, known limits and the separate future SDK/certification step. Preserve final screenshot as a project artifact. Commit verified work.
+- [x] Write failing tests: `invalidJsonUsesDefaults`; `invalidFieldsUseDefaults`; `storageReadFailureUsesDefaults`; `storageWriteFailureDoesNotThrow`; `bestScoreNeverDecreases`. Defaults are score 0 and sound enabled; only finite nonnegative scores and boolean sound values are accepted. Best score comparison occurs when a tour finishes.
+- [x] Run `npm test -- src/platform/storage.test.ts` and confirm failure.
+- [x] Implement local storage with a versioned key `mini-kargo:v1`; isolate access behind the adapter. Future SDK implementation can replace it. Load preferences at startup; save on tour completion and mute changes; catch storage exceptions. Save the maximum of the existing valid score and the incoming valid score, retaining the incoming sound preference.
+- [x] Implement lightweight synthesized pickup/delivery sounds after user interaction. Catch unlock errors and retain a fully playable silent game. Wire mute control and visibility pause into audio lifecycle.
+- [x] Make HUD and joystick responsive with safe-area padding, a capped renderer pixel ratio and resize handling. Prevent canvas gestures from scrolling the page. On WebGL initialization failure show “Oyun başlatılamadı. Yeniden deneyebilirsin.” and a reload button.
+- [x] Verify viewport sizes 390×844, 844×390 and 1280×800. Check joystick drag/cancellation, safe-area layout and restart. Simulate renderer initialization failure to verify the fallback; check muted/unavailable audio remains playable. Inspect browser errors and capture the final gameplay screenshot.
+- [x] Run `npm test`, `npm run typecheck`, `npm run build` from `games/mini-kargo`; verify built asset paths are relative. Serve the production build and complete one tour. Record bundle size and observed load behavior; do not infer Android/iOS YouTube compatibility from desktop emulation.
+- [x] Write README commands, controls, game rules, known limits and the separate future SDK/certification step. Preserve final screenshot as a project artifact. Commit verified work.
 
 ## Completion and Handoff
 
