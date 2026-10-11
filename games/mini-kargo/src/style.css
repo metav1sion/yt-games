@@ -566,6 +566,59 @@ h1 {
   color: #255a4a;
   font-size: 17px;
 }
+.garage {
+  margin: 0 0 22px;
+  text-align: left;
+}
+.garage-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 9px;
+}
+.garage-heading span:last-child {
+  color: #90a083;
+  font-size: 9px;
+}
+.upgrade-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7px;
+}
+.upgrade-button {
+  min-width: 0;
+  padding: 10px 9px;
+  border: 1px solid #dbe6cf;
+  border-radius: 12px;
+  background: #f6f7e9;
+  color: #255a4a;
+  text-align: left;
+}
+.upgrade-button span {
+  display: block;
+}
+.upgrade-button b,
+.upgrade-button small {
+  display: block;
+}
+.upgrade-button b {
+  font-size: 11px;
+}
+.upgrade-button small {
+  margin-top: 4px;
+  color: #81937d;
+  font-size: 8px;
+}
+.upgrade-button strong {
+  float: right;
+  margin-top: -19px;
+  font-size: 19px;
+}
+.upgrade-button:disabled {
+  cursor: not-allowed;
+  filter: grayscale(0.4);
+  opacity: 0.55;
+}
 .toast {
   position: absolute;
   bottom: 105px;
@@ -640,6 +693,12 @@ h1 {
     margin: 18px;
     width: calc(100% - 36px);
     padding: 28px;
+  }
+  .result-scores {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 8px;
+    margin: 18px 0;
   }
   .toast {
     bottom: 170px;
@@ -726,6 +785,21 @@ h1 {
   .company-summary strong,
   .company-summary b {
     font-size: 14px;
+  }
+  .garage {
+    margin-bottom: 12px;
+  }
+  .upgrade-list {
+    gap: 5px;
+  }
+  .upgrade-button {
+    padding: 8px 6px;
+  }
+  .upgrade-button b {
+    font-size: 9px;
+  }
+  .upgrade-button small {
+    font-size: 7px;
   }
   .result-card .primary-button {
     padding: 11px 18px;

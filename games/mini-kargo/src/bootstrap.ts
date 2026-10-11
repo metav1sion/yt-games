@@ -12,6 +12,7 @@ import { createDeliveryState, stepDelivery } from "./game/delivery";
 import { createHud } from "./ui/hud";
 import { createLocalStorageAdapter } from "./platform/storage";
 import { createSound } from "./audio/sound";
+import { upgradeCost, type UpgradeKind } from "./game/upgrades";
 export function startGame(app: HTMLElement) {
   app.innerHTML =
     '<canvas id="game" aria-label="Mini Kargo oyun alanı"></canvas>';
@@ -90,6 +91,20 @@ export function startGame(app: HTMLElement) {
       storage.save({ ...progression, soundEnabled });
       hud.update(delivery, progression, soundEnabled);
     },
+    buyUpgrade(kind: UpgradeKind) {
+      const cost = upgradeCost(kind, progression.upgrades[kind]);
+      if (progression.money < cost) return;
+      progression = {
+        ...progression,
+        money: progression.money - cost,
+        upgrades: {
+          ...progression.upgrades,
+          [kind]: progression.upgrades[kind] + 1,
+        },
+      };
+      storage.save({ ...progression, soundEnabled });
+      hud.update(delivery, progression, soundEnabled);
+    },
   });
   const input = createInput(document.querySelector<HTMLElement>("#joystick")!);
   function resize() {
@@ -108,7 +123,7 @@ export function startGame(app: HTMLElement) {
     (dt) => {
       if (started && delivery.phase !== "result") {
         const previous = vehicle.position;
-        vehicle = stepVehicle(vehicle, input.read(), dt);
+        vehicle = stepVehicle(vehicle, input.read(), dt, progression.upgrades);
         const proposed = vehicle.position;
         const resolved = resolveMovement(
           previous,

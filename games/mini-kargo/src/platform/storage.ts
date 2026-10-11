@@ -1,3 +1,4 @@
+import { defaultUpgrades, type VehicleUpgrades } from "../game/upgrades";
 export type Preferences = {
   bestScore: number;
   soundEnabled: boolean;
@@ -5,6 +6,7 @@ export type Preferences = {
   reputation: number;
   companyLevel: number;
   completedDeliveries: number;
+  upgrades: VehicleUpgrades;
 };
 export type StorageAdapter = {
   load(): Preferences;
@@ -17,6 +19,7 @@ const defaults = (): Preferences => ({
   reputation: 0,
   companyLevel: 1,
   completedDeliveries: 0,
+  upgrades: defaultUpgrades(),
 });
 function valid(value: unknown): Preferences {
   if (!value || typeof value !== "object") return defaults();
@@ -34,6 +37,17 @@ function valid(value: unknown): Preferences {
     reputation: nonNegativeInteger(record.reputation),
     companyLevel: Math.max(1, nonNegativeInteger(record.companyLevel) || 1),
     completedDeliveries: nonNegativeInteger(record.completedDeliveries),
+    upgrades: validUpgrades(record.upgrades),
+  };
+}
+function validUpgrades(value: unknown): VehicleUpgrades {
+  const record = value && typeof value === "object"
+    ? (value as Record<string, unknown>)
+    : {};
+  return {
+    engine: nonNegativeInteger(record.engine),
+    brakes: nonNegativeInteger(record.brakes),
+    cargo: nonNegativeInteger(record.cargo),
   };
 }
 function nonNegativeInteger(value: unknown) {

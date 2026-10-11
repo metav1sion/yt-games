@@ -18,6 +18,7 @@ describe("safe preferences", () => {
       reputation: 0,
       companyLevel: 1,
       completedDeliveries: 0,
+      upgrades: { engine: 0, brakes: 0, cargo: 0 },
     }));
   it("invalidFieldsUseDefaults", () =>
     expect(
@@ -31,6 +32,7 @@ describe("safe preferences", () => {
       reputation: 0,
       companyLevel: 1,
       completedDeliveries: 0,
+      upgrades: { engine: 0, brakes: 0, cargo: 0 },
     }));
   it("nullRecordUsesDefaults", () =>
     expect(createLocalStorageAdapter(memory("null")).load()).toEqual({
@@ -40,6 +42,7 @@ describe("safe preferences", () => {
       reputation: 0,
       companyLevel: 1,
       completedDeliveries: 0,
+      upgrades: { engine: 0, brakes: 0, cargo: 0 },
     }));
   it("storageReadFailureUsesDefaults", () =>
     expect(
@@ -56,6 +59,7 @@ describe("safe preferences", () => {
       reputation: 0,
       companyLevel: 1,
       completedDeliveries: 0,
+      upgrades: { engine: 0, brakes: 0, cargo: 0 },
     }));
   it("storageWriteFailureDoesNotThrow", () =>
     expect(() =>
@@ -78,6 +82,7 @@ describe("safe preferences", () => {
       reputation: 0,
       companyLevel: 1,
       completedDeliveries: 0,
+      upgrades: { engine: 0, brakes: 0, cargo: 0 },
     });
   });
   it("newRecordAndSoundPreferencePersist", () => {
@@ -93,6 +98,7 @@ describe("safe preferences", () => {
       reputation: 0,
       companyLevel: 1,
       completedDeliveries: 0,
+      upgrades: { engine: 0, brakes: 0, cargo: 0 },
     });
   });
 });

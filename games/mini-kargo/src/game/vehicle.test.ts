@@ -27,4 +27,20 @@ describe("driving", () => {
     expect(Math.hypot(s.velocity.x, s.velocity.z)).toBeGreaterThan(0);
     expect(Math.hypot(s.position.x, s.position.z)).toBeLessThan(0.02);
   });
+  it("engineUpgradeIncreasesTopSpeed", () => {
+    let base = car();
+    let upgraded = car();
+    for (let i = 0; i < 240; i++) {
+      base = stepVehicle(base, { x: 0, z: 1 }, 1 / 60);
+      upgraded = stepVehicle(
+        upgraded,
+        { x: 0, z: 1 },
+        1 / 60,
+        { engine: 2, brakes: 0, cargo: 0 },
+      );
+    }
+    expect(Math.hypot(upgraded.velocity.x, upgraded.velocity.z)).toBeGreaterThan(
+      Math.hypot(base.velocity.x, base.velocity.z),
+    );
+  });
 });

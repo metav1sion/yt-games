@@ -1,8 +1,10 @@
 import type { Vec2, VehicleState } from "./types";
+import type { VehicleUpgrades } from "./upgrades";
 export function stepVehicle(
   state: VehicleState,
   input: Vec2,
   dt: number,
+  upgrades: VehicleUpgrades = { engine: 0, brakes: 0, cargo: 0 },
 ): VehicleState {
   const amount = Math.min(1, Math.hypot(input.x, input.z));
   let heading = state.heading;
@@ -16,8 +18,10 @@ export function stepVehicle(
     const maxTurn = (3.8 - speed * 0.09) * dt;
     heading += Math.max(-maxTurn, Math.min(maxTurn, difference));
   }
-  const desired = amount * 8;
-  const follow = 1 - Math.exp(-(amount > 0.06 ? 3.2 : 5.2) * dt);
+  const desired = amount * (8 + upgrades.engine * 0.7);
+  const follow = 1 - Math.exp(
+    -((amount > 0.06 ? 3.2 : 5.2) + upgrades.brakes * (amount > 0.06 ? 0 : 1.2)) * dt,
+  );
   const vx =
     state.velocity.x +
     (Math.sin(heading) * desired - state.velocity.x) * follow;
