@@ -83,7 +83,11 @@ export function createSkidmarks(scene: THREE.Scene): SkidmarksManager {
   return {
     update(state: VehicleState, dt: number) {
       const speed = Math.hypot(state.velocity.x, state.velocity.z);
-      const isSkidding = state.drifting && speed > 2.0;
+      const isSkidding =
+        !state.airborne &&
+        (state.altitude ?? 0) < 0.05 &&
+        state.drifting &&
+        speed > 2.0;
 
       const sinH = Math.sin(state.heading);
       const cosH = Math.cos(state.heading);

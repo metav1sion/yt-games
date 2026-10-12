@@ -17,6 +17,9 @@ function mockVehicle(overrides: Partial<VehicleState> = {}): VehicleState {
     nitro: 1,
     drifting: false,
     steerAngle: 0,
+    altitude: 0,
+    verticalVelocity: 0,
+    airborne: false,
     ...overrides,
   };
 }

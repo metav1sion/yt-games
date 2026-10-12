@@ -10,6 +10,9 @@ const car = (): VehicleState => ({
   nitro: 1,
   drifting: false,
   steerAngle: 0,
+  altitude: 0,
+  verticalVelocity: 0,
+  airborne: false,
 });
 const drive = (over: Partial<DriveInput> = {}): DriveInput => ({
   throttle: 0,
@@ -401,4 +404,99 @@ describe("joystick drive integration", () => {
     expect(signChangesInLast2s).toBeLessThanOrEqual(2);
   });
 });
+
+describe("jumping and vertical physics (air time)", () => {
+  it("launches into the air, ascends to apex, and lands safely on ground with gravity", () => {
+    let s: VehicleState = {
+      ...car(),
+      velocity: { x: 0, z: 12 },
+      verticalVelocity: 12,
+      altitude: 0.1,
+      airborne: true,
+    };
+    const dt = 1 / 60;
+    let maxAltitude = 0;
+    let reachedApex = false;
+
+    // Simulate flight
+    for (let i = 0; i < 120; i++) {
+      s = stepVehicle(s, drive(), dt);
+      if (s.altitude > maxAltitude) {
+        maxAltitude = s.altitude;
+      }
+      if (s.verticalVelocity < 0 && s.airborne) {
+        reachedApex = true;
+      }
+      if (!s.airborne) {
+        break;
+      }
+    }
+
+    expect(reachedApex).toBe(true);
+    expect(maxAltitude).toBeGreaterThan(1.5);
+    expect(s.airborne).toBe(false);
+    expect(s.altitude).toBe(0);
+    expect(s.verticalVelocity).toBe(0);
+  });
+
+  it("restricts steering yaw rate while airborne", () => {
+    const dt = 1 / 60;
+    // Ground car turning
+    const groundCar = stepVehicle(
+      { ...car(), velocity: { x: 0, z: 10 } },
+      drive({ steer: 1, throttle: 0.5 }),
+      dt,
+    );
+
+    // Airborne car turning
+    const airCar = stepVehicle(
+      {
+        ...car(),
+        velocity: { x: 0, z: 10 },
+        altitude: 2.0,
+        verticalVelocity: 5,
+        airborne: true,
+      },
+      drive({ steer: 1, throttle: 0.5 }),
+      dt,
+    );
+
+    expect(Math.abs(airCar.heading)).toBeLessThan(Math.abs(groundCar.heading) * 0.35);
+  });
+
+  it("reduces lateral grip while airborne allowing ballistic glide", () => {
+    const dt = 1 / 60;
+    // Car with lateral slide on ground
+    const groundCar = stepVehicle(
+      { ...car(), velocity: { x: 6, z: 0 }, heading: 0 },
+      drive(),
+      dt,
+    );
+
+    // Car with lateral slide in air
+    const airCar = stepVehicle(
+      {
+        ...car(),
+        velocity: { x: 6, z: 0 },
+        heading: 0,
+        altitude: 2.0,
+        verticalVelocity: 5,
+        airborne: true,
+      },
+      drive(),
+      dt,
+    );
+
+    // Airborne vehicle retains more lateral velocity due to reduced grip
+    expect(Math.abs(airCar.velocity.x)).toBeGreaterThan(Math.abs(groundCar.velocity.x));
+  });
+
+  it("initializes vehicle on ground with resetVehicle", () => {
+    const s = resetVehicle({ x: 10, z: 20 });
+    expect(s.altitude).toBe(0);
+    expect(s.verticalVelocity).toBe(0);
+    expect(s.airborne).toBe(false);
+  });
+});
+
 

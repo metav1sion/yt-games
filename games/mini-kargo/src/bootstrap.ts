@@ -19,6 +19,8 @@ import { tryPurchaseUpgrade, type UpgradeKind } from "./game/upgrades";
 import { createTraffic } from "./scene/traffic";
 import { createPedestrians } from "./scene/pedestrians";
 import { districtById } from "./game/districts";
+import { RAMPS, checkRampLaunch } from "./game/ramps";
+import { createProps } from "./scene/props";
 export function startGame(app: HTMLElement) {
   app.innerHTML =
     '<canvas id="game" aria-label="Mini Kargo oyun alanı"></canvas>';
@@ -62,6 +64,7 @@ export function startGame(app: HTMLElement) {
   const deliveryAnimation = createDeliveryAnimation(scene);
   const skidmarks = createSkidmarks(scene);
   const particles = createParticles(scene);
+  const props = createProps(scene);
   const camera = new THREE.PerspectiveCamera(
     40,
     innerWidth / innerHeight,
@@ -99,6 +102,7 @@ export function startGame(app: HTMLElement) {
       resetCamera(vehicle.position, vehicle.heading);
       skidmarks.reset();
       particles.reset();
+      props.reset();
       delivery = createDeliveryState(
         progression.upgrades.cargo,
         progression.companyLevel,
@@ -112,6 +116,7 @@ export function startGame(app: HTMLElement) {
       resetCamera(vehicle.position, vehicle.heading);
       skidmarks.reset();
       particles.reset();
+      props.reset();
       delivery = { ...delivery, holdSeconds: 0 };
       cameraShake = 0;
       contactDamage.reset();
@@ -166,6 +171,18 @@ export function startGame(app: HTMLElement) {
         currentThrottle = drive.throttle;
         currentNitro = drive.nitro;
         vehicle = stepVehicle(vehicle, drive, dt, progression.upgrades);
+
+        // Atlama rampaları kontrolü
+        const rampLaunch = checkRampLaunch(vehicle, RAMPS);
+        if (rampLaunch && !vehicle.airborne) {
+          vehicle.verticalVelocity = Math.max(
+            vehicle.verticalVelocity,
+            rampLaunch.verticalVelocity,
+          );
+          vehicle.altitude = Math.max(vehicle.altitude, 0.15);
+          vehicle.airborne = true;
+        }
+
         const proposed = vehicle.position;
         const preVelocity = { ...vehicle.velocity };
         const collision = resolveCollision(
@@ -176,6 +193,7 @@ export function startGame(app: HTMLElement) {
           {
             heading: vehicle.heading,
             velocity: preVelocity,
+            altitude: vehicle.altitude,
           },
         );
         const staticContacts = staticCollisionContacts(
@@ -189,6 +207,12 @@ export function startGame(app: HTMLElement) {
         );
         vehicle.position = collision.position;
         vehicle.velocity = collision.velocity;
+
+        // Yıkılabilir / fırlayan nesneler (Props) çarpışma ve fizik simülasyonu
+        const propHit = props.update(dt, vehicle);
+        if (propHit) {
+          sound.collision();
+        }
         const old = delivery;
         const trafficContacts = traffic.update(dt, vehicle.position);
         const pedestrianContacts = pedestrians.update(
@@ -248,6 +272,7 @@ export function startGame(app: HTMLElement) {
       } else {
         currentThrottle = 0;
         currentNitro = false;
+        props.update(dt, vehicle);
       }
       cameraShake *= Math.exp(-8 * dt);
       const target =

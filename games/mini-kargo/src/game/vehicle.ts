@@ -33,6 +33,11 @@ export const TUNING = {
   nitroRefill: 0.1, // normal dolum (1/sn)
   nitroDriftRefill: 0.25, // drift sırasında dolum (1/sn)
   nitroResume: 0.15, // tükenince yeniden başlamak için gereken doluluk
+  // Dikey ve Zıplama Fiziği (Air Time)
+  gravity: 30, // yerçekimi ivmesi (birim/sn²)
+  airGripMultiplier: 0.15, // havada tekerlek yanal tutuş çarpanı
+  airTurnMultiplier: 0.2, // havada yönlendirme çarpanı
+  airThrottleMultiplier: 0.3, // havada gaz ivmesi çarpanı
   // Geliştirmeler (seviye başına)
   engineSpeed: 1.2,
   engineAccel: 1.65,
@@ -80,8 +85,26 @@ export function stepVehicle(
     nitro = Math.min(1, nitro + refill * dt);
   }
   const boost = boosting ? T.nitroBoost : 1;
+
+  // Dikey hareket ve zıplama fiziği
+  let altitude = state.altitude ?? 0;
+  let verticalVelocity = state.verticalVelocity ?? 0;
+  let airborne = state.airborne ?? (altitude > 0 || verticalVelocity > 0);
+
+  if (altitude > 0 || verticalVelocity !== 0 || airborne) {
+    verticalVelocity -= T.gravity * dt;
+    altitude += verticalVelocity * dt;
+    if (altitude <= 0) {
+      altitude = 0;
+      verticalVelocity = 0;
+      airborne = false;
+    } else {
+      airborne = true;
+    }
+  }
+
   const maxSpeed = baseMax * boost;
-  const accel = baseAccel * boost;
+  const accel = baseAccel * boost * (airborne ? T.airThrottleMultiplier : 1);
 
   // Dönüş: hıza bağlı, duran araç dönmez, geri giderken ters çalışır.
   const vfBefore =
@@ -95,13 +118,14 @@ export function stepVehicle(
       smoothstep(
         (speedAbs / baseMax - T.turnFalloffStart) / (1 - T.turnFalloffStart),
       );
-  const yawRate =
+  let yawRate =
     -steer *
     T.turnRate *
     rise *
     falloff *
     (vfBefore >= 0 ? 1 : -1) *
     (input.handbrake ? T.handbrakeTurnBoost : 1);
+  if (airborne) yawRate *= T.airTurnMultiplier;
   const heading = wrapAngle(state.heading + yawRate * dt);
 
   // Hız vektörü dünyada sabit kalır; yeni heading'e göre ileri/yanal ayrıştır.
@@ -114,11 +138,12 @@ export function stepVehicle(
 
   // Yanal tutuş
   const totalSpeed = Math.hypot(state.velocity.x, state.velocity.z);
-  const grip = input.handbrake
+  const baseGrip = input.handbrake
     ? T.driftGrip
     : T.grip *
       (1 -
         T.highSpeedSlip * Math.abs(steer) * clamp(totalSpeed / baseMax, 0, 1));
+  const grip = baseGrip * (airborne ? T.airGripMultiplier : 1);
   vl *= Math.exp(-grip * dt);
 
   // İleri hız
@@ -160,6 +185,9 @@ export function stepVehicle(
     nitroLocked: locked,
     drifting: Math.abs(vl) > T.driftThreshold,
     steerAngle,
+    altitude,
+    verticalVelocity,
+    airborne,
   };
 }
 
@@ -172,5 +200,8 @@ export function resetVehicle(depot: Vec2): VehicleState {
     nitroLocked: false,
     drifting: false,
     steerAngle: 0,
+    altitude: 0,
+    verticalVelocity: 0,
+    airborne: false,
   };
 }

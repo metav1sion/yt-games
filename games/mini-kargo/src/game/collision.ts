@@ -22,6 +22,7 @@ export type CollisionOptions = {
   restitution?: number;
   friction?: number;
   colliders?: CircleCollider[];
+  altitude?: number;
 };
 
 export type CollisionContact = {
@@ -173,6 +174,9 @@ export function resolveCollision(
       for (let oIdx = 0; oIdx < obstacles.length; oIdx++) {
         const rect = obstacles[oIdx];
         if (
+          (rect.height !== undefined &&
+            options.altitude !== undefined &&
+            options.altitude >= rect.height) ||
           cx + col.radius < rect.minX ||
           cx - col.radius > rect.maxX ||
           cz + col.radius < rect.minZ ||

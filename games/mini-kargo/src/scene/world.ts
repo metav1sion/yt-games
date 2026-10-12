@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import type { Rect, Vec2 } from "../game/types";
 import { districts, type DistrictId } from "../game/districts";
+import { RAMPS } from "../game/ramps";
+import { createRamps } from "./ramps";
 
 const materials = new Map<string, THREE.MeshStandardMaterial>();
 function mat(color: string, roughness = 0.85): THREE.MeshStandardMaterial {
@@ -281,9 +283,40 @@ export function createWorld(): World {
     baseObstacles.push({ minX: s.x - 4.5, maxX: s.x + 4.5, minZ: s.z - 3.8, maxZ: s.z + 3.8 });
   });
 
+  // Çarşı Kestirme Sokağı (Market Alley Shortcut)
+  // İki dükkan binası arasından geçen dar bir kestirme sokak (X: ~35.4, Z: 20..38)
+  box(group, [4.4, 0.12, 20], [35.4, 0.08, 29], "#ded6be"); // Kaldırım tabanı
+  box(group, [3.8, 0.13, 20], [35.4, 0.085, 29], "#8b7e66"); // Parke taş sokak
+
+  // Sol dükkan bloğu
+  box(group, [4.8, 4.2, 17], [30.6, 2.1, 29], "#ecd9b8");
+  box(group, [5.0, 0.35, 17.2], [30.6, 4.3, 29], "#c0392b");
+  baseObstacles.push({ minX: 28.0, maxX: 33.0, minZ: 20.5, maxZ: 37.5 });
+
+  // Sağ dükkan bloğu
+  box(group, [4.8, 4.2, 17], [40.2, 2.1, 29], "#f7e8ce");
+  box(group, [5.0, 0.35, 17.2], [40.2, 4.3, 29], "#2980b9");
+  baseObstacles.push({ minX: 37.8, maxX: 42.6, minZ: 20.5, maxZ: 37.5 });
+
   // ==========================================
   // BÖLGE 3: 🏭 SANAYİ BÖLGESİ (Kuzeydoğu)
   // ==========================================
+
+  // Sanayi Kestirme Yolu (Industrial Corridor Shortcut)
+  // İki kargo hangarı arasından geçen ve çıkışında konteyner rampası olan kestirme yol
+  box(group, [4.6, 0.12, 16], [50, 0.08, -29], "#636e72"); // Asfalt zemin
+  box(group, [0.2, 0.02, 12], [50, 0.14, -29], "#f1c40f"); // Sarı yol çizgisi
+
+  // Sol kargo hangarı
+  box(group, [5.6, 4.8, 14], [44.8, 2.4, -29], "#4a5568");
+  box(group, [5.8, 0.4, 14.2], [44.8, 4.9, -29], "#2b6cb0");
+  baseObstacles.push({ minX: 42.0, maxX: 47.6, minZ: -36.0, maxZ: -22.0 });
+
+  // Sağ kargo hangarı
+  box(group, [5.6, 4.8, 14], [55.2, 2.4, -29], "#5a6578");
+  box(group, [5.8, 0.4, 14.2], [55.2, 4.9, -29], "#dd6b20");
+  baseObstacles.push({ minX: 52.4, maxX: 58.0, minZ: -36.0, maxZ: -22.0 });
+
   function addContainers(cx: number, cz: number) {
     const g = new THREE.Group();
     g.position.set(cx, 0, cz);
@@ -292,7 +325,13 @@ export function createWorld(): World {
     box(g, [6.5, 2.4, 2.5], [0, 1.2, -1.5], colors[0]);
     box(g, [6.5, 2.4, 2.5], [0, 1.2, 1.5], colors[1]);
     box(g, [6.5, 2.4, 2.5], [0, 3.6, 0], colors[2]);
-    baseObstacles.push({ minX: cx - 3.5, maxX: cx + 3.5, minZ: cz - 3.0, maxZ: cz + 3.0 });
+    baseObstacles.push({
+      minX: cx - 3.5,
+      maxX: cx + 3.5,
+      minZ: cz - 3.0,
+      maxZ: cz + 3.0,
+      height: 2.8,
+    });
   }
   addContainers(50, -50);
 
@@ -490,6 +529,9 @@ export function createWorld(): World {
 
   // Varsayılan seviye 1 engellerini ayarla
   updateUnlockedDistricts(1);
+
+  // Zıplama rampalarını dünyaya ekle
+  group.add(createRamps(RAMPS));
 
   return {
     group,

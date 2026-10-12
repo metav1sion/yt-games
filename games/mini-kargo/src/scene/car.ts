@@ -58,7 +58,7 @@ export function createCar() {
         Math.cos(state.heading - lastHeading),
       );
       lastHeading = state.heading;
-      group.position.set(state.position.x, 0.08, state.position.z);
+      group.position.set(state.position.x, 0.08 + state.altitude, state.position.z);
       group.rotation.y = state.heading;
       body.rotation.z = THREE.MathUtils.lerp(
         body.rotation.z,
@@ -68,11 +68,16 @@ export function createCar() {
         ),
         1 - Math.exp(-8 * dt),
       );
-      body.position.y = Math.sin(time * 15) * Math.min(speed / 8, 1) * 0.015;
+      body.position.y = state.airborne
+        ? 0
+        : Math.sin(time * 15) * Math.min(speed / 8, 1) * 0.015;
+      const pitchTarget = state.airborne
+        ? THREE.MathUtils.clamp(-state.verticalVelocity * 0.025, -0.32, 0.32)
+        : Math.max(-0.035, Math.min(0.035, -speed * 0.004));
       body.rotation.x = THREE.MathUtils.lerp(
         body.rotation.x,
-        Math.max(-0.035, Math.min(0.035, -speed * 0.004)),
-        1 - Math.exp(-7 * dt),
+        pitchTarget,
+        1 - Math.exp((state.airborne ? 10 : 7) * dt),
       );
       wheels.forEach((w) => {
         w.rotation.x = wheelSpin;

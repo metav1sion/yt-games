@@ -142,7 +142,7 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
       const cosH = Math.cos(state.heading);
 
       // 1. Drift Tozu Üretimi
-      if (state.drifting && speed > 2.5) {
+      if (!state.airborne && (state.altitude ?? 0) < 0.05 && state.drifting && speed > 2.5) {
         dustTimer += dt;
         if (dustTimer >= 0.035) {
           dustTimer = 0;
