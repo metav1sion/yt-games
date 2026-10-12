@@ -229,6 +229,7 @@ export function createInput(joystick: HTMLElement): InputController {
     reset();
   }
   function reset() {
+    reversing = false;
     keyboard.reset();
     externalNitro = false;
     externalHandbrake = false;

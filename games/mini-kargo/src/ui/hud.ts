@@ -16,6 +16,7 @@ export function createHud(
     buyUpgrade(kind: UpgradeKind): void;
     setHandbrake?(on: boolean): void;
     setNitro?(on: boolean): void;
+    openCompanySheet?(): void;
   },
 ) {
   root.innerHTML = `<header class="topbar"><div class="brand"><span class="brand-icon">▣</span><div>mini kargo<small>MAHALLE TESLİMATLARI</small></div></div><span class="district" id="district-name">GÜNEŞ MAHALLESİ <i></i></span></header>
@@ -29,8 +30,8 @@ export function createHud(
   </div>
   <div class="control-hint">W/S gaz-fren · A/D direksiyon · Space el freni · Shift nitro</div>
   <div class="nitro-bar" aria-label="Nitro"><span class="eyebrow">NİTRO</span><div class="nitro-track"><span id="nitro-fill"></span></div></div>
-  <div class="sheet welcome" id="welcome"><div class="intro-card"><span class="eyebrow">KÜÇÜK ARABA. BÜYÜK İŞLER.</span><h1>Mahallenin<br>yeni kargocusu.</h1><p>Paketini al, sokaklara çık.<br>Üç teslimatla mahalleyi mutlu et.</p><div class="intro-rules"><span><b>01</b> Depodan paket al</span><span><b>02</b> İşaretli evde dur</span><span><b>03</b> Hızlı teslim et, bonus kazan</span></div><button class="primary-button" id="start">Hadi yola çık <span>→</span></button><small class="intro-controls">WASD / OK TUŞLARI · MOBİLDE JOYSTICK</small></div></div>
-  <div class="sheet result" id="result" hidden><div class="result-card"><span class="result-badge">✓</span><span class="eyebrow">BUGÜNLÜK İŞLER TAMAM</span><h1>Eline sağlık,<br>kargocu!</h1><p>Üç paket, üç mutlu komşu.</p><div class="result-scores"><div><span>TUR PUANI</span><strong id="result-score">0</strong></div><div><span>EN İYİ TUR</span><strong id="best-score">0</strong></div><div><span>KAZANÇ</span><strong id="result-earnings">0 ₺</strong></div><div><span>İTİBAR</span><strong id="result-reputation">+0</strong></div></div><div class="quality-summary"><span>PAKET DURUMU <b id="package-quality">Hasarsız</b></span><span>GÜVENLİ SÜRÜŞ <b id="safe-bonus">+0 ₺</b></span></div><div class="company-summary"><span>ŞİRKET BAKİYESİ</span><strong id="company-money">0 ₺</strong><span>ŞİRKET SEVİYESİ <b id="company-level">1</b></span></div><section class="garage" aria-label="Garaj"><div class="garage-heading"><span class="eyebrow">GARAJ</span><span id="garage-status">Aracını geliştir</span></div><div class="upgrade-list"><button class="upgrade-button" data-upgrade="engine"><span><b>Motor</b><small id="engine-upgrade">Seviye 1 · 180 ₺</small></span><strong>+</strong></button><button class="upgrade-button" data-upgrade="brakes"><span><b>Fren</b><small id="brakes-upgrade">Seviye 1 · 160 ₺</small></span><strong>+</strong></button><button class="upgrade-button" data-upgrade="cargo"><span><b>Kapasite</b><small id="cargo-upgrade">Seviye 1 · 220 ₺</small></span><strong>+</strong></button></div></section><button class="primary-button" id="restart">Bir tur daha <span>↗</span></button></div></div>
+  <div class="sheet welcome" id="welcome" hidden><div class="intro-card"><span class="eyebrow">KÜÇÜK ARABA. BÜYÜK İŞLER.</span><h1>Mahallenin<br>yeni kargocusu.</h1><p>Paketini al, sokaklara çık.<br>Üç teslimatla mahalleyi mutlu et.</p><div class="intro-rules"><span><b>01</b> Depodan paket al</span><span><b>02</b> İşaretli evde dur</span><span><b>03</b> Hızlı teslim et, bonus kazan</span></div><button class="primary-button" id="start">Hadi yola çık <span>→</span></button><small class="intro-controls">WASD / OK TUŞLARI · MOBİLDE JOYSTICK</small></div></div>
+  <div class="sheet result" id="result" hidden><div class="result-card"><span class="result-badge">✓</span><span class="eyebrow">BUGÜNLÜK İŞLER TAMAM</span><h1>Eline sağlık,<br>kargocu!</h1><p>Üç paket, üç mutlu komşu.</p><div class="result-scores"><div><span>TUR PUANI</span><strong id="result-score">0</strong></div><div><span>EN İYİ TUR</span><strong id="best-score">0</strong></div><div><span>KAZANÇ</span><strong id="result-earnings">0 ₺</strong></div><div><span>İTİBAR</span><strong id="result-reputation">+0</strong></div></div><div class="quality-summary"><span>PAKET DURUMU <b id="package-quality">Hasarsız</b></span><span>GÜVENLİ SÜRÜŞ <b id="safe-bonus">+0 ₺</b></span></div><div class="company-summary"><span>ŞİRKET BAKİYESİ</span><strong id="company-money">0 ₺</strong><span>ŞİRKET SEVİYESİ <b id="company-level">1</b></span></div><section class="garage" aria-label="Garaj"><div class="garage-heading"><span class="eyebrow">GARAJ</span><span id="garage-status">Aracını geliştir</span></div><div class="upgrade-list"><button class="upgrade-button" data-upgrade="engine"><span><b>Motor</b><small id="engine-upgrade">Seviye 1 · 180 ₺</small></span><strong>+</strong></button><button class="upgrade-button" data-upgrade="brakes"><span><b>Fren</b><small id="brakes-upgrade">Seviye 1 · 160 ₺</small></span><strong>+</strong></button><button class="upgrade-button" data-upgrade="cargo"><span><b>Kapasite</b><small id="cargo-upgrade">Seviye 1 · 220 ₺</small></span><strong>+</strong></button></div></section><button class="primary-button" id="restart">Bir tur daha <span>↗</span></button><button class="primary-button btn-office-return" id="btn-office">🏢 Şirket Ofisine Dön</button></div></div>
   <div class="toast" id="toast" role="status" hidden></div>`;
 
   const el = <T extends HTMLElement = HTMLElement>(id: string) =>
@@ -112,10 +113,17 @@ export function createHud(
     button.addEventListener("lostpointercapture", release);
   }
 
+  function returnToOffice() {
+    el("result").hidden = true;
+    el("welcome").hidden = true;
+    actions.openCompanySheet?.();
+  }
+
   el("start").addEventListener("click", begin);
   el("restart").addEventListener("click", begin);
   el("recover").addEventListener("click", recover);
   el("sound").addEventListener("click", toggle);
+  el("btn-office")?.addEventListener("click", returnToOffice);
 
   if (actions.setHandbrake) {
     bindHoldButton(el("btn-handbrake"), actions.setHandbrake);
@@ -193,7 +201,7 @@ export function createHud(
       el("company-level").textContent = String(progression.companyLevel);
       el("district-name").innerHTML = `${districtById(s.district).name} <i></i>`;
       for (const kind of ["engine", "brakes", "cargo"] as UpgradeKind[]) {
-        const level = progression.upgrades[kind];
+        const level = progression.upgrades[kind] ?? 0;
         el(`${kind}-upgrade`).textContent =
           kind === "cargo" && level >= 1
             ? "Maksimum · 2 paket"
@@ -221,6 +229,10 @@ export function createHud(
           : `${Math.ceil(distance)} m · hedefe`;
       el("nav-arrow").style.transform = `rotate(${bearing}rad)`;
     },
+    hideResult() {
+      el("result").hidden = true;
+      el("welcome").hidden = true;
+    },
     dispose() {
       clearTimeout(toastTimer);
       clearTimeout(hintTimer);
@@ -228,6 +240,7 @@ export function createHud(
       el("restart").removeEventListener("click", begin);
       el("recover").removeEventListener("click", recover);
       el("sound").removeEventListener("click", toggle);
+      el("btn-office")?.removeEventListener("click", returnToOffice);
       for (const button of root.querySelectorAll<HTMLButtonElement>(
         "[data-upgrade]",
       ))

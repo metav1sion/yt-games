@@ -118,12 +118,14 @@ export function stepVehicle(
       smoothstep(
         (speedAbs / baseMax - T.turnFalloffStart) / (1 - T.turnFalloffStart),
       );
+  const isReversing = vfBefore < -0.2 && throttle < -0.05;
+  const steerDir = isReversing ? -1 : 1;
   let yawRate =
     -steer *
     T.turnRate *
     rise *
     falloff *
-    (vfBefore >= 0 ? 1 : -1) *
+    steerDir *
     (input.handbrake ? T.handbrakeTurnBoost : 1);
   if (airborne) yawRate *= T.airTurnMultiplier;
   const heading = wrapAngle(state.heading + yawRate * dt);

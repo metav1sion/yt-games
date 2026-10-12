@@ -365,6 +365,13 @@ p {
   .control-hint {
     display: none;
   }
+  .minimap-container {
+    top: max(195px, env(safe-area-inset-top) + 175px);
+    right: max(14px, env(safe-area-inset-right));
+    width: 95px;
+    height: 95px;
+    border-radius: 12px;
+  }
 }
 
 @media (max-height: 520px) {
@@ -411,6 +418,13 @@ p {
     right: max(12px, env(safe-area-inset-right));
     width: auto;
     padding: 5px 10px;
+    border-radius: 10px;
+  }
+  .minimap-container {
+    top: max(8px, env(safe-area-inset-top));
+    right: max(135px, env(safe-area-inset-right));
+    width: 75px;
+    height: 75px;
     border-radius: 10px;
   }
   #joystick {
@@ -588,6 +602,30 @@ button:active {
   border-radius: 4px;
   margin-top: 12px;
   overflow: hidden;
+}
+.minimap-container {
+  position: absolute;
+  top: 228px;
+  right: 28px;
+  width: 105px;
+  height: 105px;
+  border-radius: 14px;
+  background: rgba(22, 62, 56, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  overflow: hidden;
+  z-index: 12;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.minimap-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 .timer-track span {
   display: block;
@@ -1234,5 +1272,571 @@ h1 {
   }
   .score-card {
     width: 114px;
+  }
+}
+
+/* ==========================================================================
+   ŞİRKET YÖNETİM MERKEZİ (TYCOON SHEET)
+   ========================================================================== */
+.company-sheet {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(18, 42, 35, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 100;
+  padding: 16px;
+  box-sizing: border-box;
+}
+.company-sheet[hidden] {
+  display: none !important;
+}
+.company-card {
+  width: 100%;
+  max-width: 820px;
+  max-height: min(720px, 94vh);
+  background: #fff9e8;
+  border: 1.5px solid #ffffffa0;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: compFadeIn 0.22s ease-out;
+}
+@keyframes compFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+.company-header {
+  background: #235546;
+  color: #fff9e8;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  border-bottom: 2px solid #1a4237;
+}
+.company-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.company-logo {
+  width: 44px;
+  height: 44px;
+  background: #f4bb48;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+.company-brand h1 {
+  font-size: 22px;
+  letter-spacing: -0.5px;
+  color: #fff8e6;
+  margin: 0;
+  line-height: 1.1;
+}
+.company-brand small {
+  font-size: 8px;
+  letter-spacing: 2px;
+  font-weight: 750;
+  color: #a4cca8;
+}
+.company-stats-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.22);
+  padding: 6px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0 8px;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+}
+.stat-item:last-child {
+  border-right: none;
+}
+.stat-label {
+  font-size: 7.5px;
+  letter-spacing: 1.2px;
+  font-weight: 800;
+  color: #a4cca8;
+}
+.stat-item b,
+.stat-item strong {
+  font-size: 14px;
+  color: #fff9e8;
+}
+.stat-item.treasury strong {
+  color: #f3ce7e;
+  font-size: 17px;
+  font-weight: 850;
+}
+.company-tabs {
+  display: flex;
+  background: #f2e9d2;
+  padding: 6px 16px;
+  gap: 8px;
+  border-bottom: 1px solid #e2d7be;
+}
+.tab-button {
+  background: transparent;
+  border: none;
+  font-size: 13px;
+  font-weight: 750;
+  color: #637765;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.tab-button:hover {
+  color: #235546;
+  background: rgba(35, 85, 70, 0.08);
+}
+.tab-button.active {
+  background: #235546;
+  color: #fff9e8;
+  box-shadow: 0 3px 10px rgba(35, 85, 70, 0.25);
+}
+.tab-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+}
+.tab-pane[hidden] {
+  display: none !important;
+}
+
+/* 1. GENEL BAKIŞ */
+.overview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.summary-card {
+  background: #ffffff90;
+  border: 1px solid #e6dcbf;
+  border-radius: 16px;
+  padding: 16px 20px;
+}
+.summary-numbers {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+}
+.summary-numbers span {
+  font-size: 9px;
+  color: #798d7b;
+  font-weight: 700;
+}
+.summary-numbers strong {
+  display: block;
+  font-size: 18px;
+  color: #235546;
+  margin-top: 4px;
+}
+.offline-card {
+  background: #fffdf5;
+  border: 1.5px solid #ded3b2;
+  border-radius: 16px;
+  padding: 16px 20px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+.offline-card.has-earnings {
+  border-color: #f4bb48;
+  background: #fff8e1;
+  box-shadow: 0 4px 18px rgba(244, 187, 72, 0.25);
+}
+.offline-badge {
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 1px;
+  color: #a07412;
+}
+.offline-card h3 {
+  font-size: 15px;
+  margin: 6px 0 2px;
+  color: #235546;
+}
+.offline-card p {
+  font-size: 11px;
+  color: #758677;
+  margin-bottom: 12px;
+}
+.offline-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.offline-action-row strong {
+  font-size: 20px;
+  color: #d68910;
+}
+.btn-claim {
+  padding: 8px 18px;
+  font-size: 12px;
+  border-radius: 10px;
+  background: #e67e22;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+.btn-claim:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: #95a5a6;
+}
+.shift-cta-box {
+  margin-top: 8px;
+}
+.btn-shift {
+  width: 100%;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #235546 0%, #173d32 100%);
+  color: #fff9e8;
+  border: 2px solid #377d67;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(35, 85, 70, 0.35);
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+.btn-shift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(35, 85, 70, 0.45);
+}
+.btn-shift span {
+  font-size: 17px;
+  font-weight: 850;
+  letter-spacing: 0.5px;
+}
+.btn-shift small {
+  font-size: 10px;
+  color: #9fd2a5;
+  margin-top: 4px;
+}
+
+/* 2. GARAJ */
+.garage-intro {
+  margin-bottom: 16px;
+}
+.garage-intro h3 {
+  font-size: 18px;
+  color: #235546;
+  margin: 0 0 4px;
+}
+.garage-intro p {
+  font-size: 12px;
+  color: #728474;
+}
+.garage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.garage-card {
+  background: #ffffffa0;
+  border: 1px solid #e2d7ba;
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.card-icon {
+  font-size: 26px;
+  width: 46px;
+  height: 46px;
+  background: #f7eed7;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.card-body {
+  flex: 1;
+}
+.card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-title-row h4 {
+  font-size: 13px;
+  margin: 0;
+  color: #235546;
+}
+.level-badge {
+  font-size: 8.5px;
+  font-weight: 800;
+  background: #23554618;
+  color: #235546;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+.card-desc {
+  font-size: 10px;
+  color: #7b8e7e;
+  margin: 4px 0 6px;
+  line-height: 1.3;
+}
+.level-bars {
+  display: flex;
+  gap: 4px;
+}
+.level-bars .bar {
+  flex: 1;
+  height: 4px;
+  background: #d8ceb3;
+  border-radius: 2px;
+}
+.level-bars .bar.filled {
+  background: #f4bb48;
+}
+.card-action .upgrade-btn {
+  background: #235546;
+  color: #fff9e8;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.12s ease;
+}
+.card-action .upgrade-btn:disabled {
+  background: #c3beae;
+  color: #7d7a6e;
+  cursor: not-allowed;
+}
+
+/* 3. KADRO */
+.couriers-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.couriers-header h3 {
+  font-size: 18px;
+  color: #235546;
+  margin: 0 0 4px;
+}
+.couriers-header p {
+  font-size: 12px;
+  color: #728474;
+}
+.secondary-button {
+  background: #235546;
+  color: #fff9e8;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+}
+.hire-modal {
+  margin-bottom: 16px;
+  animation: compFadeIn 0.15s ease-out;
+}
+.hire-card {
+  background: #fff8e4;
+  border: 1.5px solid #f4bb48;
+  border-radius: 16px;
+  padding: 14px 18px;
+}
+.hire-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.icon-button-sm {
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  color: #728474;
+}
+.hire-card h4 {
+  font-size: 16px;
+  color: #235546;
+  margin: 6px 0 10px;
+}
+.candidate-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  font-size: 11px;
+  color: #617363;
+  background: #ffffffa0;
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+.candidate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+.hire-cost {
+  font-weight: 800;
+  font-size: 14px;
+  color: #b7791f;
+}
+.btn-hire {
+  padding: 8px 20px;
+  font-size: 12px;
+  border-radius: 10px;
+}
+.empty-couriers {
+  text-align: center;
+  padding: 36px 20px;
+  background: #ffffff60;
+  border: 1px dashed #d8ceb3;
+  border-radius: 16px;
+}
+.empty-icon {
+  font-size: 42px;
+  display: block;
+  margin-bottom: 10px;
+}
+.empty-couriers h4 {
+  font-size: 15px;
+  color: #235546;
+  margin: 0 0 6px;
+}
+.empty-couriers p {
+  font-size: 12px;
+  color: #788a7a;
+  max-width: 380px;
+  margin: 0 auto;
+}
+.couriers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.courier-item {
+  background: #ffffff90;
+  border: 1px solid #e2d7ba;
+  border-radius: 14px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.courier-avatar {
+  font-size: 24px;
+  width: 42px;
+  height: 42px;
+  background: #eef5ea;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+}
+.courier-info {
+  flex: 1;
+}
+.courier-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.courier-name-row strong {
+  font-size: 14px;
+  color: #235546;
+}
+.courier-badge {
+  font-size: 8px;
+  font-weight: 800;
+  background: #23554615;
+  color: #235546;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+.courier-stats-row {
+  display: flex;
+  gap: 14px;
+  font-size: 10px;
+  color: #738475;
+  margin-top: 4px;
+}
+.courier-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #27ae60;
+}
+.courier-status small {
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 0.8px;
+  color: #27ae60;
+}
+
+/* Ofise Dön Butonu (Sonuç ekranı) */
+.btn-office-return {
+  background: #fff9e8 !important;
+  color: #235546 !important;
+  border: 1.5px solid #235546 !important;
+  margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .company-card {
+    max-height: 94vh;
+    border-radius: 18px;
+  }
+  .company-header {
+    padding: 12px 16px;
+    gap: 10px;
+  }
+  .company-brand h1 {
+    font-size: 18px;
+  }
+  .company-stats-pill {
+    width: 100%;
+    justify-content: space-around;
+  }
+  .overview-grid {
+    grid-template-columns: 1fr;
+  }
+  .garage-grid {
+    grid-template-columns: 1fr;
+  }
+  .tab-content {
+    padding: 14px 16px;
   }
 }

@@ -1,5 +1,12 @@
-export type UpgradeKind = "engine" | "brakes" | "cargo";
-export type VehicleUpgrades = Record<UpgradeKind, number>;
+export type UpgradeKind = "engine" | "brakes" | "cargo" | "grip" | "nitro";
+
+export type VehicleUpgrades = {
+  engine: number;
+  brakes: number;
+  cargo: number;
+  grip?: number;
+  nitro?: number;
+};
 
 export const defaultUpgrades = (): VehicleUpgrades => ({
   engine: 0,
@@ -8,8 +15,14 @@ export const defaultUpgrades = (): VehicleUpgrades => ({
 });
 
 export function upgradeCost(kind: UpgradeKind, level: number) {
-  const base = { engine: 180, brakes: 160, cargo: 220 }[kind];
-  return base * (level + 1);
+  const base: Record<UpgradeKind, number> = {
+    engine: 180,
+    brakes: 160,
+    cargo: 220,
+    grip: 170,
+    nitro: 200,
+  };
+  return base[kind] * (level + 1);
 }
 
 export function canPurchaseUpgrade(
@@ -23,7 +36,7 @@ export function canPurchaseUpgrade(
 export function tryPurchaseUpgrade<
   T extends { money: number; upgrades: VehicleUpgrades },
 >(state: T, kind: UpgradeKind): T {
-  const level = state.upgrades[kind];
+  const level = state.upgrades[kind] ?? 0;
   if (!canPurchaseUpgrade(kind, level, state.money)) return state;
   return {
     ...state,
@@ -33,5 +46,11 @@ export function tryPurchaseUpgrade<
 }
 
 export function upgradeLabel(kind: UpgradeKind) {
-  return { engine: "Motor", brakes: "Fren", cargo: "Kapasite" }[kind];
+  return {
+    engine: "Motor",
+    brakes: "Fren",
+    cargo: "Kapasite",
+    grip: "Lastik Tutuşu",
+    nitro: "Nitro Deposu",
+  }[kind];
 }

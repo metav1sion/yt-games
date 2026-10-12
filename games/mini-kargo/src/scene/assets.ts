@@ -8,9 +8,7 @@ export type AssetManifestItem = {
   url: string;
 };
 
-export const DEFAULT_ASSET_MANIFEST: AssetManifestItem[] = [
-  { id: "car", url: "/models/car.glb" },
-];
+export const DEFAULT_ASSET_MANIFEST: AssetManifestItem[] = [];
 
 export type AssetManager = {
   load(manifest?: readonly AssetManifestItem[]): Promise<void>;

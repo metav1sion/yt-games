@@ -13,15 +13,18 @@ import { createLoop } from "./game/loop";
 import { createDeliveryState, stepDelivery } from "./game/delivery";
 import { createContactDamageTracker, staticCollisionContacts } from "./game/contact-damage";
 import { createHud } from "./ui/hud";
-import { createLocalStorageAdapter } from "./platform/storage";
+import { createLocalStorageAdapter, asCompanyProgression, type CompanyProgression } from "./platform/storage";
 import { createSound } from "./audio/sound";
 import { tryPurchaseUpgrade, type UpgradeKind } from "./game/upgrades";
+import { applyOfflineEarnings, claimOfflineEarnings, hireCourier } from "./game/company";
+import { createCompanySheet } from "./ui/company-sheet";
 import { createTraffic } from "./scene/traffic";
 import { createPedestrians } from "./scene/pedestrians";
 import { districtById } from "./game/districts";
 import { RAMPS, checkRampLaunch } from "./game/ramps";
 import { createProps } from "./scene/props";
 import { assetManager } from "./scene/assets";
+import { createMinimap } from "./ui/minimap";
 export function startGame(app: HTMLElement) {
   app.innerHTML =
     '<canvas id="game" aria-label="Mini Kargo oyun alanı"></canvas>';
@@ -56,12 +59,6 @@ export function startGame(app: HTMLElement) {
   scene.add(world.group);
   const car = createCar();
   scene.add(car.group);
-  void assetManager.load().then(() => {
-    const customCar = assetManager.cloneModel("car");
-    if (customCar) {
-      car.setModel(customCar);
-    }
-  });
   const marker = createMarkers();
   scene.add(marker.group);
   const traffic = createTraffic();
@@ -84,15 +81,18 @@ export function startGame(app: HTMLElement) {
   });
   const preferences = storage.load(),
     sound = createSound();
+  let progression: CompanyProgression = asCompanyProgression(preferences);
+  progression = applyOfflineEarnings(progression, Date.now());
+  storage.save(progression);
+
   const contactDamage = createContactDamageTracker();
   let vehicle = resetVehicle(world.depot),
     delivery = createDeliveryState(
-      preferences.upgrades.cargo,
-      preferences.companyLevel,
+      progression.upgrades.cargo,
+      progression.companyLevel,
     ),
     started = false,
-    progression = { ...preferences },
-    soundEnabled = preferences.soundEnabled,
+    soundEnabled = progression.soundEnabled,
     cameraShake = 0;
   world.updateUnlockedDistricts(progression.companyLevel);
   sound.setEnabled(soundEnabled);
@@ -117,6 +117,8 @@ export function startGame(app: HTMLElement) {
       cameraShake = 0;
       contactDamage.reset();
       input.reset();
+      hud.hideResult();
+      companySheet.hide();
     },
     recover() {
       vehicle = resetVehicle(world.depot);
@@ -142,6 +144,7 @@ export function startGame(app: HTMLElement) {
       progression = purchased;
       storage.save({ ...progression, soundEnabled });
       hud.update(delivery, progression, soundEnabled);
+      companySheet.update(progression);
     },
     setHandbrake(on: boolean) {
       input.setHandbrake(on);
@@ -149,8 +152,64 @@ export function startGame(app: HTMLElement) {
     setNitro(on: boolean) {
       input.setNitro(on);
     },
+    openCompanySheet() {
+      started = false;
+      companySheet.show();
+      companySheet.update(progression);
+      hud.hideResult();
+    },
+  });
+
+  const companySheet = createCompanySheet(ui, {
+    onStartShift() {
+      companySheet.hide();
+      void sound.unlock();
+      started = true;
+      vehicle = resetVehicle(world.depot);
+      resetCamera(vehicle.position, vehicle.heading);
+      skidmarks.reset();
+      particles.reset();
+      props.reset();
+      delivery = createDeliveryState(
+        progression.upgrades.cargo,
+        progression.companyLevel,
+      );
+      cameraShake = 0;
+      contactDamage.reset();
+      input.reset();
+      hud.hideResult();
+    },
+    onBuyUpgrade(kind) {
+      const purchased = tryPurchaseUpgrade(progression, kind);
+      if (purchased === progression) return;
+      progression = purchased;
+      storage.save({ ...progression, soundEnabled });
+      companySheet.update(progression);
+      hud.update(delivery, progression, soundEnabled);
+      sound.pickup();
+    },
+    onHireCourier(candidate) {
+      progression = hireCourier(progression, candidate);
+      storage.save({ ...progression, soundEnabled });
+      companySheet.update(progression);
+      hud.showToast("🎉 Yeni kurye işe alındı!", 3000);
+      sound.delivery();
+    },
+    onClaimOffline() {
+      const amount = progression.offlineEarningsAccumulated;
+      progression = claimOfflineEarnings(progression);
+      storage.save({ ...progression, soundEnabled });
+      companySheet.update(progression);
+      hud.showToast(`💰 Kasaya +${amount} ₺ aktarıldı!`, 3000);
+      sound.pickup();
+    },
   });
   const input = createInput(document.querySelector<HTMLElement>("#joystick")!);
+  const minimap = createMinimap(ui, {
+    depot: world.depot,
+    homes: world.homes,
+    bounds: world.bounds,
+  });
   function resize() {
     renderer.setSize(innerWidth, innerHeight);
     camera.aspect = innerWidth / innerHeight;
@@ -264,6 +323,7 @@ export function startGame(app: HTMLElement) {
             companyLevel: newLevel,
           };
           storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
           if (newLevel > oldLevel) {
             const newlyUnlocked = world.updateUnlockedDistricts(newLevel);
             if (newlyUnlocked.length > 0) {
@@ -308,6 +368,14 @@ export function startGame(app: HTMLElement) {
 
       hud.update(delivery, progression, soundEnabled);
       hud.setNitro(vehicle.nitro);
+      minimap.update(
+        vehicle.position,
+        vehicle.heading,
+        target,
+        delivery.phase,
+        progression.companyLevel,
+        dt,
+      );
       hud.setNavigation(
         Math.hypot(
           target.x - vehicle.position.x,
@@ -321,24 +389,38 @@ export function startGame(app: HTMLElement) {
     },
     () => renderer.render(scene, camera),
   );
+
+  function saveExitTimestamp() {
+    progression.lastPlayedTimestamp = Date.now();
+    storage.save(progression);
+  }
+
   function visibility() {
     loop.setPaused(document.hidden);
     sound.setPaused(document.hidden);
-    if (document.hidden) sound.updateMotor(0, 0, false, false);
+    if (document.hidden) {
+      sound.updateMotor(0, 0, false, false);
+      saveExitTimestamp();
+    }
     pause.hidden = !document.hidden;
     input.reset();
   }
   document.addEventListener("visibilitychange", visibility);
   visibility();
   hud.update(delivery, progression, soundEnabled);
+  companySheet.show();
+  companySheet.update(progression);
   loop.start();
 
   window.addEventListener(
     "pagehide",
     () => {
+      saveExitTimestamp();
       loop.dispose();
       input.dispose();
       hud.dispose();
+      companySheet.dispose();
+      minimap.dispose();
       sound.dispose();
       skidmarks.dispose();
       particles.dispose();
