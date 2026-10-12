@@ -21,6 +21,7 @@ import { createPedestrians } from "./scene/pedestrians";
 import { districtById } from "./game/districts";
 import { RAMPS, checkRampLaunch } from "./game/ramps";
 import { createProps } from "./scene/props";
+import { assetManager } from "./scene/assets";
 export function startGame(app: HTMLElement) {
   app.innerHTML =
     '<canvas id="game" aria-label="Mini Kargo oyun alanı"></canvas>';
@@ -55,6 +56,12 @@ export function startGame(app: HTMLElement) {
   scene.add(world.group);
   const car = createCar();
   scene.add(car.group);
+  void assetManager.load().then(() => {
+    const customCar = assetManager.cloneModel("car");
+    if (customCar) {
+      car.setModel(customCar);
+    }
+  });
   const marker = createMarkers();
   scene.add(marker.group);
   const traffic = createTraffic();

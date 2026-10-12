@@ -2,13 +2,13 @@ import * as THREE from "three";
 import type { Vec2, VehicleState } from "../game/types";
 
 export type CameraRigOptions = {
+  fixedAngle?: number; // Sabit dünya açısı (varsayılan Math.PI: güneyden kuzeye bakış)
   baseFov?: number;
   maxFovBoost?: number;
   baseDistance?: number;
   baseHeight?: number;
-  angleLagRate?: number;
-  lookAheadDist?: number;
   positionLagRate?: number;
+  lookAheadLagRate?: number;
 };
 
 export type CameraRig = {
@@ -23,40 +23,30 @@ export type CameraRig = {
   getState(): { angle: number; fov: number; position: THREE.Vector3 };
 };
 
-/**
- * En kısa yönlü açı farkını [-PI, PI] aralığında hesaplar.
- */
-function shortestAngleDiff(target: number, current: number): number {
-  return Math.atan2(Math.sin(target - current), Math.cos(target - current));
-}
-
 export function createCameraRig(options: CameraRigOptions = {}): CameraRig {
+  // Sabit dünya açısı: Math.PI güneyden kuzeye doğru bakar.
+  // Kamera araba döndükçe asla kendi etrafında dönmez; sıfır baş dönmesi!
+  const fixedAngle = options.fixedAngle ?? Math.PI;
   const baseFov = options.baseFov ?? 40;
   const maxFovBoost = options.maxFovBoost ?? 8.5;
-  const angleLagRate = options.angleLagRate ?? 3.4;
   const positionLagRate = options.positionLagRate ?? 6.0;
+  const lookAheadLagRate = options.lookAheadLagRate ?? 7.5;
 
-  let currentAngle: number | null = null;
   let currentFov = baseFov;
-  let currentCameraPos = new THREE.Vector3();
-  let currentLookAt = new THREE.Vector3();
+  const currentCameraPos = new THREE.Vector3();
+  const currentLookAt = new THREE.Vector3();
   let initialized = false;
 
-  function reset(position: Vec2, heading = Math.PI / 2) {
-    currentAngle = heading;
+  function reset(position: Vec2, _heading?: number) {
     currentFov = baseFov;
-    const baseDist = 19;
-    const baseHeight = 24;
-    currentCameraPos.set(
-      position.x - Math.sin(heading) * baseDist,
-      baseHeight,
-      position.z - Math.cos(heading) * baseDist,
-    );
-    currentLookAt.set(
-      position.x + Math.sin(heading) * 2,
-      0.8,
-      position.z + Math.cos(heading) * 2,
-    );
+    // Yukarıdan ~50° açıyla izometrik perspektif (tan 50.7° ≈ 22 / 18)
+    const baseDist = 18;
+    const baseHeight = 22;
+
+    const startX = position.x - Math.sin(fixedAngle) * baseDist;
+    const startZ = position.z - Math.cos(fixedAngle) * baseDist;
+    currentCameraPos.set(startX, baseHeight, startZ);
+    currentLookAt.set(position.x, 0.8, position.z);
     initialized = true;
   }
 
@@ -69,46 +59,20 @@ export function createCameraRig(options: CameraRigOptions = {}): CameraRig {
   ) {
     const isVehicleState = "heading" in target;
     const position = isVehicleState ? target.position : target;
-    const vehicleHeading = isVehicleState ? target.heading : undefined;
     const velocity = isVehicleState
       ? target.velocity
       : velocityArg ?? { x: 0, z: 0 };
+    const altitude = isVehicleState ? target.altitude ?? 0 : 0;
 
     if (!initialized) {
-      reset(position, vehicleHeading ?? Math.PI / 2);
+      reset(position);
     }
 
     const safeDt = Math.min(0.1, Math.max(0.001, dt));
     const speed = Math.hypot(velocity.x, velocity.z);
     const speedNorm = Math.min(1, speed / 20); // 20 birim/sn nitro maksimumu
 
-    // 1. Hedef Kamera Açısı ve Geri Vites Koruması
-    // Araç ileri giderken aracın yönünü (heading) veya hareket yönünü takip et.
-    // Geri giderken kamera aniden 180° dönmemeli; mevcut açıyı korumalıdır.
-    let targetAngle = currentAngle!;
-
-    if (vehicleHeading !== undefined) {
-      const forwardX = Math.sin(vehicleHeading);
-      const forwardZ = Math.cos(vehicleHeading);
-      const forwardSpeed = velocity.x * forwardX + velocity.z * forwardZ;
-
-      if (forwardSpeed < -0.4 && speed > 0.8) {
-        // Geri viteste sürüş: Mevcut kamera açısını koru, 180° ters dönme
-        targetAngle = currentAngle!;
-      } else {
-        // Normal veya durma hali: Arabanın burnuna göre arkasında kal
-        targetAngle = vehicleHeading;
-      }
-    } else if (speed > 0.5) {
-      // Sadece Vec2 verildiyse hareket yönünü takip et
-      targetAngle = Math.atan2(velocity.x, velocity.z);
-    }
-
-    // Yumuşak açı sönümlemesi (heading lag)
-    const angleDiff = shortestAngleDiff(targetAngle, currentAngle!);
-    currentAngle = currentAngle! + angleDiff * (1 - Math.exp(-angleLagRate * safeDt));
-
-    // 2. Dinamik FOV
+    // 1. Dinamik FOV (Hız arttıkça hafif genişler)
     const targetFov = baseFov + speedNorm * maxFovBoost;
     currentFov += (targetFov - currentFov) * (1 - Math.exp(-4 * safeDt));
     if (Math.abs(camera.fov - currentFov) > 0.01) {
@@ -116,29 +80,41 @@ export function createCameraRig(options: CameraRigOptions = {}): CameraRig {
       camera.updateProjectionMatrix();
     }
 
-    // 3. Mesafe ve Yükseklik (Mobil ve Hıza Duyarlı)
+    // 2. Mesafe ve Yükseklik (Mobil ve Hıza Duyarlı, ~50° Açı)
     const isPortrait = camera.aspect < 0.8;
-    const baseDist = (isPortrait ? 24 : 19) * (1 + speedNorm * 0.16);
-    const baseHeight = (isPortrait ? 29 : 24) * (1 + speedNorm * 0.14);
+    const distMultiplier = 1 + speedNorm * 0.12;
+    const baseDist = (isPortrait ? 22 : 18) * distMultiplier;
+    const baseHeight =
+      (isPortrait ? 27 : 22) * distMultiplier + altitude * 0.6;
 
-    // 4. Hedef Kamera Pozisyonu (Arabanın Arkası ve Yukarısı)
-    const idealPosX = position.x - Math.sin(currentAngle) * baseDist;
-    const idealPosZ = position.z - Math.cos(currentAngle) * baseDist;
+    // 3. Hız Yönüne Yumuşak Bakış (Look-ahead)
+    // Kamera dönmez, ancak arabanın hız vektörüne göre hafifçe önüne bakar
+    const lookAheadX = velocity.x * (0.12 + speedNorm * 0.08);
+    const lookAheadZ = velocity.z * (0.12 + speedNorm * 0.08);
+
+    const idealLookAtX = position.x + lookAheadX;
+    const idealLookAtY = 0.8 + altitude;
+    const idealLookAtZ = position.z + lookAheadZ;
+
+    const targetLook = new THREE.Vector3(
+      idealLookAtX,
+      idealLookAtY,
+      idealLookAtZ,
+    );
+    currentLookAt.lerp(targetLook, 1 - Math.exp(-lookAheadLagRate * safeDt));
+
+    // 4. Sabit Açılı Kamera Pozisyonu (Yumuşak Takip)
+    // Açısı SABİTTİR. Sadece arabanın konumunu yumuşakça takip eder.
+    const leadX = velocity.x * 0.05;
+    const leadZ = velocity.z * 0.05;
+    const idealPosX = position.x - Math.sin(fixedAngle) * baseDist + leadX;
+    const idealPosZ = position.z - Math.cos(fixedAngle) * baseDist + leadZ;
     const idealPosY = baseHeight;
 
     const targetPos = new THREE.Vector3(idealPosX, idealPosY, idealPosZ);
     currentCameraPos.lerp(targetPos, 1 - Math.exp(-positionLagRate * safeDt));
 
-    // 5. İleri Bakış (Look-ahead)
-    const lookAheadDist = 1.5 + speedNorm * 3.0;
-    const idealLookAtX = position.x + Math.sin(currentAngle) * lookAheadDist;
-    const idealLookAtZ = position.z + Math.cos(currentAngle) * lookAheadDist;
-    const idealLookAtY = 0.8;
-
-    const targetLook = new THREE.Vector3(idealLookAtX, idealLookAtY, idealLookAtZ);
-    currentLookAt.lerp(targetLook, 1 - Math.exp(-8 * safeDt));
-
-    // 6. Çarpışma Sarsıntısı (Shake)
+    // 5. Çarpışma Sarsıntısı (Shake)
     let finalCamX = currentCameraPos.x;
     let finalCamY = currentCameraPos.y;
     let finalCamZ = currentCameraPos.z;
@@ -159,7 +135,7 @@ export function createCameraRig(options: CameraRigOptions = {}): CameraRig {
     reset,
     getState() {
       return {
-        angle: currentAngle ?? Math.PI / 2,
+        angle: fixedAngle,
         fov: currentFov,
         position: currentCameraPos.clone(),
       };
@@ -167,7 +143,7 @@ export function createCameraRig(options: CameraRigOptions = {}): CameraRig {
   };
 }
 
-// Varsayılan global rig instance (geriye dönük doğrudan fonksiyon çağrıları için)
+// Varsayılan global rig instance
 const globalCameraRig = createCameraRig();
 
 export function updateCamera(
