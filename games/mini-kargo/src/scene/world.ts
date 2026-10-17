@@ -3,6 +3,8 @@ import type { Rect, Vec2 } from "../game/types";
 import { districts, type DistrictId } from "../game/districts";
 import { RAMPS } from "../game/ramps";
 import { createRamps } from "./ramps";
+import { assetManager, type AssetManager } from "./assets";
+import { SUNNY_DEPOT, SUNNY_DEPOT_BUILDING, SUNNY_DEPOT_COLLIDER, SUNNY_HOMES, SUNNY_ROAD_TILES, SUNNY_DEPOT_APRON } from "./sunny-layout";
 
 const materials = new Map<string, THREE.MeshStandardMaterial>();
 function mat(color: string, roughness = 0.85): THREE.MeshStandardMaterial {
@@ -96,7 +98,7 @@ export type World = {
   updateUnlockedDistricts(companyLevel: number): DistrictId[];
 };
 
-export function createWorld(): World {
+export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetManager): World {
   const group = new THREE.Group();
   const baseObstacles: Rect[] = [];
   const obstacles: Rect[] = [];
@@ -118,9 +120,9 @@ export function createWorld(): World {
     const isMain = z === 0;
     const width = isMain ? 9.6 : 8.0;
     const curb = width + 1.2;
-    box(group, [196, 0.12, curb], [0, 0.04, z], "#ded6be"); // Kaldırım
-    box(group, [196, 0.14, width], [0, 0.09, z], "#526362"); // Sıcak koyu asfalt
-    for (let x = -90; x <= 90; x += 6) {
+    box(group, [z === -50 ? 103 : 196, 0.12, curb], [z === -50 ? 46.5 : 0, 0.04, z], "#ded6be"); // Kaldırım
+    box(group, [z === -50 ? 103 : 196, 0.14, width], [z === -50 ? 46.5 : 0, 0.09, z], "#526362"); // Sıcak koyu asfalt
+    for (let x = z === -50 ? 6 : -90; x <= 90; x += 6) {
       box(group, [1.6, 0.015, 0.15], [x, 0.18, z], "#fff4d4");
     }
   }
@@ -130,9 +132,9 @@ export function createWorld(): World {
     const isMain = x === 0;
     const width = isMain ? 9.6 : 8.0;
     const curb = width + 1.2;
-    box(group, [curb, 0.12, 196], [x, 0.045, 0], "#ded6be");
-    box(group, [width, 0.14, 196], [x, 0.095, 0], "#526362");
-    for (let z = -90; z <= 90; z += 6) {
+    box(group, [curb, 0.12, x === -50 ? 103 : 196], [x, 0.045, x === -50 ? 46.5 : 0], "#ded6be");
+    box(group, [width, 0.14, x === -50 ? 103 : 196], [x, 0.095, x === -50 ? 46.5 : 0], "#526362");
+    for (let z = x === -50 ? 6 : -90; z <= 90; z += 6) {
       box(group, [0.15, 0.015, 1.6], [x, 0.19, z], "#fff4d4");
     }
   }
@@ -194,9 +196,28 @@ export function createWorld(): World {
   // ==========================================
   // BÖLGE 1: 🏡 GÜNEŞ MAHALLESİ (Kuzeybatı)
   // ==========================================
-  const depotPos: Vec2 = { x: -40, z: -40 };
+  // GLBs use metre-like unit tiles; fixed uniform scales keep lots consistent.
+  function addModel(parent: THREE.Object3D, id: string, x: number, z: number, scale: number, rotation = 0) {
+    const model = assets.cloneModel(id);
+    if (!model) return false;
+    model.userData.assetId = id;
+    model.position.set(x, 0, z);
+    model.scale.setScalar(scale);
+    model.rotation.y = rotation;
+    parent.add(model);
+    return true;
+  }
+  for (const tile of SUNNY_ROAD_TILES) {
+    if (!addModel(group, tile.model, tile.x, tile.z, 10, tile.rotation)) {
+      const crossing = tile.model === "road-crossroad";
+      const horizontal = tile.rotation === 0;
+      box(group, [10, 0.12, 10], [tile.x, 0.04, tile.z], "#ded6be");
+      box(group, [horizontal || crossing ? 10 : 8, 0.14, !horizontal || crossing ? 10 : 8], [tile.x, 0.09, tile.z], "#526362");
+    }
+  }
+  const depotPos = { ...SUNNY_DEPOT };
   const depotGroup = new THREE.Group();
-  depotGroup.position.set(-47, 0, -42);
+  depotGroup.position.set(SUNNY_DEPOT_BUILDING.x, 0, SUNNY_DEPOT_BUILDING.z);
   group.add(depotGroup);
   box(depotGroup, [10, 4.2, 7.5], [0, 2.1, 0], "#f4bb48");
   box(depotGroup, [10.5, 0.4, 8], [0, 4.3, 0], "#235c4e");
@@ -205,43 +226,43 @@ export function createWorld(): World {
   const depotLabel = label("KARGO DEPOSU", "#fff8e6", "#235c4e");
   depotLabel.position.set(0, 5.4, 0);
   depotGroup.add(depotLabel);
-  baseObstacles.push({ minX: -52.5, maxX: -41.5, minZ: -46.5, maxZ: -37.5 });
+  baseObstacles.push(SUNNY_DEPOT_COLLIDER);
+  box(group,
+    [SUNNY_DEPOT_APRON.maxX - SUNNY_DEPOT_APRON.minX, 0.12, SUNNY_DEPOT_APRON.maxZ - SUNNY_DEPOT_APRON.minZ],
+    [(SUNNY_DEPOT_APRON.minX + SUNNY_DEPOT_APRON.maxX) / 2, 0.04, (SUNNY_DEPOT_APRON.minZ + SUNNY_DEPOT_APRON.maxZ) / 2],
+    "#d5d5c0",
+  );
+  box(group, [4, 0.12, 4], [depotPos.x, 0.12, depotPos.z], "#f4bb48");
+  addTree(-69, -43, 0.85);
+  addStreetLight(-68, -34);
+  addStreetLight(-74.5, -74.5);
+  addStreetLight(-25.5, -55.5);
 
   // Evler 00 - 03 (Sunny)
-  const sunnyHouses = [
-    { x: -75, z: -75, color: "#efa265", roof: "#b05e46", id: "01" },
-    { x: -25, z: -75, color: "#8abcb0", roof: "#3e6e66", id: "02" },
-    { x: -75, z: -25, color: "#f5d475", roof: "#ae6550", id: "03" },
-    { x: -25, z: -25, color: "#d9a1a1", roof: "#45766b", id: "04" },
-  ];
-
-  sunnyHouses.forEach((h) => {
+  SUNNY_HOMES.forEach((h) => {
     const g = new THREE.Group();
     g.position.set(h.x, 0, h.z);
     group.add(g);
-    box(g, [9.5, 0.16, 8.5], [0, 0.1, 0], "#bed596");
-    box(g, [6.5, 3.8, 5.5], [0, 2.0, 0], h.color);
-    const roof = new THREE.Mesh(
-      new THREE.CylinderGeometry(0, 5.2, 2.4, 4),
-      mat(h.roof),
-    );
-    roof.rotation.y = Math.PI / 4;
-    roof.scale.z = 0.85;
-    roof.position.y = 5.0;
-    roof.castShadow = true;
-    g.add(roof);
-    box(g, [1.2, 2.2, 0.15], [0, 1.2, 2.8], "#3b6057");
-    const sign = label(h.id);
+    box(g, [9.5, 0.16, 8.5], [0, 0.0, 0], "#bed596");
+    if (!addModel(g, h.model, 0, 0, 5)) {
+      box(g, [6.5, 3.8, 5.5], [0, 2.0, 0], h.color);
+      const roof = new THREE.Mesh(new THREE.CylinderGeometry(0, 5.2, 2.4, 4), mat(h.roof));
+      roof.rotation.y = Math.PI / 4;
+      roof.scale.z = 0.85;
+      roof.position.y = 5;
+      roof.castShadow = true;
+      g.add(roof);
+      box(g, [1.2, 2.2, 0.15], [0, 1.2, 2.8], "#3b6057");
+    }
+    const sign = label(String(h.index + 1).padStart(2, "0"));
     sign.scale.set(1.2, 0.45, 1);
-    sign.position.set(0, 3.0, 3.0);
+    sign.position.set(0, 3, 3);
     g.add(sign);
-
-    box(g, [9.2, 0.6, 0.1], [0, 0.35, 4.1], "#fff5dc");
-    addTree(h.x - 3.8, h.z - 2.8, 0.95);
-    addTree(h.x + 3.8, h.z + 2.8, 0.9);
-
-    homes.push({ x: h.x, z: h.z + 5.5 });
-    baseObstacles.push({ minX: h.x - 3.8, maxX: h.x + 3.8, minZ: h.z - 3.2, maxZ: h.z + 3.2 });
+    // Open front path: no fence crosses the entrance or stopping area.
+    box(g, [3.6, 0.08, 7], [0, 0.04, 6], "#d5d5c0");
+    addTree(h.x - 5.5, h.z, 0.85);
+    homes.push({ ...h.delivery });
+    baseObstacles.push(h.collider);
   });
 
   // ==========================================
@@ -404,6 +425,7 @@ export function createWorld(): World {
     [-50, -85], [-50, -15], [-50, 15], [-50, 85],
     [50, -85], [50, -15], [50, 15], [50, 85],
   ]) {
+    if (x < 0 && z < 0) continue; // Sunny lights use its new sidewalk corners.
     addStreetLight(x, z);
     if (Math.abs(z) < 35) addTree(x + 3, z + 3, 1.1);
   }

@@ -1,3 +1,4 @@
+import { SUNNY_ROADS, SUNNY_DEPOT, SUNNY_DEPOT_APRON } from "../scene/sunny-layout";
 import type { Rect, Vec2 } from "../game/types";
 import { districtById, type DistrictId } from "../game/districts";
 
@@ -67,7 +68,7 @@ export function createMinimap(
 ): MinimapInstance {
   const size = options?.size ?? 105;
   const bounds = options?.bounds ?? DEFAULT_BOUNDS;
-  const depot = options?.depot ?? { x: -40, z: -40 };
+  const depot = options?.depot ?? SUNNY_DEPOT;
   const homes = options?.homes ?? [];
 
   const container = document.createElement("div");
@@ -135,14 +136,22 @@ export function createMinimap(
       const pZ = worldToMinimap(0, coord, size, bounds).y;
       // Dikey yol
       ctx.beginPath();
-      ctx.moveTo(pX, 0);
+      ctx.moveTo(pX, coord === -50 ? worldToMinimap(0, -5, size, bounds).y : 0);
       ctx.lineTo(pX, size);
       ctx.stroke();
       // Yatay yol
       ctx.beginPath();
-      ctx.moveTo(0, pZ);
+      ctx.moveTo(coord === -50 ? worldToMinimap(-5, 0, size, bounds).x : 0, pZ);
       ctx.lineTo(size, pZ);
       ctx.stroke();
+    }
+
+    // Same street footprints as the Sunny scene tiles, plus the depot approach.
+    ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+    for (const road of [...SUNNY_ROADS, SUNNY_DEPOT_APRON]) {
+      const a = worldToMinimap(road.minX, road.minZ, size, bounds);
+      const b = worldToMinimap(road.maxX, road.maxZ, size, bounds);
+      ctx.fillRect(a.x, a.y, b.x - a.x, b.y - a.y);
     }
 
     // Ana bulvarlar (X = 0, Z = 0)

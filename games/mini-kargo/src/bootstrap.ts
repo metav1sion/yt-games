@@ -25,7 +25,12 @@ import { RAMPS, checkRampLaunch } from "./game/ramps";
 import { createProps } from "./scene/props";
 import { assetManager } from "./scene/assets";
 import { createMinimap } from "./ui/minimap";
-export function startGame(app: HTMLElement) {
+export async function startGame(app: HTMLElement) {
+  try {
+    await assetManager.load();
+  } catch (error) {
+    console.warn("Mahalle varlıkları yüklenemedi; prosedürel görünüm kullanılıyor:", error);
+  }
   app.innerHTML =
     '<canvas id="game" aria-label="Mini Kargo oyun alanı"></canvas>';
   const renderer = new THREE.WebGLRenderer({

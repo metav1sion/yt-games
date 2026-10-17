@@ -8,7 +8,16 @@ export type AssetManifestItem = {
   url: string;
 };
 
-export const DEFAULT_ASSET_MANIFEST: AssetManifestItem[] = [];
+export const DEFAULT_ASSET_MANIFEST: AssetManifestItem[] = [
+  ...["building-type-a", "building-type-c"].map(id => ({
+    id, url: `${import.meta.env.BASE_URL}assets/kenney/suburban/${id}.glb`,
+  })),
+  ...["road-straight", "road-crossroad"].map(id => ({
+    id, url: `${import.meta.env.BASE_URL}assets/kenney/roads/${id}.glb`,
+  })),
+];
+
+export type ModelLoader = (id: string, url: string) => Promise<THREE.Group>;
 
 export type AssetManager = {
   load(manifest?: readonly AssetManifestItem[]): Promise<void>;
@@ -26,7 +35,8 @@ export type AssetManager = {
   reset(): void;
 };
 
-export function createAssetManager(): AssetManager {
+export function createAssetManager(loadModel?: ModelLoader): AssetManager {
+  const pending = new Map<string, Promise<void>>();
   const models = new Map<string, THREE.Group>();
   let state: AssetState = "idle";
   let loadedCount = 0;
@@ -74,56 +84,43 @@ export function createAssetManager(): AssetManager {
     totalCount = manifest.length;
     loadedCount = 0;
 
-    // Node.js veya test ortamında fetch/XHR desteği yoksa güvenli fallback
-    const hasNetwork =
-      typeof window !== "undefined" && typeof fetch !== "undefined";
-
-    if (!hasNetwork) {
-      state = "loaded";
-      notifyLoaded();
-      return;
-    }
-
     const loader = new GLTFLoader();
-
-    await Promise.all(
-      manifest.map(async (item) => {
-        try {
-          await new Promise<void>((resolve) => {
-            loader.load(
-              item.url,
-              (gltf) => {
-                const scene = gltf.scene;
-                scene.traverse((child) => {
-                  if (child instanceof THREE.Mesh) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                  }
-                });
-                models.set(item.id, scene);
-                loadedCount++;
-                notifyProgress();
-                resolve();
-              },
-              undefined,
-              (err) => {
-                // Dosya bulunamadığında (404) oyunu çökertme, fallback prosedürel modellere devam et
-                console.warn(
-                  `[AssetManager] Model yüklenemedi (${item.id}):`,
-                  err,
-                );
-                loadedCount++;
-                notifyProgress();
-                resolve();
-              },
-            );
-          });
-        } catch {
-          loadedCount++;
-          notifyProgress();
+    const fetchModel: ModelLoader = loadModel ?? (async (_id, url) => {
+      if (typeof window === "undefined" || typeof fetch === "undefined") {
+        throw new Error("Model loading requires a browser");
+      }
+      return (await loader.loadAsync(url)).scene;
+    });
+    await Promise.all(manifest.map(async item => {
+      try {
+        if (!models.has(item.id)) {
+          let request = pending.get(item.id);
+          if (!request) {
+            request = (async () => {
+              const scene = await fetchModel(item.id, item.url);
+              scene.traverse(child => {
+                if (child instanceof THREE.Mesh) {
+                  child.castShadow = true;
+                  child.receiveShadow = true;
+                }
+              });
+              models.set(item.id, scene);
+            })();
+            pending.set(item.id, request);
+          }
+          await request;
         }
-      }),
-    );
+      } catch (error) {
+        // A missing individual asset leaves its procedural replacement in use.
+        if (typeof window !== "undefined") {
+          console.warn(`[AssetManager] Model yüklenemedi (${item.id}):`, error);
+        }
+      } finally {
+        pending.delete(item.id);
+        loadedCount++;
+        notifyProgress();
+      }
+    }));
 
     state = "loaded";
     notifyLoaded();

@@ -128,7 +128,7 @@ export function createCar(assetModel?: THREE.Group | null) {
       body.rotation.x = THREE.MathUtils.lerp(
         body.rotation.x,
         pitchTarget,
-        1 - Math.exp((state.airborne ? 10 : 7) * dt),
+        1 - Math.exp(-(state.airborne ? 10 : 7) * dt),
       );
       const steering = -state.steerAngle;
       for (const w of wheelPivots) {

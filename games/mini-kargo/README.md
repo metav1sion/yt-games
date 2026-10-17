@@ -56,3 +56,9 @@ YouTube Playables SDK entegrasyonu, Android/iOS YouTube uygulamasında sertifika
 Trafik, paket düşmesi, yakıt, araç satın alma ve ekonomi sistemi yoktur. Sürüş tam fizik simülasyonu değildir. Dokunmatik ekran uyumu Chrome'da ekran boyutu ve pointer olaylarıyla doğrulanır; gerçek iPhone/Android cihaz testi ayrıca yapılmalıdır.
 
 Vite üretim derlemesinde Three.js içeren JavaScript parçası için 500 kB uyarısı verir. Bu bir derleme hatası değildir; gzip aktarım boyutu yaklaşık 144 kB, tüm paket yaklaşık 575 kB'dır. Paket içi varlık yolları görelidir; uzaktan font, model, doku veya CDN isteği yapılmaz.
+
+## MK-005 yerel mahalle varlıkları
+
+Güneş Mahallesi: Kenney [City Kit Suburban](https://kenney.nl/assets/city-kit-suburban) (`building-type-a`, `building-type-c`) ve [City Kit Roads](https://kenney.nl/assets/city-kit-roads) (`road-straight`, `road-crossroad`). CC0 lisansları `public/assets/kenney/suburban/License.txt` ve `roads/License.txt` içinde korunur. Yalnızca kullanılan GLB'ler ve her paketin gerekli `Textures/colormap.png` dokusu dağıtılır; tüm yüklemeler yereldir. Eksik model için aynı yerleşimde prosedürel görünüm kullanılır.
+
+MK-005 geometri ve yükleme testleri gerçek sürüş veya görsel kabul değildir. Dört evin girişleri, depo erişimi, kavşaklar, diğer bölgelere geçişler ve görünüm kullanıcı oynanış testi bekliyor.

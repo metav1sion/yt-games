@@ -46,3 +46,42 @@ describe("3D asset manager and loader", () => {
     expect(manager.getModel("car")).toBeNull();
   });
 });
+
+it("settles failed loads, keeps successful models, and reuses cached downloads", async () => {
+  let requests = 0;
+  const manager = createAssetManager(async id => {
+    requests++;
+    if (id === "missing") throw new Error("404");
+    const group = new THREE.Group();
+    group.add(new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1)));
+    return group;
+  });
+  const manifest = [{ id: "house", url: "./house.glb" }, { id: "missing", url: "./missing.glb" }];
+  await expect(manager.load(manifest)).resolves.toBeUndefined();
+  expect(manager.getState()).toMatchObject({ state: "loaded", progress: 1, loadedCount: 2 });
+  expect(manager.cloneModel("missing")).toBeNull();
+  const first = manager.cloneModel("house")!;
+  const second = manager.cloneModel("house")!;
+  expect(first).not.toBe(second);
+  first.position.x = 9;
+  expect(second.position.x).toBe(0);
+  expect((first.children[0] as THREE.Mesh).geometry).toBe((second.children[0] as THREE.Mesh).geometry);
+  await manager.load([{ id: "house", url: "./house.glb" }]);
+  expect(requests).toBe(2);
+});
+
+
+it("continues with a complete procedural world when every asset fails", async () => {
+  const { createWorld } = await import("./world");
+  const manager = createAssetManager(async () => { throw new Error("offline"); });
+  await expect(manager.load()).resolves.toBeUndefined();
+  const world = createWorld(manager);
+  expect(world.homes).toHaveLength(16);
+  expect(world.group.children.length).toBeGreaterThan(0);
+  expect(world.homes[0]).toEqual({ x: -65, z: -84 });
+  expect(world.updateUnlockedDistricts(3)).toEqual(["market", "industrial"]);
+  expect(manager.getState().progress).toBe(1);
+  const ids: string[] = [];
+  world.group.traverse(o => { if (o.userData.assetId) ids.push(o.userData.assetId); });
+  expect(ids).toEqual([]);
+});
