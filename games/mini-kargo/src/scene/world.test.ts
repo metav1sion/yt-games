@@ -3,9 +3,11 @@ import * as THREE from "three";
 import { readFileSync, existsSync } from "node:fs";
 import { SUNNY_ROAD_TILES, SUNNY_ROADS, SUNNY_HOMES, SUNNY_DEPOT_APRON } from "./sunny-layout";
 import { createWorld } from "./world";
+import { DISTRICT_TRAFFIC } from "./traffic";
+import { DISTRICT_PEDESTRIANS } from "./pedestrians";
 import { createAssetManager, DEFAULT_ASSET_MANIFEST } from "./assets";
 import { testCircleVsRect } from "../game/collision";
-import { getAvailableHomeIndices } from "../game/districts";
+import { getAvailableHomeIndices, getDistrictForHome, districts } from "../game/districts";
 
 // Catches reordered homes, blocked delivery approaches, disconnected streets,
 // and models loaded into a cache but never attached to the game world.
@@ -17,12 +19,12 @@ describe("MK-005 sunny world", () => {
       { x: -65, z: -14 }, { x: -35, z: -14 },
     ]);
     expect(world.homes.slice(4)).toEqual([
-      { x: 25, z: 30.5 }, { x: 75, z: 30.5 },
-      { x: 25, z: 80.5 }, { x: 75, z: 80.5 },
-      { x: 25, z: -69 }, { x: 75, z: -69 },
-      { x: 25, z: -19 }, { x: 75, z: -19 },
-      { x: -75, z: 30.5 }, { x: -25, z: 30.5 },
-      { x: -75, z: 80.5 }, { x: -25, z: 80.5 },
+      { x: 25, z: 31.5 }, { x: 75, z: 31.5 },
+      { x: 25, z: 81.5 }, { x: 75, z: 81.5 },
+      { x: 25, z: -68 }, { x: 75, z: -68 },
+      { x: 25, z: -18 }, { x: 75, z: -18 },
+      { x: -75, z: 31.5 }, { x: -25, z: 31.5 },
+      { x: -75, z: 81.5 }, { x: -25, z: 81.5 },
     ]);
     expect(getAvailableHomeIndices(1)).toEqual([0, 1, 2, 3]);
     expect(world.updateUnlockedDistricts(4)).toEqual(["market", "industrial", "coastal"]);
@@ -140,8 +142,8 @@ it("has one connected tile network with clear links to deliveries, depot and bou
 
 it("ships all GLB dependencies locally and keeps scaled houses inside simple colliders", () => {
   for (const item of DEFAULT_ASSET_MANIFEST) {
-    const pack = item.id.startsWith("building") ? "suburban" : "roads";
-    const { json } = glb(item.id, pack);
+    const [, pack, file] = item.url.match(/kenney\/([^/]+)\/([^/]+)\.glb$/)!;
+    const { json } = glb(file, pack);
     for (const ref of [...(json.images ?? []), ...(json.buffers ?? [])]) {
       if (ref.uri) {
         expect(ref.uri).not.toMatch(/^(https?:|data:)/);
@@ -159,4 +161,144 @@ it("ships all GLB dependencies locally and keeps scaled houses inside simple col
       }
     }
   }
+});
+
+describe("world district structure", () => {
+  it("maps every home index to a district and keeps delivery points clear once all districts are unlocked", () => {
+    const world = createWorld();
+    world.updateUnlockedDistricts(4);
+    expect(world.homes).toHaveLength(districts.reduce((n, d) => n + d.homeIndices.length, 0));
+    world.homes.forEach((home, i) => {
+      expect(getDistrictForHome(i)).toBeDefined();
+      expect(
+        world.obstacles.some(r => testCircleVsRect(home.x, home.z, 1.8, r).hit),
+        `home ${i} delivery blocked`,
+      ).toBe(false);
+      expect(home.x).toBeGreaterThan(world.bounds.minX);
+      expect(home.x).toBeLessThan(world.bounds.maxX);
+      expect(home.z).toBeGreaterThan(world.bounds.minZ);
+      expect(home.z).toBeLessThan(world.bounds.maxZ);
+    });
+  });
+
+  it("blocks locked district entrances until their unlock level and removes them after", () => {
+    const world = createWorld();
+    const lockedCount = world.obstacles.length;
+    for (const b of world.barriers) {
+      expect(b.group.visible).toBe(true);
+      expect(b.obstacles.length).toBeGreaterThan(0);
+    }
+    world.updateUnlockedDistricts(2);
+    expect(world.barriers.find(b => b.districtId === "market")!.group.visible).toBe(false);
+    expect(world.barriers.find(b => b.districtId === "industrial")!.group.visible).toBe(true);
+    expect(world.obstacles.length).toBeLessThan(lockedCount);
+  });
+});
+
+// Gerçek GLB sınır kutularıyla (render yok) tüm Kenney modelleri yüklüyken harita tutarlılığı.
+describe("world with every manifest model loaded", () => {
+  async function loadedWorld() {
+    const manager = createAssetManager(async (_id, url) => {
+      const [, pack, file] = url.match(/kenney\/([^/]+)\/([^/]+)\.glb$/)!;
+      const { json } = glb(file, pack);
+      const min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
+      for (const mesh of json.meshes) for (const prim of mesh.primitives) {
+        const a = json.accessors[prim.attributes.POSITION];
+        for (let k = 0; k < 3; k++) { min[k] = Math.min(min[k], a.min[k]); max[k] = Math.max(max[k], a.max[k]); }
+      }
+      const g = new THREE.Group();
+      const m = new THREE.Mesh(new THREE.BoxGeometry(max[0] - min[0], max[1] - min[1], max[2] - min[2]));
+      m.position.set((min[0] + max[0]) / 2, (min[1] + max[1]) / 2, (min[2] + max[2]) / 2);
+      g.add(m);
+      return g;
+    });
+    await manager.load();
+    const world = createWorld(manager);
+    world.updateUnlockedDistricts(4);
+    return world;
+  }
+
+  it("keeps every delivery stop clear of colliders", async () => {
+    const world = await loadedWorld();
+    world.homes.forEach((h, i) => {
+      expect(world.obstacles.some(r => testCircleVsRect(h.x, h.z, 1.8, r).hit), `home ${i}`).toBe(false);
+    });
+    expect(world.obstacles.some(r => testCircleVsRect(world.depot.x, world.depot.z, 1.8, r).hit)).toBe(false);
+  });
+
+  it("keeps boulevard centrelines drivable across the whole map", async () => {
+    const world = await loadedWorld();
+    for (const c of [-50, 0, 50]) {
+      for (let t = -95; t <= 95; t += 0.5) {
+        for (const [x, z] of [[c, t], [t, c]]) {
+          // Çarşı meydanındaki çeşme kasıtlı bir ada (çevresinden dönülür); onun dışında eksen açık olmalı.
+          if (Math.hypot(x - 50, z - 50) < 7) continue;
+          const blocker = world.obstacles.find(r => testCircleVsRect(x, z, 1.1, r).hit);
+          expect(blocker, `blocked at ${x},${z}`).toBeUndefined();
+        }
+      }
+    }
+  });
+
+  it("keeps district traffic lanes clear of model colliders", async () => {
+    const world = await loadedWorld();
+    for (const car of DISTRICT_TRAFFIC) {
+      for (let t = car.min ?? -90; t <= (car.max ?? 90); t += 0.5) {
+        const x = car.axis === "x" ? t : car.position.x;
+        const z = car.axis === "z" ? t : car.position.z;
+        expect(world.obstacles.some(r => testCircleVsRect(x, z, 0.7, r).hit), `${car.district} ${x},${z}`).toBe(false);
+      }
+    }
+  });
+
+  it("attaches district models", async () => {
+    const world = await loadedWorld();
+    const ids = new Set<string>();
+    world.group.traverse(o => { if (o.userData.assetId) ids.add(o.userData.assetId); });
+    for (const id of ["commercial/building-a", "industrial/building-a", "industrial/shipping-container-a", "nature/tree_palmTall"]) {
+      expect(ids.has(id), id).toBe(true);
+    }
+  });
+});
+
+describe("district traffic lanes", () => {
+  it("never route traffic through buildings or props, with or without loaded models", async () => {
+    const plain = createWorld();
+    plain.updateUnlockedDistricts(4);
+    for (const car of DISTRICT_TRAFFIC) {
+      const min = car.min ?? -90, max = car.max ?? 90;
+      for (let t = min; t <= max; t += 0.5) {
+        const x = car.axis === "x" ? t : car.position.x;
+        const z = car.axis === "z" ? t : car.position.z;
+        expect(plain.obstacles.some(r => testCircleVsRect(x, z, 0.7, r).hit), `${car.district} lane at ${x},${z}`).toBe(false);
+      }
+    }
+  });
+
+  it("never route district pedestrians into building colliders", async () => {
+    const plain = createWorld();
+    plain.updateUnlockedDistricts(4);
+    for (const ped of DISTRICT_PEDESTRIANS) {
+      const min = ped.min ?? -ped.limit!;
+      const max = ped.max ?? ped.limit!;
+      for (let t = min; t <= max; t += 0.5) {
+        const x = ped.axis === "x" ? t : ped.position.x;
+        const z = ped.axis === "z" ? t : ped.position.z;
+        expect(plain.obstacles.some(r => testCircleVsRect(x, z, 0.3, r).hit), `${ped.district} pedestrian at ${x},${z}`).toBe(false);
+      }
+    }
+  });
+
+  it("allows unlocking individual districts via extraUnlocked at level 1 (BuyPad purchase)", () => {
+    const world = createWorld();
+    expect(world.isDistrictUnlocked("market")).toBe(false);
+    expect(world.barriers.find((b) => b.districtId === "market")?.group.visible).toBe(true);
+
+    const initialObstacles = world.obstacles.length;
+    const newly = world.updateUnlockedDistricts(1, ["market"]);
+    expect(newly).toEqual(["market"]);
+    expect(world.isDistrictUnlocked("market")).toBe(true);
+    expect(world.barriers.find((b) => b.districtId === "market")?.group.visible).toBe(false);
+    expect(world.obstacles.length).toBeLessThan(initialObstacles);
+  });
 });

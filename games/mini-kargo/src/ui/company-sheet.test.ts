@@ -244,4 +244,33 @@ describe("CompanySheet Component", () => {
     sheet.dispose();
     expect((root as unknown as MockElement).children).toHaveLength(0);
   });
+
+  it("bölge seçici açık bölgeleri seçilebilir, kilitlileri devre dışı gösterir ve seçimi bildirir", () => {
+    const root = new MockElement() as unknown as HTMLElement;
+    const onSelectDistrict = vi.fn();
+    const sheet = createCompanySheet(root, {
+      onStartShift: vi.fn(),
+      onBuyUpgrade: vi.fn(),
+      onHireCourier: vi.fn(),
+      onClaimOffline: vi.fn(),
+      onSelectDistrict,
+    });
+    sheet.update({ ...mockProgression, companyLevel: 2 });
+    const picker = sheet.element.querySelector("#district-picker") as unknown as MockElement;
+    expect(picker.innerHTML).toContain('data-district="market"');
+    expect(picker.innerHTML).toMatch(/data-district="industrial" disabled/);
+    expect(picker.innerHTML).toMatch(/data-district="coastal" disabled/);
+    expect(picker.innerHTML).not.toMatch(/data-district="market" disabled/);
+    // Varsayılan vurgu: seviyedeki en son bölge
+    expect(picker.innerHTML).toMatch(/district-chip active[^>]*data-district="market"/);
+
+    const chip = (id: string, disabled = false) => ({
+      closest: () => ({ dataset: { district: id }, hasAttribute: () => disabled }),
+    });
+    picker.listeners["click"][0]({ target: chip("industrial", true) });
+    expect(onSelectDistrict).not.toHaveBeenCalled();
+    picker.listeners["click"][0]({ target: chip("sunny") });
+    expect(onSelectDistrict).toHaveBeenCalledWith("sunny");
+    expect(picker.innerHTML).toMatch(/district-chip active[^>]*data-district="sunny"/);
+  });
 });

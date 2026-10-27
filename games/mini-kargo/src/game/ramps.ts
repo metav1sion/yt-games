@@ -61,7 +61,7 @@ export const RAMPS: Ramp[] = [
   {
     id: "ramp_sunny_depot",
     name: "Güneş Depo Kestirme Rampası",
-    position: { x: -40, z: -26 },
+    position: { x: -50, z: -22 },
     size: { x: 4.8, z: 5.6 },
     heading: 0, // Güneye (+Z) ana bulvara doğru bakar
     height: 1.8,
@@ -71,12 +71,12 @@ export const RAMPS: Ramp[] = [
   {
     id: "ramp_industrial_crosscut",
     name: "Sanayi Transit Rampası",
-    position: { x: 18, z: -25 },
-    size: { x: 4.8, z: 5.8 },
-    heading: Math.PI / 2, // Doğuya (+X) doğru bakar
-    height: 2.0,
+    position: { x: 64, z: -51.5 },
+    size: { x: 5.0, z: 5.8 },
+    heading: Math.PI, // Kuzeye (-Z) konteynerlerin üzerinden atlar
+    height: 2.2,
     launchSpeed: 8,
-    launchMultiplier: 0.9,
+    launchMultiplier: 0.92,
   },
 ];
 

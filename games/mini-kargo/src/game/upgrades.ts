@@ -8,6 +8,14 @@ export type VehicleUpgrades = {
   nitro?: number;
 };
 
+export const MAX_UPGRADE_LEVEL: Record<UpgradeKind, number> = {
+  engine: 4,
+  brakes: 4,
+  cargo: 3,
+  grip: 4,
+  nitro: 4,
+};
+
 export const defaultUpgrades = (): VehicleUpgrades => ({
   engine: 0,
   brakes: 0,
@@ -30,7 +38,8 @@ export function canPurchaseUpgrade(
   level: number,
   money: number,
 ): boolean {
-  return (kind !== "cargo" || level < 1) && money >= upgradeCost(kind, level);
+  const maxLevel = MAX_UPGRADE_LEVEL[kind] ?? 4;
+  return level < maxLevel && money >= upgradeCost(kind, level);
 }
 
 export function tryPurchaseUpgrade<

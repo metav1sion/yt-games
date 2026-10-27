@@ -6,13 +6,23 @@ import {
 } from "./upgrades";
 
 describe("upgrade purchase rules", () => {
-  it("allows the first cargo upgrade at exactly its cost", () => {
+  it("allows cargo upgrades up to level 3 at exact costs", () => {
     expect(canPurchaseUpgrade("cargo", 0, 220)).toBe(true);
+    expect(canPurchaseUpgrade("cargo", 1, 440)).toBe(true);
+    expect(canPurchaseUpgrade("cargo", 2, 660)).toBe(true);
   });
 
-  it.each([1, 2, 10])("rejects cargo at level %i even with ample money", level => {
+  it.each([3, 4, 10])("rejects cargo at level %i even with ample money", level => {
     expect(canPurchaseUpgrade("cargo", level, 10000)).toBe(false);
   });
+
+  it.each(["engine", "brakes", "grip", "nitro"] as const)(
+    "enforces max level 4 for %s",
+    kind => {
+      expect(canPurchaseUpgrade(kind, 3, 10000)).toBe(true);
+      expect(canPurchaseUpgrade(kind, 4, 10000)).toBe(false);
+    },
+  );
 
   it.each([
     ["cargo", 0, 219],
@@ -62,7 +72,7 @@ describe("upgrade purchase transaction", () => {
     expect(original).toEqual(snapshot);
   });
 
-  it.each([1, 2, 10])("preserves the same state and legacy cargo level %i on rejection", level => {
+  it.each([3, 4, 10])("preserves the same state and legacy cargo level %i on rejection", level => {
     const original = state(10000, level);
     const snapshot = structuredClone(original);
     expect(tryPurchaseUpgrade(original, "cargo")).toBe(original);

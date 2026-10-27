@@ -1,8 +1,8 @@
 import type { VehicleState, Vec2 } from "./types";
 import {
   districtById,
-  districtForLevel,
   getAvailableHomeIndices,
+  resolveDistrict,
   getDistrictForHome,
   type DistrictId,
 } from "./districts";
@@ -33,8 +33,41 @@ export const packageInfo: Record<
   },
 };
 
-const packageFor = (index: number): PackageType =>
-  (["standard", "urgent", "fragile"] as PackageType[])[index % 3];
+export const PACKAGE_PROFILE_BY_HOME: Record<number, PackageType> = {
+  // Güneş Mahallesi (Konutlar - Dengeli rota)
+  0: "standard",
+  1: "urgent",
+  2: "fragile",
+  3: "standard",
+
+  // Çarşı Bölgesi (Dükkanlar - Sıcak yemek, taze ürün ve acil siparişler)
+  4: "urgent",   // Pastane (sıcak teslimat)
+  5: "fragile",  // Manav (taze gıda ezilmesin)
+  6: "standard", // Kitapçı
+  7: "urgent",   // Butik (hızlı moda siparişi)
+
+  // Sanayi Bölgesi (Ağır parçalar, antrepo ve lojistik)
+  8: "standard",  // Antrepo
+  9: "standard",  // Döküm
+  10: "urgent",   // Lojistik (üretim hattı parçası)
+  11: "standard", // Fabrika
+
+  // Sahil Bölgesi (Lüks villalar, marina ve hassas ürünler)
+  12: "fragile",  // Marina (hassas elektronik)
+  13: "urgent",   // Kafe (hızlı içecek siparişi)
+  14: "fragile",  // Villa (özel porselen/hediyelik)
+  15: "fragile",  // Kulüp (cam şişe kargo)
+};
+
+export const packageFor = (index: number): PackageType =>
+  PACKAGE_PROFILE_BY_HOME[index] ?? (["standard", "urgent", "fragile"] as PackageType[])[index % 3];
+
+export type DeliveryReward = {
+  score: number;
+  earnings: number;
+  reputation: number;
+  safeBonus: number;
+};
 
 export type DeliveryState = {
   phase: "loading" | "delivering" | "returning" | "result";
@@ -52,41 +85,63 @@ export type DeliveryState = {
   vehicleDamage: number;
   safeDrivingBonus: number;
   district: DistrictId;
+  routeOffset?: number;
+  maxDeliveries?: number | null;
+  lastReward?: DeliveryReward | null;
 };
 
-function pickTargetHome(completed: number, companyLevel: number): number {
-  const activeDistrict = districtForLevel(companyLevel);
+function pickTargetHome(
+  stepIndex: number,
+  companyLevel: number,
+  selectedDistrict?: DistrictId | null,
+  unlockedDistricts?: DistrictId[] | Set<DistrictId>,
+): number {
+  const activeDistrict = resolveDistrict(companyLevel, selectedDistrict, unlockedDistricts);
   const homesInDistrict = activeDistrict.homeIndices;
   if (homesInDistrict && homesInDistrict.length > 0) {
-    return homesInDistrict[completed % homesInDistrict.length];
+    return homesInDistrict[stepIndex % homesInDistrict.length];
   }
-  const available = getAvailableHomeIndices(companyLevel);
-  return available[completed % available.length] ?? 0;
+  const available = getAvailableHomeIndices(companyLevel, unlockedDistricts);
+  return available[stepIndex % available.length] ?? 0;
 }
 
 export function createDeliveryState(
   cargoLevel = 0,
   companyLevel = 1,
+  selectedDistrict: DistrictId | null = null,
+  routeOffset = 0,
+  maxDeliveries: number | null = null,
+  unlockedDistricts?: DistrictId[] | Set<DistrictId>,
 ): DeliveryState {
-  const targetIndex = pickTargetHome(0, companyLevel);
+  const safeOffset = Math.max(0, Math.floor(routeOffset));
+  const targetIndex = pickTargetHome(
+    safeOffset,
+    companyLevel,
+    selectedDistrict,
+    unlockedDistricts,
+  );
   const targetDistrict = getDistrictForHome(targetIndex);
+  const pkg = packageFor(targetIndex);
 
   return {
     phase: "loading",
     completed: 0,
     targetIndex,
     holdSeconds: 0,
-    secondsLeft: 45,
+    secondsLeft: packageInfo[pkg].seconds,
     score: 0,
     earnings: 0,
     reputation: 0,
-    packageType: packageFor(targetIndex),
+    packageType: pkg,
     packageSlot: 0,
-    capacity: Math.min(2, 1 + cargoLevel),
+    capacity: Math.min(4, 1 + cargoLevel),
     packageDamage: 0,
     vehicleDamage: 0,
     safeDrivingBonus: 0,
     district: targetDistrict,
+    routeOffset: safeOffset,
+    maxDeliveries: maxDeliveries ?? null,
+    lastReward: null,
   };
 }
 
@@ -98,9 +153,11 @@ export function stepDelivery(
   dt: number,
   collisionDamage = 0,
   companyLevel = 1,
+  selectedDistrict: DistrictId | null = null,
+  unlockedDistricts?: DistrictId[] | Set<DistrictId>,
 ): DeliveryState {
   if (state.phase === "result") return state;
-  const s = { ...state };
+  const s: DeliveryState = { ...state };
 
   if (s.phase === "delivering" && collisionDamage > 0) {
     s.vehicleDamage = Math.min(100, s.vehicleDamage + collisionDamage * 22);
@@ -141,36 +198,61 @@ export function stepDelivery(
       const qualityMultiplier = Math.max(0.35, 1 - s.packageDamage / 220);
       const safeBonus = s.packageDamage === 0 ? 25 : 0;
       const qualityReward = Math.floor(reward * qualityMultiplier) + safeBonus;
+      const repGain = s.secondsLeft > 20 ? 2 : 1;
 
       s.score += reward;
       s.earnings += qualityReward;
-      s.reputation += s.secondsLeft > 20 ? 2 : 1;
+      s.reputation += repGain;
       s.safeDrivingBonus += safeBonus;
       s.completed++;
+      s.lastReward = {
+        score: reward,
+        earnings: qualityReward,
+        reputation: repGain,
+        safeBonus,
+      };
 
-      if (s.completed === 3) {
+      const nextStep = (s.routeOffset ?? 0) + s.completed;
+      if (s.maxDeliveries != null && s.completed >= s.maxDeliveries) {
         s.phase = "result";
       } else if (s.packageSlot < s.capacity) {
         s.packageSlot++;
         s.phase = "delivering";
-        s.targetIndex = pickTargetHome(s.completed, companyLevel);
+        s.targetIndex = pickTargetHome(
+          nextStep,
+          companyLevel,
+          selectedDistrict,
+          unlockedDistricts,
+        );
         s.district = getDistrictForHome(s.targetIndex);
         s.packageType = packageFor(s.targetIndex);
         s.secondsLeft = packageInfo[s.packageType].seconds;
         s.packageDamage = 0;
       } else {
         s.phase = "returning";
-        s.targetIndex = pickTargetHome(s.completed, companyLevel);
+        s.targetIndex = pickTargetHome(
+          nextStep,
+          companyLevel,
+          selectedDistrict,
+          unlockedDistricts,
+        );
         s.district = getDistrictForHome(s.targetIndex);
       }
     } else {
+      const nextStep = (s.routeOffset ?? 0) + s.completed;
       s.phase = "delivering";
       s.packageSlot = 1;
-      s.targetIndex = pickTargetHome(s.completed, companyLevel);
+      s.targetIndex = pickTargetHome(
+        nextStep,
+        companyLevel,
+        selectedDistrict,
+        unlockedDistricts,
+      );
       s.district = getDistrictForHome(s.targetIndex);
       s.packageType = packageFor(s.targetIndex);
       s.secondsLeft = packageInfo[s.packageType].seconds;
       s.packageDamage = 0;
+      s.lastReward = null;
     }
   }
 

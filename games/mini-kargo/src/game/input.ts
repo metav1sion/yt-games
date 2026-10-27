@@ -158,6 +158,8 @@ export type InputController = {
   readJoystick(): Vec2;
   setNitro(on: boolean): void;
   setHandbrake(on: boolean): void;
+  consumeInteract(): boolean;
+  triggerInteract?(): void;
   reset(): void;
   dispose(): void;
 };
@@ -165,11 +167,18 @@ export function createInput(joystick: HTMLElement): InputController {
   const state = createInputState();
   const keyboard = createKeyboardState();
   let externalNitro = false,
-    externalHandbrake = false;
+    externalHandbrake = false,
+    interactTriggered = false;
   const knob = joystick.querySelector<HTMLElement>(".stick-knob")!;
   let pointer: number | null = null;
   function keydown(e: KeyboardEvent) {
     const k = normalizeKey(e.key);
+    if (k === "e") {
+      if ((e.target as HTMLElement)?.closest("button,input")) return;
+      e.preventDefault();
+      interactTriggered = true;
+      return;
+    }
     if (!driveKeys.has(k)) return;
     if ((e.target as HTMLElement)?.closest("button,input")) return;
     e.preventDefault();
@@ -233,6 +242,7 @@ export function createInput(joystick: HTMLElement): InputController {
     keyboard.reset();
     externalNitro = false;
     externalHandbrake = false;
+    interactTriggered = false;
     const capturedPointer = pointer;
     pointer = null;
     if (capturedPointer !== null && joystick.hasPointerCapture(capturedPointer))
@@ -273,6 +283,16 @@ export function createInput(joystick: HTMLElement): InputController {
       };
     },
     readJoystick: state.read,
+    consumeInteract() {
+      if (interactTriggered) {
+        interactTriggered = false;
+        return true;
+      }
+      return false;
+    },
+    triggerInteract() {
+      interactTriggered = true;
+    },
     setNitro(on) {
       externalNitro = on;
     },

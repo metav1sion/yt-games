@@ -8,13 +8,29 @@ export type AssetManifestItem = {
   url: string;
 };
 
+const kenney = (pack: string, files: string[]) =>
+  files.map(file => ({
+    id: pack === "suburban" || pack === "roads" ? file : `${pack}/${file}`,
+    url: `${import.meta.env.BASE_URL}assets/kenney/${pack}/${file}.glb`,
+  }));
+
 export const DEFAULT_ASSET_MANIFEST: AssetManifestItem[] = [
-  ...["building-type-a", "building-type-c"].map(id => ({
-    id, url: `${import.meta.env.BASE_URL}assets/kenney/suburban/${id}.glb`,
-  })),
-  ...["road-straight", "road-crossroad"].map(id => ({
-    id, url: `${import.meta.env.BASE_URL}assets/kenney/roads/${id}.glb`,
-  })),
+  ...kenney("suburban", ["building-type-a", "building-type-c"]),
+  ...kenney("roads", ["road-straight", "road-crossroad"]),
+  ...kenney("commercial", [
+    "building-a", "building-c", "building-e", "building-f", "building-g", "building-h",
+    "detail-awning", "detail-awning-wide", "detail-parasol-a", "detail-parasol-b",
+  ]),
+  ...kenney("industrial", [
+    "building-a", "building-b", "building-d", "building-f",
+    "shipping-container-a", "shipping-container-b", "shipping-container-c",
+    "chimney-large", "water-tower", "detail-tank-large",
+  ]),
+  ...kenney("nature", [
+    "tree_palmTall", "tree_palmDetailedShort", "tree_palmShort", "tree_oak", "tree_default", "tree_detailed",
+    "plant_bush", "plant_bushLarge", "flower_redA", "flower_yellowA", "flower_purpleA",
+    "rock_largeA", "rock_smallA", "fence_simple", "sign", "statue_column", "canoe", "tent_smallOpen",
+  ]),
 ];
 
 export type ModelLoader = (id: string, url: string) => Promise<THREE.Group>;

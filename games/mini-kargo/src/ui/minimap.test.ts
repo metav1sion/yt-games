@@ -129,6 +129,12 @@ describe("Minimap", () => {
       expect(isDistrictLocked("coastal", 4)).toBe(false);
       expect(isDistrictLocked("coastal", 5)).toBe(false);
     });
+
+    it("unlockedDistricts listesi verildiğinde düşük seviyede de açık görünür", () => {
+      expect(isDistrictLocked("market", 1, ["sunny", "market"])).toBe(false);
+      expect(isDistrictLocked("industrial", 1, new Set(["sunny", "industrial"]))).toBe(false);
+      expect(isDistrictLocked("coastal", 1, ["sunny", "market"])).toBe(true);
+    });
   });
 
   describe("createMinimap lifecycle and DOM", () => {

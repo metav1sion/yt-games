@@ -180,7 +180,7 @@ p {
 }
 .mobile-actions {
   position: absolute;
-  bottom: max(26px, env(safe-area-inset-bottom));
+  bottom: calc(84px + env(safe-area-inset-bottom));
   right: max(24px, env(safe-area-inset-right));
   display: flex;
   gap: 12px;
@@ -270,8 +270,8 @@ p {
     height: 118px;
   }
   .mobile-actions {
-    right: max(20px, env(safe-area-inset-right));
-    bottom: max(20px, env(safe-area-inset-bottom));
+    right: max(18px, env(safe-area-inset-right));
+    bottom: calc(80px + env(safe-area-inset-bottom));
     gap: 12px;
   }
   .touch-action-btn {
@@ -436,8 +436,8 @@ p {
     pointer-events: auto !important;
   }
   .mobile-actions {
-    right: max(14px, env(safe-area-inset-right));
-    bottom: max(12px, env(safe-area-inset-bottom));
+    right: max(18px, env(safe-area-inset-right));
+    bottom: calc(66px + env(safe-area-inset-bottom));
     gap: 10px;
   }
   .touch-action-btn {
@@ -1507,6 +1507,47 @@ h1 {
   opacity: 0.45;
   cursor: not-allowed;
   background: #95a5a6;
+}
+.district-picker {
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+}
+.district-chips {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+}
+.district-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 2px solid #c9d6c3;
+  border-radius: 12px;
+  background: #fffaf0;
+  color: #23443d;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.district-chip b {
+  font-size: 11px;
+  letter-spacing: 0.3px;
+}
+.district-chip small {
+  font-size: 10px;
+  color: #6b7f74;
+}
+.district-chip.active {
+  border-color: #235546;
+  background: #e4f2e2;
+  box-shadow: 0 0 0 2px rgba(35, 85, 70, 0.18);
+}
+.district-chip.locked {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 .shift-cta-box {
   margin-top: 8px;

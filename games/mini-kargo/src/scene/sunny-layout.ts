@@ -26,9 +26,18 @@ for (const z of rows) {
 }
 for (const x of columns) {
   for (let z = -90; z <= -10; z += 10) {
-    if (!rows.includes(z)) SUNNY_ROAD_TILES.push({ x, z, model: "road-straight", rotation: Math.PI / 2 });
+    if (!rows.includes(z)) {
+      const isDepotJunction = x === -50 && z === -30;
+      SUNNY_ROAD_TILES.push({
+        x,
+        z,
+        model: isDepotJunction ? "road-crossroad" : "road-straight",
+        rotation: isDepotJunction ? 0 : Math.PI / 2,
+      });
+    }
   }
 }
+SUNNY_ROAD_TILES.push({ x: -60, z: -30, model: "road-straight", rotation: 0 });
 export const SUNNY_ROADS: Rect[] = [
   ...rows.map(z => ({ minX: -95, maxX: -5, minZ: z - 5, maxZ: z + 5 })),
   ...columns.map(x => ({ minX: x - 5, maxX: x + 5, minZ: -95, maxZ: -5 })),

@@ -201,6 +201,40 @@ export function createSound() {
       note(110, 0, 0.12);
       note(75, 0.08, 0.18);
     },
+    playMoneyDrain() {
+      if (!context || !enabled || paused || context.state !== "running") return;
+      try {
+        const osc = context.createOscillator();
+        const gain = context.createGain();
+        const at = context.currentTime;
+        // Ritmik, hafif ve tok sayma tıkırtısı
+        const freq = 1050 + (Math.random() - 0.5) * 140;
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, at);
+        osc.frequency.exponentialRampToValueAtTime(420, at + 0.035);
+
+        gain.gain.setValueAtTime(0.045, at);
+        gain.gain.exponentialRampToValueAtTime(0.001, at + 0.04);
+
+        osc.connect(gain);
+        gain.connect(context.destination);
+        osc.start(at);
+        osc.stop(at + 0.045);
+        osc.onended = () => {
+          osc.disconnect();
+          gain.disconnect();
+        };
+      } catch {
+        /* Sound is optional */
+      }
+    },
+    playUnlockJingle() {
+      // C5 - E5 - G5 - C6 neşeli zafer arpeji
+      note(523.25, 0, 0.1);
+      note(659.25, 0.07, 0.1);
+      note(783.99, 0.14, 0.12);
+      note(1046.5, 0.21, 0.35);
+    },
     dispose() {
       try {
         engineOsc?.stop();

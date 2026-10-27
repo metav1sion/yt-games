@@ -31,12 +31,21 @@ export function worldToMinimap(
 }
 
 /**
- * Belirtilen bölgenin oyuncunun şirket seviyesine göre kilitli olup olmadığını kontrol eder.
+ * Belirtilen bölgenin oyuncunun şirket seviyesine veya açık bölgeler listesine göre kilitli olup olmadığını kontrol eder.
  */
 export function isDistrictLocked(
   districtId: DistrictId,
   companyLevel: number,
+  unlockedDistricts?: DistrictId[] | Set<DistrictId>,
 ): boolean {
+  if (districtId === "sunny") return false;
+  if (unlockedDistricts) {
+    if (unlockedDistricts instanceof Set) {
+      if (unlockedDistricts.has(districtId)) return false;
+    } else if (Array.isArray(unlockedDistricts) && unlockedDistricts.includes(districtId)) {
+      return false;
+    }
+  }
   const district = districtById(districtId);
   return companyLevel < district.unlockLevel;
 }
@@ -58,6 +67,8 @@ export type MinimapInstance = {
     phase: string,
     companyLevel: number,
     dt: number,
+    courierPositions?: Vec2[],
+    unlockedDistricts?: DistrictId[] | Set<DistrictId>,
   ): void;
   dispose(): void;
 };
@@ -91,6 +102,8 @@ export function createMinimap(
     targetPos: Vec2,
     phase: string,
     companyLevel: number,
+    courierPositions?: Vec2[],
+    unlockedDistricts?: DistrictId[] | Set<DistrictId>,
   ) {
     if (!ctx) return;
 
@@ -111,9 +124,9 @@ export function createMinimap(
     ctx.fillStyle = "#eddab8";
     ctx.fillRect(0, half, half, half);
 
-    // Coastal Deniz Alanı: X: [-100..-10], Z: [40..100]
-    const seaTopLeft = worldToMinimap(-100, 40, size, bounds);
-    const seaBottomRight = worldToMinimap(-10, 100, size, bounds);
+    // Coastal Deniz Alanı: X: [-100..-8], Z: [88..100] (kumsal 84..88)
+    const seaTopLeft = worldToMinimap(-100, 88, size, bounds);
+    const seaBottomRight = worldToMinimap(-8, 100, size, bounds);
     ctx.fillStyle = "#6bb3ca";
     ctx.fillRect(
       seaTopLeft.x,
@@ -154,6 +167,26 @@ export function createMinimap(
       ctx.fillRect(a.x, a.y, b.x - a.x, b.y - a.y);
     }
 
+    // Bölge içi bağlantı sokakları (Çarşı, Sanayi ve Sahil)
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.38)";
+    ctx.lineWidth = 1.0;
+    for (const z of [-66, -16, 34, 84]) {
+      const p1 = worldToMinimap(0, z, size, bounds);
+      const p2 = worldToMinimap(88, z, size, bounds);
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.stroke();
+    }
+    for (const z of [34, 80]) {
+      const p1 = worldToMinimap(-88, z, size, bounds);
+      const p2 = worldToMinimap(0, z, size, bounds);
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.stroke();
+    }
+
     // Ana bulvarlar (X = 0, Z = 0)
     ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
     ctx.lineWidth = 2.4;
@@ -178,10 +211,29 @@ export function createMinimap(
     ctx.textBaseline = "middle";
 
     for (const d of lockedDistricts) {
-      if (isDistrictLocked(d.id, companyLevel)) {
+      if (isDistrictLocked(d.id, companyLevel, unlockedDistricts)) {
         ctx.fillStyle = "rgba(18, 38, 34, 0.65)";
         ctx.fillRect(d.x, d.y, d.w, d.h);
-        ctx.fillText("🔒", d.x + d.w / 2, d.y + d.h / 2);
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "14px sans-serif";
+        ctx.fillText("🔒", d.x + d.w / 2, d.y + d.h / 2 - 5);
+        ctx.font = "bold 8px sans-serif";
+        ctx.fillText(`SV. ${districtById(d.id).unlockLevel}`, d.x + d.w / 2, d.y + d.h / 2 + 8);
+      }
+    }
+
+    // Bölge adları (açık bölgelerde çeyreğin üst kenarında)
+    ctx.font = "bold 7px sans-serif";
+    ctx.fillStyle = "rgba(27, 60, 52, 0.75)";
+    const quadrants: { id: DistrictId; x: number; y: number }[] = [
+      { id: "sunny", x: 0, y: 0 },
+      { id: "industrial", x: half, y: 0 },
+      { id: "coastal", x: 0, y: half },
+      { id: "market", x: half, y: half },
+    ];
+    for (const q of quadrants) {
+      if (!isDistrictLocked(q.id, companyLevel, unlockedDistricts)) {
+        ctx.fillText(districtById(q.id).name.split(" ")[0], q.x + half / 2, q.y + 6);
       }
     }
     ctx.restore();
@@ -242,6 +294,22 @@ export function createMinimap(
       ctx.restore();
     }
 
+    // 6.5. SAHA KURYELERİ (Çalışan Filosu - Mavi Daireler)
+    if (courierPositions && courierPositions.length > 0) {
+      ctx.save();
+      for (const cp of courierPositions) {
+        const mp = worldToMinimap(cp.x, cp.z, size, bounds);
+        ctx.beginPath();
+        ctx.arc(mp.x, mp.y, 2.2, 0, Math.PI * 2);
+        ctx.fillStyle = "#3498db";
+        ctx.fill();
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
     // 7. OYUNCU (Araba)
     ctx.save();
     const cp = worldToMinimap(vehiclePos.x, vehiclePos.z, size, bounds);
@@ -279,9 +347,26 @@ export function createMinimap(
   return {
     container,
     canvas,
-    update(vehiclePos, vehicleHeading, targetPos, phase, companyLevel, dt) {
+    update(
+      vehiclePos,
+      vehicleHeading,
+      targetPos,
+      phase,
+      companyLevel,
+      dt,
+      courierPositions,
+      unlockedDistricts,
+    ) {
       pulseTime += dt;
-      draw(vehiclePos, vehicleHeading, targetPos, phase, companyLevel);
+      draw(
+        vehiclePos,
+        vehicleHeading,
+        targetPos,
+        phase,
+        companyLevel,
+        courierPositions,
+        unlockedDistricts,
+      );
     },
     dispose() {
       container.remove();

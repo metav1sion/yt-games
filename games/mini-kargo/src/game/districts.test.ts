@@ -122,3 +122,40 @@ describe("expanded 200x200 world architecture & barriers", () => {
     expect(world.barriers.find((b) => b.districtId === "coastal")?.group.visible).toBe(false);
   });
 });
+
+import { districtAt, resolveDistrict, unlockedDistricts, isDistrictUnlocked } from "./districts";
+import { createDeliveryState } from "./delivery";
+
+describe("district lookup and selection", () => {
+  it("maps every delivery point of the world to its own district by position", () => {
+    const world = createWorld();
+    world.homes.forEach((home, i) => {
+      expect(districtAt(home.x, home.z), `home ${i}`).toBe(getDistrictForHome(i));
+    });
+    expect(districtAt(world.depot.x, world.depot.z)).toBe("sunny");
+  });
+
+  it("lists only unlocked districts and falls back when selection is locked", () => {
+    expect(unlockedDistricts(1).map((d) => d.id)).toEqual(["sunny"]);
+    expect(unlockedDistricts(3).map((d) => d.id)).toEqual(["sunny", "market", "industrial"]);
+    expect(resolveDistrict(4, "market").id).toBe("market");
+    expect(resolveDistrict(4, null).id).toBe("coastal");
+    expect(resolveDistrict(1, "coastal").id).toBe("sunny");
+  });
+
+  it("starts deliveries in the selected unlocked district", () => {
+    expect(createDeliveryState(0, 4, "sunny").district).toBe("sunny");
+    expect(createDeliveryState(0, 4, "industrial").district).toBe("industrial");
+    expect(createDeliveryState(0, 2, "coastal").district).toBe("market");
+    expect(createDeliveryState(0, 3).district).toBe("industrial");
+  });
+
+  it("supports unlocking districts via unlockedList (BuyPad purchases) even at level 1", () => {
+    expect(isDistrictUnlocked("market", 1, ["sunny", "market"])).toBe(true);
+    expect(isDistrictUnlocked("industrial", 1, ["sunny", "market"])).toBe(false);
+    expect(unlockedDistricts(1, ["sunny", "market"]).map((d) => d.id)).toEqual(["sunny", "market"]);
+    expect(getAvailableHomeIndices(1, ["sunny", "market"])).toEqual([0, 1, 2, 3, 4, 5, 6, 7]);
+    expect(resolveDistrict(1, "market", ["sunny", "market"]).id).toBe("market");
+    expect(createDeliveryState(0, 1, "market", 0, null, ["sunny", "market"]).district).toBe("market");
+  });
+});

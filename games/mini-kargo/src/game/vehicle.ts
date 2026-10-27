@@ -1,4 +1,4 @@
-import type { DriveInput, Vec2, VehicleState } from "./types";
+import type { DriveInput, Vec2, VehicleState, VehicleType } from "./types";
 import type { VehicleUpgrades } from "./upgrades";
 
 /** Tüm sürüş sabitleri burada; birimler: birim, saniye, radyan. */
@@ -42,6 +42,21 @@ export const TUNING = {
   engineSpeed: 1.2,
   engineAccel: 1.65,
   brakePower: 5.5,
+  gripBonus: 2.2,
+  gripSlipReduction: 0.08,
+  nitroDrainReduction: 0.055,
+  nitroRefillBonus: 0.035,
+  nitroMaxBonus: 0.25,
+};
+
+export const SCOOTER_TUNING = {
+  accelMultiplier: 1.35, // Daha yüksek ivmelenme
+  turnRateMultiplier: 1.35, // Çeviklik / daha dar dönüş açısı
+  turnRiseSpeed: 2.4, // Düşük hızlarda bile çok çevik
+  steerAngleMax: 0.55, // Daha geniş gidon açısı / dar dönüş
+  brakeMultiplier: 1.25, // Hafif kütle sayesinde daha hızlı durma
+  coastDecelMultiplier: 1.25, // Hafif kütle sürtünme tepkisi
+  maxSpeedMultiplier: 1.05, // Çevik ve seri maksimum hız
 };
 
 const wrapAngle = (a: number) => Math.atan2(Math.sin(a), Math.cos(a));
@@ -53,10 +68,11 @@ const smoothstep = (t: number) => {
 };
 
 /** Hedefin üstündeki hız için sürtünme; w >= target >= 0. */
-function coast(w: number, target: number, amount: number, dt: number) {
+function coast(w: number, target: number, amount: number, dt: number, isScooter = false) {
   const T = TUNING;
+  const decel = T.coastDecel * (isScooter ? SCOOTER_TUNING.coastDecelMultiplier : 1);
   const dragged = target + (w - target) * Math.exp(-T.coastDrag * dt);
-  return Math.max(target, dragged - T.coastDecel * (1 - amount) * dt);
+  return Math.max(target, dragged - decel * (1 - amount) * dt);
 }
 
 export function stepVehicle(
@@ -64,25 +80,37 @@ export function stepVehicle(
   input: DriveInput,
   dt: number,
   upgrades: VehicleUpgrades = { engine: 0, brakes: 0, cargo: 0 },
+  vehicleType: VehicleType = state.type ?? "van",
 ): VehicleState {
   const T = TUNING;
+  const isScooter = vehicleType === "scooter";
+  const S = SCOOTER_TUNING;
   const throttle = clamp(input.throttle, -1, 1);
   const steer = clamp(input.steer, -1, 1);
-  const baseMax = T.maxSpeed + upgrades.engine * T.engineSpeed;
-  const baseAccel = T.accel + upgrades.engine * T.engineAccel;
-  const brakePower = T.brake + upgrades.brakes * T.brakePower;
+  const speedMult = isScooter ? S.maxSpeedMultiplier : 1;
+  const accelMult = isScooter ? S.accelMultiplier : 1;
+  const brakeMult = isScooter ? S.brakeMultiplier : 1;
+  const baseMax = (T.maxSpeed + upgrades.engine * T.engineSpeed) * speedMult;
+  const baseAccel = (T.accel + upgrades.engine * T.engineAccel) * accelMult;
+  const brakePower = (T.brake + upgrades.brakes * T.brakePower) * brakeMult;
+  const gripLevel = upgrades.grip ?? 0;
+  const nitroLevel = upgrades.nitro ?? 0;
+  const maxNitro = 1 + nitroLevel * (T.nitroMaxBonus ?? 0.25);
 
   // Nitro: tükenince doluluk nitroResume üstüne çıkana kadar kilitli.
-  let nitro = clamp(state.nitro, 0, 1);
+  let nitro = clamp(state.nitro, 0, maxNitro);
   let locked = state.nitroLocked ?? false;
   if (locked && nitro > T.nitroResume) locked = false;
   const boosting = input.nitro && !locked && nitro > 0 && throttle > 0.1;
   if (boosting) {
-    nitro = Math.max(0, nitro - T.nitroDrain * dt);
+    const drain = Math.max(0.14, T.nitroDrain - nitroLevel * T.nitroDrainReduction);
+    nitro = Math.max(0, nitro - drain * dt);
     if (nitro <= 0) locked = true;
   } else {
-    const refill = state.drifting ? T.nitroDriftRefill : T.nitroRefill;
-    nitro = Math.min(1, nitro + refill * dt);
+    const refill =
+      (state.drifting ? T.nitroDriftRefill : T.nitroRefill) +
+      nitroLevel * T.nitroRefillBonus;
+    nitro = Math.min(maxNitro, nitro + refill * dt);
   }
   const boost = boosting ? T.nitroBoost : 1;
 
@@ -106,12 +134,17 @@ export function stepVehicle(
   const maxSpeed = baseMax * boost;
   const accel = baseAccel * boost * (airborne ? T.airThrottleMultiplier : 1);
 
+  const turnRate = T.turnRate * (isScooter ? S.turnRateMultiplier : 1);
+  const turnRiseSpeed = isScooter ? S.turnRiseSpeed : T.turnRiseSpeed;
+  const steerAngleMax = isScooter ? S.steerAngleMax : T.steerAngleMax;
+  const steerAngleFollow = isScooter ? 18 : T.steerAngleFollow;
+
   // Dönüş: hıza bağlı, duran araç dönmez, geri giderken ters çalışır.
   const vfBefore =
     state.velocity.x * Math.sin(state.heading) +
     state.velocity.z * Math.cos(state.heading);
   const speedAbs = Math.abs(vfBefore);
-  const rise = smoothstep(speedAbs / T.turnRiseSpeed);
+  const rise = smoothstep(speedAbs / turnRiseSpeed);
   const falloff =
     1 -
     T.turnFalloff *
@@ -122,7 +155,7 @@ export function stepVehicle(
   const steerDir = isReversing ? -1 : 1;
   let yawRate =
     -steer *
-    T.turnRate *
+    turnRate *
     rise *
     falloff *
     steerDir *
@@ -140,11 +173,13 @@ export function stepVehicle(
 
   // Yanal tutuş
   const totalSpeed = Math.hypot(state.velocity.x, state.velocity.z);
+  const effectiveGrip = T.grip + gripLevel * T.gripBonus;
+  const effectiveSlip = Math.max(0.08, T.highSpeedSlip - gripLevel * T.gripSlipReduction);
   const baseGrip = input.handbrake
     ? T.driftGrip
-    : T.grip *
+    : effectiveGrip *
       (1 -
-        T.highSpeedSlip * Math.abs(steer) * clamp(totalSpeed / baseMax, 0, 1));
+        effectiveSlip * Math.abs(steer) * clamp(totalSpeed / baseMax, 0, 1));
   const grip = baseGrip * (airborne ? T.airGripMultiplier : 1);
   vl *= Math.exp(-grip * dt);
 
@@ -152,7 +187,7 @@ export function stepVehicle(
   const sign = Math.abs(throttle) < 0.02 ? 0 : Math.sign(throttle);
   const amount = Math.abs(throttle);
   if (sign === 0) {
-    const w = coast(Math.abs(vf), 0, 0, dt);
+    const w = coast(Math.abs(vf), 0, 0, dt, isScooter);
     vf = w < T.stopSnap ? 0 : w * Math.sign(vf);
   } else {
     let w = vf * sign;
@@ -164,7 +199,7 @@ export function stepVehicle(
       const rate = (sign > 0 ? accel : T.reverseAccel) / limit;
       w = target + (w - target) * Math.exp(-rate * dt);
     } else {
-      w = coast(w, target, amount, dt);
+      w = coast(w, target, amount, dt, isScooter);
     }
     vf = w * sign;
   }
@@ -174,8 +209,8 @@ export function stepVehicle(
   const vz = fz * vf + lz * vl;
   const steerAngle =
     state.steerAngle +
-    (steer * T.steerAngleMax - state.steerAngle) *
-      (1 - Math.exp(-T.steerAngleFollow * dt));
+    (steer * steerAngleMax - state.steerAngle) *
+      (1 - Math.exp(-steerAngleFollow * dt));
   return {
     heading,
     velocity: { x: vx, z: vz },
@@ -190,10 +225,11 @@ export function stepVehicle(
     altitude,
     verticalVelocity,
     airborne,
+    type: vehicleType,
   };
 }
 
-export function resetVehicle(depot: Vec2): VehicleState {
+export function resetVehicle(depot: Vec2, type: VehicleType = "van"): VehicleState {
   return {
     position: { ...depot },
     velocity: { x: 0, z: 0 },
@@ -205,5 +241,6 @@ export function resetVehicle(depot: Vec2): VehicleState {
     altitude: 0,
     verticalVelocity: 0,
     airborne: false,
+    type,
   };
 }

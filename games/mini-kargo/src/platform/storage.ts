@@ -1,4 +1,5 @@
 import { defaultUpgrades, type VehicleUpgrades } from "../game/upgrades";
+import { districts, type DistrictId } from "../game/districts";
 
 export type Courier = {
   id: string;
@@ -21,12 +22,16 @@ export type Preferences = {
   lastPlayedTimestamp?: number;
   offlineEarningsAccumulated?: number;
   couriers?: Courier[];
+  unlockedVehicles?: string[];
+  currentVehicle?: string;
+  unlockedDistricts?: DistrictId[];
 };
 
 export type CompanyProgression = Preferences & {
   lastPlayedTimestamp: number;
   offlineEarningsAccumulated: number;
   couriers: Courier[];
+  unlockedDistricts?: DistrictId[];
 };
 
 export type StorageAdapter = {
@@ -42,11 +47,15 @@ const defaults = (): Preferences => ({
   companyLevel: 1,
   completedDeliveries: 0,
   upgrades: defaultUpgrades(),
+  unlockedVehicles: ["van"],
+  currentVehicle: "van",
+  unlockedDistricts: ["sunny"],
 });
 
 function valid(value: unknown): Preferences {
   if (!value || typeof value !== "object") return defaults();
   const record = value as Record<string, unknown>;
+  const companyLevel = Math.max(1, nonNegativeInteger(record.companyLevel) || 1);
   const res: Preferences = {
     bestScore:
       typeof record.bestScore === "number" &&
@@ -58,10 +67,17 @@ function valid(value: unknown): Preferences {
       typeof record.soundEnabled === "boolean" ? record.soundEnabled : true,
     money: nonNegativeInteger(record.money),
     reputation: nonNegativeInteger(record.reputation),
-    companyLevel: Math.max(1, nonNegativeInteger(record.companyLevel) || 1),
+    companyLevel,
     completedDeliveries: nonNegativeInteger(record.completedDeliveries),
     upgrades: validUpgrades(record.upgrades),
+    unlockedVehicles: validUnlockedVehicles(record.unlockedVehicles),
+    currentVehicle: "van",
+    unlockedDistricts: validUnlockedDistricts(record.unlockedDistricts, companyLevel),
   };
+  res.currentVehicle = validCurrentVehicle(
+    record.currentVehicle,
+    res.unlockedVehicles!,
+  );
 
   if (
     typeof record.lastPlayedTimestamp === "number" &&
@@ -134,12 +150,49 @@ function nonNegativeInteger(value: unknown) {
     : 0;
 }
 
+function validUnlockedVehicles(value: unknown): string[] {
+  if (!Array.isArray(value)) return ["van"];
+  const list = value.filter(
+    (v): v is string => typeof v === "string" && v.trim().length > 0,
+  );
+  if (!list.includes("van")) list.unshift("van");
+  return list;
+}
+
+function validCurrentVehicle(value: unknown, unlocked: string[]): string {
+  if (typeof value === "string" && unlocked.includes(value)) {
+    return value;
+  }
+  return "van";
+}
+
+function validUnlockedDistricts(value: unknown, companyLevel = 1): DistrictId[] {
+  const set = new Set<DistrictId>(["sunny"]);
+  for (const d of districts) {
+    if (companyLevel >= d.unlockLevel) {
+      set.add(d.id);
+    }
+  }
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      if (item === "sunny" || item === "market" || item === "industrial" || item === "coastal") {
+        set.add(item);
+      }
+    }
+  }
+  return Array.from(set);
+}
+
 export function asCompanyProgression(pref: Preferences): CompanyProgression {
+  const level = pref.companyLevel ?? 1;
   return {
     ...pref,
     lastPlayedTimestamp: pref.lastPlayedTimestamp ?? Date.now(),
     offlineEarningsAccumulated: pref.offlineEarningsAccumulated ?? 0,
     couriers: pref.couriers ?? [],
+    unlockedVehicles: pref.unlockedVehicles ?? ["van"],
+    currentVehicle: pref.currentVehicle ?? "van",
+    unlockedDistricts: validUnlockedDistricts(pref.unlockedDistricts, level),
   };
 }
 

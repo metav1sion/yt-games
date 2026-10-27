@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { stepVehicle, resetVehicle, TUNING } from "./vehicle";
 import { joystickToDrive } from "./input";
 import type { DriveInput, VehicleState } from "./types";
+import type { VehicleUpgrades } from "./upgrades";
 
 const car = (): VehicleState => ({
   position: { x: 0, z: 0 },
@@ -31,7 +32,7 @@ function run(
   input: DriveInput,
   seconds: number,
   dt = 1 / 60,
-  upgrades = { engine: 0, brakes: 0, cargo: 0 },
+  upgrades: VehicleUpgrades = { engine: 0, brakes: 0, cargo: 0 },
 ) {
   for (let i = 0; i < Math.round(seconds / dt); i++)
     s = stepVehicle(s, input, dt, upgrades);
@@ -244,6 +245,75 @@ describe("upgrades", () => {
       return s.position.z;
     };
     expect(stopDistance(up)).toBeLessThan(stopDistance({ engine: 0, brakes: 0, cargo: 0 }));
+  });
+  it("grip upgrade reduces lateral slip in high-speed turns", () => {
+    const base = run(
+      { ...car(), velocity: { x: 4, z: 10 } },
+      drive({ throttle: 0.8, steer: 1 }),
+      0.35,
+      1 / 60,
+      { engine: 0, brakes: 0, cargo: 0, grip: 0 },
+    );
+    const grippy = run(
+      { ...car(), velocity: { x: 4, z: 10 } },
+      drive({ throttle: 0.8, steer: 1 }),
+      0.35,
+      1 / 60,
+      { engine: 0, brakes: 0, cargo: 0, grip: 3 },
+    );
+    expect(Math.abs(lateral(grippy))).toBeLessThan(Math.abs(lateral(base)));
+  });
+  it("nitro upgrade slows nitro drain and speeds up refill", () => {
+    const baseDrain = run(
+      car(),
+      drive({ throttle: 1, nitro: true }),
+      1.2,
+      1 / 60,
+      { engine: 0, brakes: 0, cargo: 0, nitro: 0 },
+    );
+    const upDrain = run(
+      car(),
+      drive({ throttle: 1, nitro: true }),
+      1.2,
+      1 / 60,
+      { engine: 0, brakes: 0, cargo: 0, nitro: 3 },
+    );
+    expect(upDrain.nitro).toBeGreaterThan(baseDrain.nitro);
+
+    const baseRefill = run(
+      { ...car(), nitro: 0.3 },
+      drive({ throttle: 0.5 }),
+      1.0,
+      1 / 60,
+      { engine: 0, brakes: 0, cargo: 0, nitro: 0 },
+    );
+    const upRefill = run(
+      { ...car(), nitro: 0.3 },
+      drive({ throttle: 0.5 }),
+      1.0,
+      1 / 60,
+      { engine: 0, brakes: 0, cargo: 0, nitro: 3 },
+    );
+    expect(upRefill.nitro).toBeGreaterThan(baseRefill.nitro);
+  });
+  it("nitro upgrade increases maximum nitro capacity above baseline", () => {
+    const baseCap = run(
+      { ...car(), nitro: 1.0 },
+      drive({ throttle: 0.1 }),
+      5.0,
+      1 / 60,
+      { engine: 0, brakes: 0, cargo: 0, nitro: 0 },
+    );
+    expect(baseCap.nitro).toBeCloseTo(1.0, 2);
+
+    const upCap = run(
+      { ...car(), nitro: 1.0 },
+      drive({ throttle: 0.1 }),
+      5.0,
+      1 / 60,
+      { engine: 0, brakes: 0, cargo: 0, nitro: 3 },
+    );
+    expect(upCap.nitro).toBeGreaterThan(1.5);
   });
 });
 
@@ -498,5 +568,55 @@ describe("jumping and vertical physics (air time)", () => {
     expect(s.airborne).toBe(false);
   });
 });
+
+describe("scooter physics profile", () => {
+  it("accelerates faster than van from rest", () => {
+    let vanState: VehicleState = car();
+    let scooterState: VehicleState = { ...car(), type: "scooter" };
+
+    for (let i = 0; i < 30; i++) {
+      vanState = stepVehicle(vanState, drive({ throttle: 1 }), 1 / 60);
+      scooterState = stepVehicle(scooterState, drive({ throttle: 1 }), 1 / 60);
+    }
+
+    expect(forward(scooterState)).toBeGreaterThan(forward(vanState));
+  });
+
+  it("turns with higher agility and tighter yaw rate than van", () => {
+    let vanState: VehicleState = { ...car(), velocity: { x: 0, z: 6 } };
+    let scooterState: VehicleState = { ...car(), velocity: { x: 0, z: 6 }, type: "scooter" };
+
+    for (let i = 0; i < 30; i++) {
+      vanState = stepVehicle(vanState, drive({ throttle: 0.5, steer: 1 }), 1 / 60);
+      scooterState = stepVehicle(scooterState, drive({ throttle: 0.5, steer: 1 }), 1 / 60);
+    }
+
+    expect(Math.abs(scooterState.heading)).toBeGreaterThan(Math.abs(vanState.heading));
+  });
+
+  it("decelerates and brakes faster due to lighter mass", () => {
+    let vanState: VehicleState = { ...car(), velocity: { x: 0, z: 10 } };
+    let scooterState: VehicleState = { ...car(), velocity: { x: 0, z: 10 }, type: "scooter" };
+
+    for (let i = 0; i < 20; i++) {
+      vanState = stepVehicle(vanState, drive({ throttle: -1 }), 1 / 60);
+      scooterState = stepVehicle(scooterState, drive({ throttle: -1 }), 1 / 60);
+    }
+
+    expect(speedOf(scooterState)).toBeLessThan(speedOf(vanState));
+  });
+
+  it("preserves vehicle type in state and supports resetVehicle with type", () => {
+    const s = resetVehicle({ x: 5, z: 15 }, "scooter");
+    expect(s.type).toBe("scooter");
+
+    const stepped = stepVehicle(s, drive({ throttle: 1 }), 1 / 60);
+    expect(stepped.type).toBe("scooter");
+
+    const defaultReset = resetVehicle({ x: 0, z: 0 });
+    expect(defaultReset.type).toBe("van");
+  });
+});
+
 
 

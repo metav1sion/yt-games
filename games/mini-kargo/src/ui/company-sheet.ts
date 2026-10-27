@@ -1,10 +1,12 @@
 import type { CompanyProgression, Courier } from "../platform/storage";
 import {
   canPurchaseUpgrade,
+  MAX_UPGRADE_LEVEL,
   upgradeCost,
   upgradeLabel,
   type UpgradeKind,
 } from "../game/upgrades";
+import { districts, isDistrictUnlocked, type DistrictId } from "../game/districts";
 import {
   canHireCourier,
   courierHireCost,
@@ -16,6 +18,8 @@ export type CompanySheetActions = {
   onBuyUpgrade(kind: UpgradeKind): void;
   onHireCourier(candidate: Courier): void;
   onClaimOffline(): void;
+  /** Oyuncu teslimat bölgesini seçtiğinde çağrılır (yalnızca açık bölgeler seçilebilir). */
+  onSelectDistrict?(id: DistrictId): void;
 };
 
 export type CompanySheetInstance = {
@@ -24,6 +28,8 @@ export type CompanySheetInstance = {
   hide(): void;
   isVisible(): boolean;
   update(progression: CompanyProgression): void;
+  /** Seçili teslimat bölgesini vurgular; null = otomatik (en son açılan bölge). */
+  setSelectedDistrict(id: DistrictId | null): void;
   dispose(): void;
 };
 
@@ -83,6 +89,8 @@ export function createCompanySheet(
               </div>
             </div>
           </div>
+
+          <div class="district-picker" id="district-picker" aria-label="Teslimat bölgesi"></div>
 
           <div class="shift-cta-box">
             <button class="primary-button btn-shift" id="btn-start-shift">
@@ -161,6 +169,44 @@ export function createCompanySheet(
     if (latestProgression) {
       renderTabContent(latestProgression);
     }
+  }
+
+  // BÖLGE SEÇİCİ
+  let selectedDistrict: DistrictId | null = null;
+  const districtPicker = element.querySelector<HTMLElement>("#district-picker");
+  districtPicker?.addEventListener("click", (e) => {
+    const target = (e as { target?: HTMLElement | null }).target;
+    const chip = target?.closest?.("[data-district]") as HTMLElement | null | undefined;
+    const id = chip?.dataset.district as DistrictId | undefined;
+    if (!id || chip?.hasAttribute("disabled")) return;
+    selectedDistrict = id;
+    actions.onSelectDistrict?.(id);
+    if (latestProgression) renderDistrictPicker(latestProgression);
+  });
+
+  function renderDistrictPicker(prog: CompanyProgression) {
+    if (!districtPicker) return;
+    const isUnlocked = (dId: DistrictId) =>
+      isDistrictUnlocked(dId, prog.companyLevel, prog.unlockedDistricts);
+    const available = districts.filter((d) => isUnlocked(d.id));
+    const latest = available[available.length - 1] ?? districts[0];
+    const active = selectedDistrict && isUnlocked(selectedDistrict)
+      ? selectedDistrict
+      : latest.id;
+    districtPicker.innerHTML = `
+      <span class="eyebrow">TESLİMAT BÖLGESİ</span>
+      <div class="district-chips">
+        ${districts
+          .map((d) => {
+            const locked = !isUnlocked(d.id);
+            const cls = `district-chip${d.id === active ? " active" : ""}${locked ? " locked" : ""}`;
+            return `<button type="button" class="${cls}" data-district="${d.id}"${locked ? " disabled" : ""}>
+              <b>${locked ? "🔒 " : ""}${d.name}</b>
+              <small>${locked ? `Şirket Sv. ${d.unlockLevel}` : `Ödül ×${d.rewardMultiplier.toFixed(2)}`}</small>
+            </button>`;
+          })
+          .join("")}
+      </div>`;
   }
 
   // AKSİYON DÜĞMELERİ
@@ -253,9 +299,10 @@ export function createCompanySheet(
 
     for (const cfg of UPGRADE_CONFIGS) {
       const level = prog.upgrades[cfg.kind] ?? 0;
+      const maxLevel = MAX_UPGRADE_LEVEL[cfg.kind] ?? 4;
       const cost = upgradeCost(cfg.kind, level);
       const canBuy = canPurchaseUpgrade(cfg.kind, level, prog.money);
-      const isMax = cfg.kind === "cargo" && level >= 1;
+      const isMax = level >= maxLevel;
 
       const card = document.createElement("div");
       card.className = "garage-card";
@@ -268,7 +315,7 @@ export function createCompanySheet(
           </div>
           <p class="card-desc">${cfg.desc}</p>
           <div class="level-bars">
-            ${Array.from({ length: 4 })
+            ${Array.from({ length: maxLevel })
               .map(
                 (_, i) =>
                   `<span class="bar ${i < level ? "filled" : ""}"></span>`,
@@ -402,7 +449,12 @@ export function createCompanySheet(
         }
       }
 
+      renderDistrictPicker(progression);
       renderTabContent(progression);
+    },
+    setSelectedDistrict(id: DistrictId | null) {
+      selectedDistrict = id;
+      if (latestProgression) renderDistrictPicker(latestProgression);
     },
     dispose() {
       element.remove();

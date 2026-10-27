@@ -211,6 +211,12 @@ describe("input controller events", () => {
     input.reset();
     expect(input.read(0, 0, 1 / 60)).toMatchObject({ nitro: false, handbrake: false });
   });
+  it("captures 'e' key for interaction and consumes it once", () => {
+    expect(input.consumeInteract()).toBe(false);
+    key("keydown", "e");
+    expect(input.consumeInteract()).toBe(true);
+    expect(input.consumeInteract()).toBe(false);
+  });
   it("removes event handlers on disposal", () => {
     input.dispose();
     down(joystick, { pointerType: "mouse" });

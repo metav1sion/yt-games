@@ -191,4 +191,74 @@ describe("createCar vehicle geometry and visual parts", () => {
     expect(foundFrontHolder).toBe(true);
     expect(foundRollGroup).toBe(true);
   });
+
+  it("supports switching to scooter with two wheels, handlebars, courier helmet, and cargo basket", () => {
+    const car = createCar();
+    expect(car.getVehicleType()).toBe("van");
+
+    car.setVehicleType("scooter");
+    expect(car.getVehicleType()).toBe("scooter");
+
+    const body = car.group.children[0] as THREE.Group;
+    const meshes: THREE.Mesh[] = [];
+    body.traverse((child) => {
+      if (child instanceof THREE.Mesh) meshes.push(child);
+    });
+
+    // 1. İki tekerlek (ön ve arka tekerlek + jantlar = 4 silindir)
+    const cylinders = meshes.filter(
+      (m) => m.geometry instanceof THREE.CylinderGeometry,
+    );
+    expect(cylinders).toHaveLength(4);
+
+    // 2. Kırmızı kurye kaskı (#ff4757)
+    const materials = meshes.map((m) => m.material as THREE.MeshStandardMaterial);
+    const hasHelmet = materials.some(
+      (mat) => mat.color?.getHexString().toLowerCase() === "ff4757",
+    );
+    expect(hasHelmet).toBe(true);
+
+    // 3. Kargo sepeti rengi (#c98e51)
+    const hasCargoBasket = materials.some(
+      (mat) => mat.color?.getHexString().toLowerCase() === "c98e51",
+    );
+    expect(hasCargoBasket).toBe(true);
+
+    // 4. Scooter sürüş güncellemesi: tekerlekler döner ve ön gidon yönlenir
+    const movingVehicle: VehicleState = {
+      ...mockVehicle(),
+      type: "scooter",
+      velocity: { x: 0, z: 8 },
+      steerAngle: 0.35,
+    };
+    car.update(movingVehicle, true, 1 / 60);
+
+    let foundSteerGroup = false;
+    let foundRollGroup = false;
+    body.traverse((child) => {
+      if (child instanceof THREE.Group && child !== body) {
+        if (Math.abs(child.rotation.y - (-0.35)) < 1e-4) {
+          foundSteerGroup = true;
+        }
+        if (child.rotation.x > 0.01) {
+          foundRollGroup = true;
+        }
+      }
+    });
+
+    expect(foundSteerGroup).toBe(true);
+    expect(foundRollGroup).toBe(true);
+
+    // 5. Van'a geri geçiş yapılabilir
+    car.setVehicleType("van");
+    expect(car.getVehicleType()).toBe("van");
+    const vanMeshes: THREE.Mesh[] = [];
+    body.traverse((child) => {
+      if (child instanceof THREE.Mesh) vanMeshes.push(child);
+    });
+    const vanCylinders = vanMeshes.filter(
+      (m) => m.geometry instanceof THREE.CylinderGeometry,
+    );
+    expect(vanCylinders).toHaveLength(8);
+  });
 });

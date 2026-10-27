@@ -19,6 +19,9 @@ describe("safe preferences", () => {
       companyLevel: 1,
       completedDeliveries: 0,
       upgrades: { engine: 0, brakes: 0, cargo: 0 },
+      unlockedVehicles: ["van"],
+      currentVehicle: "van",
+      unlockedDistricts: ["sunny"],
     }));
   it("invalidFieldsUseDefaults", () =>
     expect(
@@ -33,6 +36,9 @@ describe("safe preferences", () => {
       companyLevel: 1,
       completedDeliveries: 0,
       upgrades: { engine: 0, brakes: 0, cargo: 0 },
+      unlockedVehicles: ["van"],
+      currentVehicle: "van",
+      unlockedDistricts: ["sunny"],
     }));
   it("nullRecordUsesDefaults", () =>
     expect(createLocalStorageAdapter(memory("null")).load()).toEqual({
@@ -43,6 +49,9 @@ describe("safe preferences", () => {
       companyLevel: 1,
       completedDeliveries: 0,
       upgrades: { engine: 0, brakes: 0, cargo: 0 },
+      unlockedVehicles: ["van"],
+      currentVehicle: "van",
+      unlockedDistricts: ["sunny"],
     }));
   it("storageReadFailureUsesDefaults", () =>
     expect(
@@ -60,6 +69,9 @@ describe("safe preferences", () => {
       companyLevel: 1,
       completedDeliveries: 0,
       upgrades: { engine: 0, brakes: 0, cargo: 0 },
+      unlockedVehicles: ["van"],
+      currentVehicle: "van",
+      unlockedDistricts: ["sunny"],
     }));
   it("storageWriteFailureDoesNotThrow", () =>
     expect(() =>
@@ -83,6 +95,9 @@ describe("safe preferences", () => {
       companyLevel: 1,
       completedDeliveries: 0,
       upgrades: { engine: 0, brakes: 0, cargo: 0 },
+      unlockedVehicles: ["van"],
+      currentVehicle: "van",
+      unlockedDistricts: ["sunny"],
     });
   });
   it("newRecordAndSoundPreferencePersist", () => {
@@ -99,6 +114,43 @@ describe("safe preferences", () => {
       companyLevel: 1,
       completedDeliveries: 0,
       upgrades: { engine: 0, brakes: 0, cargo: 0 },
+      unlockedVehicles: ["van"],
+      currentVehicle: "van",
+      unlockedDistricts: ["sunny"],
     });
+  });
+  it("persists unlocked vehicles and current vehicle switch", () => {
+    const backing = memory(null);
+    const adapter = createLocalStorageAdapter(backing);
+    adapter.save({
+      unlockedVehicles: ["van", "scooter"],
+      currentVehicle: "scooter",
+    });
+    expect(adapter.load().unlockedVehicles).toEqual(["van", "scooter"]);
+    expect(adapter.load().currentVehicle).toBe("scooter");
+  });
+  it("falls back to van if currentVehicle is not unlocked", () => {
+    const backing = memory(null);
+    const adapter = createLocalStorageAdapter(backing);
+    adapter.save({
+      unlockedVehicles: ["van"],
+      currentVehicle: "scooter",
+    });
+    expect(adapter.load().currentVehicle).toBe("van");
+  });
+  it("persists unlocked districts and includes company level districts", () => {
+    const backing = memory(null);
+    const adapter = createLocalStorageAdapter(backing);
+    adapter.save({
+      unlockedDistricts: ["sunny", "market"],
+    });
+    expect(adapter.load().unlockedDistricts).toEqual(["sunny", "market"]);
+
+    // Seviye arttığında ilgili bölge otomatik eklenir
+    adapter.save({
+      companyLevel: 3,
+    });
+    expect(adapter.load().unlockedDistricts).toContain("market");
+    expect(adapter.load().unlockedDistricts).toContain("industrial");
   });
 });

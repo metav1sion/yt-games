@@ -2,6 +2,8 @@ import { describe, it, expect } from "vitest";
 import {
   createDeliveryState,
   stepDelivery,
+  packageFor,
+  PACKAGE_PROFILE_BY_HOME,
   type DeliveryState,
 } from "./delivery";
 import { getAvailableHomeIndices, getDistrictForHome } from "./districts";
@@ -73,8 +75,27 @@ describe("delivery tour", () => {
     expect(s.completed).toBe(1);
     expect(s.score).toBe(score);
   });
-  it("thirdDeliveryEndsTour", () => {
+  it("thirdDeliveryContinuesEndlessLoop", () => {
     let s = createDeliveryState();
+    for (let i = 0; i < 3; i++) {
+      s = wait(s, depot);
+      s = wait(s, homes[i]);
+    }
+    expect(s.completed).toBe(3);
+    // Sonsuz modda 3. teslimattan sonra oyun sonuç ekranına kilitlenmez, depoya yönlendirir
+    expect(s.phase).toBe("returning");
+    expect(s.score).toBeGreaterThan(300);
+    expect(s.earnings).toBeGreaterThan(s.score);
+    expect(s.reputation).toBeGreaterThan(0);
+
+    // Depoya dönüp 1 saniye bekleyince kesintisiz 4. teslimat yüklenir
+    s = wait(s, depot);
+    expect(s.phase).toBe("delivering");
+    s = wait(s, homes[0]);
+    expect(s.completed).toBe(4);
+  });
+  it("optionalMaxDeliveriesEndsTourInResultPhase", () => {
+    let s = createDeliveryState(0, 1, null, 0, 3);
     for (let i = 0; i < 3; i++) {
       s = wait(s, depot);
       s = wait(s, homes[i]);
@@ -96,6 +117,22 @@ describe("delivery tour", () => {
     s = wait(s, homes[1]);
     s = wait(s, depot);
     expect(s.packageType).toBe("fragile");
+  });
+  it("matches package profile by home and assigns district characteristics", () => {
+    // Çarşı Pastane (4) -> urgent, Manav (5) -> fragile
+    expect(packageFor(4)).toBe("urgent");
+    expect(packageFor(5)).toBe("fragile");
+    // Sanayi Antrepo (8) -> standard
+    expect(packageFor(8)).toBe("standard");
+    // Sahil Marina (12) -> fragile, Villa (14) -> fragile
+    expect(packageFor(12)).toBe("fragile");
+    expect(packageFor(14)).toBe("fragile");
+
+    // Seçilen bölgeye göre ilk paketin türü ve süresi
+    const coastalDelivery = createDeliveryState(0, 4, "coastal");
+    expect(coastalDelivery.district).toBe("coastal");
+    expect(coastalDelivery.packageType).toBe(PACKAGE_PROFILE_BY_HOME[coastalDelivery.targetIndex]);
+    expect(coastalDelivery.secondsLeft).toBe(55); // Kırılabilir için 55s
   });
   it("cargoUpgradeCarriesIntoNextDelivery", () => {
     let s = wait(createDeliveryState(1), depot);
@@ -165,6 +202,28 @@ describe("delivery tour", () => {
     expect(s.score).toBe(0);
     expect(s.phase).toBe("loading");
   });
+  it("rotates across all 4 district homes across shifts when routeOffset advances", () => {
+    const visited = new Set<number>();
+    const sunnyHomes = [
+      { x: 10, z: 0 },
+      { x: 20, z: 0 },
+      { x: 30, z: 0 },
+      { x: 40, z: 0 },
+    ];
+    for (let shift = 0; shift < 4; shift++) {
+      let s = createDeliveryState(0, 1, "sunny", shift * 3, 3);
+      for (let i = 0; i < 3; i++) {
+        for (let f = 0; f < 66; f++)
+          s = stepDelivery(s, car(depot), depot, sunnyHomes, 1 / 60);
+        visited.add(s.targetIndex);
+        const targetPos = sunnyHomes[s.targetIndex];
+        for (let f = 0; f < 66; f++)
+          s = stepDelivery(s, car(targetPos), depot, sunnyHomes, 1 / 60);
+      }
+      expect(s.phase).toBe("result");
+    }
+    expect([...visited].sort((a, b) => a - b)).toEqual([0, 1, 2, 3]);
+  });
 });
 
 
@@ -196,9 +255,10 @@ describe("package damage across deliveries", () => {
 
   it("retains the last package damage for the result screen", () => {
     const state: DeliveryState = {
-      ...createDeliveryState(1), phase: "delivering", completed: 2,
+      ...createDeliveryState(1, 1, null, 0, 3), phase: "delivering", completed: 2,
       targetIndex: 2, packageSlot: 1, packageType: "fragile",
       secondsLeft: 0, packageDamage: 44, vehicleDamage: 27,
+      maxDeliveries: 3,
     };
     const result = stepDelivery(state, car(homes[2]), depot, homes, 1);
     expect(result.phase).toBe("result");
@@ -239,5 +299,125 @@ describe("contact events applied to delivery damage", () => {
       tracker.update([{ id: "traffic:0", severity: 0.5 }], 0.01));
     expect(state.packageDamage).toBeCloseTo(35.2);
     expect(state.vehicleDamage).toBeCloseTo(24.2);
+  });
+});
+
+describe("endless arcade idle delivery loop", () => {
+  it("runs continuously past 3 deliveries with immediate rewards on each drop", () => {
+    let s = createDeliveryState();
+    expect(s.maxDeliveries).toBeNull();
+    let accumulatedEarnings = 0;
+
+    for (let i = 0; i < 5; i++) {
+      // Depoda 1 saniye bekle -> paket yüklenir
+      s = wait(s, depot, 1.1);
+      expect(s.phase).toBe("delivering");
+      expect(s.secondsLeft).toBeGreaterThan(0);
+
+      // Hedef eve git ve teslim et
+      const targetPos = homes[s.targetIndex % homes.length];
+      s = wait(s, targetPos, 1.1);
+
+      expect(s.completed).toBe(i + 1);
+      // Kapasite 1 olduğu için teslimat sonrası hemen depoya dönüş fazına geçer
+      expect(s.phase).toBe("returning");
+      expect(s.lastReward).not.toBeNull();
+      expect(s.lastReward!.earnings).toBeGreaterThan(0);
+      expect(s.lastReward!.reputation).toBeGreaterThan(0);
+
+      accumulatedEarnings += s.lastReward!.earnings;
+      expect(s.earnings).toBe(accumulatedEarnings);
+    }
+
+    expect(s.completed).toBe(5);
+    expect(s.reputation).toBeGreaterThanOrEqual(5);
+  });
+
+  it("manages multi-capacity cargo before returning to depot in endless loop", () => {
+    // cargoLevel = 1 -> capacity = 2
+    let s = createDeliveryState(1);
+    expect(s.capacity).toBe(2);
+
+    // 1. Depo: 2 paket yüklenir (packageSlot = 1)
+    s = wait(s, depot, 1.1);
+    expect(s.phase).toBe("delivering");
+    expect(s.packageSlot).toBe(1);
+
+    // İlk paket teslimatı -> hemen 2. pakete geçer (delivering fazı devam eder)
+    let target = homes[s.targetIndex % homes.length];
+    s = wait(s, target, 1.1);
+    expect(s.completed).toBe(1);
+    expect(s.phase).toBe("delivering");
+    expect(s.packageSlot).toBe(2);
+    expect(s.lastReward).not.toBeNull();
+
+    // İkinci paket teslimatı -> kapasite doldu, depoya yönlendirilir (returning)
+    target = homes[s.targetIndex % homes.length];
+    s = wait(s, target, 1.1);
+    expect(s.completed).toBe(2);
+    expect(s.phase).toBe("returning");
+
+    // 2. Depo ziyareti: yeni paketler yüklenir
+    s = wait(s, depot, 1.1);
+    expect(s.phase).toBe("delivering");
+    expect(s.packageSlot).toBe(1);
+
+    // Üçüncü teslimat -> 3 teslimat sınırına takılmaz, slot 2'ye geçer
+    target = homes[s.targetIndex % homes.length];
+    s = wait(s, target, 1.1);
+    expect(s.completed).toBe(3);
+    expect(s.phase).toBe("delivering");
+    expect(s.packageSlot).toBe(2);
+
+    // Dördüncü teslimat -> returning
+    target = homes[s.targetIndex % homes.length];
+    s = wait(s, target, 1.1);
+    expect(s.completed).toBe(4);
+    expect(s.phase).toBe("returning");
+  });
+
+  it("clears lastReward on depot reload and awards fresh reward on next delivery", () => {
+    let s = wait(createDeliveryState(), depot, 1.1);
+    expect(s.lastReward).toBeNull();
+    const target = homes[s.targetIndex % homes.length];
+    s = wait(s, target, 1.1);
+
+    const firstReward = s.lastReward;
+    expect(firstReward).not.toBeNull();
+    expect(s.earnings).toBe(firstReward!.earnings);
+
+    // Depoya dönüp yeni kargo yükleyince lastReward sıfırlanır
+    s = wait(s, depot, 1.1);
+    expect(s.lastReward).toBeNull();
+    expect(s.phase).toBe("delivering");
+
+    // İkinci teslimatta yeni ödül atanır
+    const nextTarget = homes[s.targetIndex % homes.length];
+    s = wait(s, nextTarget, 1.1);
+
+    expect(s.completed).toBe(2);
+    expect(s.lastReward).not.toBeNull();
+    expect(s.earnings).toBe(firstReward!.earnings + s.lastReward!.earnings);
+  });
+
+  it("requires full 1 second stop at depot when returning to reload", () => {
+    let s = createDeliveryState();
+    s = wait(s, depot, 1.1);
+    s = wait(s, homes[s.targetIndex % homes.length], 1.1);
+    expect(s.phase).toBe("returning");
+
+    // Depoda sadece 0.5 saniye durunca yüklenmez
+    s = wait(s, depot, 0.5);
+    expect(s.phase).toBe("returning");
+    expect(s.holdSeconds).toBeGreaterThan(0.4);
+
+    // Depodan ayrılınca holdSeconds sıfırlanır
+    s = stepDelivery(s, car({ x: 10, z: 10 }), depot, homes, 1 / 60);
+    expect(s.holdSeconds).toBe(0);
+
+    // Depoda tam 1 saniye durunca yüklenir
+    s = wait(s, depot, 1.1);
+    expect(s.phase).toBe("delivering");
+    expect(s.packageSlot).toBe(1);
   });
 });

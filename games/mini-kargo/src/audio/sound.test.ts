@@ -83,8 +83,22 @@ describe("audio system", () => {
     sound.pickup();
     sound.delivery();
     sound.collision();
+    sound.playMoneyDrain();
+    sound.playUnlockJingle();
     sound.setEnabled(false);
     sound.setPaused(true);
+    sound.dispose();
+  });
+
+  it("plays money drain and unlock jingle when unlocked and running", async () => {
+    const sound = createSound();
+    await sound.unlock();
+
+    expect(() => {
+      sound.playMoneyDrain();
+      sound.playUnlockJingle();
+    }).not.toThrow();
+
     sound.dispose();
   });
 

@@ -2,6 +2,7 @@ import { packageInfo, type DeliveryState } from "../game/delivery";
 import { districtById } from "../game/districts";
 import {
   canPurchaseUpgrade,
+  MAX_UPGRADE_LEVEL,
   upgradeCost,
   type UpgradeKind,
   type VehicleUpgrades,
@@ -22,7 +23,7 @@ export function createHud(
   root.innerHTML = `<header class="topbar"><div class="brand"><span class="brand-icon">▣</span><div>mini kargo<small>MAHALLE TESLİMATLARI</small></div></div><span class="district" id="district-name">GÜNEŞ MAHALLESİ <i></i></span></header>
   <section class="task-card" aria-label="Aktif teslimat"><div class="task-heading"><span class="eyebrow">SIRADAKİ DURAK</span><span id="trip-count">01 / 03</span></div><div class="destination"><span class="destination-icon" id="nav-arrow">↑</span><div><h2 id="target-name">Kargo deposu</h2><p id="task-instruction">Paketini almak için alanda dur.</p></div></div><div class="loading-track"><span id="hold-progress"></span></div><div class="task-footer"><span id="distance">Depoda bekle</span><span class="package-status" id="package-status">▣ PAKET BEKLENİYOR</span></div></section>
   <section class="score-card"><div><span class="eyebrow">TUR PUANI</span><strong id="score">0</strong></div><div class="bonus-column"><span class="eyebrow">SÜRE BONUSU</span><strong id="timer">—</strong></div><div class="timer-track"><span id="timer-progress"></span></div></section>
-  <div class="toolbar"><button id="sound" class="icon-button" aria-label="Sesi kapat" title="Ses"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="sound-waves" d="M16 8c3 2 3 6 0 8m3-11c5 4 5 10 0 14"/><path class="sound-slash" d="M4 3l17 18"/></svg></button><button id="recover" class="recovery-button" title="Takılırsan depoya dön">↶ <span>Depoya dön</span></button></div>
+  <div class="toolbar"><button id="sound" class="icon-button" aria-label="Sesi kapat" title="Ses"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="sound-waves" d="M16 8c3 2 3 6 0 8m3-11c5 4 5 10 0 14"/><path class="sound-slash" d="M4 3l17 18"/></svg></button><button id="recover" class="recovery-button" title="Takılırsan depoya dön">↶ <span>Depoya dön</span></button><button id="open-office" class="recovery-button office-button" title="Şirket Yönetim Merkezi">🏢 <span>Ofis</span></button></div>
   <div id="joystick" role="group" aria-label="Sürüş joystick"><span class="stick-ring"></span><span class="stick-knob"></span></div>
   <div class="mobile-actions" aria-label="Mobil Kontroller">
     <button id="btn-handbrake" class="touch-action-btn btn-drift" aria-label="El Freni / Drift" title="Drift"><span class="btn-icon">🛑</span><span class="btn-label">DRİFT</span></button>
@@ -117,6 +118,7 @@ export function createHud(
     el("result").hidden = true;
     el("welcome").hidden = true;
     actions.openCompanySheet?.();
+    el("open-office")?.blur();
   }
 
   el("start").addEventListener("click", begin);
@@ -124,6 +126,7 @@ export function createHud(
   el("recover").addEventListener("click", recover);
   el("sound").addEventListener("click", toggle);
   el("btn-office")?.addEventListener("click", returnToOffice);
+  el("open-office")?.addEventListener("click", returnToOffice);
 
   if (actions.setHandbrake) {
     bindHoldButton(el("btn-handbrake"), actions.setHandbrake);
@@ -150,7 +153,9 @@ export function createHud(
       soundEnabled: boolean,
     ) {
       const delivering = s.phase === "delivering";
-      el("trip-count").textContent = `${String(Math.min(s.completed + 1, 3)).padStart(2, "0")} / 03`;
+      el("trip-count").textContent = s.maxDeliveries
+        ? `${String(Math.min(s.completed + 1, s.maxDeliveries)).padStart(2, "0")} / ${String(s.maxDeliveries).padStart(2, "0")}`
+        : `#${String(s.completed + 1).padStart(2, "0")}`;
       el("target-name").textContent = delivering
         ? `Ev ${String(s.targetIndex + 1).padStart(2, "0")}`
         : "Kargo deposu";
@@ -164,8 +169,12 @@ export function createHud(
             : s.phase === "returning"
               ? "Yeni paket için depoya dön."
               : "Paketini almak için alanda dur.";
+      const damageTag =
+        delivering && s.packageDamage >= 1
+          ? ` · %${Math.round(s.packageDamage)} HASAR`
+          : "";
       el("package-status").textContent = delivering
-        ? `▣ ${packageInfo[s.packageType].label}`
+        ? `▣ ${packageInfo[s.packageType].label}${damageTag}`
         : s.phase === "returning"
           ? "▣ DEPODA YÜKLE"
           : "▣ PAKET BEKLENİYOR";
@@ -174,8 +183,9 @@ export function createHud(
       el("timer").textContent = delivering
         ? `${Math.ceil(s.secondsLeft)}s`
         : "—";
+      const maxDuration = packageInfo[s.packageType]?.seconds ?? 45;
       el("timer-progress").style.width = delivering
-        ? `${(s.secondsLeft / 45) * 100}%`
+        ? `${Math.max(0, Math.min(100, (s.secondsLeft / maxDuration) * 100))}%`
         : "0%";
       el("timer").classList.toggle(
         "expired",
@@ -187,7 +197,7 @@ export function createHud(
         soundEnabled ? "Sesi kapat" : "Sesi aç",
       );
       el("sound").setAttribute("aria-pressed", String(!soundEnabled));
-      el("result").hidden = !(begun && s.phase === "result");
+      el("result").hidden = !((begun || (s.maxDeliveries ? s.completed >= s.maxDeliveries : false)) && s.phase === "result");
       el("result-score").textContent = String(s.score);
       el("best-score").textContent = String(progression.bestScore);
       el("result-earnings").textContent = `${s.earnings} ₺`;
@@ -202,9 +212,12 @@ export function createHud(
       el("district-name").innerHTML = `${districtById(s.district).name} <i></i>`;
       for (const kind of ["engine", "brakes", "cargo"] as UpgradeKind[]) {
         const level = progression.upgrades[kind] ?? 0;
+        const maxLevel = MAX_UPGRADE_LEVEL[kind] ?? 4;
         el(`${kind}-upgrade`).textContent =
-          kind === "cargo" && level >= 1
-            ? "Maksimum · 2 paket"
+          level >= maxLevel
+            ? kind === "cargo"
+              ? "Maksimum · 2 paket"
+              : `Maksimum · Seviye ${maxLevel}`
             : `Seviye ${level + 1} · ${upgradeCost(kind, level)} ₺`;
         el(`${kind}-upgrade`).parentElement?.parentElement?.toggleAttribute(
           "disabled",
@@ -212,13 +225,18 @@ export function createHud(
         );
       }
       if (s.completed > lastCompleted && s.phase !== "result") {
-        showToast("✓ Paket teslim edildi. Sıradaki için depoya!", 3000);
+        const rewardText = s.lastReward ? ` (+${s.lastReward.earnings} ₺)` : "";
+        const msg = s.phase === "delivering"
+          ? `✓ Paket teslim edildi!${rewardText} Sıradaki kargo adresine git.`
+          : `✓ Paket teslim edildi!${rewardText} Yeni kargolar için depoya dön!`;
+        showToast(msg, 3000);
       }
       lastCompleted = s.completed;
     },
     showToast,
-    setNitro(level: number) {
-      const percent = Math.max(0, Math.min(1, level)) * 100;
+    setNitro(level: number, maxLevel = 1) {
+      const max = Math.max(0.01, maxLevel);
+      const percent = Math.max(0, Math.min(1, level / max)) * 100;
       el("nitro-fill").style.width = `${percent}%`;
       el("nitro-fill").classList.toggle("low", percent < 15);
     },
@@ -230,6 +248,14 @@ export function createHud(
       el("nav-arrow").style.transform = `rotate(${bearing}rad)`;
     },
     hideResult() {
+      if (!begun) {
+        hintTimer = setTimeout(() => {
+          const hint = root.querySelector<HTMLElement>(".control-hint");
+          if (hint) hint.hidden = true;
+        }, 12000);
+      }
+      begun = true;
+      lastCompleted = 0;
       el("result").hidden = true;
       el("welcome").hidden = true;
     },
@@ -241,6 +267,7 @@ export function createHud(
       el("recover").removeEventListener("click", recover);
       el("sound").removeEventListener("click", toggle);
       el("btn-office")?.removeEventListener("click", returnToOffice);
+      el("open-office")?.removeEventListener("click", returnToOffice);
       for (const button of root.querySelectorAll<HTMLButtonElement>(
         "[data-upgrade]",
       ))

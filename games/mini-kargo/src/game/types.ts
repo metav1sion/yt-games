@@ -6,6 +6,7 @@ export type Rect = {
   maxZ: number;
   height?: number;
 };
+export type VehicleType = "van" | "scooter";
 export type VehicleState = {
   position: Vec2;
   velocity: Vec2;
@@ -17,6 +18,7 @@ export type VehicleState = {
   altitude: number;
   verticalVelocity: number;
   airborne: boolean;
+  type?: VehicleType;
 };
 export type DriveInput = {
   throttle: number;
