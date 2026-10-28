@@ -7,11 +7,13 @@ export type ParticleSystem = {
   dispose(): void;
   spawnMoneyStream(fromPos: Vec2, toPos: Vec2): void;
   spawnConfetti(pos: Vec2): void;
+  spawnImpactSparks(pos: Vec2 | THREE.Vector3, normal?: Vec2): void;
+  spawnCrashSmoke(pos: Vec2 | THREE.Vector3): void;
 };
 
-const MAX_PARTICLES = 250;
+const MAX_PARTICLES = 450;
 
-type ParticleType = "dust" | "nitro" | "money" | "confetti";
+type ParticleType = "dust" | "nitro" | "money" | "confetti" | "spark" | "smoke";
 
 type Particle = {
   active: boolean;
@@ -104,6 +106,21 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
     new THREE.Color("#2ed573"), // Canlı Yeşil
     new THREE.Color("#10ac84"), // Koyu Yeşil
     new THREE.Color("#a55eea"), // Mor
+  ];
+
+  const SPARK_COLORS = [
+    new THREE.Color("#ffffff"), // Akkor beyaz
+    new THREE.Color("#fff275"), // Parlak sarı
+    new THREE.Color("#ff9900"), // Ateş turuncusu
+    new THREE.Color("#ff5722"), // Kıvılcım kırmızısı
+    new THREE.Color("#ffd600"), // Altın sarısı
+  ];
+
+  const SMOKE_COLORS = [
+    new THREE.Color("#f8f9fa"), // Beyaz kaza dumanı
+    new THREE.Color("#e9ecef"), // Açık gri
+    new THREE.Color("#ced4da"), // Gri duman
+    new THREE.Color("#6c757d"), // Koyu duman
   ];
 
   function spawnDust(x: number, y: number, z: number, forwardX: number, forwardZ: number) {
@@ -219,6 +236,79 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
     }
   }
 
+  function spawnImpactSparks(pos: Vec2 | THREE.Vector3, normal?: Vec2) {
+    const count = 18; // 15-20 adet parlak kıvılcım
+    const px = "x" in pos ? pos.x : 0;
+    const py = "y" in pos ? pos.y : 0.45;
+    const pz = "z" in pos ? pos.z : 0;
+
+    for (let i = 0; i < count; i++) {
+      const p = particles[head];
+      p.active = true;
+      p.type = "spark";
+      p.age = 0;
+      p.maxLife = 0.18 + Math.random() * 0.18;
+      p.startScale = 0.24 + Math.random() * 0.1;
+      p.endScale = 0.04;
+
+      p.pos.set(
+        px + (Math.random() - 0.5) * 0.25,
+        py + (Math.random() - 0.5) * 0.2,
+        pz + (Math.random() - 0.5) * 0.25,
+      );
+
+      // Normal yönünde veya dışarıya 360 derece hız
+      let angle = Math.random() * Math.PI * 2;
+      if (normal && (normal.x !== 0 || normal.z !== 0)) {
+        const baseAngle = Math.atan2(normal.z, normal.x);
+        angle = baseAngle + (Math.random() - 0.5) * Math.PI * 0.9;
+      }
+      const speedH = 3.5 + Math.random() * 5.0;
+      p.vel.set(
+        Math.cos(angle) * speedH,
+        1.5 + Math.random() * 4.2,
+        Math.sin(angle) * speedH,
+      );
+
+      p.color.copy(SPARK_COLORS[Math.floor(Math.random() * SPARK_COLORS.length)]);
+      head = (head + 1) % MAX_PARTICLES;
+    }
+  }
+
+  function spawnCrashSmoke(pos: Vec2 | THREE.Vector3) {
+    const count = 9; // 8-12 adet kaza dumanı pufu
+    const px = "x" in pos ? pos.x : 0;
+    const py = "y" in pos ? pos.y : 0.5;
+    const pz = "z" in pos ? pos.z : 0;
+
+    for (let i = 0; i < count; i++) {
+      const p = particles[head];
+      p.active = true;
+      p.type = "smoke";
+      p.age = 0;
+      p.maxLife = 0.65 + Math.random() * 0.45;
+      p.startScale = 0.22 + Math.random() * 0.08;
+      p.endScale = 0.85 + Math.random() * 0.25;
+
+      p.pos.set(
+        px + (Math.random() - 0.5) * 0.4,
+        py + Math.random() * 0.3,
+        pz + (Math.random() - 0.5) * 0.4,
+      );
+
+      const angle = Math.random() * Math.PI * 2;
+      const speedH = 0.4 + Math.random() * 0.9;
+      p.vel.set(
+        Math.cos(angle) * speedH,
+        1.2 + Math.random() * 1.6, // Yavaşça yükselir
+        Math.sin(angle) * speedH,
+      );
+
+      p.color.copy(SMOKE_COLORS[Math.floor(Math.random() * SMOKE_COLORS.length)]);
+      head = (head + 1) % MAX_PARTICLES;
+    }
+  }
+
   function reset() {
     for (let i = 0; i < MAX_PARTICLES; i++) {
       particles[i].active = false;
@@ -325,6 +415,36 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
           } else {
             currentScale = p.startScale;
           }
+        } else if (p.type === "spark") {
+          // Kıvılcım: Yerçekimi ve hızlı küçülme
+          p.vel.y -= 14.0 * dt;
+          p.vel.x *= Math.exp(-2.5 * dt);
+          p.vel.z *= Math.exp(-2.5 * dt);
+
+          p.pos.x += p.vel.x * dt;
+          p.pos.y += p.vel.y * dt;
+          p.pos.z += p.vel.z * dt;
+
+          if (p.pos.y < 0.04) {
+            p.pos.y = 0.04;
+            p.vel.set(0, 0, 0);
+          }
+          currentScale = THREE.MathUtils.lerp(p.startScale, p.endScale, t);
+        } else if (p.type === "smoke") {
+          // Kaza Dumanı: Yavaşça yukarı yükselip genişler
+          p.vel.y *= Math.exp(-0.8 * dt);
+          p.vel.x *= Math.exp(-1.5 * dt);
+          p.vel.z *= Math.exp(-1.5 * dt);
+
+          p.pos.x += p.vel.x * dt;
+          p.pos.y += p.vel.y * dt;
+          p.pos.z += p.vel.z * dt;
+
+          if (t < 0.75) {
+            currentScale = THREE.MathUtils.lerp(p.startScale, p.endScale, t / 0.75);
+          } else {
+            currentScale = THREE.MathUtils.lerp(p.endScale, 0.02, (t - 0.75) / 0.25);
+          }
         } else {
           // dust ve nitro
           p.pos.x += p.vel.x * dt;
@@ -353,6 +473,8 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
     },
     spawnMoneyStream,
     spawnConfetti,
+    spawnImpactSparks,
+    spawnCrashSmoke,
     reset,
     dispose() {
       reset();

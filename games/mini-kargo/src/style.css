@@ -260,204 +260,7 @@ p {
   margin-left: 8px;
   color: #6b8272;
 }
-@media (max-width: 768px) {
-  #joystick {
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    left: max(20px, env(safe-area-inset-left));
-    bottom: max(20px, env(safe-area-inset-bottom));
-    width: 118px;
-    height: 118px;
-  }
-  .mobile-actions {
-    right: max(18px, env(safe-area-inset-right));
-    bottom: calc(80px + env(safe-area-inset-bottom));
-    gap: 12px;
-  }
-  .touch-action-btn {
-    width: 62px;
-    height: 62px;
-  }
-  .topbar {
-    top: max(12px, env(safe-area-inset-top));
-    left: max(14px, env(safe-area-inset-left));
-    right: max(14px, env(safe-area-inset-right));
-  }
-  .brand {
-    font-size: 20px;
-    gap: 8px;
-  }
-  .brand-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 11px;
-    font-size: 22px;
-  }
-  .brand small {
-    font-size: 6.5px;
-    letter-spacing: 1.4px;
-  }
-  .district {
-    font-size: 8px;
-    padding: 8px 12px;
-    letter-spacing: 0.6px;
-    gap: 6px;
-  }
-  .task-card {
-    top: max(58px, env(safe-area-inset-top) + 44px);
-    left: max(14px, env(safe-area-inset-left));
-    right: max(14px, env(safe-area-inset-right));
-    width: auto;
-    min-width: 0;
-    padding: 8px 14px;
-    border-radius: 14px;
-    box-shadow: 0 4px 18px #244a4012;
-  }
-  .task-heading {
-    gap: 10px;
-  }
-  .destination {
-    margin: 4px 0 6px;
-    gap: 10px;
-  }
-  .destination-icon {
-    width: 30px;
-    height: 30px;
-    font-size: 20px;
-  }
-  h2 {
-    font-size: 15px;
-    margin: 0 0 2px;
-  }
-  .destination p {
-    font-size: 10.5px;
-  }
-  .loading-track {
-    margin-top: 4px;
-    height: 3px;
-  }
-  .task-footer {
-    margin-top: 4px;
-    font-size: 8.5px;
-  }
-  .score-card {
-    top: max(138px, env(safe-area-inset-top) + 118px);
-    right: max(14px, env(safe-area-inset-right));
-    width: auto;
-    padding: 7px 14px;
-    border-radius: 13px;
-    gap: 14px;
-  }
-  .score-card .eyebrow {
-    font-size: 7px;
-  }
-  .score-card strong {
-    font-size: 14px;
-  }
-  .timer-track {
-    margin-top: 4px;
-    height: 3px;
-  }
-  .nitro-bar {
-    bottom: max(22px, env(safe-area-inset-bottom));
-    padding: 6px 12px;
-  }
-  .control-hint {
-    display: none;
-  }
-  .minimap-container {
-    top: max(195px, env(safe-area-inset-top) + 175px);
-    right: max(14px, env(safe-area-inset-right));
-    width: 95px;
-    height: 95px;
-    border-radius: 12px;
-  }
-}
 
-@media (max-height: 520px) {
-  .topbar {
-    top: max(6px, env(safe-area-inset-top));
-    left: max(12px, env(safe-area-inset-left));
-    right: max(12px, env(safe-area-inset-right));
-  }
-  .brand {
-    font-size: 17px;
-  }
-  .brand-icon {
-    width: 28px;
-    height: 28px;
-    font-size: 18px;
-  }
-  .district {
-    display: none;
-  }
-  .task-card {
-    top: max(8px, env(safe-area-inset-top));
-    left: 140px;
-    right: 170px;
-    width: auto;
-    padding: 5px 12px;
-    border-radius: 12px;
-  }
-  .destination {
-    margin: 2px 0;
-  }
-  .destination-icon {
-    width: 24px;
-    height: 24px;
-    font-size: 16px;
-  }
-  h2 {
-    font-size: 13px;
-  }
-  .destination p {
-    display: none;
-  }
-  .score-card {
-    top: max(8px, env(safe-area-inset-top));
-    right: max(12px, env(safe-area-inset-right));
-    width: auto;
-    padding: 5px 10px;
-    border-radius: 10px;
-  }
-  .minimap-container {
-    top: max(8px, env(safe-area-inset-top));
-    right: max(135px, env(safe-area-inset-right));
-    width: 75px;
-    height: 75px;
-    border-radius: 10px;
-  }
-  #joystick {
-    width: 96px;
-    height: 96px;
-    left: max(14px, env(safe-area-inset-left));
-    bottom: max(12px, env(safe-area-inset-bottom));
-    opacity: 1 !important;
-    pointer-events: auto !important;
-  }
-  .mobile-actions {
-    right: max(18px, env(safe-area-inset-right));
-    bottom: calc(66px + env(safe-area-inset-bottom));
-    gap: 10px;
-  }
-  .touch-action-btn {
-    width: 50px;
-    height: 50px;
-  }
-  .touch-action-btn .btn-icon {
-    font-size: 16px;
-  }
-  .touch-action-btn .btn-label {
-    font-size: 7px;
-  }
-  .nitro-bar {
-    bottom: max(12px, env(safe-area-inset-bottom));
-    padding: 4px 10px;
-  }
-  .control-hint {
-    display: none;
-  }
-}
 .pause-overlay {
   position: absolute;
   inset: 0;
@@ -985,30 +788,6 @@ h1 {
   }
 }
 @media (max-height: 500px) {
-  .topbar {
-    top: 12px;
-  }
-  .task-card {
-    top: 73px;
-    left: 18px;
-    right: auto;
-    width: 255px;
-    padding: 12px 16px;
-  }
-  .destination {
-    margin: 8px 0;
-  }
-  .task-footer {
-    margin-top: 7px;
-  }
-  .score-card {
-    top: 73px;
-    right: 18px;
-  }
-  .toolbar {
-    bottom: 15px;
-    right: 18px;
-  }
   .intro-card {
     margin: 35px 0 0 7vw;
     max-width: 360px;
@@ -1103,53 +882,7 @@ h1 {
 .error-screen p {
   margin: 12px 0 24px;
 }
-.topbar {
-  top: calc(16px + env(safe-area-inset-top));
-  left: calc(24px + env(safe-area-inset-left));
-  right: calc(24px + env(safe-area-inset-right));
-}
-.task-card {
-  top: calc(95px + env(safe-area-inset-top));
-  left: calc(24px + env(safe-area-inset-left));
-}
-.score-card {
-  top: calc(95px + env(safe-area-inset-top));
-  right: calc(24px + env(safe-area-inset-right));
-}
-@media (max-width: 600px) {
-  .topbar {
-    left: calc(18px + env(safe-area-inset-left));
-    right: calc(18px + env(safe-area-inset-right));
-  }
-  .task-card {
-    top: calc(85px + env(safe-area-inset-top));
-    left: calc(18px + env(safe-area-inset-left));
-    right: calc(18px + env(safe-area-inset-right));
-  }
-  .score-card {
-    top: calc(222px + env(safe-area-inset-top));
-    right: calc(18px + env(safe-area-inset-right));
-  }
-}
-@media (max-height: 500px) {
-  .topbar {
-    top: calc(10px + env(safe-area-inset-top));
-  }
-  .task-card,
-  .score-card {
-    top: calc(73px + env(safe-area-inset-top));
-  }
-  .task-card {
-    right: auto;
-    left: calc(18px + env(safe-area-inset-left));
-  }
-  .score-card {
-    right: calc(18px + env(safe-area-inset-right));
-  }
-  .toolbar {
-    right: calc(18px + env(safe-area-inset-right));
-  }
-}
+
 .icon-button svg {
   width: 20px;
   height: 20px;
@@ -1856,6 +1589,63 @@ h1 {
 }
 
 @media (max-width: 768px) {
+  #joystick {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    left: max(16px, env(safe-area-inset-left));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    width: 114px;
+    height: 114px;
+  }
+  .mobile-actions {
+    right: max(14px, env(safe-area-inset-right));
+    bottom: calc(74px + env(safe-area-inset-bottom));
+    gap: 12px;
+  }
+  .touch-action-btn {
+    width: 60px;
+    height: 60px;
+  }
+  .control-hint {
+    display: none;
+  }
+  .minimap-container {
+    top: max(195px, env(safe-area-inset-top) + 175px);
+    right: max(14px, env(safe-area-inset-right));
+    width: 95px;
+    height: 95px;
+    border-radius: 12px;
+  }
+  /* Requirement 3: Mobile portrait HUD - no collision with recover button */
+  .nitro-bar {
+    bottom: calc(146px + env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 12px;
+    z-index: 10;
+  }
+  .toolbar {
+    right: max(14px, env(safe-area-inset-right));
+    bottom: max(18px, env(safe-area-inset-bottom));
+    gap: 6px;
+  }
+  .icon-button,
+  .recovery-button {
+    height: 38px;
+    border-radius: 12px;
+  }
+  .icon-button {
+    width: 38px;
+    font-size: 18px;
+  }
+  .recovery-button {
+    padding: 0 10px;
+    font-size: 14px;
+  }
+  .recovery-button span {
+    font-size: 8.5px;
+    margin-left: 4px;
+  }
   .company-card {
     max-height: 94vh;
     border-radius: 18px;
@@ -1879,5 +1669,273 @@ h1 {
   }
   .tab-content {
     padding: 14px 16px;
+  }
+}
+
+@media (max-height: 520px) {
+  .topbar {
+    top: max(6px, env(safe-area-inset-top));
+    left: max(12px, env(safe-area-inset-left));
+    right: max(12px, env(safe-area-inset-right));
+  }
+  .brand {
+    font-size: 17px;
+  }
+  .brand-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
+  }
+  .district {
+    display: none;
+  }
+  .task-card {
+    top: max(8px, env(safe-area-inset-top));
+    left: 140px;
+    right: 220px;
+    width: auto;
+    padding: 5px 12px;
+    border-radius: 12px;
+  }
+  .destination {
+    margin: 2px 0;
+  }
+  .destination-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+  }
+  h2 {
+    font-size: 13px;
+  }
+  .destination p {
+    display: none;
+  }
+  .score-card {
+    top: max(8px, env(safe-area-inset-top));
+    right: max(10px, env(safe-area-inset-right));
+    width: 115px;
+    padding: 4px 8px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .score-card .eyebrow {
+    font-size: 6px;
+    letter-spacing: 0.5px;
+  }
+  .score-card strong {
+    font-size: 15px;
+    margin-top: 1px;
+  }
+  .score-card .bonus-column strong {
+    font-size: 14px;
+    margin-top: 1px;
+  }
+  .score-card .timer-track {
+    display: none;
+  }
+  .minimap-container {
+    top: max(8px, env(safe-area-inset-top));
+    right: max(135px, env(safe-area-inset-right));
+    width: 75px;
+    height: 75px;
+    border-radius: 10px;
+  }
+  #joystick {
+    width: 96px;
+    height: 96px;
+    left: max(14px, env(safe-area-inset-left));
+    bottom: max(12px, env(safe-area-inset-bottom));
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+  .mobile-actions {
+    right: max(18px, env(safe-area-inset-right));
+    bottom: calc(56px + env(safe-area-inset-bottom));
+    gap: 10px;
+    z-index: 10;
+  }
+  .touch-action-btn {
+    width: 48px;
+    height: 48px;
+  }
+  .touch-action-btn .btn-icon {
+    font-size: 15px;
+  }
+  .touch-action-btn .btn-label {
+    font-size: 6.5px;
+  }
+  .nitro-bar {
+    bottom: max(12px, env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px 10px;
+  }
+  .control-hint {
+    display: none;
+  }
+  .toolbar {
+    right: max(14px, env(safe-area-inset-right));
+    bottom: max(10px, env(safe-area-inset-bottom));
+    gap: 6px;
+  }
+  .icon-button,
+  .recovery-button {
+    height: 36px;
+    border-radius: 10px;
+  }
+  .icon-button {
+    width: 36px;
+    font-size: 16px;
+  }
+  .recovery-button {
+    padding: 0 10px;
+    font-size: 14px;
+  }
+  .recovery-button span {
+    font-size: 8px;
+  }
+
+  /* Compact Company Sheet in Mobile Landscape */
+  .company-sheet {
+    padding: max(4px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(4px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+  }
+  .company-card {
+    max-height: 98vh;
+    border-radius: 14px;
+    max-width: 800px;
+  }
+  .company-header {
+    padding: 6px 14px;
+    gap: 8px;
+  }
+  .company-brand {
+    gap: 8px;
+  }
+  .company-logo {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    border-radius: 8px;
+  }
+  .company-brand h1 {
+    font-size: 15px;
+  }
+  .company-brand small {
+    font-size: 7px;
+    letter-spacing: 1px;
+  }
+  .company-stats-pill {
+    padding: 3px 8px;
+    gap: 6px;
+    border-radius: 10px;
+  }
+  .stat-label {
+    font-size: 6.5px;
+    letter-spacing: 0.8px;
+  }
+  .stat-item b,
+  .stat-item strong {
+    font-size: 11px;
+  }
+  .stat-item.treasury strong {
+    font-size: 13px;
+  }
+  .company-tabs {
+    padding: 3px 12px;
+    gap: 6px;
+  }
+  .tab-button {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 8px;
+  }
+  .tab-content {
+    padding: 8px 14px;
+  }
+  .overview-grid {
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .summary-card {
+    padding: 8px 12px;
+    border-radius: 12px;
+  }
+  .summary-numbers {
+    margin-top: 6px;
+  }
+  .summary-numbers span {
+    font-size: 8px;
+  }
+  .summary-numbers strong {
+    font-size: 14px;
+    margin-top: 2px;
+  }
+  .offline-card {
+    padding: 8px 12px;
+    border-radius: 12px;
+  }
+  .offline-badge {
+    font-size: 7px;
+  }
+  .offline-card h3 {
+    font-size: 12px;
+    margin: 3px 0 1px;
+  }
+  .offline-card p {
+    font-size: 9.5px;
+    margin-bottom: 6px;
+  }
+  .offline-action-row strong {
+    font-size: 15px;
+  }
+  .btn-claim {
+    padding: 5px 12px;
+    font-size: 10px;
+    border-radius: 8px;
+  }
+  .district-picker {
+    margin-top: 4px;
+    gap: 3px;
+  }
+  .district-chips {
+    gap: 6px;
+  }
+  .district-chip {
+    padding: 4px 8px;
+    border-radius: 8px;
+  }
+  .district-chip b {
+    font-size: 9.5px;
+  }
+  .district-chip small {
+    font-size: 8.5px;
+  }
+  .shift-cta-box {
+    margin-top: 6px;
+  }
+  .btn-shift {
+    padding: 7px 14px;
+    border-radius: 12px;
+  }
+  .btn-shift span {
+    font-size: 13px;
+  }
+  .btn-shift small {
+    font-size: 8.5px;
+    margin-top: 1px;
+  }
+  .garage-grid {
+    gap: 8px;
+  }
+  .garage-card {
+    padding: 8px 10px;
+    border-radius: 12px;
+  }
+  .courier-card {
+    padding: 8px 10px;
+    border-radius: 12px;
   }
 }

@@ -101,6 +101,7 @@ export async function startGame(app: HTMLElement) {
   });
   const preferences = storage.load(),
     sound = createSound();
+  props.setSound?.(sound);
   let progression: CompanyProgression = asCompanyProgression(preferences);
   progression = applyOfflineEarnings(progression, Date.now());
   storage.save(progression);
@@ -651,10 +652,7 @@ export async function startGame(app: HTMLElement) {
         vehicle.velocity = collision.velocity;
 
         // Yıkılabilir / fırlayan nesneler (Props) çarpışma ve fizik simülasyonu
-        const propHit = props.update(dt, vehicle);
-        if (propHit) {
-          sound.collision();
-        }
+        props.update(dt, vehicle);
         const old = delivery;
         const trafficContacts = traffic.update(dt, vehicle.position);
         const pedestrianContacts = pedestrians.update(
@@ -665,7 +663,24 @@ export async function startGame(app: HTMLElement) {
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
         );
-        if (impact > 0.15) sound.collision();
+        if (impact > 0.15) {
+          sound.metalCrash();
+          // Çarpışma noktasından kıvılcım patlaması ve kaza dumanı
+          particles.spawnImpactSparks(vehicle.position);
+          particles.spawnCrashSmoke(vehicle.position);
+
+          // Trafik arabasıyla temas: panikle korna çal ve arabayı sars/it
+          if (trafficContacts.length > 0) {
+            sound.carHorn();
+            if (trafficContacts.collisionCarIndex != null) {
+              traffic.impactCar(
+                trafficContacts.collisionCarIndex,
+                vehicle.position,
+                Math.hypot(preVelocity.x, preVelocity.z) || 4.0,
+              );
+            }
+          }
+        }
         cameraShake = Math.max(cameraShake, impact);
         delivery = stepDelivery(
           delivery,

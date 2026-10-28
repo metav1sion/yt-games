@@ -12,10 +12,12 @@ import { buildIndustrialDistrict } from "./districts/industrial";
 import { buildCoastalDistrict } from "./districts/coastal";
 import { buildDistrictBarriers, type DistrictBarrier } from "./district-barriers";
 import { createCargoRacksView, type CargoRacksView } from "./cargo-racks";
+import { buildCityBuildings } from "./city-buildings";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
 export type { CargoRacksView } from "./cargo-racks";
+export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
   group: THREE.Group;
@@ -48,6 +50,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   buildMarketDistrict(ctx);
   buildIndustrialDistrict(ctx);
   buildCoastalDistrict(ctx);
+  buildCityBuildings(ctx);
 
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;

@@ -97,6 +97,8 @@ describe("audio system", () => {
     expect(() => {
       sound.playMoneyDrain();
       sound.playUnlockJingle();
+      sound.carHorn();
+      sound.metalCrash();
     }).not.toThrow();
 
     sound.dispose();

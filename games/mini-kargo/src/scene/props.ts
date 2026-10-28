@@ -223,19 +223,37 @@ export const PROP_DEFINITIONS: PropDef[] = [
   { kind: "cone", position: { x: 9, z: -49 } },
 ];
 
+export type PropSoundEmitter = {
+  propHit?(kind?: PropKind): void;
+  collision?(kind?: PropKind): void;
+};
+
+export type PropHitListener = (prop: PropInstance) => void;
+
 export type PropsSystem = {
   group: THREE.Group;
   props: PropInstance[];
-  update(dt: number, vehicle: VehicleState): boolean;
+  update(dt: number, vehicle: VehicleState, onHit?: PropHitListener): boolean;
   reset(): void;
+  onHit?: PropHitListener | null;
+  setSound?(sound: PropSoundEmitter | null): void;
 };
 
 export function createProps(
   scene: THREE.Scene,
   defs: readonly PropDef[] = PROP_DEFINITIONS,
+  soundOrListener?: PropSoundEmitter | PropHitListener,
 ): PropsSystem {
   const group = new THREE.Group();
   scene.add(group);
+
+  let activeSound: PropSoundEmitter | null =
+    soundOrListener && typeof soundOrListener === "object"
+      ? soundOrListener
+      : null;
+
+  let activeListener: PropHitListener | null =
+    typeof soundOrListener === "function" ? soundOrListener : null;
 
   const props: PropInstance[] = [];
 
@@ -280,10 +298,15 @@ export function createProps(
     });
   });
 
-  return {
+  let system: PropsSystem;
+  system = {
     group,
     props,
-    update(dt: number, vehicle: VehicleState): boolean {
+    onHit: activeListener,
+    setSound(sound: PropSoundEmitter | null) {
+      activeSound = sound;
+    },
+    update(dt: number, vehicle: VehicleState, onHit?: PropHitListener): boolean {
       let anyHit = false;
       const vAlt = vehicle.altitude ?? 0;
       const carRadius = 0.65;
@@ -302,6 +325,22 @@ export function createProps(
             p.hit = true;
             p.timeSinceHit = 0;
             anyHit = true;
+
+            // Ses efekti ve dinleyici tetikleme (dedicated arcade prop crunch/knock)
+            if (activeSound?.propHit) {
+              activeSound.propHit(p.kind);
+            } else if (activeSound?.collision) {
+              activeSound.collision(p.kind);
+            }
+            if (activeListener) {
+              activeListener(p);
+            }
+            if (onHit) {
+              onHit(p);
+            }
+            if (system.onHit && system.onHit !== activeListener) {
+              system.onHit(p);
+            }
 
             const carSpeed = Math.hypot(vehicle.velocity.x, vehicle.velocity.z);
             const pushFactor = 0.8;
@@ -400,4 +439,5 @@ export function createProps(
       }
     },
   };
+  return system;
 }

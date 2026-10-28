@@ -1,105 +1,32 @@
 {
-  "reports": [
+  "timestamp": "2026-10-28T01:02:07.502Z",
+  "url": "http://127.0.0.1:4173",
+  "viewports": [
     {
       "name": "desktop",
-      "loadMs": 4157,
-      "errors": [],
-      "rects": {
-        ".task-card": {
-          "x": 24,
-          "y": 95,
-          "width": 261.3125,
-          "height": 147
-        },
-        ".score-card": {
-          "x": 1058,
-          "y": 95,
-          "width": 198,
-          "height": 107
-        },
-        "#joystick": {
-          "x": 30,
-          "y": 648,
-          "width": 126,
-          "height": 126
-        },
-        ".toolbar": {
-          "x": 1077.484375,
-          "y": 728,
-          "width": 174.515625,
-          "height": 44
-        }
-      }
+      "width": 1280,
+      "height": 800,
+      "loadMs": 43,
+      "screenshot": "desktop-1280x800.png",
+      "errors": []
     },
     {
-      "name": "mobile",
-      "loadMs": 500,
-      "errors": [],
-      "rects": {
-        ".task-card": {
-          "x": 18,
-          "y": 85,
-          "width": 354,
-          "height": 135
-        },
-        ".score-card": {
-          "x": 218,
-          "y": 222,
-          "width": 154,
-          "height": 89
-        },
-        "#joystick": {
-          "x": 22,
-          "y": 696,
-          "width": 126,
-          "height": 126
-        },
-        ".toolbar": {
-          "x": 210.90625,
-          "y": 774,
-          "width": 161.09375,
-          "height": 44
-        }
-      }
+      "name": "mobile-portrait",
+      "width": 390,
+      "height": 844,
+      "loadMs": 41,
+      "screenshot": "mobile-portrait-390x844.png",
+      "errors": []
     },
     {
-      "name": "landscape",
-      "loadMs": 549,
-      "errors": [],
-      "rects": {
-        ".task-card": {
-          "x": 18,
-          "y": 73,
-          "width": 255,
-          "height": 115
-        },
-        ".score-card": {
-          "x": 628,
-          "y": 73,
-          "width": 198,
-          "height": 107
-        },
-        "#joystick": {
-          "x": 30,
-          "y": 271,
-          "width": 104,
-          "height": 104
-        },
-        ".toolbar": {
-          "x": 651.484375,
-          "y": 331,
-          "width": 174.515625,
-          "height": 44
-        }
-      }
+      "name": "mobile-landscape",
+      "width": 844,
+      "height": 390,
+      "loadMs": 40,
+      "screenshot": "mobile-landscape-844x390.png",
+      "errors": []
     }
   ],
-  "tour": {
-    "score": "517",
-    "best": "517",
-    "errors": []
-  },
-  "webglFallback": true,
-  "unavailableAudioAndStorage": true,
-  "visibilityPause": true
+  "status": "PASS",
+  "consoleErrorsTotal": 0
 }

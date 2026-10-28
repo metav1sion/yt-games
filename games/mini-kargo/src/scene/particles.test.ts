@@ -106,4 +106,20 @@ describe("particles system", () => {
 
     particles.dispose();
   });
+
+  it("spawns impact sparks and crash smoke on collision and updates without errors", () => {
+    const scene = new THREE.Scene();
+    const particles = createParticles(scene);
+
+    expect(() => {
+      particles.spawnImpactSparks({ x: 5, z: -10 });
+      particles.spawnCrashSmoke({ x: 5, z: -10 });
+
+      for (let i = 0; i < 10; i++) {
+        particles.update(dummyState, false, 0.05);
+      }
+    }).not.toThrow();
+
+    particles.dispose();
+  });
 });

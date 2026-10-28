@@ -197,9 +197,133 @@ export function createSound() {
       note(659, 0.09, 0.13);
       note(784, 0.18, 0.2);
     },
-    collision() {
+    collision(kind?: "cone" | "trash" | "box") {
+      this.propHit(kind);
+    },
+    propHit(kind?: "cone" | "trash" | "box") {
+      if (!context || !enabled || paused || context.state !== "running") return;
+      try {
+        const at = context.currentTime;
+
+        // Prop türüne göre frekans ve tını parametreleri (arcade knock / crunch)
+        let startFreq = 260;
+        let endFreq = 55;
+        let duration = 0.12;
+        let oscType: OscillatorType = "triangle";
+        let snapFreq = 620;
+
+        if (kind === "cone") {
+          // Plastik kuka: tıkırtılı, hafif tiz içi boş plastik sesi (pop & clack)
+          startFreq = 340;
+          endFreq = 85;
+          duration = 0.09;
+          oscType = "sine";
+          snapFreq = 780;
+        } else if (kind === "trash") {
+          // Metalik çöp tenekesi: tok metal darbe ve çınlama hissi (clang & rattle)
+          startFreq = 210;
+          endFreq = 48;
+          duration = 0.16;
+          oscType = "sawtooth";
+          snapFreq = 480;
+        } else {
+          // Karton kutu (box): tok kütleme ve karton kırılma hışırtısı (thud & crunch)
+          startFreq = 175;
+          endFreq = 38;
+          duration = 0.11;
+          oscType = "triangle";
+          snapFreq = 380;
+        }
+
+        // 1. Ana darbe vuruşu (tok inişli gövde darbesi)
+        const osc = context.createOscillator();
+        const gain = context.createGain();
+        osc.type = oscType;
+        osc.frequency.setValueAtTime(startFreq, at);
+        osc.frequency.exponentialRampToValueAtTime(Math.max(10, endFreq), at + duration * 0.85);
+
+        gain.gain.setValueAtTime(0.11, at);
+        gain.gain.exponentialRampToValueAtTime(0.001, at + duration);
+
+        osc.connect(gain);
+        gain.connect(context.destination);
+        osc.start(at);
+        osc.stop(at + duration + 0.02);
+        osc.onended = () => {
+          osc.disconnect();
+          gain.disconnect();
+        };
+
+        // 2. Anlık çıtırtı/klik rezonansı (arcade snap / crunch)
+        const snap = context.createOscillator();
+        const snapGain = context.createGain();
+        snap.type = "sine";
+        snap.frequency.setValueAtTime(snapFreq, at);
+        snap.frequency.exponentialRampToValueAtTime(110, at + 0.04);
+
+        snapGain.gain.setValueAtTime(0.07, at);
+        snapGain.gain.exponentialRampToValueAtTime(0.001, at + 0.045);
+
+        snap.connect(snapGain);
+        snapGain.connect(context.destination);
+        snap.start(at);
+        snap.stop(at + 0.05);
+        snap.onended = () => {
+          snap.disconnect();
+          snapGain.disconnect();
+        };
+      } catch {
+        /* Sound is optional */
+      }
+    },
+    carHorn() {
+      if (!context || !enabled || paused || context.state !== "running") return;
+      try {
+        const at = context.currentTime;
+        const dur = 0.32;
+        // Çift harmonik araba kornası (420 Hz & 505 Hz)
+        for (const freq of [420, 505]) {
+          const osc = context.createOscillator();
+          const gain = context.createGain();
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(freq, at);
+
+          gain.gain.setValueAtTime(0, at);
+          gain.gain.linearRampToValueAtTime(0.045, at + 0.015);
+          gain.gain.setValueAtTime(0.045, at + dur - 0.03);
+          gain.gain.exponentialRampToValueAtTime(0.001, at + dur);
+
+          osc.connect(gain);
+          gain.connect(context.destination);
+          osc.start(at);
+          osc.stop(at + dur + 0.02);
+          osc.onended = () => {
+            osc.disconnect();
+            gain.disconnect();
+          };
+        }
+      } catch {}
+    },
+    metalCrash() {
       note(110, 0, 0.12);
       note(75, 0.08, 0.18);
+      if (!context || !enabled || paused || context.state !== "running") return;
+      try {
+        const at = context.currentTime;
+        const osc = context.createOscillator();
+        const gain = context.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(95, at);
+        osc.frequency.exponentialRampToValueAtTime(28, at + 0.2);
+
+        gain.gain.setValueAtTime(0.12, at);
+        gain.gain.exponentialRampToValueAtTime(0.001, at + 0.22);
+
+        osc.connect(gain);
+        gain.connect(context.destination);
+        osc.start(at);
+        osc.stop(at + 0.24);
+      } catch {}
     },
     playMoneyDrain() {
       if (!context || !enabled || paused || context.state !== "running") return;
