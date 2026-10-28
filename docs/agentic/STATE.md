@@ -2,42 +2,42 @@
 
 **Date**: 2026-10-28  
 **Branch**: `feat/mini-kargo`  
-**Latest Git Commit**: `6d7e20c`  
-**Current Milestone**: Continuous Polish & Visual Fidelity Sprint (Execution Run 4)  
+**Latest Git Commit**: `f7e0ae7`  
+**Current Milestone**: Continuous Polish & Visual Fidelity Sprint (Execution Run 5)  
 **Victory Audit Status**: `VICTORY CONFIRMED`
 
 ## Verification Summary
-- **Unit & Integration Tests**: 34 test files, 616 passed, 0 failed (0.98s execution)
+- **Unit & Integration Tests**: 35 test files, 620 passed, 0 failed (0.99s execution)
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 138ms)
+- **Vite Production Build**: Successful (`dist/` generated in 152ms)
 - **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
 - **Persistence Compatibility**: Verified backwards compatibility for `localStorage` key `mini-kargo:v1`.
 
 ## Completed Improvements in this Run
-1. **Dynamic Shift Time & Atmosphere Lighting System (T16)**:
-   - Implemented `createAtmosphereController` in `src/scene/atmosphere.ts` with 4 smooth lighting keyframes: Sabah (Morning), Öğle (Midday), Gün Batımı (Golden Hour Sunset with warm amber sunlight, coral sky and long shadows), and Alacakaranlık (Twilight Dusk with deep sapphire sky, slate fog, and cool moonlight).
-   - Dynamically interpolates renderer clear color, scene fog, directional sun color/intensity/angle, and hemisphere lighting.
-   - Added responsive time-of-day pill indicator in HUD topbar (`☀️ ÖĞLE`, `🌇 GÜN BATIMI`, `🌙 ALACAKARANLIK`, `🌅 SABAH`).
-2. **Procedural District Ambience Soundscape Synthesis (T17)**:
-   - Implemented `createAmbience` in `src/audio/ambience.ts` using real-time Web Audio API procedural synthesis with zero audio assets:
-     - **Sahil Şeridi**: Rolling ocean waves (LFO-modulated pink noise surf) & occasional distant seagull calls.
-     - **Sanayi Bölgesi**: Low-frequency 48Hz + 96Hz industrial machinery hum and generator vibration.
-     - **Çarşı Bölgesi**: Bustling market crowd murmur & gentle cafe chime.
-     - **Güneş Mahallesi**: Soft summer breeze whisper & cheerful morning bird chirps.
-   - Smooth 0.6s crossfading as the delivery van drives across district borders.
-3. **Multi-District Living Landmarks & Environmental Activity**:
-   - **Sahil Şeridi**: Erected a 12m classic coastal maritime lighthouse (`buildLighthouse`) on a stone breakwater island at X: -28, Z: 91 with alternating crimson/white bands, gallery balcony, lantern room, and a rotating volumetric sweeping searchlight beam that illuminates coastal waters at sunset and dusk.
-   - **Çarşı Bölgesi**: Placed the Historic Tiered Marble Fountain (`buildPiazzaFountain`) at the central piazza (X: 50, Z: 50) featuring octagonal marble basin, turquoise pool water, and animated water spray droplets arcing and splashing into the bowl.
-   - **Sanayi Bölgesi**: Added animated rising industrial steam plumes (`buildFactoryChimneySmoke`) to factory smokestacks and the container gantry crane generator.
-4. **Clean Driving Bonus & Audio Feedback**:
-   - Added celebratory Clean Driving Bonus (`⭐ TEMİZ SÜRÜŞ BONUSU! +25 ₺`) triggered upon flawless package delivery without impact.
-   - Synthesized ascending major-triad chime (`sound.cleanDriveBonus()`).
+1. **Dynamic Weather System & Wet Road Specular Sheen (T18)**:
+   - Implemented `createWeatherSystem` in `src/scene/weather.ts` cycling between clear skies and gentle summer rain showers ("Yaz Yağmuru").
+   - 350 volumetric falling rain streaks dynamically tracking the player car position with continuous ground recycling.
+   - Dynamic asphalt reflectivity sheen via `setWorldWetness`: road material roughness drops from 0.85 to 0.22 with 0.22 metalness, yielding a glistening wet asphalt surface under sunlight and streetlamps.
+   - Procedural Web Audio rain synthesis in `src/audio/ambience.ts` (bandpass-filtered 2400Hz patter on car body).
+   - Real-time weather pill indicator in topbar HUD (`🌤️ AÇIK` / `🌧️ YAZ YAĞMURU`).
+2. **Multi-District Special Cargo Contracts (T19)**:
+   - Introduced 3 high-value Special Contracts:
+     - 💎 `vip_express` ("VIP ÖZEL KARGO"): High-stakes delicate delivery with zero-damage tolerance awarding +50₺ Safe Bonus & +3 reputation.
+     - 🧊 `cold_chain` ("SOĞUK ZİNCİR"): Temperature-sensitive medical/perishable delivery with +35₺ cold preservation bonus.
+     - ⚡ `heavy_freight` ("AĞIR SANAYİ YÜKÜ"): High-mass industrial machinery transport with +40₺ heavy freight bonus.
+   - Triggers cross-district long deliveries every 3rd mission when multiple districts are unlocked.
+   - Special HUD badge and delivery start celebratory toast.
+3. **Multi-District Architectural & Environmental Landmarks**:
+   - **Sahil Marina**: Moored classic 6.2m sailing yacht and red/white sports speedboat (`buildMarinaBoats`) along the wooden pier with animated harmonic wave bobbing physics & promenade lifebuoy stations.
+   - **Çarşı Bölgesi**: Strung colorful festival bunting pennants (`buildMarketBunting`) across the market alleyways, placed A-frame chalkboard cafe easel menus, and sidewalk flower planter boxes.
+   - **Sanayi Bölgesi**: High-voltage electrical transformer substation (`buildElectricalSubstation`) with cooling radiator fins, top ceramic insulators, yellow hazard signs, and dual heavy loading floodlight towers (`buildIndustrialFloodlight`).
+   - **Güneş Mahallesi**: Suburban entrance welcome archway monument (`buildWelcomeArch`) and residential rooftop solar photovoltaic & water heating panels (`buildRooftopSolarPanels`).
 
 ## Quick Resume Instructions
 To test and run locally:
 ```bash
 cd games/mini-kargo
-npm test                # Run 616 unit & E2E tests
+npm test                # Run 620 unit & E2E tests
 npm run typecheck       # Verify TypeScript types
 npm run build           # Build client bundle
 npm run test:browser    # Run Playwright visual smoke tests

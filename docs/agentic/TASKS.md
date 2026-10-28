@@ -55,8 +55,24 @@
   - Historic Tiered Marble Fountain (`buildPiazzaFountain`) in central Çarşı square with animated water spray droplets.
   - Animated rising industrial steam puffs (`buildFactoryChimneySmoke`) from Sanayi factory smokestacks.
 
+- [x] **T18 — Dynamic Weather (Gentle Summer Rain & Wet Road Specular Sheen)**:
+  - Created `createWeatherSystem` in `src/scene/weather.ts` managing 350 volumetric rain drop streaks tracking player car.
+  - Dynamic asphalt surface reflection: `setWorldWetness` smooths and metallizes road materials (`roughness: 0.85 -> 0.22`, `metalness: 0.0 -> 0.22`), rendering wet asphalt sheen under sunlight/streetlights.
+  - Procedural rain soundscape: bandpass-filtered Web Audio synthesis at 2400Hz continuously simulating soothing summer rain on car chassis.
+  - HUD real-time weather badge: `🌤️ AÇIK` and `🌧️ YAZ YAĞMURU` topbar pill indicator.
+- [x] **T19 — Multi-District Special Cargo Contracts & Architectural Landscaping**:
+  - Expanded cargo system with 3 high-value Special Contracts:
+    - 💎 `vip_express` ("VIP ÖZEL KARGO"): High-stakes delicate delivery with zero-damage tolerance awarding +50₺ Safe Bonus & +3 reputation.
+    - 🧊 `cold_chain` ("SOĞUK ZİNCİR"): Temperature-sensitive medical/perishable delivery with +35₺ cold preservation bonus.
+    - ⚡ `heavy_freight` ("AĞIR SANAYİ YÜKÜ"): High-mass industrial machinery transport with +40₺ heavy freight bonus.
+  - Special contracts trigger cross-district long deliveries every 3rd mission when multiple districts are unlocked.
+  - **Sahil Marina**: Moored classic sailing yacht and sports speedboat with animated harmonic wave bobbing physics (`buildMarinaBoats`) & promenade lifebuoy stations.
+  - **Çarşı Bölgesi**: Festive overhead pennant bunting across market alleyways (`buildMarketBunting`), A-frame chalkboard cafe easel menus, and sidewalk flower planters.
+  - **Sanayi Bölgesi**: Industrial high-voltage transformer substation (`buildElectricalSubstation`) with safety hazard fence and dual heavy loading floodlight masts (`buildIndustrialFloodlight`).
+  - **Güneş Mahallesi**: Suburban welcome archway monument (`buildWelcomeArch`) and rooftop solar photovoltaic & water heating panels.
+
 ## Active / Next Tasks
-- [ ] **T18 — Dynamic Weather (Gentle Summer Rain & Wet Road Reflections)**: Introduce occasional refreshing summer rain showers with wet road specular sheen and rain drop audio synthesis.
-- [ ] **T19 — Multi-District Special Cargo Contracts**: Specialized delivery missions (e.g. VIP express frozen goods, delicate antique transport) with district-to-district long routes and higher rewards.
+- [ ] **T20 — Night Lighting Emissive Props & Vehicle Headlight Cones**: Dynamic front headlight beam cones illuminating wet roads at dusk/night, plus glowing shop window interiors.
+- [ ] **T21 — Dynamic Pedestrian Umbrella & Rain Reactions**: Pedestrians deploy colorful umbrellas during summer rain showers and seek cover under shop awnings.
 - [ ] **T11 — Player Hands-on Playtesting & Feedback**: Solicit user evaluation on subjective driving feel, district ambiance, and gameplay pacing.
 - [ ] **T12 — Future YouTube Playables SDK Preparation**: (Pending explicit user instruction) integrate YouTube Playables SDK hooks when ready for distribution.

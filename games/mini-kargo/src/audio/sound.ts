@@ -445,6 +445,9 @@ export function createSound() {
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },
+    setRainIntensity(intensity: number) {
+      ambience.setRainIntensity(intensity);
+    },
     updateAmbience(dt: number) {
       ambience.update(dt);
     },

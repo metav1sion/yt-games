@@ -7,6 +7,8 @@ import {
   buildIndustrialPipes,
   buildGantryCrane,
   buildFactoryChimneySmoke,
+  buildElectricalSubstation,
+  buildIndustrialFloodlight,
   type ChimneySmokeView,
 } from "../city-details";
 
@@ -156,6 +158,14 @@ export function buildIndustrialDistrict(ctx: WorldContext) {
     buildFactoryChimneySmoke(group, 75 + 4.4, 7.2, -25 - 3.2), // Fabrika tesisi
     buildFactoryChimneySmoke(group, 67, 9.2, -58), // Konteyner vinci jeneratör bacası
   ];
+
+  // Sanayi Yüksek Gerilim Trafo İstasyonu (Electrical Transformer Substation)
+  buildElectricalSubstation(group, 18, -80, 0);
+  baseObstacles.push({ minX: 15.5, maxX: 20.5, minZ: -82.0, maxZ: -78.0 });
+
+  // Sanayi Kargo Yükleme Alanı Çift Projektör Direkleri (Industrial Floodlights)
+  buildIndustrialFloodlight(group, 18, -60, 0);
+  buildIndustrialFloodlight(group, 60, -64, 0);
 
   return { chimneySmokes };
 }

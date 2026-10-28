@@ -17,6 +17,8 @@ import {
   buildStaticCar,
   buildPlayground,
   buildMailbox,
+  buildWelcomeArch,
+  buildRooftopSolarPanels,
 } from "../city-details";
 
 /** Güneş Mahallesi (Kuzeybatı): Gerçek Lojistik Merkezi üssü, bahçeli sevimli evler ve çocuk parkı. */
@@ -203,6 +205,9 @@ export function buildSunnyDistrict(ctx: WorldContext): { depot: Vec2 } {
     // Ev bahçe girişi posta kutusu (Mailbox)
     buildMailbox(group, h.x - 2.8, h.z + 5.2, 0);
 
+    // Çatı üstü güneş panelleri ve sıcak su boyleri (Rooftop Solar Panels)
+    buildRooftopSolarPanels(g, 1.2, 4.4, -0.4);
+
     homes.push({ ...h.delivery });
     baseObstacles.push(h.collider);
   });
@@ -233,6 +238,11 @@ export function buildSunnyDistrict(ctx: WorldContext): { depot: Vec2 } {
   addStreetLight(-68, -34);
   addStreetLight(-74.5, -74.5);
   addStreetLight(-25.5, -55.5);
+
+  // Güneş Mahallesi Giriş Karşılama Takı (Suburban Welcome Archway)
+  buildWelcomeArch(group, -20, -4.5, 0);
+  baseObstacles.push({ minX: -24.8, maxX: -23.6, minZ: -5.0, maxZ: -4.0 });
+  baseObstacles.push({ minX: -16.4, maxX: -15.2, minZ: -5.0, maxZ: -4.0 });
 
   return { depot: depotPos };
 }

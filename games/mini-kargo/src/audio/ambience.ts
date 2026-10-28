@@ -2,6 +2,7 @@ import type { DistrictId } from "../game/districts";
 
 export type AmbienceSystem = {
   setDistrict(districtId: DistrictId): void;
+  setRainIntensity(intensity: number): void;
   setEnabled(enabled: boolean): void;
   setPaused(paused: boolean): void;
   update(dt: number): void;
@@ -22,6 +23,7 @@ export function createAmbience(getContext: () => AudioContext | null): AmbienceS
   let currentDistrict: DistrictId = "sunny";
 
   let masterGain: GainNode | null = null;
+  let rainGain: GainNode | null = null;
   const districtGains: Record<DistrictId, GainNode | null> = {
     sunny: null,
     market: null,
@@ -169,6 +171,27 @@ export function createAmbience(getContext: () => AudioContext | null): AmbienceS
       breezeSource.start();
       activeNodes.push(breezeSource, breezeFilter, sunnyGain);
 
+      // =======================================================================
+      // 5. YAZ YAĞMURU SESİ (Procedural Summer Rain Patter)
+      // =======================================================================
+      rainGain = ctx.createGain();
+      rainGain.gain.setValueAtTime(0, ctx.currentTime);
+      rainGain.connect(masterGain);
+
+      const rainSource = ctx.createBufferSource();
+      rainSource.buffer = noiseBuffer;
+      rainSource.loop = true;
+
+      const rainFilter = ctx.createBiquadFilter();
+      rainFilter.type = "bandpass";
+      rainFilter.frequency.setValueAtTime(2400, ctx.currentTime);
+      rainFilter.Q.setValueAtTime(0.75, ctx.currentTime);
+
+      rainSource.connect(rainFilter);
+      rainFilter.connect(rainGain);
+      rainSource.start();
+      activeNodes.push(rainSource, rainFilter, rainGain);
+
       initialized = true;
     } catch {
       // Web Audio API opsiyoneldir
@@ -293,6 +316,16 @@ export function createAmbience(getContext: () => AudioContext | null): AmbienceS
       if (!initialized) init();
       if (currentDistrict !== districtId) {
         crossfadeTo(districtId);
+      }
+    },
+    setRainIntensity(intensity: number) {
+      if (!initialized && intensity > 0.01) init();
+      const ctx = getContext();
+      if (rainGain && ctx) {
+        try {
+          const target = Math.max(0, Math.min(1, intensity)) * 0.085;
+          rainGain.gain.setTargetAtTime(target, ctx.currentTime, 0.25);
+        } catch {}
       }
     },
     setEnabled(value: boolean) {

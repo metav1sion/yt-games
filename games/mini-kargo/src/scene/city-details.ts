@@ -805,3 +805,303 @@ export function buildFactoryChimneySmoke(
     },
   };
 }
+
+export type MarinaBoatsView = {
+  group: THREE.Group;
+  update(dt: number): void;
+};
+
+/** ⛵ Sahil İskelesine Bağlı Yelkenli ve Sürat Teknesi (Marina Boats with Wave Bobbing) */
+export function buildMarinaBoats(
+  parent: THREE.Object3D,
+  pierX = -50,
+  pierZ = 92,
+): MarinaBoatsView {
+  const g = new THREE.Group();
+  parent.add(g);
+
+  // 1. Yelkenli Yat (Sailing Yacht - İskelenin batı kanadı: X: -54.5, Z: 92)
+  const yacht = new THREE.Group();
+  yacht.position.set(pierX - 4.5, 0.08, pierZ);
+  g.add(yacht);
+
+  // Gövde (Derin lacivert gövde ve beyaz güverte)
+  box(yacht, [2.2, 0.85, 5.8], [0, 0.35, 0], "#1e3799");
+  box(yacht, [2.0, 0.2, 5.4], [0, 0.8, 0], "#f5f6fa"); // Güverte
+  // Pruva sivrilmesi
+  cylinder(yacht, 0.01, 1.0, 1.2, [0, 0.4, 3.2], "#1e3799", 6).rotation.x = -Math.PI / 2;
+  // Kamara üst yapısı ve pencereler
+  box(yacht, [1.4, 0.55, 2.8], [0, 1.05, -0.4], "#ffffff");
+  box(yacht, [1.44, 0.2, 2.2], [0, 1.05, -0.4], "#0984e3"); // Mavi pencereler
+  // Direk (Mast) ve bumba (Boom)
+  cylinder(yacht, 0.06, 0.08, 6.4, [0, 4.0, 0.4], "#dcdde1", 8);
+  box(yacht, [0.06, 0.08, 2.8], [0, 1.4, -0.9], "#dcdde1"); // Bumba
+  // Sarılmış beyaz ana yelken (Furled mainsail)
+  cylinder(yacht, 0.12, 0.12, 2.6, [0, 1.5, -0.9], "#f1f2f6", 8).rotation.x = Math.PI / 2;
+  // Paslanmaz vardavela korkulukları
+  box(yacht, [1.6, 0.35, 0.04], [0, 0.95, -2.6], "#bdc3c7");
+  box(yacht, [0.04, 0.35, 4.8], [-0.95, 0.95, 0], "#bdc3c7");
+  box(yacht, [0.04, 0.35, 4.8], [0.95, 0.95, 0], "#bdc3c7");
+
+  // 2. Motorlu Sürat Teknesi (Sport Speedboat - İskelenin doğu kanadı: X: -45.5, Z: 92)
+  const speedboat = new THREE.Group();
+  speedboat.position.set(pierX + 4.5, 0.08, pierZ);
+  g.add(speedboat);
+
+  // Gövde (Ateş kırmızısı ve beyaz)
+  box(speedboat, [1.9, 0.65, 4.5], [0, 0.28, 0], "#c0392b");
+  box(speedboat, [1.7, 0.15, 4.2], [0, 0.65, 0], "#ffffff");
+  // Pruva sivrilmesi
+  cylinder(speedboat, 0.01, 0.9, 1.0, [0, 0.32, 2.5], "#c0392b", 6).rotation.x = -Math.PI / 2;
+  // Aerodinamik cam siperlik (Wraparound windscreen)
+  box(speedboat, [1.5, 0.3, 0.08], [0, 0.85, 0.6], "#74b9ff", 0.4);
+  // Kokpit koltukları
+  box(speedboat, [1.3, 0.35, 0.4], [0, 0.7, 0.1], "#2d3436");
+  // Çift dıştan takma motor (Twin Outboard Motors)
+  box(speedboat, [0.35, 0.6, 0.4], [-0.5, 0.45, -2.25], "#2c3e50");
+  box(speedboat, [0.35, 0.6, 0.4], [0.5, 0.45, -2.25], "#2c3e50");
+
+  let animTime = 0;
+  return {
+    group: g,
+    update(dt: number) {
+      animTime += dt;
+      // Yelkenli hafif dalga salınımı (Rocking & pitching)
+      yacht.rotation.z = Math.sin(animTime * 1.4) * 0.038;
+      yacht.rotation.x = Math.cos(animTime * 1.1) * 0.02;
+      yacht.position.y = 0.08 + Math.sin(animTime * 1.8) * 0.055;
+
+      // Sürat teknesi hafif daha dinamik dalga salınımı
+      speedboat.rotation.z = Math.sin(animTime * 1.8 + 1.2) * 0.042;
+      speedboat.rotation.x = Math.cos(animTime * 1.5 + 0.5) * 0.025;
+      speedboat.position.y = 0.08 + Math.sin(animTime * 2.2 + 0.8) * 0.048;
+    },
+  };
+}
+
+/** 🛟 Sahil İskelesi Can Simidi Güvenlik İstasyonu (Lifebuoy Station) */
+export function buildLifebuoyStation(parent: THREE.Object3D, x: number, z: number, rotY = 0) {
+  const g = new THREE.Group();
+  g.position.set(x, 0, z);
+  g.rotation.y = rotY;
+  parent.add(g);
+
+  // Ahşap direk
+  box(g, [0.12, 1.4, 0.12], [0, 0.7, 0], "#795548");
+  // Beyaz koruma arkalığı
+  box(g, [0.7, 0.7, 0.04], [0, 1.0, 0.08], "#ffffff");
+  // Kırmızı-beyaz can simidi
+  cylinder(g, 0.28, 0.28, 0.12, [0, 1.0, 0.15], "#e74c3c", 16).rotation.x = Math.PI / 2;
+  cylinder(g, 0.14, 0.14, 0.13, [0, 1.0, 0.15], "#ffffff", 16).rotation.x = Math.PI / 2;
+  // Kurtarma halatı bobini
+  cylinder(g, 0.1, 0.1, 0.1, [0, 0.45, 0.1], "#f39c12", 8);
+  return g;
+}
+
+/** 🎏 Çarşı Meydanı Kutlama Flamaları (Festive Market Bunting / Pennants) */
+export function buildMarketBunting(
+  parent: THREE.Object3D,
+  startX: number,
+  startZ: number,
+  endX: number,
+  endZ: number,
+  height = 4.2,
+) {
+  const g = new THREE.Group();
+  parent.add(g);
+
+  const dx = endX - startX;
+  const dz = endZ - startZ;
+  const dist = Math.hypot(dx, dz);
+  const flagCount = Math.floor(dist / 1.1);
+  const colors = ["#e74c3c", "#f1c40f", "#00cec9", "#e67e22", "#9b59b6", "#2ecc71"];
+
+  // Catenary sarkma eğrisi üzerinde üçgen flamalar
+  for (let i = 0; i <= flagCount; i++) {
+    const t = i / Math.max(1, flagCount);
+    const px = startX + dx * t;
+    const pz = startZ + dz * t;
+    // Sarkma: ortada maksimum 0.4m aşağı sarkar
+    const sag = Math.sin(t * Math.PI) * 0.4;
+    const py = height - sag;
+
+    const color = colors[i % colors.length];
+    const flag = cylinder(g, 0.01, 0.2, 0.3, [px, py - 0.15, pz], color, 3);
+    flag.rotation.x = Math.PI; // Aşağı sarkan üçgen
+  }
+
+  // Taşıyıcı ince kablo
+  const cable = box(g, [dist, 0.02, 0.02], [(startX + endX) / 2, height - 0.2, (startZ + endZ) / 2], "#2c3e50");
+  cable.rotation.y = -Math.atan2(dz, dx);
+
+  return g;
+}
+
+/** 📋 Açık Hava Kafe Menü Tabelası (Cafe A-Frame Chalkboard Easel) */
+export function buildCafeMenuBoard(parent: THREE.Object3D, x: number, z: number, rotY = 0) {
+  const g = new THREE.Group();
+  g.position.set(x, 0, z);
+  g.rotation.y = rotY;
+  parent.add(g);
+
+  // Ahşap A-çerçeve ayaklar
+  box(g, [0.65, 0.95, 0.06], [0, 0.48, 0.12], "#5c3d25").rotation.x = 0.15;
+  box(g, [0.65, 0.95, 0.06], [0, 0.48, -0.12], "#5c3d25").rotation.x = -0.15;
+  // Siyah tebeşir yazı tahtası
+  box(g, [0.52, 0.68, 0.02], [0, 0.52, 0.15], "#2c3e50").rotation.x = 0.15;
+  // Tebeşir menü başlığı
+  const boardLabel = label("KAFE · MENÜ", "#ffffff", "#2c3e50");
+  boardLabel.scale.set(0.6, 0.22, 1);
+  boardLabel.position.set(0, 0.65, 0.18);
+  g.add(boardLabel);
+
+  return g;
+}
+
+/** 🌸 Kaldırım Ahşap Çiçeklik Kutusu (Sidewalk Flower Planter) */
+export function buildFlowerPlanter(parent: THREE.Object3D, x: number, z: number, rotY = 0) {
+  const g = new THREE.Group();
+  g.position.set(x, 0, z);
+  g.rotation.y = rotY;
+  parent.add(g);
+
+  // Ahşap kutu gövdesi
+  box(g, [1.4, 0.45, 0.5], [0, 0.22, 0], "#795548");
+  box(g, [1.5, 0.08, 0.6], [0, 0.44, 0], "#5d4037"); // Üst pervaz
+  box(g, [1.3, 0.1, 0.42], [0, 0.42, 0], "#3e2723"); // Toprak
+
+  // Rengarenk açan çiçekler
+  const flowerColors = ["#e84393", "#fdcb6e", "#a29bfe", "#00cec9", "#fd79a8"];
+  for (let i = 0; i < 5; i++) {
+    const fx = -0.5 + i * 0.25;
+    cylinder(g, 0.08, 0.04, 0.16, [fx, 0.54, (i % 2 === 0 ? 0.06 : -0.06)], flowerColors[i], 6);
+  }
+  return g;
+}
+
+/** ⚡ Sanayi Bölgesi Yüksek Gerilim Trafo İstasyonu (Electrical Transformer Substation) */
+export function buildElectricalSubstation(
+  parent: THREE.Object3D,
+  x: number,
+  z: number,
+  rotY = 0,
+) {
+  const g = new THREE.Group();
+  g.position.set(x, 0, z);
+  g.rotation.y = rotY;
+  parent.add(g);
+
+  // 1. Beton Kaide
+  box(g, [4.8, 0.3, 3.8], [0, 0.15, 0], "#7f8c8d");
+
+  // 2. Ana Trafo Gövdesi (Heavy Transformer Tank)
+  box(g, [2.4, 2.2, 1.8], [0, 1.4, 0], "#34495e");
+  // Soğutma radyatör kanatları (Radiator fins)
+  for (const rx of [-1.25, 1.25]) {
+    for (let fz = -0.6; fz <= 0.6; fz += 0.3) {
+      box(g, [0.35, 1.6, 0.08], [rx, 1.35, fz], "#2c3e50");
+    }
+  }
+
+  // 3. Üst Seramik İzolatörler (Ceramic High-Voltage Bushings)
+  for (const ix of [-0.6, 0, 0.6]) {
+    cylinder(g, 0.1, 0.14, 0.7, [ix, 2.85, 0], "#d35400", 8);
+    cylinder(g, 0.03, 0.03, 0.35, [ix, 3.25, 0], "#bdc3c7", 6);
+  }
+
+  // 4. Güvenlik Çevre Çiti (Perimeter Security Hazard Barrier)
+  box(g, [4.6, 0.18, 0.12], [0, 0.09, 1.7], "#f1c40f"); // Sarı zemin çizgisi
+  box(g, [0.12, 1.6, 0.12], [-2.2, 0.8, 1.7], "#2c3e50");
+  box(g, [0.12, 1.6, 0.12], [2.2, 0.8, 1.7], "#2c3e50");
+  box(g, [4.4, 0.06, 0.04], [0, 1.5, 1.7], "#95a5a6");
+  box(g, [4.4, 0.06, 0.04], [0, 0.8, 1.7], "#95a5a6");
+
+  // 5. Sarı Tehlike Tabelası
+  const warnSign = label("⚡ DİKKAT · YÜKSEK GERİLİM", "#1e272e", "#f1c40f");
+  warnSign.scale.set(2.2, 0.6, 1);
+  warnSign.position.set(0, 1.2, 1.75);
+  g.add(warnSign);
+
+  return g;
+}
+
+/** 💡 Sanayi Bölgesi Ağır Hizmet Yükleme Sahası Aydınlatma Direği (Industrial Floodlight) */
+export function buildIndustrialFloodlight(parent: THREE.Object3D, x: number, z: number, rotY = 0) {
+  const g = new THREE.Group();
+  g.position.set(x, 0, z);
+  g.rotation.y = rotY;
+  parent.add(g);
+
+  // Galvaniz çelik yüksek direk (5.5m)
+  cylinder(g, 0.1, 0.16, 5.5, [0, 2.75, 0], "#7f8c8d", 8);
+  // Çapraz montaj traversi
+  box(g, [1.4, 0.1, 0.1], [0, 5.5, 0], "#34495e");
+  // Çift LED projektör kasası ve parlak sarı camı
+  for (const lx of [-0.45, 0.45]) {
+    const fLight = box(g, [0.38, 0.28, 0.4], [lx, 5.4, 0.15], "#2c3e50");
+    fLight.rotation.x = 0.35;
+    const fGlass = box(g, [0.34, 0.24, 0.05], [lx, 5.35, 0.35], "#f6e58d");
+    fGlass.rotation.x = 0.35;
+  }
+  return g;
+}
+
+/** 🏡 Güneş Mahallesi Giriş Karşılama Takı (Suburban Welcome Archway) */
+export function buildWelcomeArch(
+  parent: THREE.Object3D,
+  x: number,
+  z: number,
+  rotY = 0,
+) {
+  const g = new THREE.Group();
+  g.position.set(x, 0, z);
+  g.rotation.y = rotY;
+  parent.add(g);
+
+  // İki yan kalın ahşap kolon (4.8m yükseklik, 8.4m açıklık - yoldan geçişi engellemez)
+  const span = 4.2;
+  box(g, [0.45, 4.8, 0.45], [-span, 2.4, 0], "#6d4c41");
+  box(g, [0.45, 4.8, 0.45], [span, 2.4, 0], "#6d4c41");
+  // Taş taban pabuçları
+  box(g, [0.8, 0.6, 0.8], [-span, 0.3, 0], "#9e9e9e");
+  box(g, [0.8, 0.6, 0.8], [span, 0.3, 0], "#9e9e9e");
+
+  // Üst kiriş ve kırma çatı sundurması
+  box(g, [span * 2 + 1.2, 0.5, 0.6], [0, 4.8, 0], "#5d4037");
+  box(g, [span * 2 + 1.6, 0.2, 0.9], [0, 5.1, 0], "#3e2723");
+
+  // Karşılama Tabelası
+  const archSign = label("🏡 GÜNEŞ MAHALLESİ", "#ffffff", "#27ae60");
+  archSign.scale.set(4.2, 0.95, 1);
+  archSign.position.set(0, 4.2, 0);
+  g.add(archSign);
+
+  return g;
+}
+
+/** ☀️ Konut Çatısı Güneş Enerjisi & Su Isıtıcı Panelleri (Rooftop Solar Panels) */
+export function buildRooftopSolarPanels(
+  parent: THREE.Object3D,
+  x: number,
+  roofY: number,
+  z: number,
+  rotY = 0,
+) {
+  const g = new THREE.Group();
+  g.position.set(x, roofY, z);
+  g.rotation.y = rotY;
+  parent.add(g);
+
+  // İki adet açılı fotovoltaik güneş paneli
+  for (const px of [-0.65, 0.65]) {
+    box(g, [0.05, 0.35, 0.4], [px, 0.18, -0.2], "#bdc3c7");
+    const panel = box(g, [1.0, 0.05, 1.4], [px, 0.32, 0], "#1e3799");
+    panel.rotation.x = -0.32; // Güneşe bakan açı
+    box(panel, [1.05, 0.06, 0.04], [0, 0.02, 0], "#bdc3c7");
+  }
+
+  // Yatay silindirik termosifon su boyleri (Boiler Tank)
+  cylinder(g, 0.22, 0.22, 1.8, [0, 0.55, -0.75], "#ecf0f1", 12).rotation.z = Math.PI / 2;
+
+  return g;
+}

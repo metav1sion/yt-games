@@ -20,7 +20,7 @@ export function createHud(
     openCompanySheet?(): void;
   },
 ) {
-  root.innerHTML = `<header class="topbar"><div class="brand"><span class="brand-icon">▣</span><div>mini kargo<small>MAHALLE TESLİMATLARI</small></div></div><div class="topbar-pills"><span class="district" id="district-name">GÜNEŞ MAHALLESİ <i></i></span><span class="time-pill" id="time-pill">☀️ ÖĞLE</span></div></header>
+  root.innerHTML = `<header class="topbar"><div class="brand"><span class="brand-icon">▣</span><div>mini kargo<small>MAHALLE TESLİMATLARI</small></div></div><div class="topbar-pills"><span class="district" id="district-name">GÜNEŞ MAHALLESİ <i></i></span><span class="time-pill" id="time-pill">☀️ ÖĞLE</span><span class="weather-pill" id="weather-pill">🌤️ AÇIK</span></div></header>
   <section class="task-card" aria-label="Aktif teslimat"><div class="task-heading"><span class="eyebrow">SIRADAKİ DURAK</span><span id="trip-count">01 / 03</span></div><div class="destination"><span class="destination-icon" id="nav-arrow">↑</span><div><h2 id="target-name">Kargo deposu</h2><p id="task-instruction">Paketini almak için alanda dur.</p></div></div><div class="loading-track"><span id="hold-progress"></span></div><div class="task-footer"><span id="distance">Depoda bekle</span><span class="package-status" id="package-status">▣ PAKET BEKLENİYOR</span></div></section>
   <section class="score-card"><div><span class="eyebrow">TUR PUANI</span><strong id="score">0</strong></div><div class="bonus-column"><span class="eyebrow">SÜRE BONUSU</span><strong id="timer">—</strong></div><div class="timer-track"><span id="timer-progress"></span></div></section>
   <div class="toolbar"><button id="sound" class="icon-button" aria-label="Sesi kapat" title="Ses"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="sound-waves" d="M16 8c3 2 3 6 0 8m3-11c5 4 5 10 0 14"/><path class="sound-slash" d="M4 3l17 18"/></svg></button><button id="recover" class="recovery-button" title="Takılırsan depoya dön">↶ <span>Depoya dön</span></button><button id="open-office" class="recovery-button office-button" title="Şirket Yönetim Merkezi">🏢 <span>Ofis</span></button></div>
@@ -173,8 +173,9 @@ export function createHud(
         delivering && s.packageDamage >= 1
           ? ` · %${Math.round(s.packageDamage)} HASAR`
           : "";
+      const specialTag = s.isSpecialContract ? "⭐ ÖZEL SÖZLEŞME · " : "";
       el("package-status").textContent = delivering
-        ? `▣ ${packageInfo[s.packageType].label}${damageTag}`
+        ? `▣ ${specialTag}${packageInfo[s.packageType].label}${damageTag}`
         : s.phase === "returning"
           ? "▣ DEPODA YÜKLE"
           : "▣ PAKET BEKLENİYOR";
@@ -238,6 +239,12 @@ export function createHud(
       const elTime = el("time-pill");
       if (elTime) {
         elTime.textContent = `${icon} ${name.toUpperCase()}`;
+      }
+    },
+    setWeather(icon: string, name: string) {
+      const elWeather = el("weather-pill");
+      if (elWeather) {
+        elWeather.textContent = `${icon} ${name.toUpperCase()}`;
       }
     },
     setNitro(level: number, maxLevel = 1) {

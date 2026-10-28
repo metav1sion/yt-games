@@ -7,7 +7,13 @@ import {
   type DistrictId,
 } from "./districts";
 
-export type PackageType = "standard" | "urgent" | "fragile";
+export type PackageType =
+  | "standard"
+  | "urgent"
+  | "fragile"
+  | "cold_chain"
+  | "vip_express"
+  | "heavy_freight";
 
 export const packageInfo: Record<
   PackageType,
@@ -30,6 +36,24 @@ export const packageInfo: Record<
     instruction: "Yavaşla ve dikkatli teslim et.",
     seconds: 55,
     multiplier: 1.2,
+  },
+  cold_chain: {
+    label: "SOĞUK ZİNCİR",
+    instruction: "Sıcaklık yükselmeden soğuk zinciri koru!",
+    seconds: 38,
+    multiplier: 1.65,
+  },
+  vip_express: {
+    label: "VIP ÖZEL KARGO",
+    instruction: "Değerli emanet! Sıfır hasarla teslim et.",
+    seconds: 48,
+    multiplier: 2.1,
+  },
+  heavy_freight: {
+    label: "AĞIR SANAYİ YÜKÜ",
+    instruction: "Ağır sanayi parçası · devasa prim kazan!",
+    seconds: 58,
+    multiplier: 1.85,
   },
 };
 
@@ -79,6 +103,7 @@ export type DeliveryState = {
   earnings: number;
   reputation: number;
   packageType: PackageType;
+  isSpecialContract?: boolean;
   packageSlot: number;
   capacity: number;
   packageDamage: number;
@@ -89,6 +114,27 @@ export type DeliveryState = {
   maxDeliveries?: number | null;
   lastReward?: DeliveryReward | null;
 };
+
+export function resolvePackageForTour(
+  targetIndex: number,
+  completed: number,
+  companyLevel: number,
+  unlockedDistricts?: DistrictId[] | Set<DistrictId>,
+): { packageType: PackageType; isSpecialContract: boolean } {
+  const available = getAvailableHomeIndices(companyLevel, unlockedDistricts);
+  // Eğer birden fazla bölge açıksa her 3. teslimat kazançlı bir Özel Sözleşme (Special Contract) olur
+  if (available.length > 4 && completed > 0 && completed % 3 === 2) {
+    const targetDistrict = getDistrictForHome(targetIndex);
+    if (targetDistrict === "coastal") {
+      return { packageType: "vip_express", isSpecialContract: true };
+    } else if (targetDistrict === "industrial") {
+      return { packageType: "heavy_freight", isSpecialContract: true };
+    } else {
+      return { packageType: "cold_chain", isSpecialContract: true };
+    }
+  }
+  return { packageType: packageFor(targetIndex), isSpecialContract: false };
+}
 
 function pickTargetHome(
   stepIndex: number,
@@ -133,6 +179,7 @@ export function createDeliveryState(
     earnings: 0,
     reputation: 0,
     packageType: pkg,
+    isSpecialContract: false,
     packageSlot: 0,
     capacity: Math.min(4, 1 + cargoLevel),
     packageDamage: 0,
@@ -161,10 +208,11 @@ export function stepDelivery(
 
   if (s.phase === "delivering" && collisionDamage > 0) {
     s.vehicleDamage = Math.min(100, s.vehicleDamage + collisionDamage * 22);
+    const damageFactor =
+      s.packageType === "fragile" ? 32 : s.packageType === "vip_express" ? 38 : 12;
     s.packageDamage = Math.min(
       100,
-      s.packageDamage +
-        collisionDamage * (s.packageType === "fragile" ? 32 : 12),
+      s.packageDamage + collisionDamage * damageFactor,
     );
   }
 
@@ -196,9 +244,25 @@ export function stepDelivery(
           districtMultiplier,
       );
       const qualityMultiplier = Math.max(0.35, 1 - s.packageDamage / 220);
-      const safeBonus = s.packageDamage === 0 ? 25 : 0;
+
+      const isVip = s.packageType === "vip_express";
+      const isCold = s.packageType === "cold_chain";
+      const isHeavy = s.packageType === "heavy_freight";
+
+      let safeBonus = 0;
+      if (s.packageDamage === 0) {
+        safeBonus = isVip ? 50 : 25;
+      }
+      if (isCold && s.secondsLeft > 15) {
+        safeBonus += 35;
+      }
+      if (isHeavy) {
+        safeBonus += 40;
+      }
+
       const qualityReward = Math.floor(reward * qualityMultiplier) + safeBonus;
-      const repGain = s.secondsLeft > 20 ? 2 : 1;
+      const repGain =
+        (s.secondsLeft > 20 ? 2 : 1) + (isVip && s.packageDamage === 0 ? 2 : 0);
 
       s.score += reward;
       s.earnings += qualityReward;
@@ -225,7 +289,14 @@ export function stepDelivery(
           unlockedDistricts,
         );
         s.district = getDistrictForHome(s.targetIndex);
-        s.packageType = packageFor(s.targetIndex);
+        const resolved = resolvePackageForTour(
+          s.targetIndex,
+          s.completed,
+          companyLevel,
+          unlockedDistricts,
+        );
+        s.packageType = resolved.packageType;
+        s.isSpecialContract = resolved.isSpecialContract;
         s.secondsLeft = packageInfo[s.packageType].seconds;
         s.packageDamage = 0;
       } else {
@@ -249,7 +320,14 @@ export function stepDelivery(
         unlockedDistricts,
       );
       s.district = getDistrictForHome(s.targetIndex);
-      s.packageType = packageFor(s.targetIndex);
+      const resolved = resolvePackageForTour(
+        s.targetIndex,
+        s.completed,
+        companyLevel,
+        unlockedDistricts,
+      );
+      s.packageType = resolved.packageType;
+      s.isSpecialContract = resolved.isSpecialContract;
       s.secondsLeft = packageInfo[s.packageType].seconds;
       s.packageDamage = 0;
       s.lastReward = null;

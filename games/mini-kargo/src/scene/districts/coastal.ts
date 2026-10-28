@@ -9,7 +9,10 @@ import {
   buildLifeguardTower,
   buildPromenadeLantern,
   buildLighthouse,
+  buildMarinaBoats,
+  buildLifebuoyStation,
   type LighthouseView,
+  type MarinaBoatsView,
 } from "../city-details";
 
 /** Sahil ve Park Bölgesi (Güneybatı): Turkuaz deniz, altın kumsal, palmiyeler ve sahil iskelesi. */
@@ -76,6 +79,13 @@ export function buildCoastalDistrict(ctx: WorldContext) {
   ctx.addModel(group, "nature/canoe", -62, 92, 5, 0.5);
   ctx.addModel(group, "nature/canoe", -38, 94, 5, -0.4);
   ctx.addModel(group, "nature/canoe", -75, 96, 5, 1.5);
+
+  // İskele boyunca bağlı lüks yelkenli yat ve sürat teknesi (Marina Boats)
+  const marinaBoats = buildMarinaBoats(group, -50, 92);
+
+  // İskele ve kordon boyu can simidi güvenlik istasyonları
+  buildLifebuoyStation(group, -47.2, 84, Math.PI);
+  buildLifebuoyStation(group, -62, 83.2, 0);
 
   // =========================================================================
   // 3. Sahil Mekanları ve Villalar (Evler 12 - 15)
@@ -144,5 +154,5 @@ export function buildCoastalDistrict(ctx: WorldContext) {
   buildStaticCar(group, -7.6, 26, Math.PI / 2, "#00cec9"); // Turkuaz sedan
   buildStaticCar(group, -7.6, 68, Math.PI / 2, "#e84393"); // Pembe/kırmızı yaz arabası
 
-  return { lighthouse };
+  return { lighthouse, marinaBoats };
 }

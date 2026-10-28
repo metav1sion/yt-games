@@ -90,6 +90,10 @@ describe("ambience sound system", () => {
     ambience.setDistrict("sunny");
     ambience.update(1.0);
 
+    ambience.setRainIntensity(0.8);
+    ambience.update(1.0);
+    ambience.setRainIntensity(0.0);
+
     ambience.setEnabled(false);
     ambience.setPaused(true);
     ambience.setEnabled(true);

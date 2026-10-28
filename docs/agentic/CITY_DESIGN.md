@@ -18,8 +18,8 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
 ---
 
 ## 1. Güneş Mahallesi (Residential District)
-- **Visual Identity**: Warm, welcoming suburban atmosphere. Soft pastel and terracotta roofs, picket fences, front gardens, flowerbeds, deciduous green trees, and authentic American-suburban curbside mailboxes with red alert flags.
-- **Architecture**: Single-family houses, small apartment blocks, neighborhood grocery shops, local park benches, and kids playground.
+- **Visual Identity**: Warm, welcoming suburban atmosphere. Soft pastel and terracotta roofs, picket fences, front gardens, flowerbeds, deciduous green trees, authentic American-suburban curbside mailboxes with red alert flags, rooftop solar water-heating panels, and a grand timber entrance welcome archway.
+- **Architecture**: Single-family houses, small apartment blocks, neighborhood grocery shops, local park benches, kids playground, and welcoming arch monument ("🏡 GÜNEŞ MAHALLESİ").
 - **Logistics Headquarters Campus**: Situated at X: -67..-50, Z: -42..-26. Features the main sorting hub, truck loading dock, corporate monument signage, security guard checkpoint, and an organized 2x2 upgrade apron.
 - **Road & Traffic**: Calm residential streets, cul-de-sacs, residential speed bumps, pedestrian crosswalks, and an unblocked stunt jump ramp (`ramp_sunny_depot` at X=-50, Z=-22) equipped with high-visibility reflector bollards.
 - **Soundscape**: Soft summer breeze whisper, rustling trees, and cheerful morning bird chirps.
@@ -28,7 +28,7 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
 ---
 
 ## 2. Çarşı Bölgesi (Commercial District)
-- **Visual Identity**: Dense, bustling urban market center. Storefront awnings, neon and wooden shop signage, outdoor cafe seating, streetlamps, colorful banners, authentic striped-canopy open-air market stalls (Pastane, Manav, Kitapçı, Hediyelik), and the Historic Piazza Clock Tower.
+- **Visual Identity**: Dense, bustling urban market center. Storefront awnings, neon and wooden shop signage, outdoor cafe seating, streetlamps, colorful banners, authentic striped-canopy open-air market stalls (Pastane, Manav, Kitapçı, Hediyelik), festive overhead celebration bunting pennants across alleyways, A-frame chalkboard cafe menus, sidewalk flower planters, and the Historic Piazza Clock Tower.
 - **Centerpiece Landmark**: Historic Tiered Marble Fountain (`buildPiazzaFountain`) centered in the Piazza roundabout (X: 50, Z: 50) featuring an octagonal marble basin, turquoise pool water, and animated water spray droplets splashing into the bowl.
 - **Architecture**: Multi-story commercial buildings, bakeries, cafes, boutique shops, and a central plaza with a marble statue column, tiered fountain, and historic clock tower at the alley entrance.
 - **Road & Traffic**: Dual-lane thoroughfares, heavy pedestrian crossings, active delivery loading zones, curbside parked vehicles.
@@ -38,9 +38,9 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
 ---
 
 ## 3. Sanayi Bölgesi (Industrial District)
-- **Visual Identity**: Utilitarian, functional heavy logistics hub. Corrugated metal cladding, industrial smokestacks, security fences, stacked shipping containers, elevated steel pipe corridors, and an imposing 10.4m x 8.5m container gantry crane with an operator cab and airborne suspended cargo container.
+- **Visual Identity**: Utilitarian, functional heavy logistics hub. Corrugated metal cladding, industrial smokestacks, security fences, stacked shipping containers, elevated steel pipe corridors, an imposing 10.4m x 8.5m container gantry crane with an operator cab and airborne suspended cargo container, high-voltage electrical transformer substation (`buildElectricalSubstation`), and dual heavy industrial floodlight towers (`buildIndustrialFloodlight`).
 - **Environmental Activity**: Factory smokestacks and crane diesel generator actively vent animated rising steam/smoke plumes (`buildFactoryChimneySmoke`).
-- **Architecture**: Large warehouse complexes, cargo depots, repair garages, crane rigs, elevated steel pipe corridors, and heavy storage yards.
+- **Architecture**: Large warehouse complexes, cargo depots, repair garages, crane rigs, elevated steel pipe corridors, transformer substation, and heavy storage yards.
 - **Road & Traffic**: Wide truck lanes, concrete barrier curbs, industrial jump ramps, forklift traffic lanes, breakable wooden crates.
 - **Soundscape**: Low-frequency 48Hz generator hum, 96Hz harmonic vibration, and heavy logistics activity.
 - **Key Delivery Points**: 4 warehouse loading docks with roll-up gates and freight pallet zones.
@@ -48,8 +48,10 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
 ---
 
 ## 4. Sahil Şeridi (Coastal Marina District)
-- **Visual Identity**: Open, scenic coastal promenade. Seaside stone piers, palm trees, sandy beach borders, water shaders, yachts, vintage cast-iron promenade lanterns, and an elevated wooden beach lifeguard watchtower equipped with ladder and lifebuoy ring.
-- **Centerpiece Landmark**: Classic Maritime Coastal Lighthouse (`buildLighthouse`) on a breakwater stone jetty at X: -28, Z: 91 with alternating bold crimson and white bands, cast-iron gallery observation deck, glass lantern housing, copper cupola, and a sweeping volumetric rotating searchlight beam illuminating the waves at sunset and dusk.
+- **Visual Identity**: Open, scenic coastal promenade. Seaside stone piers, palm trees, sandy beach borders, water shaders, vintage cast-iron promenade lanterns, an elevated wooden beach lifeguard watchtower equipped with ladder and lifebuoy ring, promenade lifebuoy stations, and authentic marina boats.
+- **Centerpiece Landmarks**:
+  - Classic Maritime Coastal Lighthouse (`buildLighthouse`) on a breakwater stone jetty at X: -28, Z: 91 with alternating bold crimson and white bands, cast-iron gallery observation deck, glass lantern housing, copper cupola, and a sweeping volumetric rotating searchlight beam illuminating the waves at sunset and dusk.
+  - Active Marina Boats (`buildMarinaBoats`): A classic 6.2m sailing yacht with cabin, tall mast, boom, and furled sails alongside a sporty red-and-white speedboat moored to the wooden pier with animated harmonic wave bobbing physics.
 - **Architecture**: Waterfront restaurants, marina harbor master station, boardwalk pavilions, resort beach huts, canoes, seaside lounging decks, and lifeguard watchtower.
 - **Road & Traffic**: Winding scenic coastal boulevard, bridge crossings, promenade sidewalks, seaside view benches.
 - **Soundscape**: Gentle rhythmic rolling ocean waves (LFO-modulated pink noise surf) and occasional distant seagull calls.
@@ -65,3 +67,12 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
   4. **Alacakaranlık (Twilight Dusk)**: Deep sapphire night sky (`#1d243a`), slate fog (`#2b3450`), cool moonlit illumination (`#8ea4d2`), and active glowing lighthouse searchlight.
 - **HUD Integration**: Real-time time pill badge displayed in topbar (`☀️ ÖĞLE`, `🌇 GÜN BATIMI`, etc.).
 - **Proximity Occlusion & Budget**: Instanced geometries and draw calls under 50 maintain 60 FPS mobile target.
+
+---
+
+## 6. Dynamic Weather & Wet Road Reflection System
+- **Weather Cycle**: Natural dynamic transitions between clear skies ("Açık Hava" `🌤️`) and refreshing summer rain showers ("Yaz Yağmuru" `🌧️`).
+- **3D Rain Particles**: 350 volumetric falling rain streaks tracking vehicle position with speed ~30 m/s and ground resets.
+- **Wet Road Specular Sheen**: Real-time asphalt surface reflectivity shader adaptation (`setWorldWetness`). As rain falls, road roughness drops from 0.85 to 0.22 with 0.2 metalness, producing glistening specular tarmac reflections under sunlight and headlights.
+- **Procedural Rain Audio**: Bandpass-filtered Web Audio synthesis at 2400Hz simulating continuous soothing rain patter on the vehicle body.
+- **HUD Weather Pill**: Real-time weather status badge displayed in topbar (`🌤️ AÇIK` / `🌧️ YAZ YAĞMURU`).

@@ -50,7 +50,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   const { depot } = buildSunnyDistrict(ctx);
   const { fountain } = buildMarketDistrict(ctx);
   const { chimneySmokes } = buildIndustrialDistrict(ctx);
-  const { lighthouse } = buildCoastalDistrict(ctx);
+  const { lighthouse, marinaBoats } = buildCoastalDistrict(ctx);
   buildCityBuildings(ctx);
 
   const barriers = buildDistrictBarriers(group);
@@ -109,6 +109,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     },
     update(dt: number, isNightOrDusk = false) {
       lighthouse.update(dt, isNightOrDusk);
+      marinaBoats.update(dt);
       fountain.update(dt);
       for (const smoke of chimneySmokes) {
         smoke.update(dt);

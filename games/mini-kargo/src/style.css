@@ -91,11 +91,12 @@ body {
   border-radius: 50%;
   background: #75a777;
 }
-.time-pill {
+.time-pill,
+.weather-pill {
   background: #fff9e8e8;
   border: 1px solid #fff9e8;
   border-radius: 30px;
-  padding: 12px 15px;
+  padding: 10px 14px;
   font-size: 10px;
   letter-spacing: 1.1px;
   font-weight: 750;

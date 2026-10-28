@@ -9,6 +9,9 @@ import {
   buildMarketStall,
   buildTownClockTower,
   buildPiazzaFountain,
+  buildMarketBunting,
+  buildCafeMenuBoard,
+  buildFlowerPlanter,
   type FountainView,
 } from "../city-details";
 
@@ -173,6 +176,21 @@ export function buildMarketDistrict(ctx: WorldContext) {
   // Çarşı Meydanı Merkezi (Piazza Roundabout): Tarihi Mermer Fıskiye
   const fountain = buildPiazzaFountain(group, 50, 50);
   baseObstacles.push({ minX: 47.7, maxX: 52.3, minZ: 47.7, maxZ: 52.3 });
+
+  // Çarşı sokakları boyunca asılan renkli kutlama flamaları (Overhead Bunting)
+  buildMarketBunting(group, 44, 44, 56, 44, 4.2);
+  buildMarketBunting(group, 44, 56, 56, 56, 4.2);
+  buildMarketBunting(group, 30, 18, 41, 18, 4.4);
+
+  // Pastane ve Butik önünde tebeşirli menü tabelaları
+  buildCafeMenuBoard(group, 21.2, 33.5, 0.2);
+  buildCafeMenuBoard(group, 71.2, 33.5, -0.2);
+
+  // Meydan ve dükkan kenarlarında ahşap çiçeklik kutuları
+  buildFlowerPlanter(group, 43.5, 45, Math.PI / 2);
+  buildFlowerPlanter(group, 56.5, 45, Math.PI / 2);
+  buildFlowerPlanter(group, 43.5, 55, Math.PI / 2);
+  buildFlowerPlanter(group, 56.5, 55, Math.PI / 2);
 
   return { fountain };
 }

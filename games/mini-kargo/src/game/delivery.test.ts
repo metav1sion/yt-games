@@ -3,6 +3,8 @@ import {
   createDeliveryState,
   stepDelivery,
   packageFor,
+  packageInfo,
+  resolvePackageForTour,
   PACKAGE_PROFILE_BY_HOME,
   type DeliveryState,
 } from "./delivery";
@@ -419,5 +421,42 @@ describe("endless arcade idle delivery loop", () => {
     s = wait(s, depot, 1.1);
     expect(s.phase).toBe("delivering");
     expect(s.packageSlot).toBe(1);
+  });
+
+  it("handles multi-district special cargo contracts when multiple districts unlocked", () => {
+    // Seviye 1'de tek bölge açıkken özel sözleşme tetiklenmez
+    const res1 = resolvePackageForTour(0, 2, 1);
+    expect(res1.isSpecialContract).toBe(false);
+    expect(res1.packageType).toBe("standard");
+
+    // Seviye 4'te tüm bölgeler açıkken her 3. teslimat (completed = 2, 5, 8...) özel sözleşmedir
+    const resCoastal = resolvePackageForTour(12, 2, 4); // Sahil hedefi
+    expect(resCoastal.isSpecialContract).toBe(true);
+    expect(resCoastal.packageType).toBe("vip_express");
+
+    const resInd = resolvePackageForTour(8, 2, 4); // Sanayi hedefi
+    expect(resInd.isSpecialContract).toBe(true);
+    expect(resInd.packageType).toBe("heavy_freight");
+
+    const resMarket = resolvePackageForTour(4, 2, 4); // Çarşı hedefi
+    expect(resMarket.isSpecialContract).toBe(true);
+    expect(resMarket.packageType).toBe("cold_chain");
+
+    // Özel sözleşme olmayan adım normal paket döner
+    const resNormal = resolvePackageForTour(12, 1, 4);
+    expect(resNormal.isSpecialContract).toBe(false);
+  });
+
+  it("calculates special contract bonus rewards accurately", () => {
+    // VIP Özel Emanet: Sıfır hasarda 50₺ güvenli sürüş primi ve yüksek itibar
+    let s = createDeliveryState();
+    s.phase = "delivering";
+    s.packageType = "vip_express";
+    s.secondsLeft = 40;
+    s.packageDamage = 0;
+    s = wait(s, homes[s.targetIndex % homes.length], 1.1);
+    expect(s.completed).toBe(1);
+    expect(s.lastReward?.safeBonus).toBe(50);
+    expect(s.lastReward?.reputation).toBeGreaterThanOrEqual(3);
   });
 });

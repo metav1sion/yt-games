@@ -3,6 +3,24 @@ import type { Rect, Vec2 } from "../game/types";
 import type { AssetManager } from "./assets";
 
 const materials = new Map<string, THREE.MeshStandardMaterial>();
+const originalRoughness = new Map<THREE.MeshStandardMaterial, number>();
+const ASPHALT_COLORS = new Set(["#2f3640", "#526362", "#4f5b66", "#586570", "#697782"]);
+
+export function setWorldWetness(wetness: number) {
+  const clamped = Math.max(0, Math.min(1, wetness));
+  for (const [key, material] of materials.entries()) {
+    const color = key.split("_")[0];
+    if (ASPHALT_COLORS.has(color)) {
+      if (!originalRoughness.has(material)) {
+        originalRoughness.set(material, material.roughness);
+      }
+      const baseRough = originalRoughness.get(material) ?? 0.85;
+      material.roughness = THREE.MathUtils.lerp(baseRough, 0.22, clamped);
+      material.metalness = THREE.MathUtils.lerp(0.0, 0.22, clamped);
+    }
+  }
+}
+
 export function mat(color: string, roughness = 0.85): THREE.MeshStandardMaterial {
   const key = `${color}_${roughness}`;
   if (!materials.has(key)) {

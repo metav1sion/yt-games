@@ -11,7 +11,7 @@ import { createInput } from "./game/input";
 import { stepVehicle, resetVehicle, TUNING } from "./game/vehicle";
 import { resolveCollision } from "./game/collision";
 import { createLoop } from "./game/loop";
-import { createDeliveryState, stepDelivery } from "./game/delivery";
+import { createDeliveryState, stepDelivery, packageInfo } from "./game/delivery";
 import { createContactDamageTracker, staticCollisionContacts } from "./game/contact-damage";
 import { createHud } from "./ui/hud";
 import { createLocalStorageAdapter, asCompanyProgression, type CompanyProgression } from "./platform/storage";
@@ -37,6 +37,7 @@ import { createMinimap } from "./ui/minimap";
 import type { VehicleType } from "./game/types";
 import { createParkedVehicle } from "./scene/parked-vehicle";
 import { createAtmosphereController } from "./scene/atmosphere";
+import { createWeatherSystem } from "./scene/weather";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -76,6 +77,8 @@ export async function startGame(app: HTMLElement) {
   const atmosphere = createAtmosphereController(renderer, scene, sun, hemi);
   const clouds = createClouds(11);
   scene.add(clouds.group);
+  const weather = createWeatherSystem();
+  scene.add(weather.group);
   const world = createWorld();
   scene.add(world.group);
   const marker = createMarkers();
@@ -784,8 +787,12 @@ export async function startGame(app: HTMLElement) {
             }
           }
         }
-        if (old.phase !== "delivering" && delivery.phase === "delivering")
+        if (old.phase !== "delivering" && delivery.phase === "delivering") {
           sound.pickup();
+          if (delivery.isSpecialContract) {
+            hud.showToast(`⭐ ÖZEL SÖZLEŞME: ${packageInfo[delivery.packageType].label}!`, 3600);
+          }
+        }
         if (delivery.phase === "result") {
           if (delivery.score > progression.bestScore) {
             progression = {
@@ -819,11 +826,14 @@ export async function startGame(app: HTMLElement) {
       deliveryAnimation.update(dt);
       updateCamera(camera, vehicle, dt, vehicle.velocity, cameraShake);
 
-      // Dinamik Gökyüzü, Atmosfer (Sabah/Öğle/Gün Batımı/Alacakaranlık) ve Dünya Animasyonları
+      // Dinamik Gökyüzü, Atmosfer (Sabah/Öğle/Gün Batımı/Alacakaranlık), Hava Durumu ve Dünya Animasyonları
       const atmoState = atmosphere.update(dt, vehicle.position);
+      const weatherState = weather.update(dt, vehicle.position);
       world.update(dt, atmoState.isNightOrDusk);
       hud.setTime(atmoState.phaseIcon, atmoState.phaseName);
+      hud.setWeather(weatherState.weatherIcon, weatherState.weatherName);
       sound.setDistrict(lastDistrict);
+      sound.setRainIntensity(weatherState.rainIntensity);
       sound.updateAmbience(dt);
       clouds.update(dt);
 
@@ -1009,6 +1019,7 @@ export async function startGame(app: HTMLElement) {
       particles.dispose();
       clouds.dispose();
       atmosphere.dispose();
+      weather.dispose();
       renderer.dispose();
     },
     { once: true },
