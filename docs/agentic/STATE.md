@@ -1,50 +1,46 @@
 # Mini Kargo — Project State Snapshot
 
-**Date**: 2026-10-28  
+**Date**: 2026-10-29  
 **Branch**: `feat/mini-kargo`  
-**Latest Git Commit**: `a15ec3a`  
-**Current Milestone**: District Environmental Micro-FX & Fleet Career Customization Sprint (Execution Run 9)  
+**Latest Git Commit**: `pending_commit`  
+**Current Milestone**: Dynamic Urban Traffic Expansion & Pedestrian Signals Sprint (Execution Run 10)  
 **Victory Audit Status**: `VICTORY CONFIRMED`
 
 ## Verification Summary
-- **Unit & Integration Tests**: 40 test files, 654 passed, 0 failed (1.12s execution)
+- **Unit & Integration Tests**: 41 test files, 659 passed, 0 failed (1.17s execution)
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 142ms)
+- **Vite Production Build**: Successful (`dist/` generated in 137ms)
 - **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
-- **Persistence Compatibility**: Verified backwards compatibility for `localStorage` key `mini-kargo:v1` with optional liveries & career trophies.
+- **Persistence Compatibility**: Verified backwards compatibility for `localStorage` key `mini-kargo:v1`.
 
 ## Completed Improvements in this Run
-1. **District Environmental Micro-FX & Seasonal Dynamics Across 4 Districts (T26)**:
-   - **Güneş Mahallesi**: 4 interactive crunchy leaf piles (`leafPiles`) on suburban lawn curbs. Driving through a leaf pile at speed (>1.2 m/s) triggers an explosion of 24 swirling autumn leaves, plays procedural dry leaf crunch sound (`sound.leafCrunch()`), and awards "+5 ₺ Sonbahar Keyfi!". Piles naturally regenerate after 16s.
-   - **Sahil Şeridi**: Coastal ocean breaker wave spray mist on the maritime lighthouse breakwater rocks. Rhythmic wave surges every 3.4s fire foaming water particles into the sea breeze and synthesize deep ocean surf crash audio (`sound.surfCrash()`).
-   - **Sanayi Bölgesi**: Metal fabrication welding workshop at X: 36, Z: -26 with heavy workbench, argon gas cylinder, portable inverter machine, and an animated Welder NPC ("Usta Kaynakçı") with full-face welding helmet and torch. Dynamic blue-white arc flickering point light (`#a5b4fc`), cascading fiery spark showers, and procedural electric arc buzz audio (`sound.weldingArc()`).
-   - **Çarşı Bölgesi**: Glistening water mist particles hovering over the Piazza marble fountain basin catching sunlight and ambient lighting.
-   - Tested in `src/scene/environmental-fx.test.ts`.
+1. **Animated Crosswalk Pedestrian Traffic Signals Across 8 Intersections (T28)**:
+   - Implemented `createTrafficLights` (`src/scene/traffic-lights.ts`) installed across 8 key crossings (Central Roundabout North/South/East/West, Çarşı Market Avenue & Piazza, Sahil Promenade, Sanayi Freight Crossing).
+   - Galvanized steel masts (height 4.3m) with 2.6m cantilever arms extending over lanes, 3-aspect vehicular signal heads (Red, Amber, Green) with sun visors, and 2-aspect pedestrian signal heads (Red standing silhouette, Green walking silhouette).
+   - 26.6-second cyclical traffic controller (Z-green -> Z-yellow -> All-red -> X-green -> X-yellow -> All-red) with dynamic emissive glow multiplier that scales up dramatically at night/dusk.
+   - Tested in `src/scene/traffic-lights.test.ts`.
 
-2. **Company Career Milestones & Fleet Custom Liveries (T27)**:
-   - Defined 4 unlockable vehicle liveries:
-     - 🚚 **Klasik Kargo**: Traditional yellow/green corporate identity (default).
-     - 🌊 **Sahil Dalgası**: Turquoise and cyan ocean wave with white roof (unlocked at 5 deliveries or Sahil district).
-     - ⚡ **Gece Ekspresi**: Stealth anthracite body with neon fuchsia racing stripe (unlocked at 10 deliveries).
-     - 👑 **Altın Şampiyon**: Luxury metallic gold finish with fire bronze accents (unlocked at Level 3 or 20 deliveries).
-   - Dynamic livery application on `createCar` updating materials in real-time for both Delivery Van and Scooter without recreating geometry.
-   - 6 Career Trophies (İlk Adım, Kıdemli Dağıtıcı, Şehir Kâşifi, Filo Patronu, Kargo Baronu, Efsanevi Kurye) with cash rewards and real-time celebration notifications.
-   - Tested in `src/game/career.test.ts` and `src/scene/car.test.ts`.
+2. **Scooter Courier AI Traffic Sharing Roads (T28)**:
+   - Added autonomous AI delivery couriers (`kind: "courier"`) navigating Güneş, Çarşı, and Sahil routes.
+   - Low-poly courier scooter model (`buildCourierModel`) with rubber wheels, alloy spokes, front headlamp, rear taillamp, insulated thermal kargo delivery box, and an animated AI courier rider wearing windbreaker jacket and safety helmet.
+   - Dynamic motorcycle lean/tilt physics while driving and interactive horn greeting (`onPlayerHonk` in `traffic.ts` triggering responsive greeting and two-tone scooter horn `sound.courierBeep()`).
+   - Tested in `src/scene/traffic.test.ts` and `src/audio/sound.test.ts`.
 
-3. **Company Management UI Expansion (T27)**:
-   - Added new "🏆 Başarılar & Garaj" tab to `CompanySheet`.
-   - Visual livery selector with color swatch previews, active status badges, and single-click application.
-   - Career achievements trophy showcase displaying real-time unlocked badges and rewards.
-   - Tested in `src/ui/company-sheet.test.ts`.
+3. **Parcel Handoff Micro-Animations & Customer Gratitude (T28)**:
+   - Enhanced `delivery-stations.ts` with customer eager receiving handoff posture (outstretched arms ready to receive the package).
+   - Floating 3D gratitude speech bubble badges (`"⭐⭐⭐⭐⭐ Harika Teslimat!"`, `"📦 Çok Teşekkürler!"`, `"⚡ Jet Hızında Servis!"`, `"🙌 Eline Sağlık Kurye!"`) that pop up, scale with spring bounce, rise +1.2m, and fade out smoothly over 2.2 seconds.
+   - Enhanced parabolic parcel swoop animation in `markers.ts` with squash-and-stretch landing bounce.
+   - Synthesized procedural package cardboard rustle & solid table drop impact audio (`sound.packageDrop()`).
+   - Tested in `src/scene/delivery-stations.test.ts`, `src/scene/markers.test.ts`, and `src/audio/sound.test.ts`.
 
 ## Exact Next Development Task
-- **T28 — Dynamic Urban Traffic Expansion & Pedestrian Density**: Animated crosswalk pedestrian traffic signals, scooter courier AI traffic sharing roads, and parcel handoff micro-animations.
+- **T29 — Audio Jukebox & In-Game Radio Channels**: In-game radio channels (Cozy Chill, Arcade Turbo, City Vibes) toggleable in HUD with procedural generative beats & melodies.
 
 ## Quick Resume Instructions
 To test and run locally:
 ```bash
 cd games/mini-kargo
-npm test                # Run 654 unit & E2E tests
+npm test                # Run 659 unit & E2E tests
 npm run typecheck       # Verify TypeScript types
 npm run build           # Build client bundle
 npm run test:browser    # Run Playwright visual smoke tests

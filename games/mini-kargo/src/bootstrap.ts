@@ -761,6 +761,9 @@ export async function startGame(app: HTMLElement) {
         if (input.consumeHorn()) {
           sound.carHorn();
           urbanFauna.onHonk(vehicle.position);
+          if (traffic.onPlayerHonk(vehicle.position)) {
+            sound.courierBeep();
+          }
         }
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
@@ -823,6 +826,7 @@ export async function startGame(app: HTMLElement) {
             world.homes[old.targetIndex],
           );
           sound.delivery();
+          sound.packageDrop();
 
           world.deliveryStations.onDelivered(old.targetIndex, old.packageType);
           particles.spawnMoneyStream(world.homes[old.targetIndex], vehicle.position);

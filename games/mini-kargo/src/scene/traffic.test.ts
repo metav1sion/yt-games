@@ -25,6 +25,22 @@ describe("traffic system", () => {
     expect(kinds.has("suv")).toBe(true);
     expect(kinds.has("truck")).toBe(true);
     expect(kinds.has("sedan")).toBe(true);
+    expect(kinds.has("courier")).toBe(true);
+  });
+
+  it("spawns AI courier scooters that react to player horn", () => {
+    const traffic = createTraffic();
+    const couriers = traffic.cars.filter((c) => c.kind === "courier");
+    expect(couriers.length).toBeGreaterThanOrEqual(2);
+
+    const firstCourier = couriers[0];
+    expect(firstCourier.group.children.length).toBeGreaterThan(0);
+
+    // Horn interaction
+    const reacted = traffic.onPlayerHonk(firstCourier.position);
+    expect(reacted).toBe(true);
+    expect(firstCourier.shakeTimer).toBeGreaterThan(0);
+    expect(firstCourier.hornTimer).toBeGreaterThan(0);
   });
 
   it("toggles district traffic visibility with company level and extra unlocked districts", () => {

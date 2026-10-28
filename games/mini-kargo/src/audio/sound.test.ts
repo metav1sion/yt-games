@@ -98,6 +98,8 @@ describe("audio system", () => {
     sound.leafCrunch();
     sound.surfCrash(0.8);
     sound.weldingArc(0.9);
+    sound.packageDrop();
+    sound.courierBeep();
     sound.setDistrict("coastal");
     sound.updateAmbience(1.0);
     sound.setEnabled(false);
@@ -123,6 +125,8 @@ describe("audio system", () => {
       sound.leafCrunch();
       sound.surfCrash(1.0);
       sound.weldingArc(0.7);
+      sound.packageDrop();
+      sound.courierBeep();
     }).not.toThrow();
 
     sound.dispose();

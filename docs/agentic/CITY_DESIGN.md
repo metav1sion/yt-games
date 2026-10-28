@@ -184,4 +184,24 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
   - Live real-time material shader color swapping on player van and courier scooter.
   - Career trophies gallery & Livery selector tab in the company management office sheet.
 
+---
+
+## 13. Dynamic Urban Traffic Expansion & Pedestrian Signals (T28)
+- **Animated Crosswalk Pedestrian Traffic Signals (`TrafficLights`)**:
+  - Installed across 8 key intersections and pedestrian zebra crossings (Central Grand Roundabout, Çarşı Market Square, Sahil Coastal Promenade, Sanayi Heavy Freight Crossing).
+  - Physical galvanized steel cantilever mast arms extending 2.6m over road lanes, with round steel bases and anchor brackets.
+  - 3-aspect vehicular signal heads (Red, Amber, Green) with hooded sun visors and reflective hazard border panels.
+  - 2-aspect pedestrian signal heads mounted at eye level (Red standing silhouette, Green walking silhouette).
+  - 26.6-second cyclical traffic controller (Z-axis Green -> Z-axis Yellow -> All Red -> X-axis Green -> X-axis Yellow -> All Red) with dynamic emissive glow scaling up at night and dusk.
+- **Scooter Courier AI Traffic Sharing Roads (`CourierScooterTraffic`)**:
+  - Autonomous AI delivery scooters driving along city avenues and neighborhood streets in Güneş, Çarşı, and Sahil.
+  - Detailed low-poly delivery scooter model: dual wheels with rubber tires and alloy rims, footrest, handlebars, bright LED headlamp, and a large insulated rear thermal delivery box with reflective striping and kargo emblem.
+  - Animated AI Courier Rider dressed in windbreaker and safety helmet with tinted visor, dynamically banking and leaning into motion.
+  - Interactive horn salute: honking near an AI courier triggers an interactive friendly response ("bip-bip!" procedural sound `sound.courierBeep()`) and greeting shake.
+- **Parcel Handoff Micro-Animations & Customer Gratitude**:
+  - Customer NPCs transition into an eager receiving handoff posture with outstretched arms when the player vehicle holds to deliver.
+  - Floating 3D gratitude speech bubble badges ("⭐⭐⭐⭐⭐ Harika Teslimat!", "📦 Çok Teşekkürler!", "⚡ Jet Hızında Servis!", "🙌 Eline Sağlık Kurye!") rising and fading above customer heads upon delivery.
+  - Parabolic parcel swoop animation in `markers.ts` with squash-and-stretch bounce landing.
+  - Procedural cardboard rustle and solid drop impact audio (`sound.packageDrop()`).
+
 

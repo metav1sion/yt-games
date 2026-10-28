@@ -717,6 +717,64 @@ export function createSound() {
         };
       } catch {}
     },
+    packageDrop() {
+      if (!context || !enabled || paused || context.state !== "running") return;
+      try {
+        const at = context.currentTime;
+        // 1. Koli bandı ve karton hışırtısı (kısa yüksek frekanslı bandpass gürültü)
+        const dur = 0.16;
+        const buf = context.createBuffer(1, Math.floor(context.sampleRate * dur), context.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (data.length * 0.3));
+        const noise = context.createBufferSource();
+        noise.buffer = buf;
+        const filter = context.createBiquadFilter();
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(2800, at);
+        filter.Q.setValueAtTime(2.5, at);
+        const gain = context.createGain();
+        gain.gain.setValueAtTime(0.08, at);
+        gain.gain.exponentialRampToValueAtTime(0.001, at + dur);
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(context.destination);
+        noise.start(at);
+
+        // 2. Masaya / tezgaha tok teslimat vuruşu (damping triangle lowpass)
+        const osc = context.createOscillator();
+        const oscGain = context.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(140, at);
+        osc.frequency.exponentialRampToValueAtTime(55, at + 0.12);
+        oscGain.gain.setValueAtTime(0.12, at);
+        oscGain.gain.exponentialRampToValueAtTime(0.001, at + 0.14);
+        osc.connect(oscGain);
+        oscGain.connect(context.destination);
+        osc.start(at);
+        osc.stop(at + 0.15);
+      } catch {}
+    },
+    courierBeep() {
+      if (!context || !enabled || paused || context.state !== "running") return;
+      try {
+        const at = context.currentTime;
+        // İki tonlu neşeli scooter korna cıvıltısı ("bip-bip!")
+        const osc1 = context.createOscillator();
+        const gain1 = context.createGain();
+        osc1.type = "sine";
+        osc1.frequency.setValueAtTime(1250, at);
+        osc1.frequency.setValueAtTime(1450, at + 0.06);
+        gain1.gain.setValueAtTime(0.08, at);
+        gain1.gain.setValueAtTime(0.08, at + 0.05);
+        gain1.gain.setValueAtTime(0.005, at + 0.055);
+        gain1.gain.setValueAtTime(0.08, at + 0.06);
+        gain1.gain.exponentialRampToValueAtTime(0.001, at + 0.14);
+        osc1.connect(gain1);
+        gain1.connect(context.destination);
+        osc1.start(at);
+        osc1.stop(at + 0.15);
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

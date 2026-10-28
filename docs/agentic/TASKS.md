@@ -117,8 +117,12 @@
   - Added "🏆 Başarılar & Garaj" tab to `CompanySheet` with interactive livery applicator and trophy showcase.
   - Tested in `src/game/career.test.ts`, `src/scene/car.test.ts`, and `src/ui/company-sheet.test.ts`.
 
+- [x] **T28 — Dynamic Urban Traffic Expansion & Pedestrian Signals**:
+  - **Animated Crosswalk Pedestrian Traffic Signals**: Implemented `createTrafficLights` (`src/scene/traffic-lights.ts`) across 8 intersections with galvanized steel mast arms, 3-aspect vehicle signals, 2-aspect pedestrian signals, and 26.6s cycle timing with night emissive glow boost. Tested in `src/scene/traffic-lights.test.ts`.
+  - **Scooter Courier AI Traffic**: Added autonomous AI delivery couriers (`kind: "courier"`) navigating Güneş, Çarşı and Sahil routes with dual wheels, thermal delivery box, animated rider mesh, lean/tilt roll physics, and interactive horn greeting (`onPlayerHonk` + `sound.courierBeep()`). Tested in `src/scene/traffic.test.ts`.
+  - **Parcel Handoff Micro-Animations**: Enhanced `delivery-stations.ts` with customer eager receiving handoff posture, floating gratitude speech bubble badges (`"⭐⭐⭐⭐⭐ Harika Teslimat!"`, `"📦 Çok Teşekkürler!"`, etc.), parabolic swoop with squash-and-stretch bounce landing, and procedural `sound.packageDrop()` audio. Tested in `src/scene/delivery-stations.test.ts`, `src/scene/markers.test.ts`, and `src/audio/sound.test.ts`.
+
 ## Active / Next Tasks
-- [ ] **T28 — Dynamic Urban Traffic Expansion & Pedestrian Density**: Animated crosswalk pedestrian traffic signals, scooter courier AI traffic sharing roads, and parcel handoff micro-animations.
 - [ ] **T29 — Audio Jukebox & Radio Station**: In-game radio channels (Cozy Chill, Arcade Turbo, City Vibes) toggleable in HUD.
 - [ ] **T11 — Player Hands-on Playtesting & Feedback**: Solicit user evaluation on subjective driving feel, district ambiance, and gameplay pacing.
 - [ ] **T12 — Future YouTube Playables SDK Preparation**: (Pending explicit user instruction) integrate YouTube Playables SDK hooks when ready for distribution.

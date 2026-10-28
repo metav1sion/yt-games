@@ -14,11 +14,13 @@ import { buildDistrictBarriers, type DistrictBarrier } from "./district-barriers
 import { createCargoRacksView, type CargoRacksView } from "./cargo-racks";
 import { buildCityBuildings } from "./city-buildings";
 import { createDeliveryStations, type DeliveryStationsView } from "./delivery-stations";
+import { createTrafficLights, type TrafficLightsView } from "./traffic-lights";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
 export type { CargoRacksView } from "./cargo-racks";
 export type { DeliveryStationsView } from "./delivery-stations";
+export type { TrafficLightsView } from "./traffic-lights";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -30,6 +32,7 @@ export type World = {
   barriers: DistrictBarrier[];
   cargoRacks: CargoRacksView;
   deliveryStations: DeliveryStationsView;
+  trafficLights: TrafficLightsView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -108,6 +111,10 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   const deliveryStations = createDeliveryStations(ctx.homes);
   group.add(deliveryStations.group);
 
+  // Şehir Sinyalizasyon & Yaya Geçidi Trafik Işıkları
+  const trafficLights = createTrafficLights();
+  group.add(trafficLights.group);
+
   let currentNightFactor = 0;
 
   return {
@@ -119,6 +126,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     barriers,
     cargoRacks,
     deliveryStations,
+    trafficLights,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);
@@ -144,6 +152,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
         smoke.update(dt);
       }
       deliveryStations.update(dt, activeTargetIndex, isDelivering);
+      trafficLights.update(dt, isNightOrDusk);
     },
     getNightFactor() {
       return currentNightFactor;

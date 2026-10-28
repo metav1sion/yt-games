@@ -151,6 +151,9 @@ export function createDeliveryAnimation(scene: THREE.Scene) {
   const parcel = new THREE.Group();
   box(parcel, [0.8, 0.7, 0.8], [0, 0, 0], "#c98e51");
   box(parcel, [0.14, 0.71, 0.81], [0, 0, 0], "#f6d191");
+  // Altın hediye kurdelesi
+  box(parcel, [0.82, 0.08, 0.82], [0, 0, 0], "#e74c3c");
+  box(parcel, [0.18, 0.12, 0.18], [0, 0.38, 0], "#f1c40f");
   scene.add(parcel);
   parcel.visible = false;
 
@@ -159,9 +162,11 @@ export function createDeliveryAnimation(scene: THREE.Scene) {
   const to = new THREE.Vector3();
 
   return {
-    play(position: Vec2, home: Vec2) {
+    play(position: Vec2, home: Vec2, stationOffset?: Vec2) {
       from.set(position.x, 1.2, position.z);
-      to.set(home.x, 1, home.z - 3.5);
+      const oz = stationOffset?.z ?? -3.5;
+      const ox = stationOffset?.x ?? 0;
+      to.set(home.x + ox, 0.95, home.z + oz);
       elapsed = 0;
       parcel.visible = true;
     },
@@ -173,9 +178,19 @@ export function createDeliveryAnimation(scene: THREE.Scene) {
       }
       const t = Math.min(1, elapsed / 0.85);
       parcel.position.lerpVectors(from, to, t);
-      parcel.position.y += Math.sin(t * Math.PI) * 2;
-      parcel.rotation.y = t * Math.PI * 2;
-      parcel.scale.setScalar(1 - t * 0.35);
+      // Parabolik uçuş eğrisi
+      parcel.position.y = THREE.MathUtils.lerp(from.y, to.y, t) + Math.sin(t * Math.PI) * 2.2;
+      parcel.rotation.y = t * Math.PI * 2.5;
+      parcel.rotation.x = Math.sin(t * Math.PI) * 0.3;
+
+      // İnişte elastik ezilme ve sekme (Squash & stretch bounce)
+      if (t > 0.8) {
+        const bounceT = (t - 0.8) / 0.2;
+        const squash = Math.sin(bounceT * Math.PI) * 0.28;
+        parcel.scale.set(1.0 + squash * 0.6, 1.0 - squash, 1.0 + squash * 0.6);
+      } else {
+        parcel.scale.setScalar(1);
+      }
     },
   };
 }

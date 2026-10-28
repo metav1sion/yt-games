@@ -21,6 +21,9 @@ export type StationView = {
   celebrateTimer: number;
   waveTimer: number;
   baseY: number;
+  gratitudeGroup: THREE.Group;
+  gratitudeTimer: number;
+  isReceiving: boolean;
 };
 
 export type DeliveryStationsView = {
@@ -216,6 +219,11 @@ export function createDeliveryStations(homes: Vec2[]): DeliveryStationsView {
       box(rightArmPivot, [0.06, 0.12, 0.08], [0, -0.42, 0.04], "#2c3e50");
     }
 
+    const gratitudeGroup = new THREE.Group();
+    gratitudeGroup.position.set(0, 1.85, 0);
+    gratitudeGroup.visible = false;
+    characterGroup.add(gratitudeGroup);
+
     stations.push({
       homeIndex: index,
       districtId,
@@ -231,6 +239,9 @@ export function createDeliveryStations(homes: Vec2[]): DeliveryStationsView {
       celebrateTimer: 0,
       waveTimer: 0,
       baseY: 0,
+      gratitudeGroup,
+      gratitudeTimer: 0,
+      isReceiving: false,
     });
   });
 
@@ -242,7 +253,27 @@ export function createDeliveryStations(homes: Vec2[]): DeliveryStationsView {
       if (!station) return;
 
       station.celebrateTimer = 1.8;
+      station.gratitudeTimer = 2.2;
       station.deliveredCount++;
+
+      // Müşteri teşekkür ve memnuniyet konuşma balonu rozeti
+      station.gratitudeGroup.clear();
+      const gratitudePhrases = [
+        "⭐⭐⭐⭐⭐ Harika Teslimat!",
+        "📦 Çok Teşekkürler!",
+        "⚡ Jet Hızında Servis!",
+        "🙌 Eline Sağlık Kurye!",
+      ];
+      const speech = label(
+        gratitudePhrases[homeIndex % gratitudePhrases.length],
+        "#ffffff",
+        "#10b981",
+      );
+      speech.scale.set(1.7, 0.46, 1);
+      station.gratitudeGroup.add(speech);
+      station.gratitudeGroup.position.set(0, 1.85, 0);
+      station.gratitudeGroup.scale.set(0.01, 0.01, 1);
+      station.gratitudeGroup.visible = true;
 
       // İstasyon masası veya paleti üzerinde teslim edilmiş şık paket yığını oluştur (en fazla 3 adet)
       if (station.deliveredParcelsGroup.children.length < 3) {
@@ -310,6 +341,18 @@ export function createDeliveryStations(homes: Vec2[]): DeliveryStationsView {
     },
     update(dt: number, activeTargetIndex = -1, isDelivering = false) {
       for (const st of stations) {
+        // Teşekkür konuşma balonu yukarı süzülme ve yaylanma animasyonu
+        if (st.gratitudeTimer > 0) {
+          st.gratitudeTimer -= dt;
+          const progress = 1 - Math.max(0, st.gratitudeTimer) / 2.2;
+          st.gratitudeGroup.position.y = 1.85 + progress * 0.85;
+          const popScale = Math.sin(Math.min(1, progress * 4) * Math.PI / 2);
+          st.gratitudeGroup.scale.set(popScale, popScale, 1);
+          if (st.gratitudeTimer <= 0) {
+            st.gratitudeGroup.visible = false;
+          }
+        }
+
         if (st.celebrateTimer > 0) {
           st.celebrateTimer -= dt;
           // Zıplama & iki kol havada neşeli kutlama dansı ("🙌")
@@ -320,16 +363,18 @@ export function createDeliveryStations(homes: Vec2[]): DeliveryStationsView {
           st.leftArmPivot.rotation.x = Math.sin((1.8 - st.celebrateTimer) * 10) * 0.3;
           st.rightArmPivot.rotation.x = -Math.sin((1.8 - st.celebrateTimer) * 10) * 0.3;
         } else if (isDelivering && activeTargetIndex === st.homeIndex) {
-          // Oyuncu aracı bu eve teslimat yaparken el sallayarak karşılama
+          // Oyuncu aracı bu eve teslimat yaparken kargo karşılama ve el sallama
+          st.isReceiving = true;
           st.waveTimer += dt;
-          st.characterGroup.position.y = st.baseY + Math.sin(st.waveTimer * 4) * 0.03;
-          // Sağ kol yukarıda el sallama
+          st.characterGroup.position.y = st.baseY + Math.sin(st.waveTimer * 5) * 0.04;
+          // Sağ kol yukarıda karşılama, kollar teslim almaya hazır öne uzanmış
           st.rightArmPivot.rotation.z = -Math.PI * 0.72 + Math.sin(st.waveTimer * 8) * 0.28;
-          st.rightArmPivot.rotation.x = 0.15;
-          st.leftArmPivot.rotation.z = 0.1;
-          st.leftArmPivot.rotation.x = 0;
+          st.rightArmPivot.rotation.x = -Math.PI * 0.25;
+          st.leftArmPivot.rotation.z = 0.12;
+          st.leftArmPivot.rotation.x = -Math.PI * 0.25;
         } else {
           // Sakin nefes alma duruşu
+          st.isReceiving = false;
           st.characterGroup.position.y = st.baseY;
           st.leftArmPivot.rotation.set(0, 0, 0.08);
           st.rightArmPivot.rotation.set(0, 0, -0.08);

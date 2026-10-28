@@ -4,7 +4,7 @@ import type { Vec2 } from "../game/types";
 import type { DamageContact } from "../game/contact-damage";
 import { districts, isDistrictUnlocked, type DistrictId } from "../game/districts";
 
-export type VehicleKind = "taxi" | "police" | "suv" | "truck" | "sedan";
+export type VehicleKind = "taxi" | "police" | "suv" | "truck" | "sedan" | "courier";
 
 export type TrafficCar = {
   group: THREE.Group;
@@ -163,6 +163,88 @@ function buildSedanModel(group: THREE.Group, color: string, w = 1.22, h = 0.54, 
   box(group, [0.22, 0.12, 0.05], [w * 0.34, h * 0.85, -l * 0.5], "#e53e3e");
 }
 
+// 🛵 Kurye Dağıtım Scooter'ı Modeli (AI Courier Scooter)
+function buildCourierModel(group: THREE.Group, scooterColor = "#00cec9", l = 1.7) {
+  // 1. İki Tekerlek (Ön ve Arka tekerlek)
+  const wheelGeom = new THREE.CylinderGeometry(0.2, 0.2, 0.12, 10);
+  const wheelMat = mat("#1a202c", 0.9);
+  const rimMat = mat("#cbd5e0", 0.3);
+
+  // Ön tekerlek
+  const frontWheel = new THREE.Mesh(wheelGeom, wheelMat);
+  frontWheel.rotation.z = Math.PI / 2;
+  frontWheel.position.set(0, 0.2, l * 0.36);
+  frontWheel.castShadow = true;
+  group.add(frontWheel);
+
+  const frontRim = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.14, 8), rimMat);
+  frontRim.rotation.z = Math.PI / 2;
+  frontRim.position.set(0, 0.2, l * 0.36);
+  group.add(frontRim);
+
+  // Arka tekerlek
+  const rearWheel = new THREE.Mesh(wheelGeom, wheelMat);
+  rearWheel.rotation.z = Math.PI / 2;
+  rearWheel.position.set(0, 0.2, -l * 0.36);
+  rearWheel.castShadow = true;
+  group.add(rearWheel);
+
+  const rearRim = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.14, 8), rimMat);
+  rearRim.rotation.z = Math.PI / 2;
+  rearRim.position.set(0, 0.2, -l * 0.36);
+  group.add(rearRim);
+
+  // 2. Scooter Gövdesi & Basamak (Footrest)
+  box(group, [0.38, 0.14, l * 0.55], [0, 0.22, 0], scooterColor, 0.6); // Ayak basma tabanı
+  box(group, [0.34, 0.42, 0.28], [0, 0.45, l * 0.24], scooterColor, 0.6); // Ön kalkan
+  box(group, [0.36, 0.28, l * 0.45], [0, 0.4, -l * 0.14], "#2d3748"); // Koltuk altı gövde
+
+  // Koltuk (Deri siyah)
+  box(group, [0.32, 0.08, l * 0.42], [0, 0.56, -l * 0.12], "#1a1a1a");
+
+  // Ön çamurluk
+  box(group, [0.24, 0.12, 0.34], [0, 0.34, l * 0.38], scooterColor);
+
+  // Ön direksiyon mili ve gidon (Handlebar)
+  cylinder(group, 0.03, 0.03, 0.5, [0, 0.72, l * 0.22], "#a0aec0", 8);
+  box(group, [0.62, 0.04, 0.05], [0, 0.95, l * 0.22], "#1a202c"); // Gidon kolları
+  box(group, [0.08, 0.06, 0.06], [-0.28, 0.95, l * 0.22], "#e53e3e"); // Sol elcik
+  box(group, [0.08, 0.06, 0.06], [0.28, 0.95, l * 0.22], "#e53e3e"); // Sağ elcik
+
+  // Farlar: Ön parlak LED & arka kırmızı stop
+  box(group, [0.18, 0.12, 0.05], [0, 0.58, l * 0.39], "#ffffff");
+  box(group, [0.18, 0.08, 0.05], [0, 0.46, -l * 0.42], "#ff4757");
+
+  // 3. Arka Büyük Termal Kargo Çantası (Thermal Delivery Box)
+  box(group, [0.55, 0.52, 0.48], [0, 0.82, -l * 0.28], "#f1c40f", 0.7); // Parlak kargo kutusu
+  box(group, [0.56, 0.08, 0.49], [0, 0.82, -l * 0.28], "#2d3436"); // Kargo reflektif şerit
+  box(group, [0.57, 0.03, 0.2], [0, 0.98, -l * 0.28], "#e17055"); // Çanta kapağı
+  // Kargo amblemi
+  box(group, [0.2, 0.2, 0.02], [0, 0.82, -l * 0.28 - 0.25], "#ffffff");
+  box(group, [0.12, 0.12, 0.03], [0, 0.82, -l * 0.28 - 0.25], "#e74c3c");
+
+  // 4. Kasklı AI Kurye Sürücüsü (Animated Courier Rider)
+  box(group, [0.32, 0.44, 0.22], [0, 0.86, 0.04], scooterColor, 0.7);
+  box(group, [0.33, 0.08, 0.23], [0, 0.88, 0.04], "#f5f6fa");
+
+  // Kollar gidona uzanmış
+  const armL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 0.28), mat(scooterColor, 0.7));
+  armL.position.set(-0.19, 0.92, 0.14);
+  armL.rotation.x = -Math.PI * 0.15;
+  group.add(armL);
+
+  const armR = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 0.28), mat(scooterColor, 0.7));
+  armR.position.set(0.19, 0.92, 0.14);
+  armR.rotation.x = -Math.PI * 0.15;
+  group.add(armR);
+
+  // Kask & Vizör
+  const helmet = new THREE.Mesh(new THREE.SphereGeometry(0.18, 10, 8), mat("#2d3436", 0.6));
+  helmet.position.set(0, 1.25, 0.05);
+  group.add(helmet);
+  box(group, [0.22, 0.09, 0.12], [0, 1.24, 0.16], "#0984e3", 0.2);
+}
+
 /**
  * Bölgeye özel trafik tanımları.
  * world.test.ts tarafından import edildiği için orijinal 9 rota tam olarak korunur.
@@ -196,7 +278,7 @@ export const EXTRA_DISTRICT_TRAFFIC: TrafficCarDef[] = [
   // Sahil açılınca kordon/bulvar araçları
   { district: "coastal", position: { x: -40, z: 52.2 }, axis: "x", direction: 1, speed: 3.5, min: -90, max: -12, kind: "taxi", color: "#f1c40f" },
   { district: "coastal", position: { x: -70, z: 47.8 }, axis: "x", direction: -1, speed: 3.3, min: -90, max: -12, kind: "suv", color: "#0ea5e9" },
-  { district: "coastal", position: { x: -52.2, z: 45 }, axis: "z", direction: 1, speed: 3.2, min: 12, max: 80, kind: "sedan", color: "#ec4899" },
+  { district: "coastal", position: { x: -52.2, z: 45 }, axis: "z", direction: 1, speed: 3.5, min: 12, max: 80, kind: "courier", color: "#00cec9" },
 ];
 
 /**
@@ -217,14 +299,14 @@ export const DEFAULT_TRAFFIC: TrafficCarDef[] = [
   { position: { x: 2.2, z: -45 }, axis: "z", direction: -1, speed: 3.0, min: -90, max: 90, kind: "suv", color: "#831843" },
   { position: { x: -2.2, z: -75 }, axis: "z", direction: 1, speed: 3.2, min: -90, max: 90, kind: "police", color: "#ffffff" },
   { position: { x: -2.2, z: -25 }, axis: "z", direction: 1, speed: 2.9, min: -90, max: 90, kind: "truck", color: "#ea580c" },
-  { position: { x: -2.2, z: 35 }, axis: "z", direction: 1, speed: 3.0, min: -90, max: 90, kind: "sedan", color: "#7c3aed" },
+  { position: { x: -2.2, z: 35 }, axis: "z", direction: 1, speed: 3.3, min: -90, max: 90, kind: "courier", color: "#ff7675" },
 
   // 3. Güneş Mahallesi Sokakları (Z = -80, Z = -10, X = -80, X = -50)
   { position: { x: -55, z: -48.2 }, axis: "x", direction: 1, speed: 3.0, min: -90, max: -10, kind: "sedan", color: "#b85d4e" },
   { position: { x: -75, z: -80 }, axis: "x", direction: 1, speed: 2.7, min: -88, max: -12, kind: "taxi", color: "#f1c40f" },
   { position: { x: -25, z: -80 }, axis: "x", direction: -1, speed: 2.6, min: -88, max: -12, kind: "suv", color: "#047857" },
   { position: { x: -65, z: -10 }, axis: "x", direction: 1, speed: 2.8, min: -88, max: -12, kind: "truck", color: "#f59e0b" },
-  { position: { x: -25, z: -10 }, axis: "x", direction: -1, speed: 2.7, min: -88, max: -12, kind: "sedan", color: "#475569" },
+  { position: { x: -25, z: -10 }, axis: "x", direction: -1, speed: 3.1, min: -88, max: -12, kind: "courier", color: "#f1c40f" },
   { position: { x: -80, z: -35 }, axis: "z", direction: 1, speed: 2.8, min: -88, max: -12, kind: "police", color: "#ffffff" },
   { position: { x: -50, z: -65 }, axis: "z", direction: -1, speed: 2.6, min: -88, max: -12, kind: "taxi", color: "#f1c40f" },
 ];
@@ -295,6 +377,9 @@ export function createTraffic() {
       case "truck":
         buildTruckModel(car.group, color);
         break;
+      case "courier":
+        buildCourierModel(car.group, color);
+        break;
       case "sedan":
       default:
         buildSedanModel(car.group, color);
@@ -345,6 +430,24 @@ export function createTraffic() {
       car.hornTimer = 0.5; // Korna çalma isteği
     },
 
+    /**
+     * Oyuncu korna çaldığında yakındaki AI kuryelerin selam/korna tepkisi
+     */
+    onPlayerHonk(playerPos: Vec2): boolean {
+      let anyReacted = false;
+      for (const car of cars) {
+        if (car.kind === "courier") {
+          const d = Math.hypot(car.position.x - playerPos.x, car.position.z - playerPos.z);
+          if (d < 16) {
+            car.shakeTimer = 0.35;
+            car.hornTimer = 0.4;
+            anyReacted = true;
+          }
+        }
+      }
+      return anyReacted;
+    },
+
     update(dt: number, player: Vec2): TrafficUpdateResult {
       const contacts: DamageContact[] = [];
       let collisionCarIndex: number | null = null;
@@ -375,6 +478,11 @@ export function createTraffic() {
         if (car.shakeTimer > 0) {
           car.shakeTimer -= dt;
           rollAngle = Math.sin(car.shakeTimer * 30) * 0.12 * (car.shakeTimer / 0.4);
+        }
+
+        // Kurye scooter'ı hafif iki tekerlek denge ve viraj yatış salınımı
+        if (car.kind === "courier") {
+          rollAngle += Math.sin(car.position[car.axis] * 0.4) * 0.04;
         }
 
         // Polis tepe lambası çakarı

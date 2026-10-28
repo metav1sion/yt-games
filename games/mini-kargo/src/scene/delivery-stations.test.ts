@@ -45,19 +45,23 @@ describe("DeliveryStations", () => {
     stationsView.update(0.1, 2, true);
     expect(targetStation.rightArmPivot.rotation.z).not.toBe(initialRot);
     expect(targetStation.waveTimer).toBeGreaterThan(0);
+    expect(targetStation.isReceiving).toBe(true);
   });
 
-  it("triggers celebration jump and stacks delivered parcels upon onDelivered", () => {
+  it("triggers celebration jump, gratitude bubble and stacks delivered parcels upon onDelivered", () => {
     const stationsView = createDeliveryStations(dummyHomes);
     const targetStation = stationsView.stations[5];
 
     expect(targetStation.deliveredCount).toBe(0);
     expect(targetStation.deliveredParcelsGroup.children).toHaveLength(0);
+    expect(targetStation.gratitudeGroup.visible).toBe(false);
 
     // First delivery (cold chain)
     stationsView.onDelivered(5, "cold_chain");
     expect(targetStation.deliveredCount).toBe(1);
     expect(targetStation.celebrateTimer).toBeGreaterThan(0);
+    expect(targetStation.gratitudeTimer).toBeGreaterThan(0);
+    expect(targetStation.gratitudeGroup.visible).toBe(true);
     expect(targetStation.deliveredParcelsGroup.children).toHaveLength(1);
 
     // Update animation should jump
