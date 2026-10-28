@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { box } from "./world";
 import type { VehicleState, VehicleType } from "../game/types";
+import { getLiveryById, type VehicleLivery } from "../game/career";
 
 export type WheelPivot = {
   holder: THREE.Group;
@@ -12,6 +13,7 @@ export type VanVisual = {
   group: THREE.Group;
   wheelPivots: WheelPivot[];
   cargo: THREE.Group;
+  setLivery(livery: VehicleLivery): void;
 };
 
 export type ScooterVisual = {
@@ -21,14 +23,46 @@ export type ScooterVisual = {
   rearRoll: THREE.Group;
   cargo: THREE.Group;
   parcel: THREE.Group;
+  setLivery(livery: VehicleLivery): void;
 };
 
-export function buildVanVisual(): VanVisual {
+export function buildVanVisual(initialLivery?: VehicleLivery): VanVisual {
   const group = new THREE.Group();
+  const livery = initialLivery ?? getLiveryById("classic");
 
-  // 1. Sarı kaporta, kabin, camlar ve tamponlar
-  box(group, [1.25, 0.48, 2.1], [0, 0.65, 0], "#f3b544");
-  box(group, [1.16, 0.58, 0.85], [0, 1.11, 0.55], "#ffe4a2");
+  // 1. Gövde kaportası, kabin, şeritler, camlar ve tamponlar
+  const bodyMat = new THREE.MeshStandardMaterial({
+    color: livery.primaryColor,
+    roughness: 0.5,
+  });
+  const bodyGeo = new THREE.BoxGeometry(1.25, 0.48, 2.1);
+  const bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
+  bodyMesh.position.set(0, 0.65, 0);
+  bodyMesh.castShadow = true;
+  group.add(bodyMesh);
+
+  const cabinMat = new THREE.MeshStandardMaterial({
+    color: livery.secondaryColor,
+    roughness: 0.5,
+  });
+  const cabinGeo = new THREE.BoxGeometry(1.16, 0.58, 0.85);
+  const cabinMesh = new THREE.Mesh(cabinGeo, cabinMat);
+  cabinMesh.position.set(0, 1.11, 0.55);
+  cabinMesh.castShadow = true;
+  group.add(cabinMesh);
+
+  const stripeMat = new THREE.MeshStandardMaterial({
+    color: livery.accentColor,
+    roughness: 0.4,
+  });
+  const stripeGeo = new THREE.BoxGeometry(0.04, 0.12, 1.6);
+  const stripeL = new THREE.Mesh(stripeGeo, stripeMat);
+  stripeL.position.set(-0.63, 0.68, 0);
+  group.add(stripeL);
+  const stripeR = new THREE.Mesh(stripeGeo, stripeMat);
+  stripeR.position.set(0.63, 0.68, 0);
+  group.add(stripeR);
+
   box(group, [1.04, 0.38, 0.055], [0, 1.14, 0.99], "#406c73");
   for (const x of [-0.59, 0.59])
     box(group, [0.04, 0.34, 0.58], [x, 1.15, 0.56], "#406c73");
@@ -84,11 +118,18 @@ export function buildVanVisual(): VanVisual {
   box(cargo, [0.17, 0.71, 0.86], [0, 0.35, 0], "#f6d191");
   box(cargo, [0.86, 0.71, 0.13], [0, 0.35, 0], "#f6d191");
 
-  return { group, wheelPivots, cargo };
+  function setLivery(l: VehicleLivery) {
+    bodyMat.color.set(l.primaryColor);
+    cabinMat.color.set(l.secondaryColor);
+    stripeMat.color.set(l.accentColor);
+  }
+
+  return { group, wheelPivots, cargo, setLivery };
 }
 
-export function buildScooterVisual(): ScooterVisual {
+export function buildScooterVisual(initialLivery?: VehicleLivery): ScooterVisual {
   const group = new THREE.Group();
+  const livery = initialLivery ?? getLiveryById("classic");
 
   // 1. İki tekerlek (ön ve arka tekerlek + jantlar)
   const tireGeo = new THREE.CylinderGeometry(0.26, 0.26, 0.12, 12);
@@ -147,16 +188,40 @@ export function buildScooterVisual(): ScooterVisual {
   rearHub.rotation.z = Math.PI / 2;
   rearRoll.add(rearHub);
 
-  // Arka çamurluk
-  box(group, [0.22, 0.16, 0.38], [0, 0.40, -0.68], "#326157");
+  // 2. Kıvrak gövde (ayaklık, ön kalkan, sele, farlar) - Livery renkleri
+  const primaryMat = new THREE.MeshStandardMaterial({
+    color: livery.primaryColor,
+    roughness: 0.5,
+  });
+  const accentMat = new THREE.MeshStandardMaterial({
+    color: livery.accentColor,
+    roughness: 0.5,
+  });
 
-  // 2. Kıvrak gövde (ayaklık, ön kalkan, sele, farlar)
+  // Arka çamurluk
+  const fenderGeo = new THREE.BoxGeometry(0.22, 0.16, 0.38);
+  const fenderMesh = new THREE.Mesh(fenderGeo, accentMat);
+  fenderMesh.position.set(0, 0.40, -0.68);
+  group.add(fenderMesh);
+
   // Ayaklık (footboard)
-  box(group, [0.46, 0.10, 0.76], [0, 0.24, 0.05], "#326157");
+  const boardGeo = new THREE.BoxGeometry(0.46, 0.10, 0.76);
+  const boardMesh = new THREE.Mesh(boardGeo, accentMat);
+  boardMesh.position.set(0, 0.24, 0.05);
+  group.add(boardMesh);
+
   // Orta gövde tüneli / akü kapağı
-  box(group, [0.38, 0.38, 0.65], [0, 0.44, -0.22], "#f3b544");
+  const tunnelGeo = new THREE.BoxGeometry(0.38, 0.38, 0.65);
+  const tunnelMesh = new THREE.Mesh(tunnelGeo, primaryMat);
+  tunnelMesh.position.set(0, 0.44, -0.22);
+  group.add(tunnelMesh);
+
   // Ön kalkan / siperlik
-  box(group, [0.46, 0.58, 0.12], [0, 0.60, 0.38], "#f3b544");
+  const shieldGeo = new THREE.BoxGeometry(0.46, 0.58, 0.12);
+  const shieldMesh = new THREE.Mesh(shieldGeo, primaryMat);
+  shieldMesh.position.set(0, 0.60, 0.38);
+  group.add(shieldMesh);
+
   box(group, [0.36, 0.18, 0.06], [0, 0.54, 0.45], "#fff0c7");
   // Ön far
   box(group, [0.18, 0.12, 0.05], [0, 0.74, 0.45], "#fff8d2");
@@ -185,6 +250,11 @@ export function buildScooterVisual(): ScooterVisual {
   box(parcel, [0.38, 0.32, 0.34], [0, 0.25, 0], "#e67e22"); // Koli
   box(parcel, [0.40, 0.08, 0.36], [0, 0.25, 0], "#f39c12"); // Koli bandı
 
+  function setLivery(l: VehicleLivery) {
+    primaryMat.color.set(l.primaryColor);
+    accentMat.color.set(l.accentColor);
+  }
+
   return {
     group,
     frontHolder,
@@ -192,6 +262,7 @@ export function buildScooterVisual(): ScooterVisual {
     rearRoll,
     cargo,
     parcel,
+    setLivery,
   };
 }
 
@@ -324,6 +395,7 @@ function createHeadlightsVisual() {
 export function createCar(
   assetModel?: THREE.Group | null,
   initialType: VehicleType = "van",
+  initialLiveryId = "classic",
 ) {
   const group = new THREE.Group();
   const body = new THREE.Group();
@@ -332,14 +404,24 @@ export function createCar(
   const headlights = createHeadlightsVisual();
   group.add(headlights.root);
 
-  const vanVisual = buildVanVisual();
-  const scooterVisual = buildScooterVisual();
+  let currentLiveryId = initialLiveryId;
+  let currentLivery = getLiveryById(currentLiveryId);
+
+  const vanVisual = buildVanVisual(currentLivery);
+  const scooterVisual = buildScooterVisual(currentLivery);
 
   let currentType: VehicleType = initialType;
   if (currentType === "scooter") {
     body.add(scooterVisual.group);
   } else {
     body.add(vanVisual.group);
+  }
+
+  function setLivery(liveryId: string) {
+    currentLiveryId = liveryId;
+    currentLivery = getLiveryById(liveryId);
+    vanVisual.setLivery(currentLivery);
+    scooterVisual.setLivery(currentLivery);
   }
 
   // Harici aksesuar eklentisi (gövdeyi asla gizlemez)
@@ -372,6 +454,10 @@ export function createCar(
     setVehicleType,
     getVehicleType(): VehicleType {
       return currentType;
+    },
+    setLivery,
+    getLivery(): string {
+      return currentLiveryId;
     },
     getHeadlightIntensity(): number {
       return headlightIntensity;

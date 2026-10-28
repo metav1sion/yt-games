@@ -25,6 +25,8 @@ export type Preferences = {
   unlockedVehicles?: string[];
   currentVehicle?: string;
   unlockedDistricts?: DistrictId[];
+  currentLivery?: string;
+  careerTrophies?: string[];
 };
 
 export type CompanyProgression = Preferences & {
@@ -95,6 +97,14 @@ function valid(value: unknown): Preferences {
   }
   if (Array.isArray(record.couriers)) {
     res.couriers = validCouriers(record.couriers);
+  }
+  if (typeof record.currentLivery === "string" && record.currentLivery.length > 0) {
+    res.currentLivery = record.currentLivery;
+  }
+  if (Array.isArray(record.careerTrophies)) {
+    res.careerTrophies = record.careerTrophies.filter(
+      (t): t is string => typeof t === "string" && t.length > 0,
+    );
   }
 
   return res;

@@ -1648,6 +1648,180 @@ h1 {
   margin-top: 8px;
 }
 
+/* 4. BAŞARILAR & GARAJ KAPLAMALARI (T27) */
+.career-intro {
+  margin-bottom: 16px;
+}
+.career-intro h3 {
+  font-size: 18px;
+  color: #235546;
+  margin: 0 0 4px;
+}
+.career-intro p {
+  font-size: 12px;
+  color: #728474;
+}
+.career-section-header {
+  margin-bottom: 10px;
+}
+.liveries-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+.livery-card {
+  background: #ffffffa0;
+  border: 1.5px solid #e2d7ba;
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.12s ease, border-color 0.15s ease;
+}
+.livery-card.active {
+  border-color: #235546;
+  background: #eef7eb;
+  box-shadow: 0 0 0 2px rgba(35, 85, 70, 0.2);
+}
+.livery-card.locked {
+  opacity: 0.65;
+}
+.livery-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.livery-icon {
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  background: #f7eed7;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+}
+.livery-title-group {
+  flex: 1;
+}
+.livery-title-group strong {
+  font-size: 13.5px;
+  color: #235546;
+  display: block;
+}
+.swatch-dots {
+  display: flex;
+  gap: 5px;
+  margin-top: 4px;
+}
+.swatch-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  display: inline-block;
+}
+.livery-desc {
+  font-size: 10.5px;
+  color: #728474;
+  margin: 0;
+  line-height: 1.35;
+  flex: 1;
+}
+.livery-footer {
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.livery-status {
+  font-size: 9px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+.active-pill {
+  background: #235546;
+  color: #ffffff;
+}
+.locked-pill {
+  background: #2c3e5015;
+  color: #576574;
+}
+.btn-apply-livery {
+  font-size: 11px;
+  font-weight: 750;
+  padding: 6px 14px;
+}
+
+.trophies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+.trophy-card {
+  background: #ffffffa0;
+  border: 1px solid #e2d7ba;
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.trophy-card.unlocked {
+  border-color: #f1c40f;
+  background: #fffdf5;
+}
+.trophy-card.locked {
+  opacity: 0.6;
+}
+.trophy-icon {
+  font-size: 24px;
+  width: 42px;
+  height: 42px;
+  background: #fdf5df;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.trophy-info {
+  flex: 1;
+}
+.trophy-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.trophy-name-row strong {
+  font-size: 13px;
+  color: #235546;
+}
+.trophy-badge {
+  font-size: 8px;
+  font-weight: 850;
+  background: #27ae6018;
+  color: #27ae60;
+  padding: 2px 6px;
+  border-radius: 5px;
+}
+.trophy-card.locked .trophy-badge {
+  background: #2c3e5012;
+  color: #7f8c8d;
+}
+.trophy-desc {
+  font-size: 10px;
+  color: #7b8e7e;
+  margin: 3px 0 4px;
+  line-height: 1.3;
+}
+.trophy-reward {
+  font-size: 9px;
+  font-weight: 800;
+  color: #e67e22;
+}
+
 @media (max-width: 768px) {
   #joystick {
     opacity: 1 !important;

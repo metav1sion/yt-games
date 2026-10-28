@@ -12,6 +12,12 @@ import {
   courierHireCost,
   generateCourierCandidate,
 } from "../game/company";
+import {
+  VEHICLE_LIVERIES,
+  evaluateCareerTrophies,
+  getLiveryById,
+  type VehicleLivery,
+} from "../game/career";
 
 export type CompanySheetActions = {
   onStartShift(): void;
@@ -20,6 +26,8 @@ export type CompanySheetActions = {
   onClaimOffline(): void;
   /** Oyuncu teslimat bölgesini seçtiğinde çağrılır (yalnızca açık bölgeler seçilebilir). */
   onSelectDistrict?(id: DistrictId): void;
+  /** Oyuncu araç kaplamasını değiştirdiğinde çağrılır. */
+  onSelectLivery?(liveryId: string): void;
 };
 
 export type CompanySheetInstance = {
@@ -33,7 +41,7 @@ export type CompanySheetInstance = {
   dispose(): void;
 };
 
-type TabId = "overview" | "garage" | "couriers";
+type TabId = "overview" | "garage" | "couriers" | "career";
 
 export function createCompanySheet(
   root: HTMLElement,
@@ -64,6 +72,7 @@ export function createCompanySheet(
         <button class="tab-button active" data-tab="overview" role="tab">🏢 Genel Bakış</button>
         <button class="tab-button" data-tab="garage" role="tab">🔧 Garaj</button>
         <button class="tab-button" data-tab="couriers" role="tab">👥 Kadro (<span id="courier-badge">0</span>)</button>
+        <button class="tab-button" data-tab="career" role="tab">🏆 Başarılar & Garaj</button>
       </nav>
 
       <main class="tab-content">
@@ -141,6 +150,24 @@ export function createCompanySheet(
 
           <div class="couriers-list" id="couriers-list"></div>
         </section>
+
+        <!-- 4. BAŞARILAR & GARAJ KAPLAMALARI -->
+        <section class="tab-pane" id="pane-career" hidden>
+          <div class="career-intro">
+            <h3>Şirket Başarıları & Özel Kaplamalar</h3>
+            <p>Görevleri tamamla, prestijli şirket kupalarını kazan ve kargo aracına özel renk kaplamalarını uygula.</p>
+          </div>
+
+          <div class="career-section-header">
+            <span class="eyebrow">🎨 ARAÇ KAPLAMALARI (GARAJ)</span>
+          </div>
+          <div class="liveries-grid" id="liveries-grid"></div>
+
+          <div class="career-section-header" style="margin-top: 22px;">
+            <span class="eyebrow">🏆 ŞİRKET KUPALARI & PRESTİJ (<span id="trophy-count">0/6</span>)</span>
+          </div>
+          <div class="trophies-grid" id="trophies-grid"></div>
+        </section>
       </main>
     </div>
   `;
@@ -166,6 +193,7 @@ export function createCompanySheet(
     element.querySelector("#pane-overview")?.toggleAttribute("hidden", tabId !== "overview");
     element.querySelector("#pane-garage")?.toggleAttribute("hidden", tabId !== "garage");
     element.querySelector("#pane-couriers")?.toggleAttribute("hidden", tabId !== "couriers");
+    element.querySelector("#pane-career")?.toggleAttribute("hidden", tabId !== "career");
     if (latestProgression) {
       renderTabContent(latestProgression);
     }
@@ -382,11 +410,90 @@ export function createCompanySheet(
     }
   }
 
+  function renderCareer(prog: CompanyProgression) {
+    const liveriesGrid = element.querySelector<HTMLElement>("#liveries-grid");
+    const trophiesGrid = element.querySelector<HTMLElement>("#trophies-grid");
+    const trophyCountEl = element.querySelector<HTMLElement>("#trophy-count");
+
+    // 1. Kaplamalar (Vehicle Liveries)
+    if (liveriesGrid) {
+      const currentLivery = prog.currentLivery || "classic";
+      liveriesGrid.innerHTML = VEHICLE_LIVERIES.map((livery) => {
+        const unlocked = livery.isUnlocked(prog);
+        const isActive = livery.id === currentLivery;
+        return `
+          <div class="livery-card${isActive ? " active" : ""}${!unlocked ? " locked" : ""}">
+            <div class="livery-header">
+              <span class="livery-icon">${livery.icon}</span>
+              <div class="livery-title-group">
+                <strong>${livery.name}</strong>
+                <div class="swatch-dots">
+                  <span class="swatch-dot" style="background:${livery.primaryColor}" title="Ana Renk"></span>
+                  <span class="swatch-dot" style="background:${livery.secondaryColor}" title="İkincil Renk"></span>
+                  <span class="swatch-dot" style="background:${livery.accentColor}" title="Şerit Rengi"></span>
+                </div>
+              </div>
+            </div>
+            <p class="livery-desc">${livery.description}</p>
+            <div class="livery-footer">
+              ${
+                isActive
+                  ? `<span class="livery-status active-pill">✓ KULLANILIYOR</span>`
+                  : unlocked
+                    ? `<button class="primary-button btn-apply-livery" data-livery="${livery.id}">🎨 Uygula</button>`
+                    : `<span class="livery-status locked-pill">🔒 ${livery.unlockRequirement}</span>`
+              }
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // 2. Kupalar (Career Trophies)
+    const evaluated = evaluateCareerTrophies(prog);
+    if (trophyCountEl) {
+      trophyCountEl.textContent = `${evaluated.unlockedCount}/${evaluated.totalCount}`;
+    }
+
+    if (trophiesGrid) {
+      trophiesGrid.innerHTML = evaluated.trophies.map((item) => {
+        const t = item.trophy;
+        return `
+          <div class="trophy-card${item.unlocked ? " unlocked" : " locked"}">
+            <div class="trophy-icon">${item.unlocked ? t.icon : "🔒"}</div>
+            <div class="trophy-info">
+              <div class="trophy-name-row">
+                <strong>${t.title}</strong>
+                <span class="trophy-badge">${item.unlocked ? "✅ AÇILDI" : "KİLİTLİ"}</span>
+              </div>
+              <p class="trophy-desc">${t.description}</p>
+              <small class="trophy-reward">+${t.rewardMoney} ₺ Başarı Ödülü</small>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+  }
+
+  const liveriesGrid = element.querySelector<HTMLElement>("#liveries-grid");
+  liveriesGrid?.addEventListener("click", (e) => {
+    const target = (e as { target?: HTMLElement | null }).target;
+    const btn = target?.closest?.("[data-livery]") as HTMLElement | null | undefined;
+    const liveryId = btn?.dataset.livery;
+    if (liveryId && latestProgression) {
+      latestProgression = { ...latestProgression, currentLivery: liveryId };
+      actions.onSelectLivery?.(liveryId);
+      renderCareer(latestProgression);
+    }
+  });
+
   function renderTabContent(prog: CompanyProgression) {
     if (currentTab === "garage") {
       renderGarage(prog);
     } else if (currentTab === "couriers") {
       renderCouriers(prog);
+    } else if (currentTab === "career") {
+      renderCareer(prog);
     }
   }
 

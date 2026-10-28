@@ -284,4 +284,20 @@ describe("createCar vehicle geometry and visual parts", () => {
     }
     expect(car.getHeadlightIntensity()).toBeLessThan(0.05);
   });
+
+  it("supports dynamic vehicle livery customization across van and scooter", () => {
+    const car = createCar(null, "van", "classic");
+    expect(car.getLivery()).toBe("classic");
+
+    // Sahil dalgası kaplamasına geçiş
+    car.setLivery("coastal_wave");
+    expect(car.getLivery()).toBe("coastal_wave");
+
+    // Scooter'a geçiş ve altın şampiyon kaplaması
+    car.setVehicleType("scooter");
+    expect(car.getVehicleType()).toBe("scooter");
+
+    car.setLivery("gold_rush");
+    expect(car.getLivery()).toBe("gold_rush");
+  });
 });

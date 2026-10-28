@@ -155,3 +155,33 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
   - Honking startles nearby pigeons to take flight, triggers cat meows, and elicits protective barks from Karabaş.
   - "⚡ FLAŞ SİPARİŞ RUSH" mini-event triggers periodically with active countdown and topbar glowing pill indicator, awarding +75 ₺ bonus cash, +2 reputation, and fanfare on timely delivery.
 
+---
+
+## 12. District Environmental Micro-FX & Fleet Career Customization (T26 & T27)
+- **Güneş Mahallesi Interactive Crunchy Leaf Piles**:
+  - 4 physical leaf pile mounds situated along suburban curbs, lawn borders, and parks (Homes 01 & 02, Depot entrance, Playground).
+  - Composed of multi-hued autumn leaves (golden yellow `#f1c40f`, warm amber `#f39c12`, crimson red `#c0392b`, olive green `#27ae60`).
+  - Speed-triggered explosion: Driving through a leaf pile at speed (>1.2 m/s) scatters the pile and bursts 24 swirling airborne leaf particles that spiral in the wind before softly floating down.
+  - Procedural leaf crunch audio (`sound.leafCrunch()`) and playful "+5 ₺ Sonbahar Keyfi!" bonus reward with 16-second natural pile regeneration.
+- **Sahil Şeridi Coastal Breaker Sea Spray Mist**:
+  - Located on the maritime lighthouse breakwater rocks (X: -28, Z: 91).
+  - Every 3.4 seconds, an ocean swell impacts the rocks, firing foaming white and translucent cyan water droplets (`#e0f7fa`, `#ffffff`) 2.8–4.2m upward into the coastal breeze.
+  - Procedural deep ocean surf crash sound (`sound.surfCrash()`) with distance-based acoustic attenuation.
+- **Sanayi Bölgesi Metal Fabrication Welding Workshop**:
+  - Located in the industrial courtyard (X: 36, Z: -26) equipped with heavy steel workbench, argon gas cylinder, portable inverter machine, and yellow safety screen.
+  - Industrial Welder NPC ("Usta Kaynakçı"): Dressed in dark denim overalls and protective leather apron, wearing a full-face helmet with dark visor, holding an articulated welding torch.
+  - Dynamic Arc Flicker: High-frequency blue-white point light (`#a5b4fc`, intensity 2.0–5.0) illuminating metal structures and casting dramatic shadows.
+  - Falling spark showers: Cascades of glowing orange/yellow sparks bouncing off the workbench and floor.
+  - Procedural electric arc buzz audio (`sound.weldingArc()`) with proximity falloff.
+- **Çarşı Bölgesi Piazza Fountain Mist**:
+  - Glistening water mist particles hovering over the marble fountain basin (X: 50, Z: 50).
+- **Company Fleet Career Custom Liveries (T27)**:
+  - 4 customizable vehicle styles:
+    - 🚚 Klasik Kargo: Traditional yellow/green corporate identity.
+    - 🌊 Sahil Dalgası: Vibrant turquoise & ocean blue styling.
+    - ⚡ Gece Ekspresi: Stealth anthracite with neon fuchsia racing stripe.
+    - 👑 Altın Şampiyon: High-prestige metallic gold & bronze finish.
+  - Live real-time material shader color swapping on player van and courier scooter.
+  - Career trophies gallery & Livery selector tab in the company management office sheet.
+
+

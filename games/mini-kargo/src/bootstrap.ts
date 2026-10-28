@@ -24,6 +24,8 @@ import { createCompanySheet } from "./ui/company-sheet";
 import { createTraffic } from "./scene/traffic";
 import { createPedestrians } from "./scene/pedestrians";
 import { createUrbanFauna } from "./scene/urban-fauna";
+import { createEnvironmentalFX } from "./scene/environmental-fx";
+import { getLiveryById, checkNewTrophies } from "./game/career";
 import { createCourierFleet } from "./game/fleet";
 import { createFleetView } from "./scene/fleet";
 import { districtById, districtAt, isDistrictUnlocked, type DistrictId } from "./game/districts";
@@ -111,12 +113,15 @@ export async function startGame(app: HTMLElement) {
   props.setSound?.(sound);
   const urbanFauna = createUrbanFauna(sound);
   scene.add(urbanFauna.group);
+  const environmentalFX = createEnvironmentalFX(sound);
+  scene.add(environmentalFX.group);
   let progression: CompanyProgression = asCompanyProgression(preferences);
   progression = applyOfflineEarnings(progression, Date.now());
   storage.save(progression);
 
   const currentVehType = (progression.currentVehicle as VehicleType) ?? "van";
-  const car = createCar(null, currentVehType);
+  const initialLivery = progression.currentLivery ?? "classic";
+  const car = createCar(null, currentVehType, initialLivery);
   scene.add(car.group);
 
   const isScooterUnlocked = (progression.unlockedVehicles || []).includes("scooter");
@@ -523,6 +528,13 @@ export async function startGame(app: HTMLElement) {
       selectedDistrict = id;
       sound.pickup();
     },
+    onSelectLivery(liveryId) {
+      progression = { ...progression, currentLivery: liveryId };
+      storage.save({ ...progression, soundEnabled });
+      car.setLivery(liveryId);
+      sound.pickup();
+      hud.showToast(`🎨 Kaplama uygulandı: ${getLiveryById(liveryId).name}`, 2500);
+    },
     onStartShift() {
       companySheet.hide();
       void sound.unlock();
@@ -728,6 +740,24 @@ export async function startGame(app: HTMLElement) {
           vehicle.position,
           Math.hypot(vehicle.velocity.x, vehicle.velocity.z),
         );
+        const envResult = environmentalFX.update(
+          dt,
+          vehicle.position,
+          Math.hypot(vehicle.velocity.x, vehicle.velocity.z),
+          atmoState.isNightOrDusk,
+        );
+        if (envResult.leafPileTriggered) {
+          progression = {
+            ...progression,
+            money: progression.money + envResult.bonusReward,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          if (envResult.bonusMessage) {
+            hud.showToast(envResult.bonusMessage, 2200);
+          }
+        }
         if (input.consumeHorn()) {
           sound.carHorn();
           urbanFauna.onHonk(vehicle.position);
@@ -822,6 +852,27 @@ export async function startGame(app: HTMLElement) {
             sound.comboFanfare(5);
             particles.spawnConfetti(world.homes[old.targetIndex]);
             hud.showToast(`⚡ FLAŞ SİPARİŞ TAMAMLANDI! +${delivery.lastReward.flashBonus} ₺ BONUS! 🚀`, 3800);
+          }
+
+          // Yeni açılan kariyer başarımlarını ve ödüllerini kontrol et (T27)
+          const prevTrophies = progression.careerTrophies ?? [];
+          const newTrophies = checkNewTrophies(progression, prevTrophies);
+          if (newTrophies.length > 0) {
+            const newIds = newTrophies.map((t) => t.id);
+            let totalTrophyBonus = 0;
+            for (const t of newTrophies) totalTrophyBonus += t.rewardMoney;
+            progression = {
+              ...progression,
+              money: progression.money + totalTrophyBonus,
+              careerTrophies: [...prevTrophies, ...newIds],
+            };
+            storage.save({ ...progression, soundEnabled });
+            companySheet.update(progression);
+            hud.update(delivery, progression, soundEnabled);
+            for (const t of newTrophies) {
+              hud.showToast(`🏆 BAŞARIM KAZANILDI: ${t.title} (+${t.rewardMoney} ₺)`, 3500);
+            }
+            sound.comboFanfare(5);
           }
 
           if (newLevel > oldLevel) {

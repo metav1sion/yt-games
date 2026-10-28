@@ -597,6 +597,126 @@ export function createSound() {
         }
       } catch {}
     },
+    leafCrunch() {
+      if (!context || !enabled || paused || context.state !== "running") return;
+      try {
+        const at = context.currentTime;
+        // Sonbahar kuru yaprak yığını ezilme ve hışırtı sesi (3 katmanlı bant filtreli çıtırtı)
+        for (let i = 0; i < 3; i++) {
+          const t = at + i * 0.035;
+          const dur = 0.09 + i * 0.02;
+          const osc = context.createOscillator();
+          const filter = context.createBiquadFilter();
+          const gain = context.createGain();
+
+          osc.type = i === 0 ? "triangle" : "sawtooth";
+          osc.frequency.setValueAtTime(320 - i * 40, t);
+          osc.frequency.exponentialRampToValueAtTime(110, t + dur);
+
+          filter.type = "bandpass";
+          filter.frequency.setValueAtTime(1800 + i * 600, t);
+          filter.Q.setValueAtTime(2.2, t);
+
+          gain.gain.setValueAtTime(0, t);
+          gain.gain.linearRampToValueAtTime(0.045, t + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(context.destination);
+          osc.start(t);
+          osc.stop(t + dur + 0.01);
+          osc.onended = () => {
+            osc.disconnect();
+            filter.disconnect();
+            gain.disconnect();
+          };
+        }
+      } catch {}
+    },
+    surfCrash(volume = 1.0) {
+      if (!context || !enabled || paused || context.state !== "running") return;
+      const vol = Math.max(0, Math.min(1, volume));
+      if (vol <= 0.02) return;
+      try {
+        const at = context.currentTime;
+        const dur = 1.35;
+        // Sahil kayalıklarına vuran derin okyanus dalgası çarpma ve köpük sesi
+        const osc = context.createOscillator();
+        const sub = context.createOscillator();
+        const filter = context.createBiquadFilter();
+        const gain = context.createGain();
+
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(120, at);
+        osc.frequency.exponentialRampToValueAtTime(45, at + dur);
+
+        sub.type = "sine";
+        sub.frequency.setValueAtTime(58, at);
+        sub.frequency.exponentialRampToValueAtTime(32, at + dur * 0.8);
+
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(420, at);
+        filter.frequency.exponentialRampToValueAtTime(80, at + dur);
+        filter.Q.setValueAtTime(1.8, at);
+
+        gain.gain.setValueAtTime(0, at);
+        gain.gain.linearRampToValueAtTime(0.05 * vol, at + 0.12);
+        gain.gain.exponentialRampToValueAtTime(0.001, at + dur);
+
+        osc.connect(filter);
+        sub.connect(filter);
+        filter.connect(gain);
+        gain.connect(context.destination);
+
+        osc.start(at);
+        sub.start(at);
+        osc.stop(at + dur + 0.02);
+        sub.stop(at + dur + 0.02);
+        osc.onended = () => {
+          osc.disconnect();
+          sub.disconnect();
+          filter.disconnect();
+          gain.disconnect();
+        };
+      } catch {}
+    },
+    weldingArc(volume = 1.0) {
+      if (!context || !enabled || paused || context.state !== "running") return;
+      const vol = Math.max(0, Math.min(1, volume));
+      if (vol <= 0.02) return;
+      try {
+        const at = context.currentTime;
+        const dur = 0.22;
+        // Sanayi metal atölyesi elektrik ark kaynağı cızırtı ve plazma kıvılcım sesi
+        const osc = context.createOscillator();
+        const filter = context.createBiquadFilter();
+        const gain = context.createGain();
+
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(110 + (Math.random() - 0.5) * 30, at);
+        osc.frequency.linearRampToValueAtTime(220 + (Math.random() - 0.5) * 40, at + dur);
+
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(1600 + Math.random() * 800, at);
+        filter.Q.setValueAtTime(3.2, at);
+
+        gain.gain.setValueAtTime(0, at);
+        gain.gain.linearRampToValueAtTime(0.035 * vol, at + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, at + dur);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(context.destination);
+        osc.start(at);
+        osc.stop(at + dur + 0.01);
+        osc.onended = () => {
+          osc.disconnect();
+          filter.disconnect();
+          gain.disconnect();
+        };
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

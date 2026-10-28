@@ -104,8 +104,21 @@
   - "⚡ FLAŞ SİPARİŞ RUSH" emergent mini-events triggering every 3rd-4th delivery with active countdown, animated glowing topbar HUD badge, and +75 ₺ bonus cash.
   - Tested in `src/game/delivery.test.ts` and `src/game/input.test.ts`.
 
+- [x] **T26 — District Environmental Micro-FX & Seasonal Dynamics**:
+  - Güneş: 4 interactive leaf piles (`leafPiles`), 3D leaf burst particle explosion (`spawnLeafBurst`), procedural leaf crunch sound (`sound.leafCrunch()`), +5₺ Sonbahar Keyfi reward, auto-regeneration.
+  - Sahil: Coastal wave sea spray mist rising rhythmically on maritime lighthouse breakwater rocks with deep surf crash sound (`sound.surfCrash()`).
+  - Sanayi: Metal fabrication welding workshop at X: 36, Z: -26 with workbench, argon cylinder, inverter generator, and animated Welder NPC ("Usta Kaynakçı"). Dynamic blue-white arc flickering point light, cascading glowing sparks, and procedural electric arc buzz audio (`sound.weldingArc()`).
+  - Çarşı: Piazza fountain water mist and glistening micro-droplets.
+  - Tested in `src/scene/environmental-fx.test.ts`.
+
+- [x] **T27 — Company Career Milestones & Fleet Custom Liveries**:
+  - 4 unlockable vehicle liveries (Klasik Kargo, Sahil Dalgası, Gece Ekspresi, Altın Şampiyon) with dynamic real-time mesh material color adaptation on `createCar` for both delivery van and scooter.
+  - 6 Career Trophies (İlk Adım, Kıdemli Dağıtıcı, Şehir Kâşifi, Filo Patronu, Kargo Baronu, Efsanevi Kurye) with cash rewards and real-time celebration notifications.
+  - Added "🏆 Başarılar & Garaj" tab to `CompanySheet` with interactive livery applicator and trophy showcase.
+  - Tested in `src/game/career.test.ts`, `src/scene/car.test.ts`, and `src/ui/company-sheet.test.ts`.
+
 ## Active / Next Tasks
-- [ ] **T26 — District Environmental Micro-FX & Seasonal Foliage Details**: Autumn leaf swirls in Güneş parks, coastal sea spray mist on Sahil promenade, industrial welding spark glows in Sanayi.
-- [ ] **T27 — Company Career Milestones & Fleet Custom Liveries**: Unlockable van decals, courier fleet customization, and company trophy cabinet.
+- [ ] **T28 — Dynamic Urban Traffic Expansion & Pedestrian Density**: Animated crosswalk pedestrian traffic signals, scooter courier AI traffic sharing roads, and parcel handoff micro-animations.
+- [ ] **T29 — Audio Jukebox & Radio Station**: In-game radio channels (Cozy Chill, Arcade Turbo, City Vibes) toggleable in HUD.
 - [ ] **T11 — Player Hands-on Playtesting & Feedback**: Solicit user evaluation on subjective driving feel, district ambiance, and gameplay pacing.
 - [ ] **T12 — Future YouTube Playables SDK Preparation**: (Pending explicit user instruction) integrate YouTube Playables SDK hooks when ready for distribution.

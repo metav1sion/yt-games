@@ -273,4 +273,41 @@ describe("CompanySheet Component", () => {
     expect(onSelectDistrict).toHaveBeenCalledWith("sunny");
     expect(picker.innerHTML).toMatch(/district-chip active[^>]*data-district="sunny"/);
   });
+
+  it("başarılar ve garaj kaplamaları sekmesini render eder ve livery seçimini tetikler", () => {
+    const root = new MockElement() as unknown as HTMLElement;
+    const onSelectLivery = vi.fn();
+    const sheet = createCompanySheet(root, {
+      onStartShift: vi.fn(),
+      onBuyUpgrade: vi.fn(),
+      onHireCourier: vi.fn(),
+      onClaimOffline: vi.fn(),
+      onSelectLivery,
+    });
+
+    sheet.update({ ...mockProgression, completedDeliveries: 15, currentLivery: "classic" });
+
+    // Career tabına geçiş
+    const mockEl = sheet.element as unknown as MockElement;
+    const careerTabBtn = mockEl.children.find((c) => c.dataset?.tab === "career");
+    expect(careerTabBtn).toBeDefined();
+    careerTabBtn?.click();
+
+    const liveriesGrid = mockEl.querySelector("#liveries-grid") as unknown as MockElement;
+    expect(liveriesGrid).toBeDefined();
+    expect(liveriesGrid.innerHTML).toContain("Klasik Kargo");
+    expect(liveriesGrid.innerHTML).toContain("Gece Ekspresi");
+
+    // Livery kartına tıklama
+    const chip = (id: string) => ({
+      closest: () => ({ dataset: { livery: id } }),
+    });
+    liveriesGrid.listeners["click"][0]({ target: chip("midnight_express") });
+    expect(onSelectLivery).toHaveBeenCalledWith("midnight_express");
+
+    // Kupalar gridi
+    const trophiesGrid = mockEl.querySelector("#trophies-grid") as unknown as MockElement;
+    expect(trophiesGrid).toBeDefined();
+    expect(trophiesGrid.innerHTML).toContain("İlk Adım");
+  });
 });
