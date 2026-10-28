@@ -2,45 +2,44 @@
 
 **Date**: 2026-10-28  
 **Branch**: `feat/mini-kargo`  
-**Latest Git Commit**: `9e5e1a8`  
-**Current Milestone**: Delivery Dropoff Stations, Animated Customers & Combo Streak Fanfare Sprint (Execution Run 7)  
+**Latest Git Commit**: `pending_commit`  
+**Current Milestone**: Living Urban Fauna & Street Life Simulation Sprint (Execution Run 8)  
 **Victory Audit Status**: `VICTORY CONFIRMED`
 
 ## Verification Summary
-- **Unit & Integration Tests**: 37 test files, 633 passed, 0 failed (1.10s execution)
+- **Unit & Integration Tests**: 38 test files, 641 passed, 0 failed (1.12s execution)
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 140ms)
+- **Vite Production Build**: Successful (`dist/` generated in 123ms)
 - **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
 - **Persistence Compatibility**: Verified backwards compatibility for `localStorage` key `mini-kargo:v1`.
 
 ## Completed Improvements in this Run
-1. **16 District Delivery Reception Stations & Animated NPC Characters (T22)**:
-   - Deployed 16 authentic physical delivery stations matching each home's district style:
-     - **Güneş Mahallesi**: Cedar porch parcel bench, "HOŞGELDİNİZ" gold-bordered welcome mat, solar pathway bollard light, resident NPC in cozy casual hoodie and jeans.
-     - **Çarşı Bölgesi**: Polished boutique reception counter desk, brass service bell, order clipboard with invoice receipt, "SİPARİŞ TESLİM" sign, storekeeper NPC in apron.
-     - **Sanayi Bölgesi**: Heavy EUR wooden freight pallet, yellow/black hazard safety striped curb, steel guide stanchions, logistics supervisor NPC with hardhat and barcode scanner.
-     - **Sahil Şeridi**: Weathered boardwalk timber cargo deck, mooring cleat post, hanging lifebuoy ring, coastal server / harbor attendant NPC in nautical sailor shirt.
-   - Dynamic NPC behaviors: approaching player vehicle triggers an enthusiastic waving animation; delivery completion triggers a 1.8-second double-arm victory celebration jump ("🙌").
-   - Delivered parcels accumulation: visual stack of up to 3 colored gift/cargo parcels neatly landing on each station desk/pallet.
-   - Tested in `src/scene/delivery-stations.test.ts`.
+1. **Living Urban Fauna Ecosystem Across 4 Districts (T24)**:
+   - Deployed authentic, responsive native animals tailored to each district identity:
+     - **Sahil Şeridi**: 4 coastal soaring seagulls in thermal circular/figure-8 flight with articulated wing flap/glide physics and procedural Web Audio oceanic bird cries (`sound.seagullCry()`).
+     - **Çarşı Bölgesi**: 8 piazza pigeons pecking cobblestones with dynamic player vehicle proximity panic, flutter takeoffs, scattering flight, and flutter audio (`sound.pigeonScatter()`).
+     - **Güneş Mahallesi**: 3 suburban domestic cats (Tekir, Duman, Zeytin) lounging on fences and lawns with harmonic tail flicking, vehicle head tracking, and responsive meowing (`sound.catMeow()`).
+     - **Sanayi Bölgesi**: Logistics guard dog "Karabaş" (Anatolian Shepherd) with timber doghouse and water bowl, tail wagging, vehicle head tracking, and protective bark audio (`sound.dogBark()`).
+   - Tested in `src/scene/urban-fauna.test.ts`.
 
-2. **Dynamic Radial Delivery Progress Sweep & Contract Marker Colors (T22)**:
-   - Dynamic scaling inner green progress disc indicating 0–100% hold progress when stopping in the drop zone, providing instant visual feedback.
-   - Contract-adaptive marker colors: VIP Express (`#00d2d3`), Cold Chain (`#54a0ff`), Heavy Freight (`#ff9f43`), Urgent (`#ee5253`), Fragile (`#1dd1a1`), Depot (`#f6c55e`).
-   - Tested in `src/scene/markers.test.ts`.
+2. **Interactive Vehicle Horn & Street Wildlife Responses (T25)**:
+   - Implemented player horn input via `H` keyboard key and new mobile HUD touch button (`📢 KORNA`).
+   - Honking immediately startles pigeons to take flight and scatter, causes cats to prick ears and meow, and triggers Karabaş to bark back.
+   - Tested in `src/game/input.test.ts`.
 
-3. **Delivery Combo Streak Multipliers & Procedural Fanfare Audio (T23)**:
-   - Consecutive safe deliveries build a combo streak with rewarding cash bonuses: 2x (+15 ₺), 3x (+25 ₺, +1 rep), 4x (+40 ₺), 5x+ (+60 ₺).
-   - Procedural Web Audio fanfare arpeggio chords in `sound.comboFanfare(streak)`.
-   - Confetti showers (`particles.spawnConfetti`) and parabolic coin streams (`particles.spawnMoneyStream`) on milestone streak deliveries.
-   - Severe collisions (>5% package damage) reset the streak.
-   - Tested in `src/game/delivery.test.ts` and `src/audio/sound.test.ts`.
+3. **Emergent Express Mini-Events & Flash Rush Dispatch (T25)**:
+   - "⚡ FLAŞ SİPARİŞ RUSH" events triggered every 3-4 deliveries with urgent countdown timer and animated glowing topbar badge.
+   - On-time delivery awards +75 ₺ bonus cash, +2 reputation, gold coin showers, and fanfare celebration.
+   - Tested in `src/game/delivery.test.ts`.
+
+## Exact Next Development Task
+- **T26 — District Environmental Micro-FX & Seasonal Foliage Details**: Autumn leaf swirls in Güneş parks, coastal sea spray mist on Sahil promenade, industrial welding spark glows in Sanayi.
 
 ## Quick Resume Instructions
 To test and run locally:
 ```bash
 cd games/mini-kargo
-npm test                # Run 633 unit & E2E tests
+npm test                # Run 641 unit & E2E tests
 npm run typecheck       # Verify TypeScript types
 npm run build           # Build client bundle
 npm run test:browser    # Run Playwright visual smoke tests

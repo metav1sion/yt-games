@@ -270,7 +270,11 @@ async function ensureServer() {
       await page.waitForTimeout(300);
       await page.keyboard.up("ArrowRight");
       await page.keyboard.up("ArrowUp");
-      await page.waitForTimeout(400);
+      await page.waitForTimeout(200);
+
+      // Korna ve canlı fauna uyarısı testi (H tuşu)
+      await page.keyboard.press("KeyH");
+      await page.waitForTimeout(300);
 
       // 5. Sıfır konsol / sayfa hatası garantisi
       assert.equal(

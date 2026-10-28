@@ -495,4 +495,48 @@ describe("endless arcade idle delivery loop", () => {
     expect(s.packageDamage).toBeGreaterThan(5);
     expect(s.comboStreak).toBe(0);
   });
+
+  it("handles flash rush mini-event countdown and rewards bonus upon on-time delivery (T25)", () => {
+    let s = createDeliveryState();
+    s.phase = "delivering";
+    s.flashRush = {
+      active: true,
+      remainingSeconds: 30,
+      bonus: 75,
+      title: "⚡ FLAŞ SİPARİŞ RUSH",
+    };
+
+    // 5 saniye ilerlet
+    s = stepDelivery(s, car({ x: 0, z: 0 }), depot, homes, 5.0, 0);
+    expect(s.flashRush?.active).toBe(true);
+    expect(s.flashRush?.remainingSeconds).toBe(25);
+
+    // Zamanında teslim et
+    s = wait(s, homes[s.targetIndex % homes.length], 1.1);
+    expect(s.completed).toBe(1);
+    expect(s.lastReward?.flashBonus).toBe(75);
+    expect(s.lastReward?.earnings).toBeGreaterThanOrEqual(175);
+    expect(s.flashRush?.active).toBe(false);
+  });
+
+  it("expires flash rush gracefully if countdown reaches zero without punishing player", () => {
+    let s = createDeliveryState();
+    s.phase = "delivering";
+    s.flashRush = {
+      active: true,
+      remainingSeconds: 10,
+      bonus: 75,
+      title: "⚡ FLAŞ SİPARİŞ RUSH",
+    };
+
+    // 12 saniye sürüş yap -> süre biter
+    s = stepDelivery(s, car({ x: 0, z: 0 }), depot, homes, 12.0, 0);
+    expect(s.flashRush?.active).toBe(false);
+
+    // Ardından teslimat başarıyla tamamlanır, flashBonus verilmez ama teslimat gerçekleşir
+    s = wait(s, homes[s.targetIndex % homes.length], 1.1);
+    expect(s.completed).toBe(1);
+    expect(s.lastReward?.flashBonus).toBeUndefined();
+    expect(s.lastReward?.earnings).toBeGreaterThan(0);
+  });
 });

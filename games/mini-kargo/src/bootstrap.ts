@@ -23,6 +23,7 @@ import { applyOfflineEarnings, claimOfflineEarnings, hireCourier, generateCourie
 import { createCompanySheet } from "./ui/company-sheet";
 import { createTraffic } from "./scene/traffic";
 import { createPedestrians } from "./scene/pedestrians";
+import { createUrbanFauna } from "./scene/urban-fauna";
 import { createCourierFleet } from "./game/fleet";
 import { createFleetView } from "./scene/fleet";
 import { districtById, districtAt, isDistrictUnlocked, type DistrictId } from "./game/districts";
@@ -108,6 +109,8 @@ export async function startGame(app: HTMLElement) {
   const preferences = storage.load(),
     sound = createSound();
   props.setSound?.(sound);
+  const urbanFauna = createUrbanFauna(sound);
+  scene.add(urbanFauna.group);
   let progression: CompanyProgression = asCompanyProgression(preferences);
   progression = applyOfflineEarnings(progression, Date.now());
   storage.save(progression);
@@ -509,6 +512,10 @@ export async function startGame(app: HTMLElement) {
       companySheet.update(progression);
       hud.hideResult();
     },
+    honk() {
+      sound.carHorn();
+      urbanFauna.onHonk(vehicle.position);
+    },
   });
 
   const companySheet = createCompanySheet(ui, {
@@ -716,6 +723,15 @@ export async function startGame(app: HTMLElement) {
           Math.hypot(vehicle.velocity.x, vehicle.velocity.z),
           weatherState.rainIntensity,
         );
+        urbanFauna.update(
+          dt,
+          vehicle.position,
+          Math.hypot(vehicle.velocity.x, vehicle.velocity.z),
+        );
+        if (input.consumeHorn()) {
+          sound.carHorn();
+          urbanFauna.onHonk(vehicle.position);
+        }
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
         );
@@ -728,6 +744,7 @@ export async function startGame(app: HTMLElement) {
           // Trafik arabasıyla temas: panikle korna çal ve arabayı sars/it
           if (trafficContacts.length > 0) {
             sound.carHorn();
+            urbanFauna.onHonk(vehicle.position);
             if (trafficContacts.collisionCarIndex != null) {
               traffic.impactCar(
                 trafficContacts.collisionCarIndex,
@@ -801,6 +818,12 @@ export async function startGame(app: HTMLElement) {
             hud.showToast(`${streakLabel} +${bonus} ₺ BONUS!`, 3400);
           }
 
+          if (delivery.lastReward?.flashBonus && delivery.lastReward.flashBonus > 0) {
+            sound.comboFanfare(5);
+            particles.spawnConfetti(world.homes[old.targetIndex]);
+            hud.showToast(`⚡ FLAŞ SİPARİŞ TAMAMLANDI! +${delivery.lastReward.flashBonus} ₺ BONUS! 🚀`, 3800);
+          }
+
           if (newLevel > oldLevel) {
             const newlyUnlocked = world.updateUnlockedDistricts(
               newLevel,
@@ -827,6 +850,9 @@ export async function startGame(app: HTMLElement) {
           sound.pickup();
           if (delivery.isSpecialContract) {
             hud.showToast(`⭐ ÖZEL SÖZLEŞME: ${packageInfo[delivery.packageType].label}!`, 3600);
+          }
+          if (delivery.flashRush?.active) {
+            hud.showToast(`⚡ FLAŞ SİPARİŞ RUSH! Süre dolmadan yetiştir!`, 3600);
           }
         }
         if (delivery.phase === "result") {
@@ -1052,6 +1078,7 @@ export async function startGame(app: HTMLElement) {
       clouds.dispose();
       atmosphere.dispose();
       weather.dispose();
+      urbanFauna.dispose();
       renderer.dispose();
     },
     { once: true },

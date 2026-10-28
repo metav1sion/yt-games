@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-28T18:17:10.700Z",
+  "timestamp": "2026-10-28T19:20:10.557Z",
   "url": "http://127.0.0.1:4173",
   "viewports": [
     {
@@ -14,7 +14,7 @@
       "name": "mobile-portrait",
       "width": 390,
       "height": 844,
-      "loadMs": 38,
+      "loadMs": 41,
       "screenshot": "mobile-portrait-390x844.png",
       "errors": []
     },

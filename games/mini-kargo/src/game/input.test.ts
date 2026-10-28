@@ -217,6 +217,16 @@ describe("input controller events", () => {
     expect(input.consumeInteract()).toBe(true);
     expect(input.consumeInteract()).toBe(false);
   });
+  it("captures 'h' key for horn and supports manual trigger", () => {
+    expect(input.consumeHorn()).toBe(false);
+    key("keydown", "h");
+    expect(input.consumeHorn()).toBe(true);
+    expect(input.consumeHorn()).toBe(false);
+
+    input.triggerHorn?.();
+    expect(input.consumeHorn()).toBe(true);
+    expect(input.consumeHorn()).toBe(false);
+  });
   it("removes event handlers on disposal", () => {
     input.dispose();
     down(joystick, { pointerType: "mouse" });

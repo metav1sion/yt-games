@@ -125,3 +125,33 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
   - Web Audio procedural fanfare arpeggio chords in `sound.comboFanfare(streak)`.
   - Confetti showers (`particles.spawnConfetti`) and gold coin stream (`particles.spawnMoneyStream`) on milestone streak deliveries.
 
+---
+
+## 11. Living Urban Fauna & Street Life Simulation (T24 & T25)
+- **Coastal Soaring Seagulls (`Sahil Şeridi`)**:
+  - 4 coastal seagulls soaring gracefully in thermal circular & figure-8 flight paths above the breakwater lighthouse, marina yachts, and beach coastline.
+  - Articulated wing flap-and-glide physics: flaps rhythmically for 1.2s then glides with gentle dihedral bank into turns.
+  - Procedural oceanic bird cry (`sound.seagullCry()`) synthesized dynamically when driving through Sahil.
+- **Piazza Market Pigeons (`Çarşı Bölgesi`)**:
+  - 8 city pigeons pecking and bustling on the cobblestones around the historic fountain and market stalls.
+  - Idle pecking animation with bobbing heads and small wander hops.
+  - Vehicle Evasion / Panic Flight: When player vehicle approaches within 6.5m (or when player honks within 28m), the flock scatters, flaps wings rapidly, ascends into the air up to 3.8m, and circles outward before softly descending to land.
+  - Procedural wing flutter & soft coo (`sound.pigeonScatter()`).
+- **Suburban Domestic Cats (`Güneş Mahallesi`)**:
+  - 3 unique cats situated across the neighborhood:
+    - "Tekir" (Ginger Tabby): Perched on the white garden fence / porch railing of Home 1.
+    - "Duman" (Smoky Tuxedo): Sunbathing on the front green lawn of Home 2.
+    - "Zeytin" (Calico): Resting beside the wooden suburban welcome archway.
+  - Gentle tail flicking physics.
+  - Head tracking: Head smoothly yaws to follow player vehicle when within 12m.
+  - Alert Meow: Meows playfully (`sound.catMeow()`) when player stops close or honks.
+- **Industrial Logistics Guard Dog (`Karabaş` - Sanayi Bölgesi)**:
+  - Stationed by the entrance checkpoint outside a handcrafted timber doghouse with pitched terracotta roof and water bowl.
+  - Authentic Anatolian Shepherd / Kangal coloring (fawn coat, black mask face & ears, curled tail).
+  - Continuous tail wagging and vehicle head tracking.
+  - Friendly protective bark (`sound.dogBark()`) triggered when vehicle speeds past or honks.
+- **Interactive Vehicle Horn & Emergency Flash Delivery Mini-Events (T25)**:
+  - Dedicated player horn key (`H`) and mobile HUD touch button (`📢 KORNA`).
+  - Honking startles nearby pigeons to take flight, triggers cat meows, and elicits protective barks from Karabaş.
+  - "⚡ FLAŞ SİPARİŞ RUSH" mini-event triggers periodically with active countdown and topbar glowing pill indicator, awarding +75 ₺ bonus cash, +2 reputation, and fanfare on timely delivery.
+

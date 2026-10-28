@@ -17,35 +17,36 @@
   - `src/scene/atmosphere.test.ts` (2 tests) — Time-of-day phases (morning, noon, golden hour, dusk), sun/sky/fog interpolation
   - `src/scene/weather.test.ts` (2 tests) — Dynamic weather transitions (clear / summer rain), 3D volumetric rain streaks, asphalt wetness & sheen, disposal
   - `src/scene/delivery-stations.test.ts` (4 tests) — 16 district stations, NPC waving on approach, celebratory jumping on delivery, visual parcel stacking, and disposal
+  - `src/scene/urban-fauna.test.ts` (5 tests) — Seagull thermal flight & coastal cry, piazza pigeon scatter & flight evasion on proximity/honk, suburban cat head tracking & meow, industrial guard dog tail wagging & protective bark
   - `src/scene/markers.test.ts` (4 tests) — Radial hold progress disc scaling, VIP/contract theme colors, and parabolic delivery animation
   - `src/audio/ambience.test.ts` (2 tests) — 4-district procedural soundscape synthesis, rain patter audio, crossfading, muting & null-context safety
-  - `src/audio/sound.test.ts` (4 tests) — Motor, horn, crash, money drain, jingle, launch/landing, clean driving bonus, combo fanfare, ambience, rain intensity
+  - `src/audio/sound.test.ts` (4 tests) — Motor, horn, crash, money drain, jingle, launch/landing, clean driving bonus, combo fanfare, ambience, rain intensity, fauna cries (seagull, pigeon, cat, dog)
   - `src/scene/particles.test.ts` (7 tests) — Money stream, confetti, drift, nitro, sparks, crash smoke, landing dust
   - `src/scene/world.test.ts` (16 tests) — Road connectivity, delivery zone clearance, boulevard clearance, district traffic & pedestrian paths, night factor emissive modulation
   - `tests/adversarial-challenger2.test.ts` (35 tests) — 1,521 BFS node pairs tested with 0 disconnections; 10,000 tick courier simulation with 0 deadlocks
   - `tests/stress/adversarial_simulation.test.ts` (22 tests) — Simulation stress tests
   - `tests/e2e/mini-kargo-e2e.test.ts` (242 tests) — Opaque-box E2E tests covering features F01–F21 across Tiers 1–4
-  - **Total**: 37 test files, 633 passed, 0 failed.
+  - **Total**: 38 test files, 641 passed, 0 failed.
 
 ## Browser Automation & Visual QA (Playwright)
 - **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser`
-- **Execution Date**: 2026-10-28 (Sprint 7 Verification)
+- **Execution Date**: 2026-10-28 (Sprint 8 Verification)
 - **Viewports Tested**:
   1. **Desktop (1280x800)**:
      - Shift start button click: PASS
      - 3D WebGL canvas initialization: PASS
-     - HUD, minimap, topbar time pill (`☀️ ÖĞLE`) and weather pill (`🌤️ AÇIK`): PASS
-     - Keyboard driving controls (W, A, D, Arrow keys): PASS
+     - HUD, minimap, topbar time pill (`☀️ ÖĞLE`), weather pill (`🌤️ AÇIK`) and flash rush badge: PASS
+     - Keyboard driving controls (W, A, D, Arrow keys) and Horn (`H` key): PASS
      - Dynamic vehicle headlight beams & wet asphalt specular sheen: VERIFIED
-     - Delivery stations and animated customer waving: VERIFIED
+     - Delivery stations, animated customer waving and urban fauna reactions: VERIFIED
      - Radial hold progress indicator & contract marker colors: VERIFIED
      - Delivery combo streak fanfare & particle coin stream: VERIFIED
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png`
   2. **Mobile Portrait (390x844)**:
      - Responsive canvas & UI scaling: PASS
-     - Touch joystick & HUD layout: PASS
-     - Topbar time pill, weather pill and district badge layout: PASS
+     - Touch joystick, drift, nitro & new dedicated horn button (`📢 KORNA`): PASS
+     - Topbar time pill, weather pill, district badge & flash pill layout: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-portrait-390x844.png`
   3. **Mobile Landscape (844x390)**:

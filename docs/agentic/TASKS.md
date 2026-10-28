@@ -92,8 +92,20 @@
   - Confetti showers (`particles.spawnConfetti`) and parabolic coin streams (`particles.spawnMoneyStream`) on milestone streak deliveries.
   - Severe collisions (>5% package damage) reset the streak.
 
+- [x] **T24 — Living Urban Fauna & Street Life Polish**:
+  - Coastal soaring seagulls (Sahil): 4 seagulls circling coastal skies with flapping/gliding wing physics and procedural oceanic cry audio (`sound.seagullCry()`).
+  - Piazza pigeons (Çarşı): 8 market pigeons pecking crumbs near the fountain with dynamic player vehicle proximity panic, flutter flight takeoffs, and scatter audio (`sound.pigeonScatter()`).
+  - Suburban cats (Güneş): 3 distinct cats (Tekir, Duman, Zeytin) lounging on fences/lawns with tail flicking, vehicle head tracking, and responsive meowing (`sound.catMeow()`).
+  - Industrial guard dog (Sanayi): Karabaş the Anatolian Shepherd sitting outside his timber doghouse with wagging tail, vehicle head tracking, and protective bark audio (`sound.dogBark()`).
+  - Tested in `src/scene/urban-fauna.test.ts`.
+- [x] **T25 — Mini-Events, Timed Express Delivery Rushes & Interactive Horn**:
+  - Interactive vehicle horn via `H` key and mobile touch HUD button (`📢 KORNA`).
+  - Honking startles pigeons to scatter into flight, triggers cat meows, and elicits dog barks.
+  - "⚡ FLAŞ SİPARİŞ RUSH" emergent mini-events triggering every 3rd-4th delivery with active countdown, animated glowing topbar HUD badge, and +75 ₺ bonus cash.
+  - Tested in `src/game/delivery.test.ts` and `src/game/input.test.ts`.
+
 ## Active / Next Tasks
-- [ ] **T24 — Living Urban Fauna & Street Life Polish**: Coastal seagulls circling coastal skies, piazza pigeons pecking crumbs in Çarşı, and suburban cats lounging on porch fences.
-- [ ] **T25 — Mini-Events & Timed Express Delivery Rushes**: Dynamic emergent events such as rush hour priority dispatches, storm shelter deliveries, and courier convoy bonuses.
+- [ ] **T26 — District Environmental Micro-FX & Seasonal Foliage Details**: Autumn leaf swirls in Güneş parks, coastal sea spray mist on Sahil promenade, industrial welding spark glows in Sanayi.
+- [ ] **T27 — Company Career Milestones & Fleet Custom Liveries**: Unlockable van decals, courier fleet customization, and company trophy cabinet.
 - [ ] **T11 — Player Hands-on Playtesting & Feedback**: Solicit user evaluation on subjective driving feel, district ambiance, and gameplay pacing.
 - [ ] **T12 — Future YouTube Playables SDK Preparation**: (Pending explicit user instruction) integrate YouTube Playables SDK hooks when ready for distribution.

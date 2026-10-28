@@ -469,6 +469,134 @@ export function createSound() {
         note(783.99, 0.16, 0.22);
       }
     },
+    seagullCry() {
+      if (!context || !enabled || paused || context.state !== "running") return;
+      try {
+        const at = context.currentTime;
+        const dur = 0.58;
+        const osc = context.createOscillator();
+        const gain = context.createGain();
+        osc.type = "sine";
+        // Sahil martı çığlığı: tiz yükseliş ve dalgalı alçalış
+        osc.frequency.setValueAtTime(1450, at);
+        osc.frequency.exponentialRampToValueAtTime(2150, at + 0.18);
+        osc.frequency.exponentialRampToValueAtTime(1550, at + dur);
+
+        gain.gain.setValueAtTime(0, at);
+        gain.gain.linearRampToValueAtTime(0.045, at + 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, at + dur);
+
+        osc.connect(gain);
+        gain.connect(context.destination);
+        osc.start(at);
+        osc.stop(at + dur + 0.02);
+        osc.onended = () => {
+          osc.disconnect();
+          gain.disconnect();
+        };
+      } catch {}
+    },
+    pigeonScatter() {
+      if (!context || !enabled || paused || context.state !== "running") return;
+      try {
+        const at = context.currentTime;
+        // Çarşı güvercinlerinin panikle havalanma kanat çırpış puf sesleri
+        for (let i = 0; i < 4; i++) {
+          const t = at + i * 0.065;
+          const osc = context.createOscillator();
+          const gain = context.createGain();
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(260 - i * 22, t);
+          osc.frequency.exponentialRampToValueAtTime(95, t + 0.05);
+
+          gain.gain.setValueAtTime(0.038, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.055);
+
+          osc.connect(gain);
+          gain.connect(context.destination);
+          osc.start(t);
+          osc.stop(t + 0.06);
+          osc.onended = () => {
+            osc.disconnect();
+            gain.disconnect();
+          };
+        }
+      } catch {}
+    },
+    catMeow() {
+      if (!context || !enabled || paused || context.state !== "running") return;
+      try {
+        const at = context.currentTime;
+        const dur = 0.42;
+        // Güneş Mahallesi sevimli kedi miyavlaması (formant filtreli)
+        const osc = context.createOscillator();
+        const filter = context.createBiquadFilter();
+        const gain = context.createGain();
+
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(580, at);
+        osc.frequency.exponentialRampToValueAtTime(820, at + 0.14);
+        osc.frequency.exponentialRampToValueAtTime(520, at + dur);
+
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(1100, at);
+        filter.frequency.exponentialRampToValueAtTime(1850, at + 0.16);
+        filter.frequency.exponentialRampToValueAtTime(950, at + dur);
+        filter.Q.setValueAtTime(3.5, at);
+
+        gain.gain.setValueAtTime(0, at);
+        gain.gain.linearRampToValueAtTime(0.035, at + 0.06);
+        gain.gain.exponentialRampToValueAtTime(0.001, at + dur);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(context.destination);
+        osc.start(at);
+        osc.stop(at + dur + 0.02);
+        osc.onended = () => {
+          osc.disconnect();
+          filter.disconnect();
+          gain.disconnect();
+        };
+      } catch {}
+    },
+    dogBark() {
+      if (!context || !enabled || paused || context.state !== "running") return;
+      try {
+        const at = context.currentTime;
+        // Sanayi lojistik bekçi köpeği ("Karabaş") canlı çift havlama
+        for (let i = 0; i < 2; i++) {
+          const t = at + i * 0.15;
+          const dur = 0.11;
+          const osc = context.createOscillator();
+          const filter = context.createBiquadFilter();
+          const gain = context.createGain();
+
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(185, t);
+          osc.frequency.exponentialRampToValueAtTime(85, t + dur);
+
+          filter.type = "lowpass";
+          filter.frequency.setValueAtTime(520, t);
+          filter.Q.setValueAtTime(2.0, t);
+
+          gain.gain.setValueAtTime(0, t);
+          gain.gain.linearRampToValueAtTime(0.055, t + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(context.destination);
+          osc.start(t);
+          osc.stop(t + dur + 0.02);
+          osc.onended = () => {
+            osc.disconnect();
+            filter.disconnect();
+            gain.disconnect();
+          };
+        }
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

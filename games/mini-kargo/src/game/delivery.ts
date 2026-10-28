@@ -93,6 +93,14 @@ export type DeliveryReward = {
   safeBonus: number;
   comboBonus?: number;
   comboStreak?: number;
+  flashBonus?: number;
+};
+
+export type FlashRushEvent = {
+  active: boolean;
+  remainingSeconds: number;
+  bonus: number;
+  title: string;
 };
 
 export type DeliveryState = {
@@ -106,6 +114,7 @@ export type DeliveryState = {
   reputation: number;
   packageType: PackageType;
   isSpecialContract?: boolean;
+  flashRush?: FlashRushEvent | null;
   packageSlot: number;
   capacity: number;
   packageDamage: number;
@@ -183,6 +192,7 @@ export function createDeliveryState(
     reputation: 0,
     packageType: pkg,
     isSpecialContract: false,
+    flashRush: null,
     packageSlot: 0,
     capacity: Math.min(4, 1 + cargoLevel),
     packageDamage: 0,
@@ -230,7 +240,15 @@ export function stepDelivery(
         : s.targetIndex % homes.length
       : 0;
   const target = s.phase === "delivering" ? homes[safeIndex] : depot;
-  if (s.phase === "delivering") s.secondsLeft = Math.max(0, s.secondsLeft - dt);
+  if (s.phase === "delivering") {
+    s.secondsLeft = Math.max(0, s.secondsLeft - dt);
+    if (s.flashRush?.active) {
+      s.flashRush.remainingSeconds = Math.max(0, s.flashRush.remainingSeconds - dt);
+      if (s.flashRush.remainingSeconds <= 0) {
+        s.flashRush.active = false;
+      }
+    }
+  }
 
   const inZone =
     Math.hypot(vehicle.position.x - target.x, vehicle.position.z - target.z) <=
@@ -283,24 +301,32 @@ export function stepDelivery(
         s.comboStreak = 0;
       }
 
-      const qualityReward = Math.floor(reward * qualityMultiplier) + safeBonus + comboBonus;
+      let flashBonus = 0;
+      if (s.flashRush?.active && s.flashRush.remainingSeconds > 0) {
+        flashBonus = s.flashRush.bonus;
+        s.flashRush.active = false;
+      }
+
+      const qualityReward = Math.floor(reward * qualityMultiplier) + safeBonus + comboBonus + flashBonus;
       const repGain =
         (s.secondsLeft > 20 ? 2 : 1) +
         (isVip && s.packageDamage === 0 ? 2 : 0) +
-        ((s.comboStreak ?? 0) >= 3 ? 1 : 0);
+        ((s.comboStreak ?? 0) >= 3 ? 1 : 0) +
+        (flashBonus > 0 ? 2 : 0);
 
-      s.score += reward + comboBonus * 2;
+      s.score += reward + comboBonus * 2 + flashBonus * 2;
       s.earnings += qualityReward;
       s.reputation += repGain;
       s.safeDrivingBonus += safeBonus;
       s.completed++;
       s.lastReward = {
-        score: reward + comboBonus * 2,
+        score: reward + comboBonus * 2 + flashBonus * 2,
         earnings: qualityReward,
         reputation: repGain,
         safeBonus,
         comboBonus,
         comboStreak: s.comboStreak,
+        flashBonus: flashBonus > 0 ? flashBonus : undefined,
       };
 
       const nextStep = (s.routeOffset ?? 0) + s.completed;
@@ -326,6 +352,14 @@ export function stepDelivery(
         s.isSpecialContract = resolved.isSpecialContract;
         s.secondsLeft = packageInfo[s.packageType].seconds;
         s.packageDamage = 0;
+        if (s.completed > 0 && s.completed % 3 === 0 && !s.flashRush?.active) {
+          s.flashRush = {
+            active: true,
+            remainingSeconds: 45,
+            bonus: 75,
+            title: "⚡ FLAŞ SİPARİŞ RUSH",
+          };
+        }
       } else {
         s.phase = "returning";
         s.targetIndex = pickTargetHome(
@@ -340,6 +374,14 @@ export function stepDelivery(
       const nextStep = (s.routeOffset ?? 0) + s.completed;
       s.phase = "delivering";
       s.packageSlot = 1;
+      if (s.completed > 0 && s.completed % 3 === 0 && !s.flashRush?.active) {
+        s.flashRush = {
+          active: true,
+          remainingSeconds: 45,
+          bonus: 75,
+          title: "⚡ FLAŞ SİPARİŞ RUSH",
+        };
+      }
       s.targetIndex = pickTargetHome(
         nextStep,
         companyLevel,

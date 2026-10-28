@@ -91,6 +91,10 @@ describe("audio system", () => {
     sound.comboFanfare(2);
     sound.comboFanfare(3);
     sound.comboFanfare(5);
+    sound.seagullCry();
+    sound.pigeonScatter();
+    sound.catMeow();
+    sound.dogBark();
     sound.setDistrict("coastal");
     sound.updateAmbience(1.0);
     sound.setEnabled(false);
@@ -109,6 +113,10 @@ describe("audio system", () => {
       sound.metalCrash();
       sound.jumpLaunch();
       sound.jumpLanding(2.0);
+      sound.seagullCry();
+      sound.pigeonScatter();
+      sound.catMeow();
+      sound.dogBark();
     }).not.toThrow();
 
     sound.dispose();
