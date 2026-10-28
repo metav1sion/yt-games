@@ -71,8 +71,19 @@
   - **Sanayi Bölgesi**: Industrial high-voltage transformer substation (`buildElectricalSubstation`) with safety hazard fence and dual heavy loading floodlight masts (`buildIndustrialFloodlight`).
   - **Güneş Mahallesi**: Suburban welcome archway monument (`buildWelcomeArch`) and rooftop solar photovoltaic & water heating panels.
 
+- [x] **T20 — Night Lighting Emissive Props & Vehicle Headlight Cones**:
+  - Implemented dynamic front headlight beam cones illuminating wet roads for both Delivery Van and Courier Scooter.
+  - Scooter headlight smoothly turns and swivels with steering handlebar angle.
+  - City-wide night emissive lighting via `setWorldNightEmissive`: warm glowing incandescent streetlamps (`#ffdd66`), coastal promenade nostalgic lanterns (`#ffa834`), cozy shop and apartment interior window lights (`#f6e58d`), and industrial hazard beacons.
+  - Smooth dusk and night transitions with verified test suite in `car.test.ts` and `world.test.ts`.
+- [x] **T21 — Dynamic Pedestrian Umbrella & Rain Reactions**:
+  - Attached 8-color low-poly faceted umbrellas to pedestrian right arm pivots.
+  - Dynamic scaling and posture: when summer rain showers begin (`rainIntensity > 0.15`), pedestrians smoothly pop open umbrellas, raise their right arm overhead, and walk protected from the rain.
+  - Stows umbrellas when skies clear and preserves panic evasion behavior.
+  - Test verified in `pedestrians.test.ts`.
+
 ## Active / Next Tasks
-- [ ] **T20 — Night Lighting Emissive Props & Vehicle Headlight Cones**: Dynamic front headlight beam cones illuminating wet roads at dusk/night, plus glowing shop window interiors.
-- [ ] **T21 — Dynamic Pedestrian Umbrella & Rain Reactions**: Pedestrians deploy colorful umbrellas during summer rain showers and seek cover under shop awnings.
+- [ ] **T22 — Delivery Dropoff Props & Customer Visuals**: Residential front porch package delivery boxes, boutique storefront parcel counters, and factory wooden cargo pallet staging zones.
+- [ ] **T23 — Delivery Satisfaction Fanfare & Combo Milestone Rewards**: Celebratory multi-delivery streak combos, spatial delivery audio flourishes, and confetti burst animations.
 - [ ] **T11 — Player Hands-on Playtesting & Feedback**: Solicit user evaluation on subjective driving feel, district ambiance, and gameplay pacing.
 - [ ] **T12 — Future YouTube Playables SDK Preparation**: (Pending explicit user instruction) integrate YouTube Playables SDK hooks when ready for distribution.

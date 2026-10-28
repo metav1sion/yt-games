@@ -4,7 +4,7 @@ import { districts, type DistrictId } from "../game/districts";
 import { RAMPS } from "../game/ramps";
 import { createRamps } from "./ramps";
 import { assetManager, type AssetManager } from "./assets";
-import { createWorldContext } from "./world-kit";
+import { createWorldContext, setWorldNightEmissive } from "./world-kit";
 import { buildBaseTerrain } from "./base-terrain";
 import { buildSunnyDistrict } from "./districts/sunny";
 import { buildMarketDistrict } from "./districts/market";
@@ -30,6 +30,7 @@ export type World = {
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(dt: number, isNightOrDusk?: boolean): void;
+  getNightFactor?(): number;
   updateCargoRacks(cargoLevel: number): void;
   updateUnlockedDistricts(
     companyLevel: number,
@@ -95,6 +96,8 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   const cargoRacks = createCargoRacksView(0);
   group.add(cargoRacks.group);
 
+  let currentNightFactor = 0;
+
   return {
     group,
     obstacles,
@@ -108,12 +111,23 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
       return unlockedSet.has(districtId);
     },
     update(dt: number, isNightOrDusk = false) {
+      const targetNight = isNightOrDusk ? 1.0 : 0.0;
+      currentNightFactor = THREE.MathUtils.lerp(
+        currentNightFactor,
+        targetNight,
+        1 - Math.exp(-4 * dt),
+      );
+      setWorldNightEmissive(currentNightFactor);
+
       lighthouse.update(dt, isNightOrDusk);
       marinaBoats.update(dt);
       fountain.update(dt);
       for (const smoke of chimneySmokes) {
         smoke.update(dt);
       }
+    },
+    getNightFactor() {
+      return currentNightFactor;
     },
     updateCargoRacks(cargoLevel: number) {
       cargoRacks.update(cargoLevel);

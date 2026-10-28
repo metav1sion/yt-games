@@ -261,4 +261,27 @@ describe("createCar vehicle geometry and visual parts", () => {
     );
     expect(vanCylinders).toHaveLength(8);
   });
+
+  it("activates dynamic headlight beams at night/dusk and fades them in daytime", () => {
+    const car = createCar();
+    expect(car.getHeadlightIntensity()).toBe(0);
+
+    // Gündüz sürüşü: farlar kapalı
+    for (let i = 0; i < 20; i++) {
+      car.update(mockVehicle(), false, 0.1, false);
+    }
+    expect(car.getHeadlightIntensity()).toBeLessThan(0.01);
+
+    // Alacakaranlık / Gece sürüşü: farlar yumuşakça yanar
+    for (let i = 0; i < 25; i++) {
+      car.update(mockVehicle(), false, 0.1, true);
+    }
+    expect(car.getHeadlightIntensity()).toBeGreaterThan(0.9);
+
+    // Tekrar gündüze geçiş
+    for (let i = 0; i < 30; i++) {
+      car.update(mockVehicle(), false, 0.1, false);
+    }
+    expect(car.getHeadlightIntensity()).toBeLessThan(0.05);
+  });
 });

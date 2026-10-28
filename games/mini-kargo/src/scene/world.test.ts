@@ -301,4 +301,25 @@ describe("district traffic lanes", () => {
     expect(world.barriers.find((b) => b.districtId === "market")?.group.visible).toBe(false);
     expect(world.obstacles.length).toBeLessThan(initialObstacles);
   });
+
+  it("smoothly modulates night factor and emissive lighting at dusk", () => {
+    const world = createWorld();
+    expect(world.getNightFactor?.()).toBe(0);
+
+    // Gündüz
+    world.update(0.1, false);
+    expect(world.getNightFactor?.()).toBeCloseTo(0, 2);
+
+    // Geceye geçiş
+    for (let i = 0; i < 20; i++) {
+      world.update(0.1, true);
+    }
+    expect(world.getNightFactor?.()).toBeGreaterThan(0.9);
+
+    // Tekrar gündüz
+    for (let i = 0; i < 30; i++) {
+      world.update(0.1, false);
+    }
+    expect(world.getNightFactor?.()).toBeLessThan(0.05);
+  });
 });

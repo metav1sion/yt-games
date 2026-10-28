@@ -602,6 +602,17 @@ export async function startGame(app: HTMLElement) {
 
   const loop = createLoop(
     (dt) => {
+      // Dinamik Gökyüzü, Atmosfer (Sabah/Öğle/Gün Batımı/Alacakaranlık), Hava Durumu ve Şehir Animasyonları
+      const atmoState = atmosphere.update(dt, vehicle.position);
+      const weatherState = weather.update(dt, vehicle.position);
+      world.update(dt, atmoState.isNightOrDusk);
+      hud.setTime(atmoState.phaseIcon, atmoState.phaseName);
+      hud.setWeather(weatherState.weatherIcon, weatherState.weatherName);
+      sound.setDistrict(lastDistrict);
+      sound.setRainIntensity(weatherState.rainIntensity);
+      sound.updateAmbience(dt);
+      clouds.update(dt);
+
       if (swapCooldown > 0) {
         swapCooldown -= dt;
       }
@@ -698,6 +709,7 @@ export async function startGame(app: HTMLElement) {
           dt,
           vehicle.position,
           Math.hypot(vehicle.velocity.x, vehicle.velocity.z),
+          weatherState.rainIntensity,
         );
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
@@ -822,20 +834,10 @@ export async function startGame(app: HTMLElement) {
           : world.depot;
       marker.group.visible = started;
       marker.update(target, delivery.phase === "delivering", dt);
-      car.update(vehicle, delivery.phase === "delivering", dt);
+      const isNightLights = atmoState.isNightOrDusk || weatherState.rainIntensity > 0.35;
+      car.update(vehicle, delivery.phase === "delivering", dt, isNightLights);
       deliveryAnimation.update(dt);
       updateCamera(camera, vehicle, dt, vehicle.velocity, cameraShake);
-
-      // Dinamik Gökyüzü, Atmosfer (Sabah/Öğle/Gün Batımı/Alacakaranlık), Hava Durumu ve Dünya Animasyonları
-      const atmoState = atmosphere.update(dt, vehicle.position);
-      const weatherState = weather.update(dt, vehicle.position);
-      world.update(dt, atmoState.isNightOrDusk);
-      hud.setTime(atmoState.phaseIcon, atmoState.phaseName);
-      hud.setWeather(weatherState.weatherIcon, weatherState.weatherName);
-      sound.setDistrict(lastDistrict);
-      sound.setRainIntensity(weatherState.rainIntensity);
-      sound.updateAmbience(dt);
-      clouds.update(dt);
 
       const speed = Math.hypot(vehicle.velocity.x, vehicle.velocity.z);
       if (started) {

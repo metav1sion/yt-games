@@ -21,6 +21,34 @@ export function setWorldWetness(wetness: number) {
   }
 }
 
+/**
+ * Şehir gece aydınlatması ve pencere/fener ışıkları (Night Emissive Illumination)
+ * - Alacakaranlık ve gün batımında sokak lambaları, döküm sahil fenerleri ve vitrinler parlar.
+ */
+export function setWorldNightEmissive(nightFactor: number) {
+  const clamped = Math.max(0, Math.min(1, nightFactor));
+  for (const [key, material] of materials.entries()) {
+    const color = key.split("_")[0];
+    if (color === "#fbeecc") {
+      // Sokak lambası armatürleri (Sıcak akkor ışık)
+      material.emissive.set("#ffdd66");
+      material.emissiveIntensity = clamped * 1.5;
+    } else if (color === "#fff3bf") {
+      // Sahil kordonu nostaljik fenerleri (Altın sarısı parıltı)
+      material.emissive.set("#ffa834");
+      material.emissiveIntensity = clamped * 1.6;
+    } else if (color === "#bee3f8" || color === "#e2e8f0") {
+      // Dükkan vitrinleri ve apartman pencereleri (Sıcak iç mekan ışığı)
+      material.emissive.set("#f6e58d");
+      material.emissiveIntensity = clamped * 0.75;
+    } else if (color === "#f59e0b" || color === "#ecc94b") {
+      // Sanayi trafo/helipad uyarı ışıkları
+      material.emissive.set("#f39c12");
+      material.emissiveIntensity = clamped * 0.85;
+    }
+  }
+}
+
 export function mat(color: string, roughness = 0.85): THREE.MeshStandardMaterial {
   const key = `${color}_${roughness}`;
   if (!materials.has(key)) {

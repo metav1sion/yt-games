@@ -195,6 +195,132 @@ export function buildScooterVisual(): ScooterVisual {
   };
 }
 
+/**
+ * Araç Ön Farları, Volümetrik Işık Konileri ve Islak Yol Yansıma Havuzları
+ * - Gövde (body) yerine ana araç kök grubuna eklenir (böylece gövde silindir testlerini etkilemez).
+ * - Gövde ile birlikte yatar/pitch yapar ve scooter direksiyon açısını takip eder.
+ */
+function createHeadlightsVisual() {
+  const root = new THREE.Group();
+
+  // 1. Van Farları
+  const vanGroup = new THREE.Group();
+  root.add(vanGroup);
+
+  const beamGeo = new THREE.CylinderGeometry(0.14, 1.4, 9.5, 12, 1, true);
+  beamGeo.rotateX(Math.PI / 2);
+  const vanBeamMat = new THREE.MeshBasicMaterial({
+    color: "#fffde0",
+    transparent: true,
+    opacity: 0,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+  });
+
+  const spotGeo = new THREE.PlaneGeometry(2.4, 6.2);
+  spotGeo.rotateX(-Math.PI / 2);
+  const vanSpotMat = new THREE.MeshBasicMaterial({
+    color: "#fff7c2",
+    transparent: true,
+    opacity: 0,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+
+  const vanBulbMat = new THREE.MeshBasicMaterial({
+    color: "#fffae6",
+    transparent: true,
+    opacity: 0,
+  });
+  const vanBulbGeo = new THREE.BoxGeometry(0.24, 0.19, 0.04);
+
+  for (const x of [-0.43, 0.43]) {
+    const beam = new THREE.Mesh(beamGeo, vanBeamMat);
+    beam.position.set(x, 0.70, 1.07 + 4.75);
+    beam.rotation.x = 0.07;
+    vanGroup.add(beam);
+
+    const spot = new THREE.Mesh(spotGeo, vanSpotMat);
+    spot.position.set(x, -0.05, 1.07 + 5.6);
+    vanGroup.add(spot);
+
+    const bulb = new THREE.Mesh(vanBulbGeo, vanBulbMat);
+    bulb.position.set(x, 0.78, 1.09);
+    vanGroup.add(bulb);
+  }
+
+  // 2. Scooter Farı
+  const scooterGroup = new THREE.Group();
+  root.add(scooterGroup);
+  const scooterStem = new THREE.Group();
+  scooterGroup.add(scooterStem);
+
+  const scBeamGeo = new THREE.CylinderGeometry(0.1, 1.2, 8.2, 10, 1, true);
+  scBeamGeo.rotateX(Math.PI / 2);
+  const scBeamMat = new THREE.MeshBasicMaterial({
+    color: "#fffde0",
+    transparent: true,
+    opacity: 0,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+  });
+
+  const scSpotGeo = new THREE.PlaneGeometry(2.2, 5.2);
+  scSpotGeo.rotateX(-Math.PI / 2);
+  const scSpotMat = new THREE.MeshBasicMaterial({
+    color: "#fff7c2",
+    transparent: true,
+    opacity: 0,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+
+  const scBulbMat = new THREE.MeshBasicMaterial({
+    color: "#fffae6",
+    transparent: true,
+    opacity: 0,
+  });
+  const scBulbGeo = new THREE.BoxGeometry(0.2, 0.14, 0.05);
+
+  const scBeam = new THREE.Mesh(scBeamGeo, scBeamMat);
+  scBeam.position.set(0, 0.74, 0.45 + 4.0);
+  scBeam.rotation.x = 0.07;
+  scooterStem.add(scBeam);
+
+  const scSpot = new THREE.Mesh(scSpotGeo, scSpotMat);
+  scSpot.position.set(0, -0.05, 0.45 + 4.6);
+  scooterStem.add(scSpot);
+
+  const scBulb = new THREE.Mesh(scBulbGeo, scBulbMat);
+  scBulb.position.set(0, 0.74, 0.45 + 0.05);
+  scooterStem.add(scBulb);
+
+  root.visible = false;
+
+  function update(type: VehicleType, intensity: number, steering: number) {
+    const clamped = Math.max(0, Math.min(1, intensity));
+    root.visible = clamped > 0.01;
+    if (type === "scooter") {
+      vanGroup.visible = false;
+      scooterGroup.visible = clamped > 0.01;
+      scooterStem.rotation.y = steering;
+      scBeamMat.opacity = clamped * 0.24;
+      scSpotMat.opacity = clamped * 0.3;
+      scBulbMat.opacity = clamped * 0.95;
+    } else {
+      scooterGroup.visible = false;
+      vanGroup.visible = clamped > 0.01;
+      vanBeamMat.opacity = clamped * 0.22;
+      vanSpotMat.opacity = clamped * 0.28;
+      vanBulbMat.opacity = clamped * 0.95;
+    }
+  }
+
+  return { root, update };
+}
+
 export function createCar(
   assetModel?: THREE.Group | null,
   initialType: VehicleType = "van",
@@ -202,6 +328,9 @@ export function createCar(
   const group = new THREE.Group();
   const body = new THREE.Group();
   group.add(body);
+
+  const headlights = createHeadlightsVisual();
+  group.add(headlights.root);
 
   const vanVisual = buildVanVisual();
   const scooterVisual = buildScooterVisual();
@@ -223,7 +352,8 @@ export function createCar(
   let vanWheelSpin = 0,
     scooterWheelSpin = 0,
     time = 0,
-    lastHeading = 0;
+    lastHeading = 0,
+    headlightIntensity = 0;
 
   function setVehicleType(type: VehicleType) {
     if (type === currentType) return;
@@ -243,6 +373,9 @@ export function createCar(
     getVehicleType(): VehicleType {
       return currentType;
     },
+    getHeadlightIntensity(): number {
+      return headlightIntensity;
+    },
     setModel(model?: THREE.Group | null) {
       if (customAcc) {
         body.remove(customAcc);
@@ -253,10 +386,18 @@ export function createCar(
         body.add(customAcc);
       }
     },
-    update(state: VehicleState, hasPackage: boolean, dt: number) {
+    update(state: VehicleState, hasPackage: boolean, dt: number, isNightOrDusk = false) {
       if (state.type && state.type !== currentType) {
         setVehicleType(state.type);
       }
+
+      // Ön farların gece/gündüz ve yağmur parlaklığı
+      const targetHeadlight = isNightOrDusk ? 1.0 : 0.0;
+      headlightIntensity = THREE.MathUtils.lerp(
+        headlightIntensity,
+        targetHeadlight,
+        1 - Math.exp(-6 * dt),
+      );
 
       const speed = Math.hypot(state.velocity.x, state.velocity.z);
       time += dt;
@@ -285,6 +426,10 @@ export function createCar(
       );
 
       const steering = -state.steerAngle;
+
+      headlights.root.rotation.x = body.rotation.x;
+      headlights.root.rotation.z = body.rotation.z;
+      headlights.update(currentType, headlightIntensity, steering);
 
       if (currentType === "scooter") {
         // İki tekerlekli scooter için kıvrak viraj yatışı (lean)

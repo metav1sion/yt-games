@@ -26,12 +26,14 @@ export type Pedestrian = {
   leftLegPivot: THREE.Group;
   rightLegPivot: THREE.Group;
   headGroup: THREE.Group;
+  umbrellaGroup: THREE.Group;
 
-  // Yürüme ve Panik Simülasyonu
+  // Yürüme, Şemsiye ve Panik Simülasyonu
   walkPhase: number;
   panicTimer: number;
   fleeOffsetX: number;
   fleeOffsetZ: number;
+  umbrellaScale: number;
 };
 
 export type PedestrianDef = Omit<
@@ -43,10 +45,12 @@ export type PedestrianDef = Omit<
   | "leftLegPivot"
   | "rightLegPivot"
   | "headGroup"
+  | "umbrellaGroup"
   | "walkPhase"
   | "panicTimer"
   | "fleeOffsetX"
   | "fleeOffsetZ"
+  | "umbrellaScale"
 >;
 
 /**
@@ -136,6 +140,7 @@ function buildAnimatedPedestrian(
   leftLegPivot: THREE.Group;
   rightLegPivot: THREE.Group;
   headGroup: THREE.Group;
+  umbrellaGroup: THREE.Group;
 } {
   // 1. Gövde (Torso)
   box(parent, [0.28, 0.44, 0.2], [0, 0.68, 0], color);
@@ -201,7 +206,47 @@ function buildAnimatedPedestrian(
   box(rightLegPivot, [0.1, 0.44, 0.1], [0, -0.22, 0], pantsColor);
   box(rightLegPivot, [0.1, 0.06, 0.14], [0, -0.42, 0.02], "#0f172a"); // Ayakkabı
 
-  return { leftArmPivot, rightArmPivot, leftLegPivot, rightLegPivot, headGroup };
+  // 5. Renkli Yağmur Şemsiyesi (Rain Umbrella)
+  const umbrellaGroup = new THREE.Group();
+  umbrellaGroup.position.set(0, -0.38, 0); // Sağ el pozisyonuna monte
+  rightArmPivot.add(umbrellaGroup);
+
+  // Şemsiye baston sapı ve metal mili
+  cylinder(umbrellaGroup, 0.016, 0.016, 0.92, [0, 0.42, 0.06], "#34495e", 6);
+  cylinder(umbrellaGroup, 0.02, 0.02, 0.14, [0, -0.04, 0.03], "#2c3e50", 6);
+
+  // Şemsiye kumaş kubbesi
+  const UMBRELLA_COLORS = [
+    "#e74c3c", // Kırmızı
+    "#3498db", // Canlı mavi
+    "#f1c40f", // Parlak sarı
+    "#2ecc71", // Zümrüt yeşili
+    "#9b59b6", // Mor
+    "#e67e22", // Sıcak turuncu
+    "#1abc9c", // Turkuaz
+    "#e84393", // Pembe
+  ];
+  const uCol =
+    UMBRELLA_COLORS[
+      Math.abs(Math.round(parent.position.x * 7 + parent.position.z * 13)) %
+        UMBRELLA_COLORS.length
+    ];
+
+  const canopyGeo = new THREE.ConeGeometry(0.56, 0.25, 8, 1, false);
+  canopyGeo.rotateX(Math.PI);
+  const canopy = new THREE.Mesh(canopyGeo, mat(uCol, 0.7));
+  canopy.position.set(0, 0.88, 0.06);
+  canopy.castShadow = true;
+  umbrellaGroup.add(canopy);
+
+  // Sivri tepe ucu (Ferrule)
+  cylinder(umbrellaGroup, 0.008, 0.014, 0.09, [0, 1.04, 0.06], "#bdc3c7", 6);
+
+  // Başlangıçta stowed/kapalı
+  umbrellaGroup.scale.set(0, 0, 0);
+  umbrellaGroup.visible = false;
+
+  return { leftArmPivot, rightArmPivot, leftLegPivot, rightLegPivot, headGroup, umbrellaGroup };
 }
 
 export function createPedestrians() {
@@ -224,6 +269,7 @@ export function createPedestrians() {
       panicTimer: 0,
       fleeOffsetX: 0,
       fleeOffsetZ: 0,
+      umbrellaScale: 0,
     });
   }
 
@@ -241,6 +287,7 @@ export function createPedestrians() {
       panicTimer: 0,
       fleeOffsetX: 0,
       fleeOffsetZ: 0,
+      umbrellaScale: 0,
     });
   }
 
@@ -258,6 +305,7 @@ export function createPedestrians() {
       panicTimer: 0,
       fleeOffsetX: 0,
       fleeOffsetZ: 0,
+      umbrellaScale: 0,
     });
   }
 
@@ -284,12 +332,29 @@ export function createPedestrians() {
       }
     },
 
-    update(dt: number, player: Vec2, playerSpeed: number) {
+    update(dt: number, player: Vec2, playerSpeed: number, rainIntensity = 0) {
       const contacts: DamageContact[] = [];
+      const isRaining = rainIntensity > 0.15;
+      const targetUmbrellaScale = isRaining ? 1.0 : 0.0;
 
       for (const [index, p] of pedestrians.entries()) {
         const active = !p.district || unlocked.has(p.district);
         if (!active) continue;
+
+        // Yağmur başladığında şemsiyeyi yumuşakça aç, dinince topla
+        p.umbrellaScale = THREE.MathUtils.lerp(
+          p.umbrellaScale,
+          targetUmbrellaScale,
+          1 - Math.exp(-6 * dt),
+        );
+
+        if (p.umbrellaScale > 0.02) {
+          p.umbrellaGroup.visible = true;
+          p.umbrellaGroup.scale.setScalar(p.umbrellaScale);
+        } else {
+          p.umbrellaGroup.visible = false;
+          p.umbrellaGroup.scale.set(0, 0, 0);
+        }
 
         // Oyuncuya mesafe kontrolü
         const distToPlayer = Math.hypot(
@@ -352,29 +417,48 @@ export function createPedestrians() {
               ? 0
               : Math.PI;
 
-        // 🚶 Animasyon: Kollar ve Bacaklar
+        // 🚶 Animasyon: Kollar, Bacaklar ve Yağmur Şemsiyesi Tutuşu
         if (isPanicking) {
           // Panik: Kollar havada çırpınır!
           const armFlail = Math.sin(p.panicTimer * 28) * 0.35;
           p.leftArmPivot.rotation.x = -2.6 + armFlail;
-          p.rightArmPivot.rotation.x = -2.6 - armFlail;
+          p.rightArmPivot.rotation.x = -2.4 - armFlail;
           p.leftArmPivot.rotation.z = -0.4;
           p.rightArmPivot.rotation.z = 0.4;
+          p.rightArmPivot.rotation.y = 0;
 
           // Hızlı bacak adımları
           p.leftLegPivot.rotation.x = Math.sin(p.walkPhase) * 0.75;
           p.rightLegPivot.rotation.x = -Math.sin(p.walkPhase) * 0.75;
         } else {
-          // Normal Yürüyüş: Kollar ve bacaklar ahenkle sallanır
-          const armSwing = Math.sin(p.walkPhase) * 0.55;
-          p.leftArmPivot.rotation.x = armSwing;
-          p.rightArmPivot.rotation.x = -armSwing;
-          p.leftArmPivot.rotation.z = 0;
-          p.rightArmPivot.rotation.z = 0;
-
+          // Bacaklar ahenkle sallanır
           const legSwing = Math.sin(p.walkPhase) * 0.62;
           p.leftLegPivot.rotation.x = -legSwing;
           p.rightLegPivot.rotation.x = legSwing;
+
+          // Sol kol doğal salınım
+          const armSwing = Math.sin(p.walkPhase) * 0.55;
+          p.leftArmPivot.rotation.x = armSwing;
+          p.leftArmPivot.rotation.z = 0;
+
+          if (p.umbrellaScale > 0.05) {
+            // Şemsiye Tutuşu: Sağ kol yukarı kalkar, şemsiyeyi baş üzerinde dik tutar
+            p.rightArmPivot.rotation.x = THREE.MathUtils.lerp(
+              -armSwing,
+              -1.35,
+              p.umbrellaScale,
+            );
+            p.rightArmPivot.rotation.z = THREE.MathUtils.lerp(0, 0.22, p.umbrellaScale);
+            p.rightArmPivot.rotation.y = THREE.MathUtils.lerp(0, -0.12, p.umbrellaScale);
+            p.umbrellaGroup.position.y =
+              -0.38 + Math.sin(p.walkPhase * 2) * 0.02 * p.umbrellaScale;
+          } else {
+            // Normal kol salınımı
+            p.rightArmPivot.rotation.x = -armSwing;
+            p.rightArmPivot.rotation.z = 0;
+            p.rightArmPivot.rotation.y = 0;
+            p.umbrellaGroup.position.y = -0.38;
+          }
         }
 
         // Çarpışma teması (Yayaya çarpma cezası)
@@ -384,6 +468,11 @@ export function createPedestrians() {
       }
 
       return contacts;
+    },
+    getUmbrellaStats() {
+      const active = pedestrians.filter((p) => !p.district || unlocked.has(p.district));
+      const deployed = active.filter((p) => p.umbrellaScale > 0.5).length;
+      return { total: active.length, deployed };
     },
   };
 }

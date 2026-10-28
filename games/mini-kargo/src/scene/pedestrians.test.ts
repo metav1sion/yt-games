@@ -44,4 +44,36 @@ describe("pedestrians system", () => {
     expect(contacts.length).toBeGreaterThan(0);
     expect(contacts[0].severity).toBeGreaterThan(0);
   });
+
+  it("deploys umbrellas during summer rain and stows them when clear", () => {
+    const pedestrians = createPedestrians();
+    pedestrians.setCompanyLevel(1);
+
+    // Başlangıçta açık hava: şemsiyeler kapalıdır
+    pedestrians.update(0.1, { x: 0, z: 0 }, 0, 0);
+    let stats = pedestrians.getUmbrellaStats();
+    expect(stats.deployed).toBe(0);
+
+    // Yaz yağmuru başlar (rainIntensity = 1.0)
+    for (let i = 0; i < 20; i++) {
+      pedestrians.update(0.1, { x: 0, z: 0 }, 0, 1.0);
+    }
+    stats = pedestrians.getUmbrellaStats();
+    expect(stats.deployed).toBe(stats.total);
+    expect(stats.deployed).toBeGreaterThan(0);
+
+    // Şemsiye tutan yayanın sağ kol açısı yukarı kalkmış olmalı
+    const p0 = pedestrians.pedestrians[0];
+    expect(p0.umbrellaScale).toBeGreaterThan(0.9);
+    expect(p0.umbrellaGroup.visible).toBe(true);
+    expect(p0.rightArmPivot.rotation.x).toBeLessThan(-1.0); // baş üzerinde tutuş
+
+    // Yağmur dindiğinde şemsiyeler toplanır
+    for (let i = 0; i < 30; i++) {
+      pedestrians.update(0.1, { x: 0, z: 0 }, 0, 0);
+    }
+    stats = pedestrians.getUmbrellaStats();
+    expect(stats.deployed).toBe(0);
+    expect(p0.umbrellaGroup.visible).toBe(false);
+  });
 });

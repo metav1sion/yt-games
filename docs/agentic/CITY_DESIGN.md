@@ -76,3 +76,23 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
 - **Wet Road Specular Sheen**: Real-time asphalt surface reflectivity shader adaptation (`setWorldWetness`). As rain falls, road roughness drops from 0.85 to 0.22 with 0.2 metalness, producing glistening specular tarmac reflections under sunlight and headlights.
 - **Procedural Rain Audio**: Bandpass-filtered Web Audio synthesis at 2400Hz simulating continuous soothing rain patter on the vehicle body.
 - **HUD Weather Pill**: Real-time weather status badge displayed in topbar (`🌤️ AÇIK` / `🌧️ YAZ YAĞMURU`).
+
+---
+
+## 7. Dynamic Night Lighting & Vehicle Headlight System
+- **Vehicle Headlight Cones**:
+  - Delivery Van: Dual volumetric forward projection beams (`CylinderGeometry` with `AdditiveBlending` and soft falloff) and specular ground oval puddles on asphalt (`y = 0.03`).
+  - Courier Scooter: Single forward headlight beam and ground spot attached to front fork assembly, swiveling seamlessly with handlebar steering angle.
+  - Headlight Intensity Lerp: Automatically fades in at dusk/night or during summer rain showers (`headlightIntensity: 0 -> 1`), and dims during bright daylight.
+- **City-wide Emissive Architecture**:
+  - Streetlamps across Güneş Mahallesi, Çarşı and industrial roads glow with warm incandescent emission (`#ffdd66`, intensity 1.5).
+  - Nostalgic promenade cast-iron lanterns along Sahil pier glow with golden amber light (`#ffa834`, intensity 1.6).
+  - Commercial storefront display vitrins and apartment windows emit cozy warm interior light (`#f6e58d`, intensity 0.75).
+  - Substation electrical safety beacons and heliport pads pulse with caution glow.
+
+---
+
+## 8. Dynamic Pedestrian Rain Reactions & Umbrellas
+- **Faceted Colorful Umbrellas**: 8 distinct low-poly umbrella styles (red, blue, yellow, green, purple, orange, turquoise, pink) attached to pedestrian right arm pivots.
+- **Dynamic Deployment**: When summer rain begins (`rainIntensity > 0.15`), pedestrians smoothly pop open their umbrellas (`umbrellaScale: 0 -> 1`), raise their right arm overhead, and stroll protected from the downpour.
+- **Stowing & Panic Reactions**: Umbrellas fold away when skies clear. Fleeing pedestrians maintain an alert grip on their umbrella while running from vehicle danger.
