@@ -442,6 +442,33 @@ export function createSound() {
       note(739.99, 0.08, 0.14);
       note(880.0, 0.16, 0.22);
     },
+    comboFanfare(streak = 2) {
+      if (streak >= 5) {
+        // C5, E5, G5, B5, C6, E6 muzaffer şampiyon arpeji
+        note(523.25, 0, 0.12);
+        note(659.25, 0.06, 0.12);
+        note(783.99, 0.12, 0.14);
+        note(987.77, 0.18, 0.16);
+        note(1046.5, 0.24, 0.22);
+        note(1318.5, 0.32, 0.35);
+      } else if (streak >= 4) {
+        // C5, E5, G5, C6
+        note(523.25, 0, 0.12);
+        note(659.25, 0.07, 0.12);
+        note(783.99, 0.14, 0.15);
+        note(1046.5, 0.22, 0.28);
+      } else if (streak >= 3) {
+        // C5, G5, C6
+        note(523.25, 0, 0.12);
+        note(783.99, 0.08, 0.15);
+        note(1046.5, 0.16, 0.25);
+      } else {
+        // C5, E5, G5
+        note(523.25, 0, 0.12);
+        note(659.25, 0.08, 0.14);
+        note(783.99, 0.16, 0.22);
+      }
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

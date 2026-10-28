@@ -91,6 +91,8 @@ export type DeliveryReward = {
   earnings: number;
   reputation: number;
   safeBonus: number;
+  comboBonus?: number;
+  comboStreak?: number;
 };
 
 export type DeliveryState = {
@@ -109,6 +111,7 @@ export type DeliveryState = {
   packageDamage: number;
   vehicleDamage: number;
   safeDrivingBonus: number;
+  comboStreak?: number;
   district: DistrictId;
   routeOffset?: number;
   maxDeliveries?: number | null;
@@ -185,6 +188,7 @@ export function createDeliveryState(
     packageDamage: 0,
     vehicleDamage: 0,
     safeDrivingBonus: 0,
+    comboStreak: 0,
     district: targetDistrict,
     routeOffset: safeOffset,
     maxDeliveries: maxDeliveries ?? null,
@@ -214,6 +218,9 @@ export function stepDelivery(
       100,
       s.packageDamage + collisionDamage * damageFactor,
     );
+    if (s.packageDamage > 5) {
+      s.comboStreak = 0;
+    }
   }
 
   const safeIndex =
@@ -260,20 +267,40 @@ export function stepDelivery(
         safeBonus += 40;
       }
 
-      const qualityReward = Math.floor(reward * qualityMultiplier) + safeBonus;
-      const repGain =
-        (s.secondsLeft > 20 ? 2 : 1) + (isVip && s.packageDamage === 0 ? 2 : 0);
+      let comboBonus = 0;
+      if (s.packageDamage === 0) {
+        s.comboStreak = (s.comboStreak ?? 0) + 1;
+        if (s.comboStreak >= 5) {
+          comboBonus = 60;
+        } else if (s.comboStreak >= 4) {
+          comboBonus = 40;
+        } else if (s.comboStreak >= 3) {
+          comboBonus = 25;
+        } else if (s.comboStreak >= 2) {
+          comboBonus = 15;
+        }
+      } else {
+        s.comboStreak = 0;
+      }
 
-      s.score += reward;
+      const qualityReward = Math.floor(reward * qualityMultiplier) + safeBonus + comboBonus;
+      const repGain =
+        (s.secondsLeft > 20 ? 2 : 1) +
+        (isVip && s.packageDamage === 0 ? 2 : 0) +
+        ((s.comboStreak ?? 0) >= 3 ? 1 : 0);
+
+      s.score += reward + comboBonus * 2;
       s.earnings += qualityReward;
       s.reputation += repGain;
       s.safeDrivingBonus += safeBonus;
       s.completed++;
       s.lastReward = {
-        score: reward,
+        score: reward + comboBonus * 2,
         earnings: qualityReward,
         reputation: repGain,
         safeBonus,
+        comboBonus,
+        comboStreak: s.comboStreak,
       };
 
       const nextStep = (s.routeOffset ?? 0) + s.completed;

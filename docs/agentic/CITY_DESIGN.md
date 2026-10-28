@@ -96,3 +96,32 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
 - **Faceted Colorful Umbrellas**: 8 distinct low-poly umbrella styles (red, blue, yellow, green, purple, orange, turquoise, pink) attached to pedestrian right arm pivots.
 - **Dynamic Deployment**: When summer rain begins (`rainIntensity > 0.15`), pedestrians smoothly pop open their umbrellas (`umbrellaScale: 0 -> 1`), raise their right arm overhead, and stroll protected from the downpour.
 - **Stowing & Panic Reactions**: Umbrellas fold away when skies clear. Fleeing pedestrians maintain an alert grip on their umbrella while running from vehicle danger.
+
+---
+
+## 9. District Delivery Stations & Customer Reception Visuals
+- **16 Physical Delivery Stations** (`createDeliveryStations`):
+  1. **Güneş Mahallesi (Homes 0–3)**: Suburban cedar porch parcel bench, "HOŞGELDİNİZ" gold-bordered welcome mat, solar pathway bollard light, resident NPC in cozy casual hoodie and jeans.
+  2. **Çarşı Bölgesi (Homes 4–7)**: Boutique reception counter desk, brass service bell, invoice clipboard, "SİPARİŞ TESLİM" sign, storekeeper NPC in apron.
+  3. **Sanayi Bölgesi (Homes 8–11)**: Heavy EUR wooden freight pallet, yellow/black hazard safety borders, steel guide stanchions, logistics supervisor NPC with hardhat and barcode scanner.
+  4. **Sahil Şeridi (Homes 12–15)**: Boardwalk timber cargo dock, mooring cleat post, hanging lifebuoy ring, coastal server / harbor attendant NPC in nautical sailor shirt.
+- **Dynamic NPC Living Reactions**:
+  - **Approaching Guidance**: When player drives towards an active delivery target, the corresponding station character waves enthusiastically to welcome the vehicle.
+  - **Celebration Jump ("🙌")**: Upon successful delivery drop, the character executes an energetic 1.8-second celebration dance with both arms raised high in victory.
+- **Delivered Parcel Visual Stacking**: Neatly stacks up to 3 wrapped gift/cargo parcels matching the delivered contract type on the station desk/pallet.
+
+---
+
+## 10. Delivery Satisfaction, Radial Hold Progress & Combo Streaks
+- **Dynamic Radial Hold Progress Disc**: Inner glowing green circle disc expands from 0% to 100% radius as player holds still in the target ring (`holdSeconds`), providing immediate tactile visual feedback before triggering delivery.
+- **Contract-Adaptive Marker Themes**: Distinctive ring and pin coloring based on active cargo contract:
+  - 💎 VIP Express: Radiant luxury turquoise (`#00d2d3`)
+  - 🧊 Cold Chain: Crisp frost azure (`#54a0ff`)
+  - ⚡ Heavy Freight: Industrial amber caution (`#ff9f43`)
+  - 🔴 Urgent Cargo: Vivid ruby red (`#ee5253`)
+  - 🟢 Standard / Fragile: Mint and emerald tones (`#5dbb90`, `#1dd1a1`)
+- **Delivery Combo Streak System**:
+  - Consecutive undamaged deliveries reward an escalating combo multiplier and cash bonus: 2x (+15 ₺), 3x (+25 ₺, +1 rep), 4x (+40 ₺), 5x+ (+60 ₺).
+  - Web Audio procedural fanfare arpeggio chords in `sound.comboFanfare(streak)`.
+  - Confetti showers (`particles.spawnConfetti`) and gold coin stream (`particles.spawnMoneyStream`) on milestone streak deliveries.
+

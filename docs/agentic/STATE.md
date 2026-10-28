@@ -2,38 +2,44 @@
 
 **Date**: 2026-10-28  
 **Branch**: `feat/mini-kargo`  
-**Latest Git Commit**: `c6f0a8d`  
-**Current Milestone**: Continuous Polish, Night Lighting & Weather Reaction Sprint (Execution Run 6)  
+**Current Milestone**: Delivery Dropoff Stations, Animated Customers & Combo Streak Fanfare Sprint (Execution Run 7)  
 **Victory Audit Status**: `VICTORY CONFIRMED`
 
 ## Verification Summary
-- **Unit & Integration Tests**: 35 test files, 623 passed, 0 failed (1.01s execution)
+- **Unit & Integration Tests**: 37 test files, 633 passed, 0 failed (1.10s execution)
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 141ms)
+- **Vite Production Build**: Successful (`dist/` generated in 140ms)
 - **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
 - **Persistence Compatibility**: Verified backwards compatibility for `localStorage` key `mini-kargo:v1`.
 
 ## Completed Improvements in this Run
-1. **Dynamic Vehicle Headlight Beams & Asphalt Specular Sheen (T20)**:
-   - Implemented volumetric light cone beams (`CylinderGeometry` with `AdditiveBlending` & soft falloff) for Delivery Van (dual forward beams) and Courier Scooter (swiveling forward beam attached to handlebar stem).
-   - Dynamic ground illumination oval pools on asphalt road surface at world `y = 0.03`, creating specular reflections especially when roads are wet from summer rain.
-   - Smooth night & rain activation fading (`headlightIntensity: 0 -> 1` via exponential lerp).
-   - Test verified in `src/scene/car.test.ts`.
-2. **City-Wide Night Emissive Lighting & Shop Window Illumination (T20)**:
-   - Created `setWorldNightEmissive` in `src/scene/world-kit.ts`: smoothly modulates warm golden streetlamps (`#ffdd66`, intensity 1.5), promenade lanterns (`#ffa834`, intensity 1.6), cozy shop/apartment windows (`#f6e58d`, intensity 0.75), and industrial warning beacons.
-   - Smooth dusk-to-night transitions integrated into `world.update(dt, isNightOrDusk)` with `getNightFactor()`.
-   - Test verified in `src/scene/world.test.ts`.
-3. **Dynamic Pedestrian Umbrellas & Summer Rain Reactions (T21)**:
-   - Deployed colorful low-poly 8-faceted umbrellas (8 vibrant color variants: red, blue, yellow, green, purple, orange, teal, pink) attached to pedestrian right arm pivots.
-   - Dynamic scaling and posture adaptation: when summer rain begins (`rainIntensity > 0.15`), pedestrians smoothly pop open their umbrellas, raise their right arm overhead, and walk protected from the rain with subtle walking bobbing.
-   - Panic behavior updated: fleeing pedestrians maintain firm grip on their umbrella while running from vehicle danger.
-   - Test verified in `src/scene/pedestrians.test.ts` (`getUmbrellaStats()`).
+1. **16 District Delivery Reception Stations & Animated NPC Characters (T22)**:
+   - Deployed 16 authentic physical delivery stations matching each home's district style:
+     - **Güneş Mahallesi**: Cedar porch parcel bench, "HOŞGELDİNİZ" gold-bordered welcome mat, solar pathway bollard light, resident NPC in cozy casual hoodie and jeans.
+     - **Çarşı Bölgesi**: Polished boutique reception counter desk, brass service bell, order clipboard with invoice receipt, "SİPARİŞ TESLİM" sign, storekeeper NPC in apron.
+     - **Sanayi Bölgesi**: Heavy EUR wooden freight pallet, yellow/black hazard safety striped curb, steel guide stanchions, logistics supervisor NPC with hardhat and barcode scanner.
+     - **Sahil Şeridi**: Weathered boardwalk timber cargo deck, mooring cleat post, hanging lifebuoy ring, coastal server / harbor attendant NPC in nautical sailor shirt.
+   - Dynamic NPC behaviors: approaching player vehicle triggers an enthusiastic waving animation; delivery completion triggers a 1.8-second double-arm victory celebration jump ("🙌").
+   - Delivered parcels accumulation: visual stack of up to 3 colored gift/cargo parcels neatly landing on each station desk/pallet.
+   - Tested in `src/scene/delivery-stations.test.ts`.
+
+2. **Dynamic Radial Delivery Progress Sweep & Contract Marker Colors (T22)**:
+   - Dynamic scaling inner green progress disc indicating 0–100% hold progress when stopping in the drop zone, providing instant visual feedback.
+   - Contract-adaptive marker colors: VIP Express (`#00d2d3`), Cold Chain (`#54a0ff`), Heavy Freight (`#ff9f43`), Urgent (`#ee5253`), Fragile (`#1dd1a1`), Depot (`#f6c55e`).
+   - Tested in `src/scene/markers.test.ts`.
+
+3. **Delivery Combo Streak Multipliers & Procedural Fanfare Audio (T23)**:
+   - Consecutive safe deliveries build a combo streak with rewarding cash bonuses: 2x (+15 ₺), 3x (+25 ₺, +1 rep), 4x (+40 ₺), 5x+ (+60 ₺).
+   - Procedural Web Audio fanfare arpeggio chords in `sound.comboFanfare(streak)`.
+   - Confetti showers (`particles.spawnConfetti`) and parabolic coin streams (`particles.spawnMoneyStream`) on milestone streak deliveries.
+   - Severe collisions (>5% package damage) reset the streak.
+   - Tested in `src/game/delivery.test.ts` and `src/audio/sound.test.ts`.
 
 ## Quick Resume Instructions
 To test and run locally:
 ```bash
 cd games/mini-kargo
-npm test                # Run 623 unit & E2E tests
+npm test                # Run 633 unit & E2E tests
 npm run typecheck       # Verify TypeScript types
 npm run build           # Build client bundle
 npm run test:browser    # Run Playwright visual smoke tests

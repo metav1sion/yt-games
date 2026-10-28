@@ -13,10 +13,12 @@ import { buildCoastalDistrict } from "./districts/coastal";
 import { buildDistrictBarriers, type DistrictBarrier } from "./district-barriers";
 import { createCargoRacksView, type CargoRacksView } from "./cargo-racks";
 import { buildCityBuildings } from "./city-buildings";
+import { createDeliveryStations, type DeliveryStationsView } from "./delivery-stations";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
 export type { CargoRacksView } from "./cargo-racks";
+export type { DeliveryStationsView } from "./delivery-stations";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -27,9 +29,15 @@ export type World = {
   homes: Vec2[];
   barriers: DistrictBarrier[];
   cargoRacks: CargoRacksView;
+  deliveryStations: DeliveryStationsView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
-  update(dt: number, isNightOrDusk?: boolean): void;
+  update(
+    dt: number,
+    isNightOrDusk?: boolean,
+    activeTargetIndex?: number,
+    isDelivering?: boolean,
+  ): void;
   getNightFactor?(): number;
   updateCargoRacks(cargoLevel: number): void;
   updateUnlockedDistricts(
@@ -96,6 +104,10 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   const cargoRacks = createCargoRacksView(0);
   group.add(cargoRacks.group);
 
+  // 16 Teslimat Noktası İstasyonları & Karşılayıcı NPC Karakterleri
+  const deliveryStations = createDeliveryStations(ctx.homes);
+  group.add(deliveryStations.group);
+
   let currentNightFactor = 0;
 
   return {
@@ -106,11 +118,17 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     homes: ctx.homes,
     barriers,
     cargoRacks,
+    deliveryStations,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);
     },
-    update(dt: number, isNightOrDusk = false) {
+    update(
+      dt: number,
+      isNightOrDusk = false,
+      activeTargetIndex = -1,
+      isDelivering = false,
+    ) {
       const targetNight = isNightOrDusk ? 1.0 : 0.0;
       currentNightFactor = THREE.MathUtils.lerp(
         currentNightFactor,
@@ -125,6 +143,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
       for (const smoke of chimneySmokes) {
         smoke.update(dt);
       }
+      deliveryStations.update(dt, activeTargetIndex, isDelivering);
     },
     getNightFactor() {
       return currentNightFactor;

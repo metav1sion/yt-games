@@ -227,9 +227,13 @@ export function createHud(
       }
       if (s.completed > lastCompleted && s.phase !== "result") {
         const rewardText = s.lastReward ? ` (+${s.lastReward.earnings} ₺)` : "";
+        const streakPrefix =
+          s.lastReward?.comboStreak && s.lastReward.comboStreak >= 2
+            ? `🔥 ${s.lastReward.comboStreak}x SERİ! `
+            : "";
         const msg = s.phase === "delivering"
-          ? `✓ Paket teslim edildi!${rewardText} Sıradaki kargo adresine git.`
-          : `✓ Paket teslim edildi!${rewardText} Yeni kargolar için depoya dön!`;
+          ? `${streakPrefix}✓ Paket teslim edildi!${rewardText} Sıradaki adrese git.`
+          : `${streakPrefix}✓ Paket teslim edildi!${rewardText} Depoya dön!`;
         showToast(msg, 3000);
       }
       lastCompleted = s.completed;

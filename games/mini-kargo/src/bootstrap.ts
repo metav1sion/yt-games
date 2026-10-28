@@ -605,7 +605,12 @@ export async function startGame(app: HTMLElement) {
       // Dinamik Gökyüzü, Atmosfer (Sabah/Öğle/Gün Batımı/Alacakaranlık), Hava Durumu ve Şehir Animasyonları
       const atmoState = atmosphere.update(dt, vehicle.position);
       const weatherState = weather.update(dt, vehicle.position);
-      world.update(dt, atmoState.isNightOrDusk);
+      world.update(
+        dt,
+        atmoState.isNightOrDusk,
+        delivery.targetIndex,
+        delivery.phase === "delivering",
+      );
       hud.setTime(atmoState.phaseIcon, atmoState.phaseName);
       hud.setWeather(weatherState.weatherIcon, weatherState.weatherName);
       sound.setDistrict(lastDistrict);
@@ -772,9 +777,28 @@ export async function startGame(app: HTMLElement) {
           );
           sound.delivery();
 
+          world.deliveryStations.onDelivered(old.targetIndex, old.packageType);
+          particles.spawnMoneyStream(world.homes[old.targetIndex], vehicle.position);
+
           if (delivery.lastReward?.safeBonus && delivery.lastReward.safeBonus > 0) {
             sound.cleanDriveBonus();
             hud.showToast(`⭐ TEMİZ SÜRÜŞ BONUSU! +${delivery.lastReward.safeBonus} ₺`, 2800);
+          }
+
+          if (delivery.lastReward?.comboStreak && delivery.lastReward.comboStreak >= 2) {
+            const streak = delivery.lastReward.comboStreak;
+            const bonus = delivery.lastReward.comboBonus ?? 0;
+            sound.comboFanfare(streak);
+            particles.spawnConfetti(world.homes[old.targetIndex]);
+            const streakLabel =
+              streak >= 5
+                ? `🏆 ${streak}x KARGO MASTER!`
+                : streak >= 4
+                  ? `🚀 ${streak}x KUSURSUZ SERİ!`
+                  : streak >= 3
+                    ? `⚡ ${streak}x EFSANE SERİ!`
+                    : `🔥 ${streak}x SERİ TESLİMAT!`;
+            hud.showToast(`${streakLabel} +${bonus} ₺ BONUS!`, 3400);
           }
 
           if (newLevel > oldLevel) {
@@ -833,7 +857,13 @@ export async function startGame(app: HTMLElement) {
           ? world.homes[delivery.targetIndex]
           : world.depot;
       marker.group.visible = started;
-      marker.update(target, delivery.phase === "delivering", dt);
+      marker.update(
+        target,
+        delivery.phase === "delivering",
+        dt,
+        delivery.holdSeconds,
+        delivery.packageType,
+      );
       const isNightLights = atmoState.isNightOrDusk || weatherState.rainIntensity > 0.35;
       car.update(vehicle, delivery.phase === "delivering", dt, isNightLights);
       deliveryAnimation.update(dt);

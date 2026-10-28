@@ -459,4 +459,40 @@ describe("endless arcade idle delivery loop", () => {
     expect(s.lastReward?.safeBonus).toBe(50);
     expect(s.lastReward?.reputation).toBeGreaterThanOrEqual(3);
   });
+
+  it("accumulates combo streak and bonus on consecutive undamaged deliveries", () => {
+    // 1. Teslimat: comboStreak = 1, comboBonus = 0
+    let s = createDeliveryState(2); // capacity = 3
+    s.phase = "delivering";
+    s.packageDamage = 0;
+    s = wait(s, homes[s.targetIndex % homes.length], 1.1);
+    expect(s.completed).toBe(1);
+    expect(s.comboStreak).toBe(1);
+    expect(s.lastReward?.comboBonus).toBe(0);
+
+    // 2. Teslimat: comboStreak = 2, comboBonus = 15
+    s.packageDamage = 0;
+    s = wait(s, homes[s.targetIndex % homes.length], 1.1);
+    expect(s.completed).toBe(2);
+    expect(s.comboStreak).toBe(2);
+    expect(s.lastReward?.comboBonus).toBe(15);
+
+    // 3. Teslimat: comboStreak = 3, comboBonus = 25
+    s.packageDamage = 0;
+    s = wait(s, homes[s.targetIndex % homes.length], 1.1);
+    expect(s.completed).toBe(3);
+    expect(s.comboStreak).toBe(3);
+    expect(s.lastReward?.comboBonus).toBe(25);
+    expect(s.lastReward?.reputation).toBeGreaterThanOrEqual(2);
+  });
+
+  it("resets combo streak when package suffers severe collision damage", () => {
+    let s = createDeliveryState();
+    s.phase = "delivering";
+    s.comboStreak = 3;
+    // Darbe uygula
+    s = stepDelivery(s, car(homes[0]), depot, homes, 0.05, 0.8);
+    expect(s.packageDamage).toBeGreaterThan(5);
+    expect(s.comboStreak).toBe(0);
+  });
 });

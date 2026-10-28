@@ -88,6 +88,9 @@ describe("audio system", () => {
     sound.jumpLaunch();
     sound.jumpLanding(1.5);
     sound.cleanDriveBonus();
+    sound.comboFanfare(2);
+    sound.comboFanfare(3);
+    sound.comboFanfare(5);
     sound.setDistrict("coastal");
     sound.updateAmbience(1.0);
     sound.setEnabled(false);

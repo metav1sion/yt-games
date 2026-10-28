@@ -54,7 +54,6 @@
   - Classic Maritime Lighthouse (`buildLighthouse`) on coastal breakwater with rotating sweeping searchlight beam.
   - Historic Tiered Marble Fountain (`buildPiazzaFountain`) in central Çarşı square with animated water spray droplets.
   - Animated rising industrial steam puffs (`buildFactoryChimneySmoke`) from Sanayi factory smokestacks.
-
 - [x] **T18 — Dynamic Weather (Gentle Summer Rain & Wet Road Specular Sheen)**:
   - Created `createWeatherSystem` in `src/scene/weather.ts` managing 350 volumetric rain drop streaks tracking player car.
   - Dynamic asphalt surface reflection: `setWorldWetness` smooths and metallizes road materials (`roughness: 0.85 -> 0.22`, `metalness: 0.0 -> 0.22`), rendering wet asphalt sheen under sunlight/streetlights.
@@ -70,20 +69,31 @@
   - **Çarşı Bölgesi**: Festive overhead pennant bunting across market alleyways (`buildMarketBunting`), A-frame chalkboard cafe easel menus, and sidewalk flower planters.
   - **Sanayi Bölgesi**: Industrial high-voltage transformer substation (`buildElectricalSubstation`) with safety hazard fence and dual heavy loading floodlight masts (`buildIndustrialFloodlight`).
   - **Güneş Mahallesi**: Suburban welcome archway monument (`buildWelcomeArch`) and rooftop solar photovoltaic & water heating panels.
-
 - [x] **T20 — Night Lighting Emissive Props & Vehicle Headlight Cones**:
   - Implemented dynamic front headlight beam cones illuminating wet roads for both Delivery Van and Courier Scooter.
   - Scooter headlight smoothly turns and swivels with steering handlebar angle.
   - City-wide night emissive lighting via `setWorldNightEmissive`: warm glowing incandescent streetlamps (`#ffdd66`), coastal promenade nostalgic lanterns (`#ffa834`), cozy shop and apartment interior window lights (`#f6e58d`), and industrial hazard beacons.
-  - Smooth dusk and night transitions with verified test suite in `car.test.ts` and `world.test.ts`.
 - [x] **T21 — Dynamic Pedestrian Umbrella & Rain Reactions**:
   - Attached 8-color low-poly faceted umbrellas to pedestrian right arm pivots.
   - Dynamic scaling and posture: when summer rain showers begin (`rainIntensity > 0.15`), pedestrians smoothly pop open umbrellas, raise their right arm overhead, and walk protected from the rain.
-  - Stows umbrellas when skies clear and preserves panic evasion behavior.
-  - Test verified in `pedestrians.test.ts`.
+- [x] **T22 — Delivery Dropoff Props & Customer Visuals**:
+  - Implemented 16 distinctive physical delivery reception stations across all districts (`createDeliveryStations`):
+    - Güneş: Porch parcel bench, "HOŞGELDİNİZ" welcome mat, solar pathway lantern, resident NPC.
+    - Çarşı: Boutique reception counter desk, brass service bell, invoice clipboard, storekeeper NPC.
+    - Sanayi: Heavy EUR wooden freight pallet, yellow/black hazard safety borders, guide bollards, warehouse supervisor NPC.
+    - Sahil: Boardwalk timber cargo dock, mooring cleat post, lifebuoy ring, coastal server NPC.
+  - Interactive NPC behaviors: approaching player vehicle triggers an enthusiastic waving animation; delivery completion triggers a 1.8-second double-arm victory celebration jump ("🙌").
+  - Delivered parcels accumulation: visual stack of up to 3 colored gift/cargo parcels neatly landing on each station desk/pallet.
+  - Dynamic radial progress ring in `markers.ts` providing instant 0-100% hold-stop sweep visual feedback.
+  - Contract-adaptive marker colors: VIP Express (`#00d2d3`), Cold Chain (`#54a0ff`), Heavy Freight (`#ff9f43`), Urgent (`#ee5253`), Fragile (`#1dd1a1`).
+- [x] **T23 — Delivery Satisfaction Fanfare & Combo Milestone Rewards**:
+  - Consecutive safe deliveries accumulate a combo streak with rewarding cash bonuses: 2x (+15 ₺), 3x (+25 ₺, +1 rep), 4x (+40 ₺), 5x+ (+60 ₺).
+  - Procedural Web Audio fanfare arpeggio chords in `sound.comboFanfare(streak)`.
+  - Confetti showers (`particles.spawnConfetti`) and parabolic coin streams (`particles.spawnMoneyStream`) on milestone streak deliveries.
+  - Severe collisions (>5% package damage) reset the streak.
 
 ## Active / Next Tasks
-- [ ] **T22 — Delivery Dropoff Props & Customer Visuals**: Residential front porch package delivery boxes, boutique storefront parcel counters, and factory wooden cargo pallet staging zones.
-- [ ] **T23 — Delivery Satisfaction Fanfare & Combo Milestone Rewards**: Celebratory multi-delivery streak combos, spatial delivery audio flourishes, and confetti burst animations.
+- [ ] **T24 — Living Urban Fauna & Street Life Polish**: Coastal seagulls circling coastal skies, piazza pigeons pecking crumbs in Çarşı, and suburban cats lounging on porch fences.
+- [ ] **T25 — Mini-Events & Timed Express Delivery Rushes**: Dynamic emergent events such as rush hour priority dispatches, storm shelter deliveries, and courier convoy bonuses.
 - [ ] **T11 — Player Hands-on Playtesting & Feedback**: Solicit user evaluation on subjective driving feel, district ambiance, and gameplay pacing.
 - [ ] **T12 — Future YouTube Playables SDK Preparation**: (Pending explicit user instruction) integrate YouTube Playables SDK hooks when ready for distribution.
