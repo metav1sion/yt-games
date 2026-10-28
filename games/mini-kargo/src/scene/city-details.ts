@@ -574,3 +574,234 @@ export function buildMailbox(
 
   return g;
 }
+
+export type LighthouseView = {
+  group: THREE.Group;
+  update(dt: number, isNightOrDusk?: boolean): void;
+};
+
+/** 🏮 Sahil Şeridi İkonik Deniz Feneri (Coastal Maritime Lighthouse) */
+export function buildLighthouse(
+  parent: THREE.Object3D,
+  x: number,
+  z: number,
+  rotY = 0,
+): LighthouseView {
+  const g = new THREE.Group();
+  g.position.set(x, 0, z);
+  g.rotation.y = rotY;
+  parent.add(g);
+
+  // 1. Taş İskele Kaidesi (Granite Foundation)
+  cylinder(g, 2.6, 2.8, 1.1, [0, 0.55, 0], "#4a5568", 8);
+  cylinder(g, 2.35, 2.55, 0.3, [0, 1.25, 0], "#2d3748", 8);
+
+  // Giriş Kapısı & Eşiği
+  box(g, [0.85, 1.45, 0.15], [0, 1.85, 2.1], "#2c3e50");
+  box(g, [0.95, 0.14, 0.3], [0, 1.15, 2.2], "#718096");
+
+  // 2. Kırmızı-Beyaz Şeritli Koni Gövde (5 Katmanlı Mimari Şerit)
+  const bands = [
+    { yBottom: 1.4, yTop: 3.1, rBottom: 2.15, rTop: 1.95, color: "#c0392b" },
+    { yBottom: 3.1, yTop: 4.8, rBottom: 1.95, rTop: 1.75, color: "#f5f6fa" },
+    { yBottom: 4.8, yTop: 6.5, rBottom: 1.75, rTop: 1.55, color: "#c0392b" },
+    { yBottom: 6.5, yTop: 8.2, rBottom: 1.55, rTop: 1.35, color: "#f5f6fa" },
+    { yBottom: 8.2, yTop: 9.6, rBottom: 1.35, rTop: 1.2, color: "#c0392b" },
+  ];
+
+  for (const b of bands) {
+    const h = b.yTop - b.yBottom;
+    const yCenter = b.yBottom + h / 2;
+    cylinder(g, b.rTop, b.rBottom, h, [0, yCenter, 0], b.color, 16);
+  }
+
+  // Gözetleme Pencereleri
+  box(g, [0.35, 0.6, 0.1], [0, 4.0, 1.86], "#1a202c");
+  box(g, [0.3, 0.5, 0.1], [0, 7.3, 1.46], "#1a202c");
+
+  // 3. Döküm Demir Seyir Terası & Güvenlik Korkulukları (Gallery Balcony)
+  cylinder(g, 1.65, 1.65, 0.18, [0, 9.69, 0], "#1a202c", 16);
+  // Korkuluk üst çemberi
+  cylinder(g, 1.62, 1.62, 0.05, [0, 10.3, 0], "#2d3748", 16);
+  // Korkuluk dikmeleri
+  for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
+    const rx = Math.cos(a) * 1.58;
+    const rz = Math.sin(a) * 1.58;
+    cylinder(g, 0.03, 0.03, 0.65, [rx, 9.98, rz], "#2d3748", 4);
+  }
+
+  // 4. Cam Fener Odası (Lantern Room)
+  const glassMat = mat("#74b9ff", 0.35);
+  const glassGeo = new THREE.CylinderGeometry(1.15, 1.15, 1.4, 12);
+  const glassMesh = new THREE.Mesh(glassGeo, glassMat);
+  glassMesh.position.set(0, 10.5, 0);
+  g.add(glassMesh);
+
+  // Fener ampulü / Reflektör göbeği
+  const bulb = cylinder(g, 0.45, 0.45, 0.65, [0, 10.5, 0], "#fff799", 8);
+  if (bulb.material instanceof THREE.MeshStandardMaterial) {
+    bulb.material.emissive.set("#fffa65");
+    bulb.material.emissiveIntensity = 0.8;
+  }
+
+  // 5. Tarihi Yeşil Bakır Çatı & Rüzgar Gülü (Copper Cupola & Weathervane)
+  cylinder(g, 0.08, 1.35, 1.55, [0, 11.95, 0], "#16a085", 16);
+  cylinder(g, 0.03, 0.04, 0.8, [0, 12.95, 0], "#d35400", 6);
+  box(g, [0.65, 0.08, 0.03], [0, 13.25, 0], "#f39c12");
+
+  // 6. Dönen Projektör / Deniz Arama Işığı (Volumetric Sweeping Searchlight Beam)
+  const beamGroup = new THREE.Group();
+  beamGroup.position.set(0, 10.5, 0);
+  g.add(beamGroup);
+
+  const beamGeo = new THREE.CylinderGeometry(0.2, 3.2, 22, 16, 1, true);
+  beamGeo.rotateX(Math.PI / 2);
+  beamGeo.translate(0, 0, 11);
+  const beamMat = new THREE.MeshBasicMaterial({
+    color: "#fff7c2",
+    transparent: true,
+    opacity: 0.28,
+    blending: THREE.AdditiveBlending,
+    side: THREE.DoubleSide,
+    depthWrite: false,
+  });
+  const beamMesh = new THREE.Mesh(beamGeo, beamMat);
+  beamGroup.add(beamMesh);
+
+  return {
+    group: g,
+    update(dt: number, isNightOrDusk = false) {
+      beamGroup.rotation.y += dt * 0.75;
+      beamMat.opacity = isNightOrDusk ? 0.38 : 0.12;
+      if (bulb.material instanceof THREE.MeshStandardMaterial) {
+        bulb.material.emissiveIntensity = isNightOrDusk ? 1.2 : 0.5;
+      }
+    },
+  };
+}
+
+export type FountainView = {
+  group: THREE.Group;
+  update(dt: number): void;
+};
+
+/** ⛲ Çarşı Bölgesi Tarihi Mermer Meydan Çeşmesi (Historic Piazza Fountain) */
+export function buildPiazzaFountain(
+  parent: THREE.Object3D,
+  x: number,
+  z: number,
+): FountainView {
+  const g = new THREE.Group();
+  g.position.set(x, 0, z);
+  parent.add(g);
+
+  // 1. Sekizgen Mermer Havuz Çanağı (Octagonal Basin)
+  cylinder(g, 2.5, 2.65, 0.65, [0, 0.32, 0], "#f5f6fa", 8);
+  cylinder(g, 2.6, 2.7, 0.12, [0, 0.65, 0], "#dcdde1", 8); // Havuz küpeştesi
+
+  // Havuz İçi Berrak Su Yüzeyi
+  cylinder(g, 2.2, 2.2, 0.06, [0, 0.48, 0], "#00cec9", 16);
+
+  // 2. Klasik Oyma Mermer Kaide (Fluted Pedestal)
+  cylinder(g, 0.65, 0.78, 1.35, [0, 1.15, 0], "#dfe6e9", 12);
+
+  // 3. Orta Mermer Su Çanağı (Mid-tier Basin)
+  cylinder(g, 1.45, 0.7, 0.38, [0, 1.85, 0], "#f5f6fa", 16);
+  cylinder(g, 1.35, 1.35, 0.05, [0, 1.95, 0], "#00cec9", 16);
+
+  // 4. Üst Kaide ve Tepe Fıskiye Kasesi (Upper Bowl & Spout)
+  cylinder(g, 0.35, 0.42, 0.85, [0, 2.35, 0], "#dfe6e9", 8);
+  cylinder(g, 0.8, 0.35, 0.32, [0, 2.8, 0], "#f5f6fa", 12);
+  cylinder(g, 0.7, 0.7, 0.04, [0, 2.9, 0], "#00cec9", 12);
+
+  // 5. Animasyonlu Fıskiye Su Damlacıkları (Water Spray Droplets)
+  const sprayCount = 10;
+  const sprayGroup = new THREE.Group();
+  sprayGroup.position.set(0, 2.95, 0);
+  g.add(sprayGroup);
+
+  const droplets: { mesh: THREE.Mesh; angle: number; speed: number; radius: number; progress: number }[] = [];
+  const dropletGeo = new THREE.BoxGeometry(0.08, 0.12, 0.08);
+  const dropletMat = new THREE.MeshBasicMaterial({ color: "#81ecec", transparent: true, opacity: 0.85 });
+
+  for (let i = 0; i < sprayCount; i++) {
+    const mesh = new THREE.Mesh(dropletGeo, dropletMat);
+    sprayGroup.add(mesh);
+    droplets.push({
+      mesh,
+      angle: (i / sprayCount) * Math.PI * 2,
+      speed: 1.8 + (i % 3) * 0.4,
+      radius: 0.35 + (i % 2) * 0.45,
+      progress: (i / sprayCount),
+    });
+  }
+
+  return {
+    group: g,
+    update(dt: number) {
+      for (const d of droplets) {
+        d.progress = (d.progress + dt * d.speed * 0.45) % 1.0;
+        // Parabolik yay (yukarı fışkırma ve kaseye düşüş)
+        const py = Math.sin(d.progress * Math.PI) * 1.1;
+        const dist = d.progress * d.radius;
+        d.mesh.position.set(
+          Math.cos(d.angle) * dist,
+          py,
+          Math.sin(d.angle) * dist,
+        );
+      }
+    },
+  };
+}
+
+export type ChimneySmokeView = {
+  group: THREE.Group;
+  update(dt: number): void;
+};
+
+/** 🏭 Sanayi Bölgesi Canlı Fabrika Bacası Buhar/Duman Püskürtücü */
+export function buildFactoryChimneySmoke(
+  parent: THREE.Object3D,
+  x: number,
+  y: number,
+  z: number,
+): ChimneySmokeView {
+  const g = new THREE.Group();
+  g.position.set(x, y, z);
+  parent.add(g);
+
+  const puffCount = 6;
+  const puffs: { mesh: THREE.Mesh; progress: number; speed: number; driftX: number }[] = [];
+  const geo = new THREE.BoxGeometry(0.4, 0.4, 0.4);
+  const matSmoke = new THREE.MeshBasicMaterial({
+    color: "#ecf0f1",
+    transparent: true,
+    opacity: 0.65,
+    depthWrite: false,
+  });
+
+  for (let i = 0; i < puffCount; i++) {
+    const mesh = new THREE.Mesh(geo, matSmoke);
+    g.add(mesh);
+    puffs.push({
+      mesh,
+      progress: i / puffCount,
+      speed: 0.35 + (i % 2) * 0.15,
+      driftX: 0.8 + (i % 3) * 0.3,
+    });
+  }
+
+  return {
+    group: g,
+    update(dt: number) {
+      for (const p of puffs) {
+        p.progress = (p.progress + dt * p.speed) % 1.0;
+        const curY = p.progress * 3.5;
+        const curX = p.progress * p.driftX;
+        const scale = 0.5 + p.progress * 1.6;
+        p.mesh.position.set(curX, curY, 0);
+        p.mesh.scale.set(scale, scale, scale);
+      }
+    },
+  };
+}

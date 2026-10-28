@@ -36,6 +36,7 @@ import { assetManager } from "./scene/assets";
 import { createMinimap } from "./ui/minimap";
 import type { VehicleType } from "./game/types";
 import { createParkedVehicle } from "./scene/parked-vehicle";
+import { createAtmosphereController } from "./scene/atmosphere";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -57,7 +58,8 @@ export async function startGame(app: HTMLElement) {
   renderer.toneMappingExposure = 1.05;
   const scene = new THREE.Scene();
   scene.fog = new THREE.Fog("#cbe9fc", 85, 185);
-  scene.add(new THREE.HemisphereLight("#e2f3ff", "#72b063", 2.2));
+  const hemi = new THREE.HemisphereLight("#e2f3ff", "#72b063", 2.2);
+  scene.add(hemi);
   const sun = new THREE.DirectionalLight("#fff5eb", 3.2);
   sun.position.set(-24, 38, 18);
   sun.castShadow = true;
@@ -71,6 +73,7 @@ export async function startGame(app: HTMLElement) {
   sun.shadow.normalBias = 0.04;
   scene.add(sun);
   scene.add(sun.target);
+  const atmosphere = createAtmosphereController(renderer, scene, sun, hemi);
   const clouds = createClouds(11);
   scene.add(clouds.group);
   const world = createWorld();
@@ -754,6 +757,11 @@ export async function startGame(app: HTMLElement) {
           );
           sound.delivery();
 
+          if (delivery.lastReward?.safeBonus && delivery.lastReward.safeBonus > 0) {
+            sound.cleanDriveBonus();
+            hud.showToast(`⭐ TEMİZ SÜRÜŞ BONUSU! +${delivery.lastReward.safeBonus} ₺`, 2800);
+          }
+
           if (newLevel > oldLevel) {
             const newlyUnlocked = world.updateUnlockedDistricts(
               newLevel,
@@ -811,9 +819,12 @@ export async function startGame(app: HTMLElement) {
       deliveryAnimation.update(dt);
       updateCamera(camera, vehicle, dt, vehicle.velocity, cameraShake);
 
-      // Güneş ışığı ve dinamik gölge arabayı takip eder
-      sun.position.set(vehicle.position.x - 24, 38, vehicle.position.z + 18);
-      sun.target.position.set(vehicle.position.x, 0, vehicle.position.z);
+      // Dinamik Gökyüzü, Atmosfer (Sabah/Öğle/Gün Batımı/Alacakaranlık) ve Dünya Animasyonları
+      const atmoState = atmosphere.update(dt, vehicle.position);
+      world.update(dt, atmoState.isNightOrDusk);
+      hud.setTime(atmoState.phaseIcon, atmoState.phaseName);
+      sound.setDistrict(lastDistrict);
+      sound.updateAmbience(dt);
       clouds.update(dt);
 
       const speed = Math.hypot(vehicle.velocity.x, vehicle.velocity.z);
@@ -997,6 +1008,7 @@ export async function startGame(app: HTMLElement) {
       skidmarks.dispose();
       particles.dispose();
       clouds.dispose();
+      atmosphere.dispose();
       renderer.dispose();
     },
     { once: true },

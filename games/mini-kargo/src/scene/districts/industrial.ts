@@ -6,6 +6,8 @@ import {
   buildStaticCar,
   buildIndustrialPipes,
   buildGantryCrane,
+  buildFactoryChimneySmoke,
+  type ChimneySmokeView,
 } from "../city-details";
 
 /** Sanayi Bölgesi (Kuzeydoğu): Fabrikalar, boru hatları, yüksek bacalar, su kuleleri ve konteyner labirenti. */
@@ -147,4 +149,13 @@ export function buildIndustrialDistrict(ctx: WorldContext) {
   // Park ceplerine park etmiş sanayi/lojistik araçları (Trafiği engellemeyen güvenli cepler)
   buildStaticCar(group, 7.6, -26, Math.PI / 2, "#34495e"); // Koyu gri iş arabası
   buildStaticCar(group, 7.6, -74, Math.PI / 2, "#2980b9"); // Mavi lojistik aracı
+
+  // Canlı Fabrika Bacaları Buhar Püskürtücüleri (Active Industrial Steam & Smoke)
+  const chimneySmokes: ChimneySmokeView[] = [
+    buildFactoryChimneySmoke(group, 75 + 4.4, 7.2, -75 - 3.2), // Döküm tesisi
+    buildFactoryChimneySmoke(group, 75 + 4.4, 7.2, -25 - 3.2), // Fabrika tesisi
+    buildFactoryChimneySmoke(group, 67, 9.2, -58), // Konteyner vinci jeneratör bacası
+  ];
+
+  return { chimneySmokes };
 }

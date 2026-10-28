@@ -2,34 +2,42 @@
 
 **Date**: 2026-10-28  
 **Branch**: `feat/mini-kargo`  
-**Latest Git Commit**: `002ec7d`  
-**Current Milestone**: Continuous Polish & Visual Fidelity Sprint (Execution Run 3)  
+**Latest Git Commit**: `6d7e20c`  
+**Current Milestone**: Continuous Polish & Visual Fidelity Sprint (Execution Run 4)  
 **Victory Audit Status**: `VICTORY CONFIRMED`
 
 ## Verification Summary
-- **Unit & Integration Tests**: 32 test files, 612 passed, 0 failed (1.89s execution)
+- **Unit & Integration Tests**: 34 test files, 616 passed, 0 failed (0.98s execution)
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 193ms)
+- **Vite Production Build**: Successful (`dist/` generated in 138ms)
 - **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
 - **Persistence Compatibility**: Verified backwards compatibility for `localStorage` key `mini-kargo:v1`.
 
 ## Completed Improvements in this Run
-1. **Multi-District Architectural & Street Prop Expansion (T14)**:
-   - **Çarşı Bölgesi**: Added authentic open-air market stalls (`buildMarketStall`) with striped canopies (fırın/pasta, taze manav, kitap/kahve, hediyelik) on pedestrian sidewalk corners, plus the historic European/Ottoman Piazza Clock Tower (`buildTownClockTower`) marking the market shortcut entrance.
-   - **Sanayi Bölgesi**: Erected an imposing industrial container gantry crane (`buildGantryCrane`) spanning 10.4m wide and 8.5m high over the container yard with an operator cab and airborne suspended cargo container, defining the district skyline.
-   - **Sahil Şeridi**: Added vintage promenade boardwalk lantern posts (`buildPromenadeLantern`) along the coastal promenade and beach pier, plus an elevated wooden beach lifeguard watchtower (`buildLifeguardTower`) with ladder and lifebuoy ring.
-   - **Güneş Mahallesi**: Placed curbside residential mailboxes (`buildMailbox`) with red alert flags along the garden curbs of all suburban houses.
-2. **Stunt Jump Landing Feedback, Airtime Bonus & Procedural Audio (T15)**:
-   - Synthesized procedural Web Audio ramp launch whoosh (`sound.jumpLaunch()`) sweeping from 95Hz to 320Hz.
-   - Synthesized procedural suspension landing thud and tire grip snap (`sound.jumpLanding()`) scaling dynamically with landing velocity.
-   - Added radial landing dust particle burst (`particles.spawnLandingDust()`) blowing outwards from wheels upon touching down.
-   - Implemented dynamic airtime tracking and rewarded a +15₺ Stunt Jump Airtime Bonus (`🚀 HAVALI ATLAYIŞ! +15₺`) with celebratory coin audio and camera landing kick.
+1. **Dynamic Shift Time & Atmosphere Lighting System (T16)**:
+   - Implemented `createAtmosphereController` in `src/scene/atmosphere.ts` with 4 smooth lighting keyframes: Sabah (Morning), Öğle (Midday), Gün Batımı (Golden Hour Sunset with warm amber sunlight, coral sky and long shadows), and Alacakaranlık (Twilight Dusk with deep sapphire sky, slate fog, and cool moonlight).
+   - Dynamically interpolates renderer clear color, scene fog, directional sun color/intensity/angle, and hemisphere lighting.
+   - Added responsive time-of-day pill indicator in HUD topbar (`☀️ ÖĞLE`, `🌇 GÜN BATIMI`, `🌙 ALACAKARANLIK`, `🌅 SABAH`).
+2. **Procedural District Ambience Soundscape Synthesis (T17)**:
+   - Implemented `createAmbience` in `src/audio/ambience.ts` using real-time Web Audio API procedural synthesis with zero audio assets:
+     - **Sahil Şeridi**: Rolling ocean waves (LFO-modulated pink noise surf) & occasional distant seagull calls.
+     - **Sanayi Bölgesi**: Low-frequency 48Hz + 96Hz industrial machinery hum and generator vibration.
+     - **Çarşı Bölgesi**: Bustling market crowd murmur & gentle cafe chime.
+     - **Güneş Mahallesi**: Soft summer breeze whisper & cheerful morning bird chirps.
+   - Smooth 0.6s crossfading as the delivery van drives across district borders.
+3. **Multi-District Living Landmarks & Environmental Activity**:
+   - **Sahil Şeridi**: Erected a 12m classic coastal maritime lighthouse (`buildLighthouse`) on a stone breakwater island at X: -28, Z: 91 with alternating crimson/white bands, gallery balcony, lantern room, and a rotating volumetric sweeping searchlight beam that illuminates coastal waters at sunset and dusk.
+   - **Çarşı Bölgesi**: Placed the Historic Tiered Marble Fountain (`buildPiazzaFountain`) at the central piazza (X: 50, Z: 50) featuring octagonal marble basin, turquoise pool water, and animated water spray droplets arcing and splashing into the bowl.
+   - **Sanayi Bölgesi**: Added animated rising industrial steam plumes (`buildFactoryChimneySmoke`) to factory smokestacks and the container gantry crane generator.
+4. **Clean Driving Bonus & Audio Feedback**:
+   - Added celebratory Clean Driving Bonus (`⭐ TEMİZ SÜRÜŞ BONUSU! +25 ₺`) triggered upon flawless package delivery without impact.
+   - Synthesized ascending major-triad chime (`sound.cleanDriveBonus()`).
 
 ## Quick Resume Instructions
 To test and run locally:
 ```bash
 cd games/mini-kargo
-npm test                # Run 612 unit & E2E tests
+npm test                # Run 616 unit & E2E tests
 npm run typecheck       # Verify TypeScript types
 npm run build           # Build client bundle
 npm run test:browser    # Run Playwright visual smoke tests

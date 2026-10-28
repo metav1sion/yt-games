@@ -8,6 +8,8 @@ import {
   buildStaticCar,
   buildMarketStall,
   buildTownClockTower,
+  buildPiazzaFountain,
+  type FountainView,
 } from "../city-details";
 
 /** Çarşı Bölgesi (Güneydoğu): Renkli tenteli dükkanlar, kafeler, meydan heykeli ve açık hava masaları/şemsiyeleri. */
@@ -167,4 +169,10 @@ export function buildMarketDistrict(ctx: WorldContext) {
 
   buildMarketStall(group, 81.5, 72.5, 0, "#d35400", "#ffffff", "#f39c12", "HEDİYELİK");
   baseObstacles.push({ minX: 80.2, maxX: 82.8, minZ: 71.7, maxZ: 73.3 });
+
+  // Çarşı Meydanı Merkezi (Piazza Roundabout): Tarihi Mermer Fıskiye
+  const fountain = buildPiazzaFountain(group, 50, 50);
+  baseObstacles.push({ minX: 47.7, maxX: 52.3, minZ: 47.7, maxZ: 52.3 });
+
+  return { fountain };
 }

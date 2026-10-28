@@ -67,6 +67,11 @@ body {
   font-size: 30px;
   box-shadow: 0 5px 15px #1b3c3820;
 }
+.topbar-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 .district {
   background: #fff9e8e8;
   border: 1px solid #fff9e8;
@@ -85,6 +90,20 @@ body {
   height: 7px;
   border-radius: 50%;
   background: #75a777;
+}
+.time-pill {
+  background: #fff9e8e8;
+  border: 1px solid #fff9e8;
+  border-radius: 30px;
+  padding: 12px 15px;
+  font-size: 10px;
+  letter-spacing: 1.1px;
+  font-weight: 750;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #2c3e50;
+  box-shadow: 0 5px 20px #244a4010;
 }
 .task-card {
   position: absolute;

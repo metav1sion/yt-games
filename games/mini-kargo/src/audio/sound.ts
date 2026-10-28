@@ -1,3 +1,6 @@
+import type { DistrictId } from "../game/districts";
+import { createAmbience } from "./ambience";
+
 export function createSound() {
   let context: AudioContext | null = null,
     enabled = true,
@@ -18,6 +21,7 @@ export function createSound() {
   let nitroFilter: BiquadFilterNode | null = null;
 
   let continuousStarted = false;
+  const ambience = createAmbience(() => context);
 
   function setupContinuousNodes() {
     if (!context || continuousStarted) return;
@@ -128,12 +132,14 @@ export function createSound() {
     unlock,
     setEnabled(value: boolean) {
       enabled = value;
+      ambience.setEnabled(value);
       if (masterGain && context) {
         masterGain.gain.setTargetAtTime(value && !paused ? 1 : 0, context.currentTime, 0.03);
       }
     },
     setPaused(value: boolean) {
       paused = value;
+      ambience.setPaused(value);
       if (masterGain && context) {
         masterGain.gain.setTargetAtTime(enabled && !value ? 1 : 0, context.currentTime, 0.03);
       }
@@ -430,7 +436,20 @@ export function createSound() {
         };
       } catch {}
     },
+    cleanDriveBonus() {
+      // D5, F#5, A5 neşeli majör üçlü arpej
+      note(587.33, 0, 0.12);
+      note(739.99, 0.08, 0.14);
+      note(880.0, 0.16, 0.22);
+    },
+    setDistrict(districtId: DistrictId) {
+      ambience.setDistrict(districtId);
+    },
+    updateAmbience(dt: number) {
+      ambience.update(dt);
+    },
     dispose() {
+      ambience.dispose();
       try {
         engineOsc?.stop();
         skidSource?.stop();

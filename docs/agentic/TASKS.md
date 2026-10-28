@@ -32,11 +32,10 @@
   - Added warning reflectors to stunt jump ramp.
   - Resolved Home 3 tree clipping through fence geometry.
   - Implemented proximity distance fade and enabled depth testing for 3D BuyPad floating badges.
-  - Reorganized all company upgrade stations into a clean 2x2 campus grid on the logistics depot apron, eliminating overlap with the minimap radar.
-  - Prevented bottom controls hint and nitro bar text overlap.
+  - Reorganized all company upgrade stations into a clean 2x2 campus grid on the logistics depot apron.
   - Cleaned desktop layout by suppressing touch controls on pointer-fine viewports while preserving mobile touch responsiveness.
 - [x] **T14 — Multi-District Architectural Expansion**:
-  - Çarşı: Added 4 canopy market stalls (fırın/pasta, taze manav, kitap/kahve, hediyelik) with striped fabric canopies, crates, price signs, and the historic Piazza Clock Tower.
+  - Çarşı: Added 4 canopy market stalls with striped fabric canopies, crates, price signs, and the historic Piazza Clock Tower.
   - Sanayi: Erected a massive 10.4m x 8.5m container gantry crane with trolley hoist, steel cables, operator cab, and suspended shipping container.
   - Sahil: Added nostalgic cast-iron promenade lanterns along boardwalk & pier, and an elevated wooden beach lifeguard watchtower with lifebuoy.
   - Güneş: Added cozy suburban curbside mailboxes with red alert flags for all neighborhood homes.
@@ -44,10 +43,20 @@
   - Added ascending ramp launch whoosh audio (`sound.jumpLaunch()`).
   - Added heavy suspension thud & tire grip sound (`sound.jumpLanding()`) scaled to impact velocity.
   - Added radial 360-degree landing dust burst (`particles.spawnLandingDust()`).
-  - Implemented airborne timer tracking with +15₺ Stunt Jump Airtime Bonus (`🚀 HAVALI ATLAYIŞ! +15₺`) and camera vertical landing kick.
+  - Implemented airborne timer tracking with +15₺ Stunt Jump Airtime Bonus and camera vertical landing kick.
+- [x] **T16 — Dynamic Atmosphere & Shift Time Lighting System**:
+  - Implemented `AtmosphereController` with 4 smooth keyframes: Sabah (Morning), Öğle (Midday), Gün Batımı (Golden Hour Sunset), and Alacakaranlık (Twilight Dusk).
+  - Dynamically updates sun position/color/intensity, sky/ground hemisphere lighting, horizon fog, and clear color.
+  - Added responsive time-of-day pill indicator in topbar HUD (`☀️ ÖĞLE`, `🌇 GÜN BATIMI`, etc.).
+- [x] **T17 — District Ambience Soundscape Synthesis & Clean Driving Feedback**:
+  - Procedural Web Audio background soundscapes crossfading across the 4 districts (ocean surf & gulls in Sahil, factory drone in Sanayi, crowd murmur in Çarşı, breeze & bird chirps in Güneş).
+  - Celebratory Clean Driving Bonus (`⭐ TEMİZ SÜRÜŞ BONUSU! +25 ₺`) with joyful major-triad chime.
+  - Classic Maritime Lighthouse (`buildLighthouse`) on coastal breakwater with rotating sweeping searchlight beam.
+  - Historic Tiered Marble Fountain (`buildPiazzaFountain`) in central Çarşı square with animated water spray droplets.
+  - Animated rising industrial steam puffs (`buildFactoryChimneySmoke`) from Sanayi factory smokestacks.
 
 ## Active / Next Tasks
-- [ ] **T16 — Dynamic Day/Night Lighting or Sunset Golden Hour**: Introduce subtle golden hour lighting transitions over long delivery shifts.
-- [ ] **T17 — District Ambience Synthesis**: Gentle procedural environmental sounds (seagulls/waves in Sahil, machinery rumble in Sanayi, crowd chatter in Çarşı).
+- [ ] **T18 — Dynamic Weather (Gentle Summer Rain & Wet Road Reflections)**: Introduce occasional refreshing summer rain showers with wet road specular sheen and rain drop audio synthesis.
+- [ ] **T19 — Multi-District Special Cargo Contracts**: Specialized delivery missions (e.g. VIP express frozen goods, delicate antique transport) with district-to-district long routes and higher rewards.
 - [ ] **T11 — Player Hands-on Playtesting & Feedback**: Solicit user evaluation on subjective driving feel, district ambiance, and gameplay pacing.
 - [ ] **T12 — Future YouTube Playables SDK Preparation**: (Pending explicit user instruction) integrate YouTube Playables SDK hooks when ready for distribution.

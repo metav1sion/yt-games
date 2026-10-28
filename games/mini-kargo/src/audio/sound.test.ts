@@ -87,6 +87,9 @@ describe("audio system", () => {
     sound.playUnlockJingle();
     sound.jumpLaunch();
     sound.jumpLanding(1.5);
+    sound.cleanDriveBonus();
+    sound.setDistrict("coastal");
+    sound.updateAmbience(1.0);
     sound.setEnabled(false);
     sound.setPaused(true);
     sound.dispose();

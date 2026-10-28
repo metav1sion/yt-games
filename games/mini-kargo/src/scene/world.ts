@@ -29,6 +29,7 @@ export type World = {
   cargoRacks: CargoRacksView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
+  update(dt: number, isNightOrDusk?: boolean): void;
   updateCargoRacks(cargoLevel: number): void;
   updateUnlockedDistricts(
     companyLevel: number,
@@ -47,9 +48,9 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   // Ev sırası (homes indeksleri districts.ts ile eşleşir): Güneş, Çarşı, Sanayi, Sahil.
   const ctx = createWorldContext(group, assets);
   const { depot } = buildSunnyDistrict(ctx);
-  buildMarketDistrict(ctx);
-  buildIndustrialDistrict(ctx);
-  buildCoastalDistrict(ctx);
+  const { fountain } = buildMarketDistrict(ctx);
+  const { chimneySmokes } = buildIndustrialDistrict(ctx);
+  const { lighthouse } = buildCoastalDistrict(ctx);
   buildCityBuildings(ctx);
 
   const barriers = buildDistrictBarriers(group);
@@ -105,6 +106,13 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);
+    },
+    update(dt: number, isNightOrDusk = false) {
+      lighthouse.update(dt, isNightOrDusk);
+      fountain.update(dt);
+      for (const smoke of chimneySmokes) {
+        smoke.update(dt);
+      }
     },
     updateCargoRacks(cargoLevel: number) {
       cargoRacks.update(cargoLevel);
