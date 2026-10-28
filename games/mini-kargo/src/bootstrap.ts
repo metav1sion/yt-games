@@ -163,7 +163,7 @@ export async function startGame(app: HTMLElement) {
   const enginePad = createBuyPad({
     id: "upgrade-engine",
     name: "⚡ Motor Güçlendirme",
-    position: { x: -52, z: -27 },
+    position: { x: -62, z: -26 },
     radius: 2.8,
     targetCost: upgradeCost("engine", progression.upgrades.engine ?? 0),
     level: progression.upgrades.engine ?? 0,
@@ -188,7 +188,7 @@ export async function startGame(app: HTMLElement) {
   const cargoPad = createBuyPad({
     id: "upgrade-cargo",
     name: "📦 Depo Kapasitesi",
-    position: { x: -52, z: -37 },
+    position: { x: -62, z: -36 },
     radius: 2.8,
     targetCost: upgradeCost("cargo", progression.upgrades.cargo ?? 0),
     level: progression.upgrades.cargo ?? 0,
@@ -219,7 +219,7 @@ export async function startGame(app: HTMLElement) {
   const courierPad = createBuyPad({
     id: "pad_hire_courier",
     name: "👥 Kurye İstihdam Ofisi",
-    position: { x: -44, z: -32 },
+    position: { x: -56, z: -36 },
     radius: 2.8,
     targetCost: courierPadCost(initialCourierCount),
     level: initialCourierCount,
@@ -256,7 +256,7 @@ export async function startGame(app: HTMLElement) {
   const nitroPad = createBuyPad({
     id: "pad_nitro_station",
     name: "⚡ Hızlı Nitro İstasyonu",
-    position: { x: -60, z: -24 },
+    position: { x: -56, z: -26 },
     radius: 2.8,
     targetCost: upgradeCost("nitro", progression.upgrades.nitro ?? 0),
     level: progression.upgrades.nitro ?? 0,
@@ -820,7 +820,7 @@ export async function startGame(app: HTMLElement) {
             sound.playUnlockJingle();
           }
         }
-        buyPadsView.update(buyPads, dt, buyResult.activePad?.id);
+        buyPadsView.update(buyPads, dt, buyResult.activePad?.id, vehicle.position);
 
         // Hızlı Nitro İstasyonu pompası dolumu (Oyuncu ped alanındayken anında hızlı doldur)
         const distToNitroPad = Math.hypot(
@@ -894,7 +894,7 @@ export async function startGame(app: HTMLElement) {
         particles.update(vehicle, isBoosting, dt);
         sound.updateMotor(speed, currentThrottle, currentNitro, vehicle.drifting);
       } else {
-        buyPadsView.update(buyPads, dt, null);
+        buyPadsView.update(buyPads, dt, null, vehicle.position);
         fleetView.update(fleet.couriers, dt);
         sound.updateMotor(0, 0, false, false);
       }

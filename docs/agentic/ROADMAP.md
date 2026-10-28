@@ -12,3 +12,4 @@ The roadmap follows the phased autonomous development campaign defined for Mini 
 | **PHASE 4** | Gameplay & Progression Polish | ✅ Complete | Refined vehicle dynamics (van & scooter), fair capsule collision sliding, multi-slot cargo feedback, 5 upgrade tiers, 40-node BFS autonomous courier fleet, offline earnings. |
 | **PHASE 5** | Mobile UX & Performance | ✅ Complete | Responsive touch controls (joystick, drift, nitro buttons), safe-area insets, radar minimap, <50 draw calls, 60 FPS mobile target. |
 | **PHASE 6** | Quality Refinement & Verification | ✅ Complete | 611/611 automated tests passing, Playwright browser test passing across desktop/mobile viewports with 0 errors, independent Victory Audit confirmed. |
+| **PHASE 7** | Continuous Visual Polish & District Detailing | 🔄 In Progress | Unblocked stunt ramp, corporate entrance monument, BuyPad distance fade & depth occlusion, desktop/mobile control isolation, zero-overlap HUD. |

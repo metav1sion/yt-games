@@ -27,7 +27,18 @@
   - Verified across desktop (1280x800), mobile portrait (390x844), and mobile landscape (844x390) with 0 console errors.
 - [x] **T10 — Independent Victory Audit**:
   - Independent post-victory auditor executed forensic check, verifying 100% genuine test pass and zero mock facades (`VICTORY CONFIRMED`).
+- [x] **T13 — Visual Fidelity & Layout Refinement (Depot Gantry, Jump Ramp Runway, BuyPad Proximity Occlusion & Desktop UI)**:
+  - Cleared Güneş jump ramp runway of billboard obstruction, placed corporate monument pylon at depot apron entrance.
+  - Added warning reflectors to stunt jump ramp.
+  - Resolved Home 3 tree clipping through fence geometry.
+  - Implemented proximity distance fade and enabled depth testing for 3D BuyPad floating badges.
+  - Reorganized all company upgrade stations into a clean 2x2 campus grid on the logistics depot apron, eliminating overlap with the minimap radar.
+  - Prevented bottom controls hint and nitro bar text overlap.
+  - Cleaned desktop layout by suppressing touch controls on pointer-fine viewports while preserving mobile touch responsiveness.
 
 ## Active / Next Tasks
+- [ ] **T14 — Multi-District Architectural Expansion**: Add district-specific street props (Çarşı canopy market stalls, Sanayi crane rigs & container gantry, Sahil promenade seaside boardwalk lamps).
+- [ ] **T15 — Stunt Jump Landing Feedback & Procedural Audio**: Add landing particle burst and procedural stunt airtime sound synthesis for vehicle leaps.
+- [ ] **T16 — Dynamic Day/Night Lighting or Sunset Hour**: Introduce gradual golden hour lighting transitions over long shifts.
 - [ ] **T11 — Player Hands-on Playtesting & Feedback**: Solicit user evaluation on subjective driving feel, district ambiance, and gameplay pacing.
 - [ ] **T12 — Future YouTube Playables SDK Preparation**: (Pending explicit user instruction) integrate YouTube Playables SDK hooks when ready for distribution.

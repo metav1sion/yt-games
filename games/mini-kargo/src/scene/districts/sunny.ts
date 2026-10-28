@@ -93,6 +93,8 @@ export function buildSunnyDistrict(ctx: WorldContext): { depot: Vec2 } {
   // =========================================================================
   // 3. Depo Çevresi: Konteynerler, Güvenlik Kulübesi, Paletler ve Forklift
   // =========================================================================
+  // 3. Depo Çevresi: Konteynerler, Güvenlik Kulübesi, Paletler ve Forklift
+  // =========================================================================
   // Depo arkası istiflenmiş kargo konteynerleri
   addModel(group, "industrial/shipping-container-a", -72, -44, 2.2, Math.PI / 2);
   addModel(group, "industrial/shipping-container-b", -72, -41, 2.2, Math.PI / 2);
@@ -105,15 +107,15 @@ export function buildSunnyDistrict(ctx: WorldContext): { depot: Vec2 } {
     }
   }
 
-  // Güvenlik Kulübesi (Guard Booth) & Giriş Bariyeri
-  const guardX = -53, guardZ = -22;
+  // Güvenlik Kulübesi (Guard Booth) & Giriş Kontrol Noktası (Apron girişinde, x=-56.5, z=-26.5)
+  const guardX = -56.5, guardZ = -26.5;
   box(group, [2.0, 2.4, 2.0], [guardX, 1.2, guardZ], "#34495e");
   box(group, [2.2, 0.2, 2.2], [guardX, 2.45, guardZ], "#e74c3c");
-  box(group, [1.6, 0.9, 0.1], [guardX, 1.4, guardZ + 1.02], "#74b9ff", 0.3); // Cam
-  // Çizgili bariyer kolu
-  box(group, [3.2, 0.14, 0.14], [guardX - 2.4, 0.9, guardZ + 0.8], "#f5f6fa");
-  box(group, [1.0, 0.16, 0.16], [guardX - 1.8, 0.9, guardZ + 0.8], "#d63031");
-  box(group, [1.0, 0.16, 0.16], [guardX - 3.2, 0.9, guardZ + 0.8], "#d63031");
+  box(group, [1.6, 0.9, 0.1], [guardX, 1.4, guardZ - 1.02], "#74b9ff", 0.3); // Girişe bakan pencere
+  // Çizgili bariyer kolu (Apron giriş yoluna uzanır)
+  box(group, [0.14, 0.14, 3.2], [guardX + 1.1, 0.9, guardZ - 1.6], "#f5f6fa");
+  box(group, [0.16, 0.16, 1.0], [guardX + 1.1, 0.9, guardZ - 1.0], "#d63031");
+  box(group, [0.16, 0.16, 1.0], [guardX + 1.1, 0.9, guardZ - 2.4], "#d63031");
 
   // Kargo Paletleri, Koli Yığınları ve Forklift Alanı
   for (const [px, pz] of [[-66, -31], [-66, -33.5], [-66, -28.5]] as const) {
@@ -132,8 +134,28 @@ export function buildSunnyDistrict(ctx: WorldContext): { depot: Vec2 } {
   addModel(group, "nature/fence_simple", -55, -42, 3.5);
   addModel(group, "nature/flower_purpleA", -56, -34, 4);
 
-  // Kargo Yön Tabelası
-  buildBillboard(group, -50, -21, 0, "MİNİ KARGO MERKEZ LOJİSTİK ÜSSÜ", "#ffffff", "#1e5144");
+  // Mini Kargo Lojistik Üssü Giriş Anıtı ve Totem Tabelası (Apron girişinde, x=-54, z=-25.5)
+  // Taş kaide
+  box(group, [4.0, 0.4, 0.8], [-54, 0.2, -25.5], "#2c3e50");
+  // Kurumsal pilon gövdesi
+  box(group, [3.8, 2.0, 0.35], [-54, 1.4, -25.5], "#1e5144");
+  // Altın sarısı üst taç parapeti
+  box(group, [4.0, 0.15, 0.45], [-54, 2.45, -25.5], "#f1c40f");
+  // Kurumsal Işıklı Marka Levhası
+  const gateSign = label("MİNİ KARGO · LOJİSTİK MERKEZİ", "#ffffff", "#1e5144");
+  gateSign.scale.set(3.6, 1.15, 1);
+  gateSign.position.set(-54, 1.45, -25.25);
+  group.add(gateSign);
+  // Giriş aydınlatma armatürleri
+  cylinder(group, 0.08, 0.1, 0.25, [-55.6, 0.5, -25.1], "#f1c40f", 8);
+  cylinder(group, 0.08, 0.1, 0.25, [-52.4, 0.5, -25.1], "#f1c40f", 8);
+
+  // Güneş Depo Atlama Rampası (x=-50, z=-22) pistini temiz tutuyoruz ve uyarı reflektörleri ekliyoruz
+  for (const rz of [-24, -20]) {
+    for (const rx of [-52.6, -47.4]) {
+      cylinder(group, 0.12, 0.15, 0.55, [rx, 0.28, rz], "#f39c12", 8);
+    }
+  }
 
   // =========================================================================
   // 4. Güneş Mahallesi Evleri (Homes 00 - 03)
@@ -172,7 +194,10 @@ export function buildSunnyDistrict(ctx: WorldContext): { depot: Vec2 } {
     addModel(g, "nature/fence_simple", -4.2, -1.8, 3.5, Math.PI / 2);
     addModel(g, "nature/fence_simple", 4.2, -1.8, 3.5, Math.PI / 2);
 
-    addTree(h.x - 5.5, h.z, 0.85);
+    // Ev 3 için arka bahçeye alarak çit çakışmasını engelliyoruz
+    const treeX = h.index === 3 ? h.x - 5.8 : h.x - 5.5;
+    const treeZ = h.index === 3 ? h.z - 3.5 : h.z;
+    addTree(treeX, treeZ, 0.85);
 
     homes.push({ ...h.delivery });
     baseObstacles.push(h.collider);

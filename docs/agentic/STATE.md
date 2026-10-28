@@ -2,22 +2,30 @@
 
 **Date**: 2026-10-28  
 **Branch**: `feat/mini-kargo`  
-**Current Milestone**: Phase 6 Complete / Verified Production-Ready Build  
+**Latest Git Commit**: `195ad71`  
+**Current Milestone**: Continuous Polish & Visual Fidelity Sprint (Execution Run 2)  
 **Victory Audit Status**: `VICTORY CONFIRMED`
 
 ## Verification Summary
-- **Unit & Integration Tests**: 32 test files, 611 passed, 0 failed (1.03s execution)
+- **Unit & Integration Tests**: 32 test files, 611 passed, 0 failed (1.24s execution)
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 141ms)
+- **Vite Production Build**: Successful (`dist/` generated in 153ms)
 - **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
 - **Persistence Compatibility**: Verified backwards compatibility for `localStorage` key `mini-kargo:v1`.
 
-## Core System Status
-- **Districts**: 4 districts (Güneş Mahallesi, Çarşı Bölgesi, Sanayi Bölgesi, Sahil Şeridi) fully populated with landmarks, roads, ramps, and 16 accessible drop zones.
-- **Traffic & Pedestrians**: 37 traffic vehicles, 39 pedestrians, 28 props, 11 clouds actively simulated.
-- **Driving & Physics**: Van & Scooter handling tuned, smooth capsule collision sliding, safe driving bonuses.
-- **Fleet & Economy**: 5 upgrade tiers, 40-node BFS courier automation, passive income loop.
-- **UI/UX**: Responsive virtual joystick, drift/nitro buttons, minimap radar, company sheet modal.
+## Completed Improvements in this Run
+1. **Güneş Mahallesi Stunt Ramp Runway Unblocked**:
+   - Relocated billboard from the jump runway (`x = -50, z = -21`) to a corporate entrance monument pylon at `x = -54, z = -25.5` on the depot apron.
+   - Added stunt warning reflector bollards along the jump ramp curbs.
+   - Fixed Home 3 garden tree clipping through the front wooden fence.
+2. **BuyPad 3D & Distance Fade Refinement**:
+   - Enabled `depthTest: true` on buy pad labels, eliminating unsightly occlusion bugs through buildings.
+   - Integrated distance-based smooth opacity fade (visible within 14m, smoothly fading between 14-22m, hidden beyond 22m).
+   - Reorganized buy-pads into an architecturally structured 2x2 garage & office grid on the Mini Kargo Logistics apron, removing them from traffic lanes and eliminating overlap with the minimap radar.
+3. **HUD & Desktop Experience Optimization**:
+   - Repositioned desktop driving control hint pill to `bottom: 74px; left: 50%`, eliminating overlap with the Nitro gauge.
+   - Hidden virtual joystick and touch action buttons on desktop mouse/keyboard viewports via `@media (hover: hover) and (pointer: fine)`.
+   - Tuned mobile landscape task card margins (`left: 156px; right: 230px`) for optimal breathing room around brand header.
 
 ## Quick Resume Instructions
 To test and run locally:

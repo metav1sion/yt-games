@@ -3,13 +3,13 @@ import type { BuyPad } from "../game/buy-pad";
 
 export type BuyPadVisual = {
   group: THREE.Group;
-  update(pad: BuyPad, dt: number, isTransferring?: boolean): void;
+  update(pad: BuyPad, dt: number, isTransferring?: boolean, playerPos?: { x: number; z: number }): void;
   dispose(): void;
 };
 
 export type BuyPadsView = {
   group: THREE.Group;
-  update(pads: BuyPad[], dt: number, activePadId?: string | null): void;
+  update(pads: BuyPad[], dt: number, activePadId?: string | null, playerPos?: { x: number; z: number }): void;
   dispose(): void;
 };
 
@@ -162,7 +162,7 @@ export function createBuyPadVisual(initialPad: BuyPad): BuyPadVisual {
       texture.colorSpace = THREE.SRGBColorSpace;
       const spriteMat = new THREE.SpriteMaterial({
         map: texture,
-        depthTest: false,
+        depthTest: true,
         transparent: true,
       });
       sprite = new THREE.Sprite(spriteMat);
@@ -263,7 +263,7 @@ export function createBuyPadVisual(initialPad: BuyPad): BuyPadVisual {
 
   return {
     group,
-    update(pad: BuyPad, dt: number, isTransferring = false) {
+    update(pad: BuyPad, dt: number, isTransferring = false, playerPos?: { x: number; z: number }) {
       time += dt;
 
       // Pozisyon senkronu
@@ -342,7 +342,17 @@ export function createBuyPadVisual(initialPad: BuyPad): BuyPadVisual {
       // 3D Yüzen etiket hover ve çizim güncellemesi
       if (sprite) {
         sprite.position.y = 2.8 + Math.sin(time * 2.2) * 0.12;
-        renderLabel(pad, isTransferring);
+        let alpha = 1.0;
+        if (playerPos) {
+          const dist = Math.hypot(pad.position.x - playerPos.x, pad.position.z - playerPos.z);
+          // Yakındayken (<14m) tam belirgin, 14-22m arası yumuşak solar, >22m tamamen gizlenir
+          alpha = Math.min(1.0, Math.max(0.0, (22 - dist) / 8));
+        }
+        (sprite.material as THREE.SpriteMaterial).opacity = alpha;
+        sprite.visible = alpha > 0.01;
+        if (sprite.visible) {
+          renderLabel(pad, isTransferring);
+        }
       }
     },
 
@@ -402,13 +412,13 @@ export function createBuyPadsView(initialPads: BuyPad[] = []): BuyPadsView {
 
   return {
     group,
-    update(pads: BuyPad[], dt: number, activePadId: string | null = null) {
+    update(pads: BuyPad[], dt: number, activePadId: string | null = null, playerPos?: { x: number; z: number }) {
       sync(pads);
       for (const pad of pads) {
         const visual = visualMap.get(pad.id);
         if (visual) {
           const isTransferring = activePadId === pad.id;
-          visual.update(pad, dt, isTransferring);
+          visual.update(pad, dt, isTransferring, playerPos);
         }
       }
     },

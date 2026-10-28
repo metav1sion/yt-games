@@ -156,14 +156,20 @@ p {
 }
 .control-hint {
   position: absolute;
-  bottom: 35px;
-  left: 180px;
-  font-size: 10px;
+  bottom: 74px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
   font-weight: 800;
-  letter-spacing: 3px;
-  background: #fff9e8cc;
+  letter-spacing: 2px;
+  background: #fff9e8d9;
+  border: 1px solid #244a4025;
+  box-shadow: 0 4px 16px #00000018;
   border-radius: 20px;
-  padding: 12px 16px;
+  padding: 8px 18px;
+  z-index: 10;
+  pointer-events: none;
+  white-space: nowrap;
 }
 .nitro-bar {
   position: absolute;
@@ -189,6 +195,14 @@ p {
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
+}
+@media (min-width: 900px) and (hover: hover) and (pointer: fine) {
+  #joystick {
+    display: none !important;
+  }
+  .mobile-actions {
+    display: none !important;
+  }
 }
 .touch-action-btn {
   width: 62px;
@@ -1691,8 +1705,8 @@ h1 {
   }
   .task-card {
     top: max(8px, env(safe-area-inset-top));
-    left: 140px;
-    right: 220px;
+    left: 156px;
+    right: 230px;
     width: auto;
     padding: 5px 12px;
     border-radius: 12px;
