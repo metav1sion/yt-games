@@ -122,4 +122,18 @@ describe("particles system", () => {
 
     particles.dispose();
   });
+
+  it("spawns landing dust when vehicle touches ground after stunt jump", () => {
+    const scene = new THREE.Scene();
+    const particles = createParticles(scene);
+
+    expect(() => {
+      particles.spawnLandingDust({ x: 50, z: -38 }, 12);
+      for (let i = 0; i < 15; i++) {
+        particles.update(dummyState, false, 0.05);
+      }
+    }).not.toThrow();
+
+    particles.dispose();
+  });
 });

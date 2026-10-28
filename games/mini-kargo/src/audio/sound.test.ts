@@ -85,6 +85,8 @@ describe("audio system", () => {
     sound.collision();
     sound.playMoneyDrain();
     sound.playUnlockJingle();
+    sound.jumpLaunch();
+    sound.jumpLanding(1.5);
     sound.setEnabled(false);
     sound.setPaused(true);
     sound.dispose();
@@ -99,6 +101,8 @@ describe("audio system", () => {
       sound.playUnlockJingle();
       sound.carHorn();
       sound.metalCrash();
+      sound.jumpLaunch();
+      sound.jumpLanding(2.0);
     }).not.toThrow();
 
     sound.dispose();

@@ -6,6 +6,8 @@ import {
   buildBusStop,
   buildBillboard,
   buildStaticCar,
+  buildLifeguardTower,
+  buildPromenadeLantern,
 } from "../city-details";
 
 /** Sahil ve Park Bölgesi (Güneybatı): Turkuaz deniz, altın kumsal, palmiyeler ve sahil iskelesi. */
@@ -36,6 +38,15 @@ export function buildCoastalDistrict(ctx: WorldContext) {
   // Plaj Şemsiyeleri
   ctx.addModel(group, "commercial/detail-parasol-a", -82, 85, 4.5, 0.2);
   ctx.addModel(group, "commercial/detail-parasol-b", -28, 85, 4.5, -0.3);
+
+  // Kordon Boyu Nostaljik Döküm Fener Direkleri
+  for (const lx of [-70, -58, -42, -30]) {
+    buildPromenadeLantern(group, lx, 83.2);
+  }
+
+  // Sahil Cankurtaran Gözetleme Kulesi
+  buildLifeguardTower(group, -34, 87.5, -0.2);
+  baseObstacles.push({ minX: -35.5, maxX: -32.5, minZ: 86.0, maxZ: 89.0 });
 
   // =========================================================================
   // 2. Ahşap Sahil İskelesi (Pier X=-50) ve Kanolar

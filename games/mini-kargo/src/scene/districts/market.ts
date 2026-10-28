@@ -6,6 +6,8 @@ import {
   buildBusStop,
   buildBillboard,
   buildStaticCar,
+  buildMarketStall,
+  buildTownClockTower,
 } from "../city-details";
 
 /** Çarşı Bölgesi (Güneydoğu): Renkli tenteli dükkanlar, kafeler, meydan heykeli ve açık hava masaları/şemsiyeleri. */
@@ -145,4 +147,24 @@ export function buildMarketDistrict(ctx: WorldContext) {
   // Park ceplerine park etmiş şık arabalar (Trafiği engellemeyen güvenli cepler)
   buildStaticCar(group, 24, 7.6, 0, "#f5f6fa"); // Beyaz sedan
   buildStaticCar(group, 70, 7.6, 0, "#f1c40f"); // Sarı taksi / sedan
+
+  // =========================================================================
+  // 5. Tarihi Çarşı Saat Kulesi & Açık Hava Pazar Tezgahları
+  // =========================================================================
+  // Kestirme sokak başlangıcında Tarihi Saat Kulesi
+  buildTownClockTower(group, 35.4, 16.5);
+  baseObstacles.push({ minX: 34.2, maxX: 36.6, minZ: 15.3, maxZ: 17.7 });
+
+  // Canlı sokak esnafı pazar tezgahları (Geniş kaldırım ceplerinde, yolları kapatmaz)
+  buildMarketStall(group, 18.5, 27.5, 0, "#e74c3c", "#ffffff", "#e67e22", "FIRIN & PASTA");
+  baseObstacles.push({ minX: 17.2, maxX: 19.8, minZ: 26.7, maxZ: 28.3 });
+
+  buildMarketStall(group, 81.5, 27.5, 0, "#27ae60", "#ffffff", "#2ecc71", "TAZE MANAV");
+  baseObstacles.push({ minX: 80.2, maxX: 82.8, minZ: 26.7, maxZ: 28.3 });
+
+  buildMarketStall(group, 18.5, 72.5, 0, "#2980b9", "#ffffff", "#3498db", "KİTAP & KAHVE");
+  baseObstacles.push({ minX: 17.2, maxX: 19.8, minZ: 71.7, maxZ: 73.3 });
+
+  buildMarketStall(group, 81.5, 72.5, 0, "#d35400", "#ffffff", "#f39c12", "HEDİYELİK");
+  baseObstacles.push({ minX: 80.2, maxX: 82.8, minZ: 71.7, maxZ: 73.3 });
 }

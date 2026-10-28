@@ -359,6 +359,77 @@ export function createSound() {
       note(783.99, 0.14, 0.12);
       note(1046.5, 0.21, 0.35);
     },
+    jumpLaunch() {
+      if (!context || !enabled || paused || context.state !== "running") return;
+      try {
+        const at = context.currentTime;
+        const dur = 0.45;
+        // Yükselen rüzgar / hava fırlatma osilatörü (Whoosh sweep: 95Hz -> 320Hz)
+        const osc = context.createOscillator();
+        const gain = context.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(95, at);
+        osc.frequency.exponentialRampToValueAtTime(320, at + dur);
+
+        gain.gain.setValueAtTime(0, at);
+        gain.gain.linearRampToValueAtTime(0.09, at + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, at + dur);
+
+        osc.connect(gain);
+        gain.connect(context.destination);
+        osc.start(at);
+        osc.stop(at + dur + 0.02);
+        osc.onended = () => {
+          osc.disconnect();
+          gain.disconnect();
+        };
+      } catch {}
+    },
+    jumpLanding(intensity = 1.0) {
+      if (!context || !enabled || paused || context.state !== "running") return;
+      try {
+        const at = context.currentTime;
+        const dur = 0.22;
+        // Tok süspansiyon iniş darbesi (Suspension thud: 110Hz -> 32Hz)
+        const osc = context.createOscillator();
+        const gain = context.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(110, at);
+        osc.frequency.exponentialRampToValueAtTime(32, at + dur * 0.9);
+
+        const volume = Math.min(0.18, 0.08 * Math.max(0.5, intensity));
+        gain.gain.setValueAtTime(volume, at);
+        gain.gain.exponentialRampToValueAtTime(0.001, at + dur);
+
+        osc.connect(gain);
+        gain.connect(context.destination);
+        osc.start(at);
+        osc.stop(at + dur + 0.02);
+        osc.onended = () => {
+          osc.disconnect();
+          gain.disconnect();
+        };
+
+        // Lastik asfalt kavrama çıtırtısı (Tire pavement grip snap)
+        const snap = context.createOscillator();
+        const snapGain = context.createGain();
+        snap.type = "sine";
+        snap.frequency.setValueAtTime(360, at);
+        snap.frequency.exponentialRampToValueAtTime(120, at + 0.06);
+
+        snapGain.gain.setValueAtTime(0.05, at);
+        snapGain.gain.exponentialRampToValueAtTime(0.001, at + 0.065);
+
+        snap.connect(snapGain);
+        snapGain.connect(context.destination);
+        snap.start(at);
+        snap.stop(at + 0.07);
+        snap.onended = () => {
+          snap.disconnect();
+          snapGain.disconnect();
+        };
+      } catch {}
+    },
     dispose() {
       try {
         engineOsc?.stop();

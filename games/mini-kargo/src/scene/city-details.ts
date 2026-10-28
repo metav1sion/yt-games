@@ -281,3 +281,296 @@ export function buildIndustrialPipes(
 
   return g;
 }
+
+/** 🎪 Çarşı Açık Hava Pazar / Esnaf Tezgahı (Market Stall with Striped Canopy) */
+export function buildMarketStall(
+  parent: THREE.Object3D,
+  x: number,
+  z: number,
+  rotY = 0,
+  awningColor1 = "#e74c3c",
+  awningColor2 = "#ffffff",
+  goodsColor = "#e67e22",
+  signText = "TAZE PAZAR",
+) {
+  const g = new THREE.Group();
+  g.position.set(x, 0, z);
+  g.rotation.y = rotY;
+  parent.add(g);
+
+  // 4 Ahşap Köşe Ayağı
+  const legColor = "#8c6239";
+  for (const lx of [-1.1, 1.1]) {
+    for (const lz of [-0.65, 0.65]) {
+      cylinder(g, 0.05, 0.05, 2.2, [lx, 1.1, lz], legColor, 6);
+    }
+  }
+
+  // Ahşap Tezgah Masası ve Alt Çıtalar
+  box(g, [2.4, 0.12, 1.4], [0, 0.85, 0], "#a07855"); // Masa tablası
+  box(g, [2.3, 0.35, 1.3], [0, 0.62, 0], "#7a5230"); // Tezgah alt sandığı
+
+  // Eğimli Çizgili Kumaş Tente (Çatılı Gölgelik)
+  const canopy = new THREE.Group();
+  canopy.position.set(0, 2.15, 0);
+  g.add(canopy);
+
+  // Çizgili kumaş dilimleri (Stripes)
+  const stripeWidth = 0.3;
+  const stripes = [-1.05, -0.75, -0.45, -0.15, 0.15, 0.45, 0.75, 1.05];
+  stripes.forEach((sx, idx) => {
+    const col = idx % 2 === 0 ? awningColor1 : awningColor2;
+    // Ön eğimli parça
+    const stripe = box(canopy, [stripeWidth - 0.02, 0.05, 0.85], [sx, 0.1, 0.35], col);
+    stripe.rotation.x = 0.22;
+    // Arka eğimli parça
+    const backStripe = box(canopy, [stripeWidth - 0.02, 0.05, 0.85], [sx, 0.1, -0.35], col);
+    backStripe.rotation.x = -0.22;
+    // Ön sarkan süs kumaş ucu (Valance)
+    box(canopy, [stripeWidth - 0.02, 0.18, 0.04], [sx, -0.06, 0.76], col);
+  });
+
+  // Tezgah Üstündeki Taze Ürün Kasaları ve Meyveler/Mallar
+  for (const [cx, cz] of [[-0.65, 0], [0.65, 0], [0, 0]] as const) {
+    box(g, [0.65, 0.18, 0.5], [cx, 1.0, cz], "#c89d66"); // Ahşap meyve kasası
+    box(g, [0.55, 0.14, 0.4], [cx, 1.1, cz], goodsColor);
+  }
+
+  // Ön Küçük Fiyat / Esnaf Levhası
+  const miniSign = label(signText, "#ffffff", awningColor1);
+  miniSign.scale.set(1.4, 0.4, 1);
+  miniSign.position.set(0, 0.85, 0.72);
+  g.add(miniSign);
+
+  return g;
+}
+
+/** 🕰️ Tarihi Çarşı Meydanı Saat Kulesi (Town Square Clock Pillar) */
+export function buildTownClockTower(parent: THREE.Object3D, x: number, z: number) {
+  const g = new THREE.Group();
+  g.position.set(x, 0, z);
+  parent.add(g);
+
+  // Kademeli Taş Kaide (Zemin)
+  box(g, [2.2, 0.3, 2.2], [0, 0.15, 0], "#d5cbb2");
+  box(g, [1.8, 0.3, 1.8], [0, 0.45, 0], "#c4b99f");
+
+  // Döküm Bronz / Zümrüt Yeşili Klasik Gövde
+  cylinder(g, 0.42, 0.52, 2.8, [0, 1.95, 0], "#1e372f", 8);
+  cylinder(g, 0.56, 0.46, 0.3, [0, 3.45, 0], "#f1c40f", 8); // Altın korniş bileziği
+
+  // 4 Yönlü Saat Gövde Başlığı
+  box(g, [1.2, 1.2, 1.2], [0, 4.2, 0], "#1e372f");
+  box(g, [1.3, 0.16, 1.3], [0, 4.88, 0], "#d4ac0d"); // Saat üst kornişi
+
+  // 4 Cephedeki Analog Saat Kadranları
+  const clockOffsets = [
+    { pos: [0, 4.2, 0.62], rotY: 0 },
+    { pos: [0, 4.2, -0.62], rotY: Math.PI },
+    { pos: [0.62, 4.2, 0], rotY: Math.PI / 2 },
+    { pos: [-0.62, 4.2, 0], rotY: -Math.PI / 2 },
+  ] as const;
+
+  clockOffsets.forEach(c => {
+    const face = cylinder(g, 0.42, 0.42, 0.05, c.pos as [number, number, number], "#ffffff", 16);
+    face.rotation.x = Math.PI / 2;
+    face.rotation.y = c.rotY;
+    const rim = cylinder(g, 0.46, 0.46, 0.04, c.pos as [number, number, number], "#f39c12", 16);
+    rim.rotation.x = Math.PI / 2;
+    rim.rotation.y = c.rotY;
+  });
+
+  // Bakır Kubbe ve Alem/Spire Tepe Noktası
+  const dome = new THREE.Mesh(
+    new THREE.ConeGeometry(0.75, 0.9, 8),
+    mat("#16a085"),
+  );
+  dome.position.set(0, 5.4, 0);
+  dome.castShadow = true;
+  g.add(dome);
+
+  // Altın Tepe Mili (Spire)
+  cylinder(g, 0.04, 0.08, 0.7, [0, 6.15, 0], "#f1c40f", 6);
+  cylinder(g, 0.12, 0.12, 0.22, [0, 6.55, 0], "#f39c12", 8);
+
+  return g;
+}
+
+/** 🏗️ Sanayi Bölgesi Ağır Konteyner Vinç İskelesi (Container Gantry Crane) */
+export function buildGantryCrane(
+  parent: THREE.Object3D,
+  x: number,
+  z: number,
+  rotY = 0,
+) {
+  const g = new THREE.Group();
+  g.position.set(x, 0, z);
+  g.rotation.y = rotY;
+  parent.add(g);
+
+  const craneColor = "#f39c12"; // Canlı sanayi iş makinesi sarısı
+  const steelGray = "#2c3e50";
+
+  // Vinç Ayakları (Portal A-Frame Çift Ayaklar: Genişlik 10.4m, Yükseklik 8.5m)
+  const spanX = 5.2;
+  const height = 8.5;
+
+  for (const sx of [-spanX, spanX]) {
+    box(g, [1.4, 0.6, 3.8], [sx, 0.3, 0], steelGray);
+    cylinder(g, 0.28, 0.28, 0.3, [sx - 0.45, 0.28, 1.4], "#1a252f", 8).rotation.z = Math.PI / 2;
+    cylinder(g, 0.28, 0.28, 0.3, [sx - 0.45, 0.28, -1.4], "#1a252f", 8).rotation.z = Math.PI / 2;
+
+    const leg1 = cylinder(g, 0.16, 0.2, height, [sx, height / 2, -1.0], craneColor, 6);
+    leg1.rotation.x = -0.12;
+    const leg2 = cylinder(g, 0.16, 0.2, height, [sx, height / 2, 1.0], craneColor, 6);
+    leg2.rotation.x = 0.12;
+
+    box(g, [0.18, 0.18, 2.2], [sx, 3.2, 0], steelGray);
+    box(g, [0.18, 0.18, 1.8], [sx, 5.8, 0], steelGray);
+  }
+
+  // Üst Ana Taşıyıcı Köprü Kirişleri
+  box(g, [spanX * 2 + 3.0, 0.8, 0.9], [0, height, -0.6], craneColor);
+  box(g, [spanX * 2 + 3.0, 0.8, 0.9], [0, height, 0.6], craneColor);
+  box(g, [1.4, 0.3, 2.0], [-spanX, height + 0.45, 0], steelGray);
+  box(g, [1.4, 0.3, 2.0], [spanX, height + 0.45, 0], steelGray);
+
+  // Operatör Kabini (Camlı kontrol kulübesi)
+  box(g, [1.5, 1.4, 1.5], [spanX - 1.2, height - 1.0, 0], "#e67e22");
+  box(g, [1.3, 0.7, 0.1], [spanX - 1.2, height - 0.9, 0.76], "#74b9ff", 0.3);
+
+  // Vinç Arabası (Trolley) ve Asılı Kargo Konteyneri
+  box(g, [1.8, 0.5, 1.6], [0, height - 0.3, 0], steelGray);
+  for (const hx of [-0.65, 0.65]) {
+    for (const hz of [-0.55, 0.55]) {
+      cylinder(g, 0.02, 0.02, 2.6, [hx, height - 1.6, hz], "#bdc3c7", 4);
+    }
+  }
+  box(g, [3.2, 0.25, 1.6], [0, height - 2.9, 0], "#c0392b");
+
+  // Havada Asılı Konteyner
+  box(g, [5.8, 2.2, 2.2], [0, height - 4.1, 0], "#d35400");
+  box(g, [5.85, 0.15, 2.25], [0, height - 4.1 + 1.1, 0], steelGray);
+
+  // Üstte Flaşör Kaidesi
+  cylinder(g, 0.08, 0.1, 0.3, [0, height + 0.55, 0], "#e74c3c", 6);
+
+  return g;
+}
+
+/** 🏮 Sahil Kordonu Nostaljik Döküm Fener Direği (Promenade Boardwalk Lamp) */
+export function buildPromenadeLantern(parent: THREE.Object3D, x: number, z: number) {
+  const g = new THREE.Group();
+  g.position.set(x, 0, z);
+  parent.add(g);
+
+  // Döküm Kaide ve Gövde
+  cylinder(g, 0.18, 0.24, 0.45, [0, 0.22, 0], "#1e272e", 8);
+  cylinder(g, 0.08, 0.12, 2.8, [0, 1.65, 0], "#2c3e50", 8);
+  cylinder(g, 0.14, 0.08, 0.25, [0, 3.1, 0], "#1e272e", 8);
+
+  // Sıcak Işıklı Küre Cam Fener
+  cylinder(g, 0.26, 0.26, 0.36, [0, 3.38, 0], "#fff3bf", 12);
+  cylinder(g, 0.06, 0.32, 0.15, [0, 3.62, 0], "#1e272e", 8);
+
+  return g;
+}
+
+/** 🏖️ Sahil Plajı Ahşap Cankurtaran Kulesi (Coastal Lifeguard Watchtower) */
+export function buildLifeguardTower(
+  parent: THREE.Object3D,
+  x: number,
+  z: number,
+  rotY = 0,
+) {
+  const g = new THREE.Group();
+  g.position.set(x, 0, z);
+  g.rotation.y = rotY;
+  parent.add(g);
+
+  const woodColor = "#d7995b";
+  const darkWood = "#8e5726";
+
+  // 4 Ahşap Eğimli Taşıyıcı Ayak
+  for (const lx of [-1.1, 1.1]) {
+    for (const lz of [-1.1, 1.1]) {
+      const leg = cylinder(g, 0.07, 0.09, 2.6, [lx * 0.85, 1.3, lz * 0.85], darkWood, 6);
+      leg.rotation.z = -lx * 0.08;
+      leg.rotation.x = lz * 0.08;
+    }
+  }
+
+  // Ayaklar Arası Çapraz Ahşap Bağlar
+  box(g, [2.0, 0.08, 0.08], [0, 1.2, -0.9], darkWood);
+  box(g, [2.0, 0.08, 0.08], [0, 1.2, 0.9], darkWood);
+  box(g, [0.08, 0.08, 2.0], [-0.9, 1.2, 0], darkWood);
+  box(g, [0.08, 0.08, 2.0], [0.9, 1.2, 0], darkWood);
+
+  // Gözlem Platformu Ahşap Tabanı
+  box(g, [2.4, 0.12, 2.4], [0, 2.65, 0], woodColor);
+
+  // Platform Çevre Korkulukları
+  box(g, [2.4, 0.45, 0.06], [0, 2.92, -1.18], "#ecf0f1");
+  box(g, [2.4, 0.45, 0.06], [0, 2.92, 1.18], "#ecf0f1");
+  box(g, [0.06, 0.45, 2.3], [-1.18, 2.92, 0], "#ecf0f1");
+  box(g, [0.06, 0.45, 2.3], [1.18, 2.92, 0], "#ecf0f1");
+
+  // Kulübe Kabini
+  box(g, [1.6, 1.5, 1.6], [0, 3.45, -0.2], "#f1f2f6");
+  box(g, [1.4, 0.7, 0.1], [0, 3.5, 0.62], "#74b9ff", 0.3);
+
+  // Eğimli Gölgelik Çatısı
+  const roof = box(g, [2.1, 0.1, 2.1], [0, 4.3, -0.2], "#e74c3c");
+  roof.rotation.x = 0.12;
+
+  // Çıkış Merdiveni
+  const ladderGroup = new THREE.Group();
+  ladderGroup.position.set(0, 1.3, 1.35);
+  ladderGroup.rotation.x = 0.28;
+  g.add(ladderGroup);
+  cylinder(ladderGroup, 0.04, 0.04, 2.8, [-0.4, 0, 0], darkWood, 6);
+  cylinder(ladderGroup, 0.04, 0.04, 2.8, [0.4, 0, 0], darkWood, 6);
+  for (let s = -1.1; s <= 1.1; s += 0.4) {
+    box(ladderGroup, [0.8, 0.05, 0.08], [0, s, 0], woodColor);
+  }
+
+  // Can Simidi
+  const buoy = cylinder(g, 0.3, 0.3, 0.08, [1.22, 2.9, 0], "#e74c3c", 16);
+  buoy.rotation.z = Math.PI / 2;
+  const innerHole = cylinder(g, 0.16, 0.16, 0.1, [1.22, 2.9, 0], "#ecf0f1", 16);
+  innerHole.rotation.z = Math.PI / 2;
+
+  return g;
+}
+
+/** 📬 Güneş Mahallesi Sevimli Bahçe Posta Kutusu (Suburban Curbside Mailbox) */
+export function buildMailbox(
+  parent: THREE.Object3D,
+  x: number,
+  z: number,
+  rotY = 0,
+  boxColor = "#ffffff",
+) {
+  const g = new THREE.Group();
+  g.position.set(x, 0, z);
+  g.rotation.y = rotY;
+  parent.add(g);
+
+  // Ahşap Dikme Direk
+  cylinder(g, 0.06, 0.07, 1.1, [0, 0.55, 0], "#795548", 6);
+
+  // Posta Kutusu Gövdesi
+  box(g, [0.45, 0.32, 0.65], [0, 1.15, 0], boxColor);
+  const dome = cylinder(g, 0.22, 0.22, 0.65, [0, 1.31, 0], boxColor, 12);
+  dome.rotation.x = Math.PI / 2;
+
+  // Ön Kapak & Kolu
+  box(g, [0.42, 0.3, 0.04], [0, 1.15, 0.33], "#bdc3c7");
+  cylinder(g, 0.02, 0.02, 0.08, [0, 1.25, 0.36], "#2c3e50", 4).rotation.x = Math.PI / 2;
+
+  // Kırmızı Bildirim Bayrağı
+  box(g, [0.03, 0.22, 0.03], [0.24, 1.3, -0.15], "#c0392b");
+  box(g, [0.03, 0.08, 0.14], [0.24, 1.38, -0.09], "#e74c3c");
+
+  return g;
+}

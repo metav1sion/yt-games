@@ -22,7 +22,7 @@
   - Minimap CSS cascade order corrected to separate touch controls and minimap in mobile landscape.
   - Responsive HUD spacing and modal header margins tuned for mobile portrait.
 - [x] **T08 — Comprehensive E2E Test Suite**:
-  - Added 242 opaque-box E2E tests, bringing total Vitest test suite to 611/611 passing tests across 32 test files.
+  - Added 242 opaque-box E2E tests, bringing total Vitest test suite to 612/612 passing tests across 32 test files.
 - [x] **T09 — Browser Automation & Visual QA**:
   - Verified across desktop (1280x800), mobile portrait (390x844), and mobile landscape (844x390) with 0 console errors.
 - [x] **T10 — Independent Victory Audit**:
@@ -35,10 +35,19 @@
   - Reorganized all company upgrade stations into a clean 2x2 campus grid on the logistics depot apron, eliminating overlap with the minimap radar.
   - Prevented bottom controls hint and nitro bar text overlap.
   - Cleaned desktop layout by suppressing touch controls on pointer-fine viewports while preserving mobile touch responsiveness.
+- [x] **T14 — Multi-District Architectural Expansion**:
+  - Çarşı: Added 4 canopy market stalls (fırın/pasta, taze manav, kitap/kahve, hediyelik) with striped fabric canopies, crates, price signs, and the historic Piazza Clock Tower.
+  - Sanayi: Erected a massive 10.4m x 8.5m container gantry crane with trolley hoist, steel cables, operator cab, and suspended shipping container.
+  - Sahil: Added nostalgic cast-iron promenade lanterns along boardwalk & pier, and an elevated wooden beach lifeguard watchtower with lifebuoy.
+  - Güneş: Added cozy suburban curbside mailboxes with red alert flags for all neighborhood homes.
+- [x] **T15 — Stunt Jump Landing Feedback & Procedural Audio**:
+  - Added ascending ramp launch whoosh audio (`sound.jumpLaunch()`).
+  - Added heavy suspension thud & tire grip sound (`sound.jumpLanding()`) scaled to impact velocity.
+  - Added radial 360-degree landing dust burst (`particles.spawnLandingDust()`).
+  - Implemented airborne timer tracking with +15₺ Stunt Jump Airtime Bonus (`🚀 HAVALI ATLAYIŞ! +15₺`) and camera vertical landing kick.
 
 ## Active / Next Tasks
-- [ ] **T14 — Multi-District Architectural Expansion**: Add district-specific street props (Çarşı canopy market stalls, Sanayi crane rigs & container gantry, Sahil promenade seaside boardwalk lamps).
-- [ ] **T15 — Stunt Jump Landing Feedback & Procedural Audio**: Add landing particle burst and procedural stunt airtime sound synthesis for vehicle leaps.
-- [ ] **T16 — Dynamic Day/Night Lighting or Sunset Hour**: Introduce gradual golden hour lighting transitions over long shifts.
+- [ ] **T16 — Dynamic Day/Night Lighting or Sunset Golden Hour**: Introduce subtle golden hour lighting transitions over long delivery shifts.
+- [ ] **T17 — District Ambience Synthesis**: Gentle procedural environmental sounds (seagulls/waves in Sahil, machinery rumble in Sanayi, crowd chatter in Çarşı).
 - [ ] **T11 — Player Hands-on Playtesting & Feedback**: Solicit user evaluation on subjective driving feel, district ambiance, and gameplay pacing.
 - [ ] **T12 — Future YouTube Playables SDK Preparation**: (Pending explicit user instruction) integrate YouTube Playables SDK hooks when ready for distribution.

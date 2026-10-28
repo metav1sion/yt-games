@@ -9,6 +9,7 @@ export type ParticleSystem = {
   spawnConfetti(pos: Vec2): void;
   spawnImpactSparks(pos: Vec2 | THREE.Vector3, normal?: Vec2): void;
   spawnCrashSmoke(pos: Vec2 | THREE.Vector3): void;
+  spawnLandingDust(pos: Vec2 | THREE.Vector3, speed?: number): void;
 };
 
 const MAX_PARTICLES = 450;
@@ -309,6 +310,40 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
     }
   }
 
+  function spawnLandingDust(pos: Vec2 | THREE.Vector3, speed = 8.0) {
+    const count = 22; // 20-25 adet radyal toz partikülü
+    const px = "x" in pos ? pos.x : 0;
+    const py = 0.06;
+    const pz = "z" in pos ? pos.z : 0;
+
+    for (let i = 0; i < count; i++) {
+      const p = particles[head];
+      p.active = true;
+      p.type = "dust";
+      p.age = 0;
+      p.maxLife = 0.45 + Math.random() * 0.35;
+      p.startScale = 0.28 + Math.random() * 0.14;
+      p.endScale = 0.85 + Math.random() * 0.3;
+
+      p.pos.set(
+        px + (Math.random() - 0.5) * 0.6,
+        py,
+        pz + (Math.random() - 0.5) * 0.6,
+      );
+
+      const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
+      const speedH = 2.2 + Math.random() * (speed * 0.35 + 2.5);
+      p.vel.set(
+        Math.cos(angle) * speedH,
+        0.8 + Math.random() * 1.4,
+        Math.sin(angle) * speedH,
+      );
+
+      p.color.copy(DUST_COLORS[Math.floor(Math.random() * DUST_COLORS.length)]);
+      head = (head + 1) % MAX_PARTICLES;
+    }
+  }
+
   function reset() {
     for (let i = 0; i < MAX_PARTICLES; i++) {
       particles[i].active = false;
@@ -475,6 +510,7 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
     spawnConfetti,
     spawnImpactSparks,
     spawnCrashSmoke,
+    spawnLandingDust,
     reset,
     dispose() {
       reset();

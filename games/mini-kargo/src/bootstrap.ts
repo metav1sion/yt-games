@@ -591,6 +591,8 @@ export async function startGame(app: HTMLElement) {
   let currentNitro = false;
   let swapCooldown = 0;
   let parkStopTimer = 0;
+  let jumpAirborneTimer = 0;
+  let jumpPeakAltitude = 0;
 
   const loop = createLoop(
     (dt) => {
@@ -605,6 +607,7 @@ export async function startGame(app: HTMLElement) {
       );
 
       if (started) {
+        const wasAirborne = vehicle.airborne;
         const previous = vehicle.position;
         const drive = input.read(
           vehicle.heading,
@@ -624,6 +627,36 @@ export async function startGame(app: HTMLElement) {
           );
           vehicle.altitude = Math.max(vehicle.altitude, 0.15);
           vehicle.airborne = true;
+          jumpAirborneTimer = 0;
+          jumpPeakAltitude = 0.15;
+          sound.jumpLaunch();
+        }
+
+        if (vehicle.airborne) {
+          jumpAirborneTimer += dt;
+          jumpPeakAltitude = Math.max(jumpPeakAltitude, vehicle.altitude);
+        } else if (wasAirborne && !vehicle.airborne) {
+          // Araç yere indi: süspansiyon darbesi, iniş tozu ve kamera etkisi
+          const landingSpeed = Math.hypot(vehicle.velocity.x, vehicle.velocity.z);
+          const landingImpact = Math.min(2.0, 0.8 + jumpPeakAltitude * 0.35);
+          sound.jumpLanding(landingImpact);
+          particles.spawnLandingDust(vehicle.position, landingSpeed);
+          cameraShake = Math.max(cameraShake, 0.35 + jumpPeakAltitude * 0.1);
+
+          // Havada kalış ödülü (Stunt Jump Airtime Bonus)
+          if (jumpAirborneTimer >= 0.32) {
+            const stuntReward = 15;
+            progression = {
+              ...progression,
+              money: progression.money + stuntReward,
+            };
+            storage.save({ ...progression, soundEnabled });
+            companySheet.update(progression);
+            sound.playMoneyDrain();
+            hud.showToast(`🚀 HAVALI ATLAYIŞ! +${stuntReward}₺`, 2000);
+          }
+          jumpAirborneTimer = 0;
+          jumpPeakAltitude = 0;
         }
 
         const proposed = vehicle.position;

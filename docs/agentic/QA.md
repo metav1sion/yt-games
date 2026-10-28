@@ -13,14 +13,16 @@
   - `src/scene/pedestrians.test.ts` (2 tests) — Sidewalk pathing & collision avoidance
   - `src/scene/traffic.test.ts` (3 tests) — Traffic loops & distance keeping
   - `src/scene/buy-pad.test.ts` (4 tests) — BuyPad visuals, rings, discs, dynamic syncing
+  - `src/audio/sound.test.ts` (4 tests) — Synthesized motor, horn, crash, money drain, jingle, launch & landing
+  - `src/scene/particles.test.ts` (7 tests) — Money stream, confetti, drift, nitro, sparks, crash smoke, landing dust
   - `tests/adversarial-challenger2.test.ts` (35 tests) — 1,521 BFS node pairs tested with 0 disconnections; 10,000 tick courier simulation with 0 deadlocks
   - `tests/stress/adversarial_simulation.test.ts` (22 tests) — Simulation stress tests
   - `tests/e2e/mini-kargo-e2e.test.ts` (242 tests) — Opaque-box E2E tests covering features F01–F21 across Tiers 1–4
-  - **Total**: 32 test files, 611 passed, 0 failed.
+  - **Total**: 32 test files, 612 passed, 0 failed.
 
 ## Browser Automation & Visual QA (Playwright)
 - **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser`
-- **Execution Date**: 2026-10-28 (Sprint 2 Verification)
+- **Execution Date**: 2026-10-28 (Sprint 3 Verification)
 - **Viewports Tested**:
   1. **Desktop (1280x800)**:
      - Shift start button click: PASS
@@ -28,8 +30,8 @@
      - HUD, minimap, and package card rendering: PASS
      - Keyboard driving controls (W, A, D, Arrow keys): PASS
      - Touch controls suppressed on pointer-fine desktop: VERIFIED
-     - Driving controls hint centered above Nitro bar with zero overlap: VERIFIED
-     - Güneş jump ramp runway unblocked by billboard: VERIFIED
+     - Multi-district props (Clock tower, market stalls, gantry crane, promenade lamps, mailboxes): VERIFIED
+     - Ramp launch whoosh & landing dust synthesis: VERIFIED
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png`
   2. **Mobile Portrait (390x844)**:

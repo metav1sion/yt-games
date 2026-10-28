@@ -5,6 +5,7 @@ import {
   buildBillboard,
   buildStaticCar,
   buildIndustrialPipes,
+  buildGantryCrane,
 } from "../city-details";
 
 /** Sanayi Bölgesi (Kuzeydoğu): Fabrikalar, boru hatları, yüksek bacalar, su kuleleri ve konteyner labirenti. */
@@ -59,6 +60,11 @@ export function buildIndustrialDistrict(ctx: WorldContext) {
   // Kavşak dışı konteyner labirenti istifleri
   addContainers(64, -58);
   addContainers(84, -40);
+
+  // Konteyner istifi üzerinde dev liman/sanayi portal vinci (Gantry Crane)
+  buildGantryCrane(group, 64, -58, 0);
+  baseObstacles.push({ minX: 58.0, maxX: 59.6, minZ: -60.0, maxZ: -56.0 });
+  baseObstacles.push({ minX: 68.4, maxX: 70.0, minZ: -60.0, maxZ: -56.0 });
 
   // =========================================================================
   // 3. Yüksek Endüstriyel Boru Hatları (Pipelines)

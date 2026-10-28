@@ -18,8 +18,8 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
 ---
 
 ## 1. Güneş Mahallesi (Residential District)
-- **Visual Identity**: Warm, welcoming suburban atmosphere. Soft pastel and terracotta roofs, picket fences, front gardens, flowerbeds, and deciduous green trees.
-- **Architecture**: Single-family houses, small apartment blocks, neighborhood grocery shops, local park benches.
+- **Visual Identity**: Warm, welcoming suburban atmosphere. Soft pastel and terracotta roofs, picket fences, front gardens, flowerbeds, deciduous green trees, and authentic American-suburban curbside mailboxes with red alert flags.
+- **Architecture**: Single-family houses, small apartment blocks, neighborhood grocery shops, local park benches, and kids playground.
 - **Logistics Headquarters Campus**: Situated at X: -67..-50, Z: -42..-26. Features the main sorting hub, truck loading dock, corporate monument signage, security guard checkpoint, and an organized 2x2 upgrade apron.
 - **Road & Traffic**: Calm residential streets, cul-de-sacs, residential speed bumps, pedestrian crosswalks, and an unblocked stunt jump ramp (`ramp_sunny_depot` at X=-50, Z=-22) equipped with high-visibility reflector bollards.
 - **Key Delivery Points**: 4 residential house front porches and garden gates with clear driveways.
@@ -27,15 +27,15 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
 ---
 
 ## 2. Çarşı Bölgesi (Commercial District)
-- **Visual Identity**: Dense, bustling urban market center. Storefront awnings, neon and wooden shop signage, outdoor cafe seating, streetlamps, and colorful banners.
-- **Architecture**: Multi-story commercial buildings, bakeries, cafes, boutique shops, and a central plaza with a marble statue column and tiered fountain.
+- **Visual Identity**: Dense, bustling urban market center. Storefront awnings, neon and wooden shop signage, outdoor cafe seating, streetlamps, colorful banners, authentic striped-canopy open-air market stalls (Pastane, Manav, Kitapçı, Hediyelik), and the Historic Piazza Clock Tower.
+- **Architecture**: Multi-story commercial buildings, bakeries, cafes, boutique shops, and a central plaza with a marble statue column, tiered fountain, and historic clock tower at the alley entrance.
 - **Road & Traffic**: Dual-lane thoroughfares, heavy pedestrian crossings, active delivery loading zones, curbside parked vehicles.
 - **Key Delivery Points**: 4 commercial storefronts, cafe service entrances, and central plaza kiosks.
 
 ---
 
 ## 3. Sanayi Bölgesi (Industrial District)
-- **Visual Identity**: Utilitarian, functional logistics hub. Corrugated metal cladding, industrial smokestacks, security fences, stacked shipping containers, and pallet storage.
+- **Visual Identity**: Utilitarian, functional heavy logistics hub. Corrugated metal cladding, industrial smokestacks, security fences, stacked shipping containers, elevated steel pipe corridors, and an imposing 10.4m x 8.5m container gantry crane with an operator cab and airborne suspended cargo container.
 - **Architecture**: Large warehouse complexes, cargo depots, repair garages, crane rigs, elevated steel pipe corridors, and heavy storage yards.
 - **Road & Traffic**: Wide truck lanes, concrete barrier curbs, industrial jump ramps, forklift traffic lanes, breakable wooden crates.
 - **Key Delivery Points**: 4 warehouse loading docks with roll-up gates and freight pallet zones.
@@ -43,8 +43,8 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
 ---
 
 ## 4. Sahil Şeridi (Coastal Marina District)
-- **Visual Identity**: Open, scenic coastal promenade. Seaside stone piers, palm trees, sandy beach borders, water shaders, yachts, and decorative lighthouses.
-- **Architecture**: Waterfront restaurants, marina harbor master station, boardwalk pavilions, resort beach huts, canoes, and seaside lounging decks.
+- **Visual Identity**: Open, scenic coastal promenade. Seaside stone piers, palm trees, sandy beach borders, water shaders, yachts, vintage cast-iron promenade lanterns, and an elevated wooden beach lifeguard watchtower equipped with ladder and lifebuoy ring.
+- **Architecture**: Waterfront restaurants, marina harbor master station, boardwalk pavilions, resort beach huts, canoes, seaside lounging decks, and lifeguard watchtower.
 - **Road & Traffic**: Winding scenic coastal boulevard, bridge crossings, promenade sidewalks, seaside view benches.
 - **Key Delivery Points**: 4 marina piers, seafood bistro patios, and coastal boardwalk kiosks.
 
