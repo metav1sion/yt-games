@@ -94,6 +94,7 @@ export type DeliveryReward = {
   comboBonus?: number;
   comboStreak?: number;
   flashBonus?: number;
+  tipBonus?: number;
 };
 
 export type FlashRushEvent = {
@@ -307,12 +308,27 @@ export function stepDelivery(
         s.flashRush.active = false;
       }
 
-      const qualityReward = Math.floor(reward * qualityMultiplier) + safeBonus + comboBonus + flashBonus;
+      // Müşteri Bahşiş Mekaniği (Customer Tip Mechanic - T33)
+      // Sıfır hasarla ve hızlı teslimat yapıldığında memnun müşteri cömertçe bahşiş bırakır
+      let tipBonus = 0;
+      if (s.packageDamage === 0) {
+        if (s.secondsLeft >= 22) {
+          tipBonus = 25; // Yıldırım hızında kusursuz teslimat
+        } else if (s.secondsLeft >= 12) {
+          tipBonus = 15; // Hızlı ve güvenli teslimat
+        }
+        if (tipBonus > 0 && s.isSpecialContract) {
+          tipBonus += 5; // Özel sözleşme müşterisi ek bahşiş primi (+5 ₺)
+        }
+      }
+
+      const qualityReward = Math.floor(reward * qualityMultiplier) + safeBonus + comboBonus + flashBonus + tipBonus;
       const repGain =
         (s.secondsLeft > 20 ? 2 : 1) +
         (isVip && s.packageDamage === 0 ? 2 : 0) +
         ((s.comboStreak ?? 0) >= 3 ? 1 : 0) +
-        (flashBonus > 0 ? 2 : 0);
+        (flashBonus > 0 ? 2 : 0) +
+        (tipBonus >= 25 ? 1 : 0);
 
       s.score += reward + comboBonus * 2 + flashBonus * 2;
       s.earnings += qualityReward;
@@ -327,6 +343,7 @@ export function stepDelivery(
         comboBonus,
         comboStreak: s.comboStreak,
         flashBonus: flashBonus > 0 ? flashBonus : undefined,
+        tipBonus: tipBonus > 0 ? tipBonus : undefined,
       };
 
       const nextStep = (s.routeOffset ?? 0) + s.completed;

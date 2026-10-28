@@ -29,7 +29,7 @@ export type StationView = {
 export type DeliveryStationsView = {
   group: THREE.Group;
   stations: StationView[];
-  onDelivered(homeIndex: number, packageType?: PackageType): void;
+  onDelivered(homeIndex: number, packageType?: PackageType, tipAmount?: number): void;
   update(dt: number, activeTargetIndex?: number, isDelivering?: boolean): void;
   getStationStats(): { totalStations: number; totalDeliveredParcels: number };
   dispose(): void;
@@ -248,28 +248,36 @@ export function createDeliveryStations(homes: Vec2[]): DeliveryStationsView {
   return {
     group,
     stations,
-    onDelivered(homeIndex: number, packageType: PackageType = "standard") {
+    onDelivered(homeIndex: number, packageType: PackageType = "standard", tipAmount?: number) {
       const station = stations[homeIndex];
       if (!station) return;
 
       station.celebrateTimer = 1.8;
-      station.gratitudeTimer = 2.2;
+      station.gratitudeTimer = 2.4;
       station.deliveredCount++;
 
       // Müşteri teşekkür ve memnuniyet konuşma balonu rozeti
       station.gratitudeGroup.clear();
-      const gratitudePhrases = [
-        "⭐⭐⭐⭐⭐ Harika Teslimat!",
-        "📦 Çok Teşekkürler!",
-        "⚡ Jet Hızında Servis!",
-        "🙌 Eline Sağlık Kurye!",
-      ];
+      let text = "⭐⭐⭐⭐⭐ Harika Teslimat!";
+      let badgeBg = "#10b981";
+      if (tipAmount && tipAmount > 0) {
+        text = `💵 +${tipAmount} ₺ Bahşiş!`;
+        badgeBg = "#059669";
+      } else {
+        const gratitudePhrases = [
+          "⭐⭐⭐⭐⭐ Harika Teslimat!",
+          "📦 Çok Teşekkürler!",
+          "⚡ Jet Hızında Servis!",
+          "🙌 Eline Sağlık Kurye!",
+        ];
+        text = gratitudePhrases[homeIndex % gratitudePhrases.length];
+      }
       const speech = label(
-        gratitudePhrases[homeIndex % gratitudePhrases.length],
+        text,
         "#ffffff",
-        "#10b981",
+        badgeBg,
       );
-      speech.scale.set(1.7, 0.46, 1);
+      speech.scale.set(1.75, 0.46, 1);
       station.gratitudeGroup.add(speech);
       station.gratitudeGroup.position.set(0, 1.85, 0);
       station.gratitudeGroup.scale.set(0.01, 0.01, 1);

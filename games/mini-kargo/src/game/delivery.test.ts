@@ -539,4 +539,54 @@ describe("endless arcade idle delivery loop", () => {
     expect(s.lastReward?.flashBonus).toBeUndefined();
     expect(s.lastReward?.earnings).toBeGreaterThan(0);
   });
+
+  it("awards customer tip bonuses (15-25 ₺) for fast and zero-damage deliveries (T33)", () => {
+    // 1. Yıldırım hızında kusursuz teslimat (secondsLeft >= 22 -> +25 ₺ bahşiş)
+    let sFast = createDeliveryState();
+    sFast.phase = "delivering";
+    sFast.secondsLeft = 28;
+    sFast.packageDamage = 0;
+    sFast = wait(sFast, homes[sFast.targetIndex % homes.length], 1.1);
+    expect(sFast.completed).toBe(1);
+    expect(sFast.lastReward?.tipBonus).toBe(25);
+    expect(sFast.lastReward?.safeBonus).toBe(25);
+
+    // 2. Normal hızlı teslimat (secondsLeft 12..21 -> +15 ₺ bahşiş)
+    let sMedium = createDeliveryState();
+    sMedium.phase = "delivering";
+    sMedium.secondsLeft = 16;
+    sMedium.packageDamage = 0;
+    sMedium = wait(sMedium, homes[sMedium.targetIndex % homes.length], 1.1);
+    expect(sMedium.completed).toBe(1);
+    expect(sMedium.lastReward?.tipBonus).toBe(15);
+
+    // 3. Geç teslimat (secondsLeft < 12 -> 0 ₺ bahşiş)
+    let sSlow = createDeliveryState();
+    sSlow.phase = "delivering";
+    sSlow.secondsLeft = 6;
+    sSlow.packageDamage = 0;
+    sSlow = wait(sSlow, homes[sSlow.targetIndex % homes.length], 1.1);
+    expect(sSlow.completed).toBe(1);
+    expect(sSlow.lastReward?.tipBonus).toBeUndefined();
+
+    // 4. Hasarlı teslimat (packageDamage > 0 -> 0 ₺ bahşiş, müşteri memnuniyetsiz)
+    let sDamaged = createDeliveryState();
+    sDamaged.phase = "delivering";
+    sDamaged.secondsLeft = 30;
+    sDamaged.packageDamage = 15;
+    sDamaged = wait(sDamaged, homes[sDamaged.targetIndex % homes.length], 1.1);
+    expect(sDamaged.completed).toBe(1);
+    expect(sDamaged.lastReward?.tipBonus).toBeUndefined();
+
+    // 5. Özel Sözleşme primi (VIP / Cold / Heavy -> +5 ₺ ek cömertlik primi)
+    let sVip = createDeliveryState();
+    sVip.phase = "delivering";
+    sVip.packageType = "vip_express";
+    sVip.isSpecialContract = true;
+    sVip.secondsLeft = 30;
+    sVip.packageDamage = 0;
+    sVip = wait(sVip, homes[sVip.targetIndex % homes.length], 1.1);
+    expect(sVip.completed).toBe(1);
+    expect(sVip.lastReward?.tipBonus).toBe(30); // 25 + 5
+  });
 });

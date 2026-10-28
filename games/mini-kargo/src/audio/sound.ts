@@ -784,6 +784,82 @@ export function createSound() {
         osc1.stop(at + 0.15);
       } catch {}
     },
+    puddleSplash(speed = 5.0) {
+      if (!context || !enabled || paused || context.state !== "running") return;
+      try {
+        const at = context.currentTime;
+        const dur = 0.22;
+        const vol = Math.min(0.22, 0.07 + speed * 0.012);
+
+        // 1. Su püskürmesi ve tekerlek cızırtısı (bandpass noise sweep)
+        const bufLen = Math.floor(context.sampleRate * dur);
+        const buf = context.createBuffer(1, bufLen, context.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
+
+        const noise = context.createBufferSource();
+        noise.buffer = buf;
+        const filter = context.createBiquadFilter();
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(2600, at);
+        filter.frequency.exponentialRampToValueAtTime(650, at + dur);
+        filter.Q.setValueAtTime(2.2, at);
+
+        const gain = context.createGain();
+        gain.gain.setValueAtTime(vol, at);
+        gain.gain.exponentialRampToValueAtTime(0.001, at + dur);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(context.destination);
+        noise.start(at);
+
+        // 2. Suya girme tok vuruşu (damping triangle lowpass)
+        const osc = context.createOscillator();
+        const oscGain = context.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(120, at);
+        osc.frequency.exponentialRampToValueAtTime(45, at + 0.11);
+        oscGain.gain.setValueAtTime(vol * 0.9, at);
+        oscGain.gain.exponentialRampToValueAtTime(0.001, at + 0.13);
+
+        osc.connect(oscGain);
+        oscGain.connect(context.destination);
+        osc.start(at);
+        osc.stop(at + 0.14);
+      } catch {}
+    },
+    customerTip() {
+      if (!context || !enabled || paused || context.state !== "running") return;
+      try {
+        const at = context.currentTime;
+        radio.duck(0.4, 0.6);
+
+        // İki tonlu neşeli altın sikke / bahşiş çanı (A6 1760Hz -> E7 2637Hz)
+        const osc1 = context.createOscillator();
+        const gain1 = context.createGain();
+        osc1.type = "sine";
+        osc1.frequency.setValueAtTime(1760, at);
+        gain1.gain.setValueAtTime(0.12, at);
+        gain1.gain.exponentialRampToValueAtTime(0.001, at + 0.32);
+        osc1.connect(gain1);
+        gain1.connect(context.destination);
+        osc1.start(at);
+        osc1.stop(at + 0.35);
+
+        const osc2 = context.createOscillator();
+        const gain2 = context.createGain();
+        osc2.type = "sine";
+        osc2.frequency.setValueAtTime(2637, at + 0.08);
+        gain2.gain.setValueAtTime(0.001, at);
+        gain2.gain.setValueAtTime(0.14, at + 0.08);
+        gain2.gain.exponentialRampToValueAtTime(0.001, at + 0.44);
+        osc2.connect(gain2);
+        gain2.connect(context.destination);
+        osc2.start(at + 0.08);
+        osc2.stop(at + 0.46);
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

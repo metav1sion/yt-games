@@ -136,4 +136,18 @@ describe("particles system", () => {
 
     particles.dispose();
   });
+
+  it("spawns puddle water splash spray particles when vehicle splashes through wet roads", () => {
+    const scene = new THREE.Scene();
+    const particles = createParticles(scene);
+
+    expect(() => {
+      particles.spawnPuddleSplash({ x: -58, z: -31 }, 8.5, 0.5);
+      for (let i = 0; i < 15; i++) {
+        particles.update(dummyState, false, 0.04);
+      }
+    }).not.toThrow();
+
+    particles.dispose();
+  });
 });

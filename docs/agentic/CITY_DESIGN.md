@@ -226,5 +226,27 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
   - **Parabolic Satellite Dishes ("Çanak Anten")**: Concave receiver dish pointed towards the sky with central LNB feed horn.
   - **HVAC Compressor Chillers**: Industrial sheet metal housing with side louvers, circular top exhaust fan, and copper refrigeration piping across apartments and plazas.
 
+---
+
+## 15. Dynamic Weather Puddles, Hydroplaning & Customer Tipping (T32 & T33)
+- **Dynamic Road Puddle Accumulation (`createPuddlesView`)**:
+  - 12 authentic road puddle locations positioned across all 4 districts along asphalt low points and gutter curbs:
+    - Güneş: `sunny_depot_spur` (X: -58, Z: -31), `sunny_cross_c` (X: -48, Z: -48), `sunny_cross_w` (X: -76, Z: -52), `sunny_cross_s` (X: -48, Z: -12)
+    - Bulvar: `blvd_west` (X: -44, Z: 1.2), `blvd_center` (X: 6, Z: -1.2), `blvd_east` (X: 45, Z: 1.4)
+    - Çarşı: `mkt_piazza_spur` (X: 12, Z: 35), `mkt_south_avenue` (X: 52, Z: 82)
+    - Sanayi: `ind_warehouse_bay` (X: 16, Z: -15), `ind_heavy_dock` (X: 48, Z: -64)
+    - Sahil: `cst_north_pier` (X: -76, Z: 35), `cst_south_boardwalk` (X: -52, Z: 76)
+  - Dynamically responds to weather wetness (`wetness`): invisible and zero-opacity when dry; transitions into reflective deep blue-tinted water discs with expanding concentric ripple rings during and after summer rain showers.
+- **Tire Splash Particles & Procedural Audio (`spawnPuddleSplash` & `sound.puddleSplash`)**:
+  - Driving through puddles during rain (`wetness > 0.15`) at speed (> 2.2 m/s) triggers dynamic water splashes.
+  - Generates 22 aquatic white and cyan droplet particles fanning outwards in lateral wheel bow sprays with gravity drop.
+  - Procedural Web Audio synthesis of wet tire water slap and sweeping bandpass spray hiss (2600 Hz -> 650 Hz).
+  - Micro-hydroplaning: high-speed puddle encounters (> 6.0 m/s) produce slight realistic tire drag and steering float.
+- **Customer Tipping Mechanic & Visual Fanfare (`DeliveryReward.tipBonus` & `sound.customerTip`)**:
+  - Prompt, zero-damage deliveries award generous customer cash tips (15 ₺ for fast deliveries, 25 ₺ for lightning-fast deliveries, +5 ₺ extra for Special Contracts up to 30 ₺).
+  - Customer NPC displays custom floating speech bubble: `"💵 +{tip} ₺ Bahşiş!"` with a vibrant green badge.
+  - Procedural bright two-tone coin chime (1760 Hz & 2637 Hz) and parabolic gold coin stream towards player vehicle.
+
+
 
 

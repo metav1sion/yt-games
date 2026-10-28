@@ -41,6 +41,7 @@ import type { VehicleType } from "./game/types";
 import { createParkedVehicle } from "./scene/parked-vehicle";
 import { createAtmosphereController } from "./scene/atmosphere";
 import { createWeatherSystem } from "./scene/weather";
+import { createPuddlesView } from "./scene/puddles";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -82,6 +83,8 @@ export async function startGame(app: HTMLElement) {
   scene.add(clouds.group);
   const weather = createWeatherSystem();
   scene.add(weather.group);
+  const puddles = createPuddlesView();
+  scene.add(puddles.group);
   const world = createWorld();
   scene.add(world.group);
   const marker = createMarkers();
@@ -747,6 +750,25 @@ export async function startGame(app: HTMLElement) {
         vehicle.position = collision.position;
         vehicle.velocity = collision.velocity;
 
+        // Yağmur su birikintileri ve su sıçratma simülasyonu (T32)
+        const currentSpeed = Math.hypot(vehicle.velocity.x, vehicle.velocity.z);
+        const splashEvent = puddles.update(
+          dt,
+          vehicle.position,
+          currentSpeed,
+          vehicle.heading,
+          weatherState.wetness,
+        );
+        if (splashEvent.splashed) {
+          sound.puddleSplash(splashEvent.speed);
+          particles.spawnPuddleSplash(vehicle.position, splashEvent.speed, vehicle.heading);
+          if (splashEvent.hydroplaning) {
+            vehicle.velocity.x *= 0.96;
+            vehicle.velocity.z *= 0.96;
+            cameraShake = Math.max(cameraShake, 0.18);
+          }
+        }
+
         // Yıkılabilir / fırlayan nesneler (Props) çarpışma ve fizik simülasyonu
         props.update(dt, vehicle);
         const old = delivery;
@@ -854,8 +876,14 @@ export async function startGame(app: HTMLElement) {
           sound.delivery();
           sound.packageDrop();
 
-          world.deliveryStations.onDelivered(old.targetIndex, old.packageType);
+          const tipBonus = delivery.lastReward?.tipBonus ?? 0;
+          world.deliveryStations.onDelivered(old.targetIndex, old.packageType, tipBonus);
           particles.spawnMoneyStream(world.homes[old.targetIndex], vehicle.position);
+
+          if (tipBonus > 0) {
+            sound.customerTip();
+            hud.showToast(`💵 MÜŞTERİ BAHŞİŞİ! +${tipBonus} ₺`, 2800);
+          }
 
           if (delivery.lastReward?.safeBonus && delivery.lastReward.safeBonus > 0) {
             sound.cleanDriveBonus();
@@ -950,6 +978,7 @@ export async function startGame(app: HTMLElement) {
         currentThrottle = 0;
         currentNitro = false;
         props.update(dt, vehicle);
+        puddles.update(dt, vehicle.position, 0, 0, weatherState.wetness);
       }
       if (started) {
         const here = districtAt(vehicle.position.x, vehicle.position.z);
@@ -1159,6 +1188,7 @@ export async function startGame(app: HTMLElement) {
       clouds.dispose();
       atmosphere.dispose();
       weather.dispose();
+      puddles.dispose();
       urbanFauna.dispose();
       renderer.dispose();
     },

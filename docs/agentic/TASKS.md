@@ -136,8 +136,22 @@
   - Enhanced `src/scene/city-buildings.ts` with rooftop solar water heating systems ("Güneş Enerjisi Termosifon"), parabolic satellite dishes ("Çanak Anten"), and HVAC compressor chillers across apartments and commercial plaza towers.
   - Tested in `src/scene/city-buildings.test.ts`.
 
+- [x] **T32 — Dynamic Weather Puddle Splashes & Hydroplaning Micro-FX**:
+  - Implemented `createPuddlesView` (`src/scene/puddles.ts`) managing 12 road puddles across Güneş, Çarşı, Sanayi, Sahil with dynamic wetness-responsive opacity and expanding ripple rings.
+  - Added lateral tire water spray particle physics in `src/scene/particles.ts` (`spawnPuddleSplash`) generating 22 aquatic droplets fanning outward from wheels.
+  - Synthesized procedural Web Audio water splash and wet tire spray hiss in `sound.puddleSplash(speed)`.
+  - Added realistic high-speed micro-hydroplaning tire drag and handling feedback.
+  - Tested in `src/scene/puddles.test.ts` and `src/scene/particles.test.ts`.
+
+- [x] **T33 — Delivery Customer Tipping Mechanic**:
+  - Enhanced `src/game/delivery.ts` with `tipBonus` calculation (15 ₺ for prompt deliveries, 25 ₺ for lightning deliveries, up to 30 ₺ for Special Contracts).
+  - Added customer 3D speech bubble notification badge (`"💵 +{tip} ₺ Bahşiş!"`) in `src/scene/delivery-stations.ts`.
+  - Procedural two-tone coin chime audio in `sound.customerTip()` (1760 Hz & 2637 Hz).
+  - Cash tipping toast and parabolic coin streams upon delivery completion in `src/bootstrap.ts`.
+  - Tested in `src/game/delivery.test.ts`, `src/scene/delivery-stations.test.ts`, and `src/audio/sound.test.ts`.
+
 ## Active / Next Tasks
-- [ ] **T32 — Dynamic Weather Puddle Splashes & Hydroplaning Micro-FX**: Road water puddles during rain with particle spray and tire sound.
-- [ ] **T33 — Delivery Customer Tipping Mechanic**: Fast, undamaged deliveries award tip bonuses (10–30 ₺) with customer tipping fanfare.
+- [ ] **T34 — Logistics Depot EV Quick-Charger & Fuel Pitstop**: Interactive depot refueling pad with visual charge cables, battery HUD indicator, and temporary super-nitro boost buff.
+- [ ] **T35 — Traditional Turkish Street Vendors (Simitçi & Kestaneci)**: Iconic red street vending carts with glass display cases, umbrellas, and friendly interactive street vendor NPCs in Çarşı and Sahil.
 - [ ] **T11 — Player Hands-on Playtesting & Feedback**: Solicit user evaluation on subjective driving feel, district ambiance, and gameplay pacing.
 - [ ] **T12 — Future YouTube Playables SDK Preparation**: (Pending explicit user instruction) integrate YouTube Playables SDK hooks when ready for distribution.

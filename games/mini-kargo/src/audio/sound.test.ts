@@ -100,6 +100,8 @@ describe("audio system", () => {
     sound.weldingArc(0.9);
     sound.packageDrop();
     sound.courierBeep();
+    sound.puddleSplash(6.5);
+    sound.customerTip();
     sound.setDistrict("coastal");
     sound.setRadioStation("cozy_chill");
     expect(sound.getRadioStation()).toBe("cozy_chill");
@@ -132,6 +134,8 @@ describe("audio system", () => {
       sound.weldingArc(0.7);
       sound.packageDrop();
       sound.courierBeep();
+      sound.puddleSplash(8.0);
+      sound.customerTip();
     }).not.toThrow();
 
     sound.dispose();

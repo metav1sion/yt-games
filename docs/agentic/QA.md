@@ -29,24 +29,28 @@
   - `src/audio/ambience.test.ts` (2 tests) — 4-district procedural soundscape synthesis, rain patter audio, crossfading, muting & null-context safety
   - `src/audio/radio.test.ts` (5 tests) — Procedural in-game car radio, Lo-Fi, Synthwave, City Funk track sequences, ducking & muting
   - `src/audio/sound.test.ts` (4 tests) — Motor, horn, crash, money drain, jingle, launch/landing, clean driving bonus, combo fanfare, ambience, rain intensity, fauna cries (seagull, pigeon, cat, dog), leaf crunch, surf crash, welding arc buzz, package drop thud & tape rustle, scooter courier horn beep, radio integration
-  - `src/scene/particles.test.ts` (7 tests) — Money stream, confetti, drift, nitro, sparks, crash smoke, landing dust
+  - `src/scene/puddles.test.ts` (5 tests) — 12 road puddles across 4 districts, wetness-responsive opacity, speed-triggered splash events, hydroplaning threshold & external vehicle splash checks
+  - `src/scene/particles.test.ts` (8 tests) — Money stream, confetti, drift, nitro, sparks, crash smoke, landing dust, and lateral wheel puddle splash spray
+  - `src/game/delivery.test.ts` (36 tests) — Package lifecycle, scoring, bonuses, multi-district special contracts (VIP, cold-chain, heavy-freight), combo streaks, damage reset, and customer tipping mechanics (15–30 ₺)
+  - `src/scene/delivery-stations.test.ts` (5 tests) — 16 district stations, NPC waving/receiving handoff stance, celebratory jump, gratitude speech bubbles, customer tip badges, parcel stacking & disposal
+  - `src/audio/sound.test.ts` (4 tests) — Motor, horn, crash, money drain, jingle, launch/landing, clean driving bonus, combo fanfare, ambience, rain intensity, fauna cries (seagull, pigeon, cat, dog), leaf crunch, surf crash, welding arc buzz, package drop thud & tape rustle, scooter courier horn beep, puddle splash whoosh, customer tip coin chime, radio integration
   - `src/scene/world.test.ts` (17 tests) — Road connectivity, delivery zone clearance, boulevard clearance, district traffic & pedestrian paths, night factor emissive modulation, integrated traffic lights, integrated bus stops
   - `tests/adversarial-challenger2.test.ts` (35 tests) — 1,521 BFS node pairs tested with 0 disconnections; 10,000 tick courier simulation with 0 deadlocks
   - `tests/stress/adversarial_simulation.test.ts` (22 tests) — Simulation stress tests
   - `tests/e2e/mini-kargo-e2e.test.ts` (242 tests) — Opaque-box E2E tests covering features F01–F21 across Tiers 1–4
-  - **Total**: 43 test files, 671 passed, 0 failed.
+  - **Total**: 44 test files, 679 passed, 0 failed.
 
 ## Browser Automation & Visual QA (Playwright)
 - **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser`
-- **Execution Date**: 2026-10-29 (Sprint 11 Verification — Audio Jukebox, Transit Bus Stops & Rooftop Architecture)
+- **Execution Date**: 2026-10-29 (Sprint 12 Verification — Dynamic Weather Puddles, Hydroplaning & Customer Tipping)
 - **Viewports Tested**:
   1. **Desktop (1280x800)**:
      - Shift start button click: PASS
      - 3D WebGL canvas initialization: PASS
      - HUD, minimap, topbar time pill (`☀️ ÖĞLE`), weather pill (`🌤️ AÇIK`), radio pill (`📻 RADYO: KAPALI` / active equalizer bars) and flash rush badge: PASS
      - Keyboard driving controls (W, A, D, Arrow keys), Horn (`H` key), and Radio toggle (`R` key): PASS
-     - 4 District Bus Stops visible with glass shelters, "D" transit sign discs, yellow curbside bays, and waiting commuter NPCs: VERIFIED
-     - Building rooftops featuring solar water heaters ("termosifon"), parabolic satellite dishes, and HVAC compressors: VERIFIED
+     - 12 Dynamic road puddles glistening with wet road reflections during rain with wheel water spray particles & procedural splash audio: VERIFIED
+     - Fast delivery customer tipping fanfare, speech bubble badges, and coin stream rewards: VERIFIED
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png`
   2. **Mobile Portrait (390x844)**:

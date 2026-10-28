@@ -10,11 +10,12 @@ export type ParticleSystem = {
   spawnImpactSparks(pos: Vec2 | THREE.Vector3, normal?: Vec2): void;
   spawnCrashSmoke(pos: Vec2 | THREE.Vector3): void;
   spawnLandingDust(pos: Vec2 | THREE.Vector3, speed?: number): void;
+  spawnPuddleSplash(pos: Vec2 | THREE.Vector3, speed?: number, heading?: number): void;
 };
 
 const MAX_PARTICLES = 450;
 
-type ParticleType = "dust" | "nitro" | "money" | "confetti" | "spark" | "smoke";
+type ParticleType = "dust" | "nitro" | "money" | "confetti" | "spark" | "smoke" | "puddle_splash";
 
 type Particle = {
   active: boolean;
@@ -122,6 +123,14 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
     new THREE.Color("#e9ecef"), // Açık gri
     new THREE.Color("#ced4da"), // Gri duman
     new THREE.Color("#6c757d"), // Koyu duman
+  ];
+
+  const WATER_COLORS = [
+    new THREE.Color("#ffffff"), // Köpüklü beyaz damlacık
+    new THREE.Color("#e8f8f9"), // Kristal buz beyazı
+    new THREE.Color("#c7ecee"), // Berrak açık su mavisi
+    new THREE.Color("#7ed6df"), // Canlı akuamarin
+    new THREE.Color("#70a1ff"), // İnce asfalt suyu mavisi
   ];
 
   function spawnDust(x: number, y: number, z: number, forwardX: number, forwardZ: number) {
@@ -344,6 +353,57 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
     }
   }
 
+  function spawnPuddleSplash(pos: Vec2 | THREE.Vector3, speed = 5.0, heading = 0) {
+    const count = 22; // Tekerleklerden çıkan 20-25 su damlası
+    const px = "x" in pos ? pos.x : 0;
+    const py = 0.08;
+    const pz = "z" in pos ? pos.z : 0;
+
+    const sinH = Math.sin(heading);
+    const cosH = Math.cos(heading);
+
+    // Sol ve sağ tekerlek koordinatları
+    const leftX = px - 0.45 * sinH - 0.55 * cosH;
+    const leftZ = pz - 0.45 * cosH + 0.55 * sinH;
+    const rightX = px - 0.45 * sinH + 0.55 * cosH;
+    const rightZ = pz - 0.45 * cosH - 0.55 * sinH;
+
+    for (let i = 0; i < count; i++) {
+      const p = particles[head];
+      p.active = true;
+      p.type = "puddle_splash";
+      p.age = 0;
+      p.maxLife = 0.28 + Math.random() * 0.22;
+      p.startScale = 0.16 + Math.random() * 0.12;
+      p.endScale = 0.04;
+
+      const isLeft = i % 2 === 0;
+      const baseOriginX = isLeft ? leftX : rightX;
+      const baseOriginZ = isLeft ? leftZ : rightZ;
+
+      p.pos.set(
+        baseOriginX + (Math.random() - 0.5) * 0.2,
+        py + Math.random() * 0.1,
+        baseOriginZ + (Math.random() - 0.5) * 0.2,
+      );
+
+      // Yanlara (dışarıya doğru) ve yukarı su kanadı (lateral bow wave)
+      const sideFactor = isLeft ? -1 : 1;
+      const normalX = -cosH * sideFactor;
+      const normalZ = sinH * sideFactor;
+
+      const spraySpeedH = 2.0 + Math.random() * (speed * 0.45 + 1.8);
+      p.vel.set(
+        normalX * spraySpeedH - sinH * (speed * 0.15 + (Math.random() - 0.5)),
+        1.5 + Math.random() * (speed * 0.35 + 1.6),
+        normalZ * spraySpeedH - cosH * (speed * 0.15 + (Math.random() - 0.5)),
+      );
+
+      p.color.copy(WATER_COLORS[Math.floor(Math.random() * WATER_COLORS.length)]);
+      head = (head + 1) % MAX_PARTICLES;
+    }
+  }
+
   function reset() {
     for (let i = 0; i < MAX_PARTICLES; i++) {
       particles[i].active = false;
@@ -480,6 +540,21 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
           } else {
             currentScale = THREE.MathUtils.lerp(p.endScale, 0.02, (t - 0.75) / 0.25);
           }
+        } else if (p.type === "puddle_splash") {
+          // Su damlaları: Yerçekimiyle hızla yere düşer ve küçülür
+          p.vel.y -= 12.0 * dt;
+          p.vel.x *= Math.exp(-2.2 * dt);
+          p.vel.z *= Math.exp(-2.2 * dt);
+
+          p.pos.x += p.vel.x * dt;
+          p.pos.y += p.vel.y * dt;
+          p.pos.z += p.vel.z * dt;
+
+          if (p.pos.y < 0.04) {
+            p.pos.y = 0.04;
+            p.vel.set(0, 0, 0);
+          }
+          currentScale = THREE.MathUtils.lerp(p.startScale, p.endScale, t);
         } else {
           // dust ve nitro
           p.pos.x += p.vel.x * dt;
@@ -511,6 +586,7 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
     spawnImpactSparks,
     spawnCrashSmoke,
     spawnLandingDust,
+    spawnPuddleSplash,
     reset,
     dispose() {
       reset();

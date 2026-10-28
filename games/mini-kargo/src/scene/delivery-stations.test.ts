@@ -77,6 +77,16 @@ describe("DeliveryStations", () => {
     expect(targetStation.deliveredParcelsGroup.children).toHaveLength(3); // Clamped visual stack
   });
 
+  it("displays custom customer tip badge when tipAmount is awarded", () => {
+    const stationsView = createDeliveryStations(dummyHomes);
+    const targetStation = stationsView.stations[1];
+
+    stationsView.onDelivered(1, "urgent", 25);
+    expect(targetStation.gratitudeGroup.visible).toBe(true);
+    expect(targetStation.gratitudeGroup.children.length).toBeGreaterThan(0);
+    stationsView.dispose();
+  });
+
   it("cleans up resources upon dispose", () => {
     const stationsView = createDeliveryStations(dummyHomes);
     expect(stationsView.stations.length).toBe(16);
