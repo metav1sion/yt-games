@@ -520,8 +520,29 @@ export async function startGame(app: HTMLElement) {
     honk() {
       sound.carHorn();
       urbanFauna.onHonk(vehicle.position);
+      world.busStops.onHonk(vehicle.position);
+      if (traffic.onPlayerHonk(vehicle.position)) {
+        sound.courierBeep();
+      }
+    },
+    toggleRadio() {
+      cycleRadio();
     },
   });
+
+  function cycleRadio() {
+    void sound.unlock();
+    const nextStation = sound.cycleRadioStation();
+    const info = sound.getRadioStationInfo(nextStation);
+    const active = nextStation !== "off";
+    hud.setRadio(active ? `📻 ${info.shortName}` : "RADYO: KAPALI", active);
+    hud.showToast(
+      active
+        ? `${info.emoji} Radyo: ${info.name} (${info.genre})`
+        : "📻 Radyo kapatıldı",
+      2400,
+    );
+  }
 
   const companySheet = createCompanySheet(ui, {
     onSelectDistrict(id) {
@@ -629,6 +650,7 @@ export async function startGame(app: HTMLElement) {
         atmoState.isNightOrDusk,
         delivery.targetIndex,
         delivery.phase === "delivering",
+        vehicle.position,
       );
       hud.setTime(atmoState.phaseIcon, atmoState.phaseName);
       hud.setWeather(weatherState.weatherIcon, weatherState.weatherName);
@@ -761,9 +783,13 @@ export async function startGame(app: HTMLElement) {
         if (input.consumeHorn()) {
           sound.carHorn();
           urbanFauna.onHonk(vehicle.position);
+          world.busStops.onHonk(vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
+        }
+        if (input.consumeRadio?.()) {
+          cycleRadio();
         }
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,

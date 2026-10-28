@@ -322,4 +322,16 @@ describe("district traffic lanes", () => {
     }
     expect(world.getNightFactor?.()).toBeLessThan(0.05);
   });
+
+  it("integrates 4 district bus stops into world hierarchy and update loop", () => {
+    const world = createWorld();
+    expect(world.busStops).toBeDefined();
+    expect(world.busStops.group.children.length).toBe(4);
+
+    // Update with vehicle position
+    world.update(0.1, false, 0, true, { x: -44, z: -14 });
+
+    // Honk near Güneş bus stop
+    expect(world.busStops.onHonk({ x: -44, z: -14 })).toBe(true);
+  });
 });

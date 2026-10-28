@@ -162,6 +162,8 @@ export type InputController = {
   triggerInteract?(): void;
   consumeHorn(): boolean;
   triggerHorn?(): void;
+  consumeRadio?(): boolean;
+  triggerRadio?(): void;
   reset(): void;
   dispose(): void;
 };
@@ -171,7 +173,8 @@ export function createInput(joystick: HTMLElement): InputController {
   let externalNitro = false,
     externalHandbrake = false,
     interactTriggered = false,
-    hornTriggered = false;
+    hornTriggered = false,
+    radioTriggered = false;
   const knob = joystick.querySelector<HTMLElement>(".stick-knob")!;
   let pointer: number | null = null;
   function keydown(e: KeyboardEvent) {
@@ -186,6 +189,12 @@ export function createInput(joystick: HTMLElement): InputController {
       if ((e.target as HTMLElement)?.closest("button,input")) return;
       e.preventDefault();
       hornTriggered = true;
+      return;
+    }
+    if (k === "r") {
+      if ((e.target as HTMLElement)?.closest("button,input")) return;
+      e.preventDefault();
+      radioTriggered = true;
       return;
     }
     if (!driveKeys.has(k)) return;
@@ -312,6 +321,16 @@ export function createInput(joystick: HTMLElement): InputController {
     },
     triggerHorn() {
       hornTriggered = true;
+    },
+    consumeRadio() {
+      if (radioTriggered) {
+        radioTriggered = false;
+        return true;
+      }
+      return false;
+    },
+    triggerRadio() {
+      radioTriggered = true;
     },
     setNitro(on) {
       externalNitro = on;

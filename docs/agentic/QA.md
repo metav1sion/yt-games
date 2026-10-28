@@ -20,37 +20,39 @@
   - `src/scene/urban-fauna.test.ts` (5 tests) — Seagull thermal flight & coastal cry, piazza pigeon scatter & flight evasion on proximity/honk, suburban cat head tracking & meow, industrial guard dog tail wagging & protective bark
   - `src/scene/environmental-fx.test.ts` (5 tests) — 4 leaf piles in Güneş with speed-trigger scattering & +5₺ reward, coastal wave breaker spray mist & surf sound, Sanayi welding workshop with Welder NPC, dynamic arc flicker & spark shower, and disposal
   - `src/scene/traffic-lights.test.ts` (4 tests) — 8 intersection traffic light signals, 26.6s cycle timing, 3-aspect vehicular lenses, 2-aspect pedestrian signals, night emissive multiplier & disposal
+  - `src/scene/bus-stops.test.ts` (4 tests) — 4 district bus stops, curved glass canopies, "D" transit signs, commuter NPC head tracking & friendly arm wave on honk, and disposal
+  - `src/scene/city-buildings.test.ts` (3 tests) — District building placement, obstacles, and rooftop architectural detailing (solar water heaters, satellite dishes, HVAC chillers)
   - `src/scene/traffic.test.ts` (4 tests) — 37 traffic vehicles including AI courier scooters with lean roll physics and interactive horn greeting
   - `src/scene/delivery-stations.test.ts` (4 tests) — 16 district stations, NPC waving/receiving handoff stance, celebratory jump, gratitude speech bubbles, parcel stacking & disposal
   - `src/game/career.test.ts` (6 tests) — 4 vehicle liveries (classic, coastal_wave, midnight_express, gold_rush), career trophy unlock evaluations, and new trophy notifications
   - `src/scene/markers.test.ts` (4 tests) — Radial hold progress disc scaling, VIP/contract theme colors, and parabolic delivery animation with squash-and-stretch bounce
   - `src/audio/ambience.test.ts` (2 tests) — 4-district procedural soundscape synthesis, rain patter audio, crossfading, muting & null-context safety
-  - `src/audio/sound.test.ts` (4 tests) — Motor, horn, crash, money drain, jingle, launch/landing, clean driving bonus, combo fanfare, ambience, rain intensity, fauna cries (seagull, pigeon, cat, dog), leaf crunch, surf crash, welding arc buzz, package drop thud & tape rustle, scooter courier horn beep
+  - `src/audio/radio.test.ts` (5 tests) — Procedural in-game car radio, Lo-Fi, Synthwave, City Funk track sequences, ducking & muting
+  - `src/audio/sound.test.ts` (4 tests) — Motor, horn, crash, money drain, jingle, launch/landing, clean driving bonus, combo fanfare, ambience, rain intensity, fauna cries (seagull, pigeon, cat, dog), leaf crunch, surf crash, welding arc buzz, package drop thud & tape rustle, scooter courier horn beep, radio integration
   - `src/scene/particles.test.ts` (7 tests) — Money stream, confetti, drift, nitro, sparks, crash smoke, landing dust
-  - `src/scene/world.test.ts` (16 tests) — Road connectivity, delivery zone clearance, boulevard clearance, district traffic & pedestrian paths, night factor emissive modulation, integrated traffic lights
+  - `src/scene/world.test.ts` (17 tests) — Road connectivity, delivery zone clearance, boulevard clearance, district traffic & pedestrian paths, night factor emissive modulation, integrated traffic lights, integrated bus stops
   - `tests/adversarial-challenger2.test.ts` (35 tests) — 1,521 BFS node pairs tested with 0 disconnections; 10,000 tick courier simulation with 0 deadlocks
   - `tests/stress/adversarial_simulation.test.ts` (22 tests) — Simulation stress tests
   - `tests/e2e/mini-kargo-e2e.test.ts` (242 tests) — Opaque-box E2E tests covering features F01–F21 across Tiers 1–4
-  - **Total**: 41 test files, 659 passed, 0 failed.
+  - **Total**: 43 test files, 671 passed, 0 failed.
 
 ## Browser Automation & Visual QA (Playwright)
 - **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser`
-- **Execution Date**: 2026-10-28 (Sprint 10 Verification — Urban Traffic Expansion & Pedestrian Signals)
+- **Execution Date**: 2026-10-29 (Sprint 11 Verification — Audio Jukebox, Transit Bus Stops & Rooftop Architecture)
 - **Viewports Tested**:
   1. **Desktop (1280x800)**:
      - Shift start button click: PASS
      - 3D WebGL canvas initialization: PASS
-     - HUD, minimap, topbar time pill (`☀️ ÖĞLE`), weather pill (`🌤️ AÇIK`) and flash rush badge: PASS
-     - Keyboard driving controls (W, A, D, Arrow keys) and Horn (`H` key): PASS
-     - Traffic light signals glowing at crosswalks (green/yellow/red aspect cycling): VERIFIED
-     - AI courier scooters navigating city avenues with lean roll physics: VERIFIED
-     - Customer handoff receiving posture, floating gratitude speech bubbles ("⭐⭐⭐⭐⭐ Harika Teslimat!"), and squash-and-stretch package bounce: VERIFIED
+     - HUD, minimap, topbar time pill (`☀️ ÖĞLE`), weather pill (`🌤️ AÇIK`), radio pill (`📻 RADYO: KAPALI` / active equalizer bars) and flash rush badge: PASS
+     - Keyboard driving controls (W, A, D, Arrow keys), Horn (`H` key), and Radio toggle (`R` key): PASS
+     - 4 District Bus Stops visible with glass shelters, "D" transit sign discs, yellow curbside bays, and waiting commuter NPCs: VERIFIED
+     - Building rooftops featuring solar water heaters ("termosifon"), parabolic satellite dishes, and HVAC compressors: VERIFIED
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png`
   2. **Mobile Portrait (390x844)**:
      - Responsive canvas & UI scaling: PASS
      - Touch joystick, drift, nitro & dedicated horn button (`📢 KORNA`): PASS
-     - Topbar time pill, weather pill, district badge & flash pill layout: PASS
+     - Topbar radio equalizer pill touch interaction: PASS
      - Company sheet "🏆 Başarılar & Garaj" tab and livery applicator: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-portrait-390x844.png`

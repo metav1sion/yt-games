@@ -204,4 +204,27 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
   - Parabolic parcel swoop animation in `markers.ts` with squash-and-stretch bounce landing.
   - Procedural cardboard rustle and solid drop impact audio (`sound.packageDrop()`).
 
+---
+
+## 14. Audio Jukebox & Living Transit Infrastructure (T29, T30 & T31)
+- **Procedural Car Radio Jukebox (`RadioSystem`)**:
+  - 3 procedural in-game radio channels + off state:
+    1. ☕ **Sakin Lo-Fi** (~76 BPM): Chillhop electric piano/Rhodes chords, smooth walking sub-bass, relaxed pentatonic bell melodies.
+    2. ⚡ **Turbo FM** (~126 BPM): High-energy 80s synthwave rolling 16th bassline, punchy kick/snare pulse, driving synth arpeggios.
+    3. 🌆 **Şehir Vibes** (~106 BPM): Syncopated funk groove, slap bassline, jazzy chord stabs.
+  - Interactive HUD radio pill (`#btn-radio`) with animated 3-bar audio visualizer equalizer, `R` keyboard toggle key, touch controls, and dynamic ducking during horn and fanfare audio events.
+- **District Bus Stops & Waiting Commuter NPCs (`BusStops`)**:
+  - 4 authentic Turkish transit bus stops ("Otobüs Durakları") placed across all districts:
+    - Güneş: `stop_sunny` (X: -44, Z: -14.2)
+    - Çarşı: `stop_market` (X: 14.2, Z: 32)
+    - Sanayi: `stop_industrial` (X: 44, Z: -14.2)
+    - Sahil: `stop_coastal` (X: -14.2, Z: 32)
+  - Features curved tinted-glass canopy, classic blue circular "D" (Durak) transit sign post, schedule poster board ("HAT 101"), polished cedar timber bench, recycling receptacle, and curbside yellow painted zigzag bus bay markings.
+  - Living Commuter NPCs (seated and standing) featuring vehicle head tracking and friendly responsive arm waving when the player honks (`H`).
+- **Rooftop Architectural Realism**:
+  - **Solar Water Heaters ("Güneş Enerjisi Termosifon")**: Galvanized storage cylinder tank on A-frame with angled navy blue solar thermal collector panel.
+  - **Parabolic Satellite Dishes ("Çanak Anten")**: Concave receiver dish pointed towards the sky with central LNB feed horn.
+  - **HVAC Compressor Chillers**: Industrial sheet metal housing with side louvers, circular top exhaust fan, and copper refrigeration piping across apartments and plazas.
+
+
 

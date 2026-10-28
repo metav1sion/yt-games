@@ -101,6 +101,11 @@ describe("audio system", () => {
     sound.packageDrop();
     sound.courierBeep();
     sound.setDistrict("coastal");
+    sound.setRadioStation("cozy_chill");
+    expect(sound.getRadioStation()).toBe("cozy_chill");
+    expect(sound.getRadioStationInfo().name).toBe("Sakin Lo-Fi");
+    expect(sound.cycleRadioStation()).toBe("arcade_turbo");
+    sound.duckRadio(0.3, 1.0);
     sound.updateAmbience(1.0);
     sound.setEnabled(false);
     sound.setPaused(true);

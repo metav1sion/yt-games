@@ -2,45 +2,45 @@
 
 **Date**: 2026-10-29  
 **Branch**: `feat/mini-kargo`  
-**Latest Git Commit**: `a581f53`  
-**Current Milestone**: Dynamic Urban Traffic Expansion & Pedestrian Signals Sprint (Execution Run 10)  
+**Latest Git Commit**: `pending-commit`  
+**Current Milestone**: Audio Jukebox, Transit Bus Stops & Rooftop Architecture (Execution Run 11)  
 **Victory Audit Status**: `VICTORY CONFIRMED`
 
 ## Verification Summary
-- **Unit & Integration Tests**: 41 test files, 659 passed, 0 failed (1.17s execution)
+- **Unit & Integration Tests**: 43 test files, 671 passed, 0 failed (1.23s execution)
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 137ms)
+- **Vite Production Build**: Successful (`dist/` generated in 142ms)
 - **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
 - **Persistence Compatibility**: Verified backwards compatibility for `localStorage` key `mini-kargo:v1`.
 
 ## Completed Improvements in this Run
-1. **Animated Crosswalk Pedestrian Traffic Signals Across 8 Intersections (T28)**:
-   - Implemented `createTrafficLights` (`src/scene/traffic-lights.ts`) installed across 8 key crossings (Central Roundabout North/South/East/West, Çarşı Market Avenue & Piazza, Sahil Promenade, Sanayi Freight Crossing).
-   - Galvanized steel masts (height 4.3m) with 2.6m cantilever arms extending over lanes, 3-aspect vehicular signal heads (Red, Amber, Green) with sun visors, and 2-aspect pedestrian signal heads (Red standing silhouette, Green walking silhouette).
-   - 26.6-second cyclical traffic controller (Z-green -> Z-yellow -> All-red -> X-green -> X-yellow -> All-red) with dynamic emissive glow multiplier that scales up dramatically at night/dusk.
-   - Tested in `src/scene/traffic-lights.test.ts`.
+1. **Procedural In-Game Car Radio Jukebox (T29)**:
+   - Implemented `createRadio` (`src/audio/radio.ts`) synthesized purely through the Web Audio API with zero external audio assets.
+   - 3 procedural radio stations:
+     - ☕ **Sakin Lo-Fi** (~76 BPM): Chillhop Rhodes/vibraphone chords, warm walking sub-bass, relaxed pentatonic bell melodies.
+     - ⚡ **Turbo FM** (~126 BPM): High-energy 80s synthwave rolling 16th bassline, punchy kick/snare pulse, driving arpeggiated synth lead.
+     - 🌆 **Şehir Vibes** (~106 BPM): Syncopated funk groove, slap bassline, jazzy chord stabs.
+   - Interactive topbar HUD radio pill (`#btn-radio`) with animated 3-bar audio visualizer equalizer bars, keyboard toggle (`R` key), mobile touch support, and automatic audio ducking during horn honks and delivery fanfares.
+   - Tested in `src/audio/radio.test.ts` and `src/audio/sound.test.ts`.
 
-2. **Scooter Courier AI Traffic Sharing Roads (T28)**:
-   - Added autonomous AI delivery couriers (`kind: "courier"`) navigating Güneş, Çarşı, and Sahil routes.
-   - Low-poly courier scooter model (`buildCourierModel`) with rubber wheels, alloy spokes, front headlamp, rear taillamp, insulated thermal kargo delivery box, and an animated AI courier rider wearing windbreaker jacket and safety helmet.
-   - Dynamic motorcycle lean/tilt physics while driving and interactive horn greeting (`onPlayerHonk` in `traffic.ts` triggering responsive greeting and two-tone scooter horn `sound.courierBeep()`).
-   - Tested in `src/scene/traffic.test.ts` and `src/audio/sound.test.ts`.
+2. **Living Transit Infrastructure: Turkish Bus Stops & Commuter NPCs (T30)**:
+   - Implemented `createBusStops` (`src/scene/bus-stops.ts`) across 4 districts (Güneş, Çarşı, Sanayi, Sahil).
+   - Features modern curved tinted-glass shelters, classic blue circular "D" (Durak) transit sign posts, route schedule boards ("HAT 101"), polished cedar timber benches, stainless steel recycling receptacles, and curbside yellow zigzag bus bays.
+   - Living Commuter NPCs (seated and standing) featuring vehicle head tracking and friendly responsive arm waving when the player honks (`H`).
+   - Tested in `src/scene/bus-stops.test.ts` and `src/scene/world.test.ts`.
 
-3. **Parcel Handoff Micro-Animations & Customer Gratitude (T28)**:
-   - Enhanced `delivery-stations.ts` with customer eager receiving handoff posture (outstretched arms ready to receive the package).
-   - Floating 3D gratitude speech bubble badges (`"⭐⭐⭐⭐⭐ Harika Teslimat!"`, `"📦 Çok Teşekkürler!"`, `"⚡ Jet Hızında Servis!"`, `"🙌 Eline Sağlık Kurye!"`) that pop up, scale with spring bounce, rise +1.2m, and fade out smoothly over 2.2 seconds.
-   - Enhanced parabolic parcel swoop animation in `markers.ts` with squash-and-stretch landing bounce.
-   - Synthesized procedural package cardboard rustle & solid table drop impact audio (`sound.packageDrop()`).
-   - Tested in `src/scene/delivery-stations.test.ts`, `src/scene/markers.test.ts`, and `src/audio/sound.test.ts`.
+3. **Architectural Visual Detailing: Building Rooftops (T31)**:
+   - Enhanced `src/scene/city-buildings.ts` with rooftop solar water heating systems ("Güneş Enerjisi Termosifon"), parabolic satellite dishes ("Çanak Anten"), and HVAC compressor chillers across apartments and commercial plaza towers.
+   - Tested in `src/scene/city-buildings.test.ts`.
 
 ## Exact Next Development Task
-- **T29 — Audio Jukebox & In-Game Radio Channels**: In-game radio channels (Cozy Chill, Arcade Turbo, City Vibes) toggleable in HUD with procedural generative beats & melodies.
+- **T32 — Dynamic Weather Puddle Splashes & Hydroplaning Micro-FX**: Road water puddles during rain showers with particle spray and tire sound.
 
 ## Quick Resume Instructions
 To test and run locally:
 ```bash
 cd games/mini-kargo
-npm test                # Run 659 unit & E2E tests
+npm test                # Run 671 unit & E2E tests
 npm run typecheck       # Verify TypeScript types
 npm run build           # Build client bundle
 npm run test:browser    # Run Playwright visual smoke tests

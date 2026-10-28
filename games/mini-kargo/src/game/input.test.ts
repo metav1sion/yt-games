@@ -227,6 +227,16 @@ describe("input controller events", () => {
     expect(input.consumeHorn()).toBe(true);
     expect(input.consumeHorn()).toBe(false);
   });
+  it("captures 'r' key for radio and supports manual trigger", () => {
+    expect(input.consumeRadio?.()).toBe(false);
+    key("keydown", "r");
+    expect(input.consumeRadio?.()).toBe(true);
+    expect(input.consumeRadio?.()).toBe(false);
+
+    input.triggerRadio?.();
+    expect(input.consumeRadio?.()).toBe(true);
+    expect(input.consumeRadio?.()).toBe(false);
+  });
   it("removes event handlers on disposal", () => {
     input.dispose();
     down(joystick, { pointerType: "mouse" });

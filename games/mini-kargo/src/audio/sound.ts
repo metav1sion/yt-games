@@ -1,5 +1,9 @@
 import type { DistrictId } from "../game/districts";
 import { createAmbience } from "./ambience";
+import { createRadio, type StationId, type StationDef, RADIO_STATIONS } from "./radio";
+
+export type { StationId, StationDef };
+export { RADIO_STATIONS };
 
 export function createSound() {
   let context: AudioContext | null = null,
@@ -22,6 +26,7 @@ export function createSound() {
 
   let continuousStarted = false;
   const ambience = createAmbience(() => context);
+  const radio = createRadio(() => context);
 
   function setupContinuousNodes() {
     if (!context || continuousStarted) return;
@@ -133,6 +138,7 @@ export function createSound() {
     setEnabled(value: boolean) {
       enabled = value;
       ambience.setEnabled(value);
+      radio.setEnabled(value);
       if (masterGain && context) {
         masterGain.gain.setTargetAtTime(value && !paused ? 1 : 0, context.currentTime, 0.03);
       }
@@ -140,6 +146,7 @@ export function createSound() {
     setPaused(value: boolean) {
       paused = value;
       ambience.setPaused(value);
+      radio.setPaused(value);
       if (masterGain && context) {
         masterGain.gain.setTargetAtTime(enabled && !value ? 1 : 0, context.currentTime, 0.03);
       }
@@ -284,6 +291,7 @@ export function createSound() {
     },
     carHorn() {
       if (!context || !enabled || paused || context.state !== "running") return;
+      radio.duck(0.25, 1.2);
       try {
         const at = context.currentTime;
         const dur = 0.32;
@@ -443,6 +451,7 @@ export function createSound() {
       note(880.0, 0.16, 0.22);
     },
     comboFanfare(streak = 2) {
+      radio.duck(0.2, 2.0);
       if (streak >= 5) {
         // C5, E5, G5, B5, C6, E6 muzaffer şampiyon arpeji
         note(523.25, 0, 0.12);
@@ -783,9 +792,26 @@ export function createSound() {
     },
     updateAmbience(dt: number) {
       ambience.update(dt);
+      radio.update(dt);
+    },
+    setRadioStation(stationId: StationId) {
+      radio.setStation(stationId);
+    },
+    cycleRadioStation(): StationId {
+      return radio.cycleStation();
+    },
+    getRadioStation(): StationId {
+      return radio.getStation();
+    },
+    getRadioStationInfo(stationId?: StationId): StationDef {
+      return radio.getStationInfo(stationId);
+    },
+    duckRadio(factor?: number, duration?: number) {
+      radio.duck(factor, duration);
     },
     dispose() {
       ambience.dispose();
+      radio.dispose();
       try {
         engineOsc?.stop();
         skidSource?.stop();

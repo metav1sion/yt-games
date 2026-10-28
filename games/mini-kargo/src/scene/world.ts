@@ -15,12 +15,14 @@ import { createCargoRacksView, type CargoRacksView } from "./cargo-racks";
 import { buildCityBuildings } from "./city-buildings";
 import { createDeliveryStations, type DeliveryStationsView } from "./delivery-stations";
 import { createTrafficLights, type TrafficLightsView } from "./traffic-lights";
+import { createBusStops, type BusStopsView } from "./bus-stops";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
 export type { CargoRacksView } from "./cargo-racks";
 export type { DeliveryStationsView } from "./delivery-stations";
 export type { TrafficLightsView } from "./traffic-lights";
+export type { BusStopsView } from "./bus-stops";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -33,6 +35,7 @@ export type World = {
   cargoRacks: CargoRacksView;
   deliveryStations: DeliveryStationsView;
   trafficLights: TrafficLightsView;
+  busStops: BusStopsView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -40,6 +43,7 @@ export type World = {
     isNightOrDusk?: boolean,
     activeTargetIndex?: number,
     isDelivering?: boolean,
+    playerPos?: Vec2,
   ): void;
   getNightFactor?(): number;
   updateCargoRacks(cargoLevel: number): void;
@@ -115,6 +119,10 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   const trafficLights = createTrafficLights();
   group.add(trafficLights.group);
 
+  // Şehir İçi Otobüs Durakları ("D" Levhaları, Cam Kanopi, Bank & Bekleyen Yolcular)
+  const busStops = createBusStops();
+  group.add(busStops.group);
+
   let currentNightFactor = 0;
 
   return {
@@ -127,6 +135,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     cargoRacks,
     deliveryStations,
     trafficLights,
+    busStops,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);
@@ -136,6 +145,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
       isNightOrDusk = false,
       activeTargetIndex = -1,
       isDelivering = false,
+      playerPos?: Vec2,
     ) {
       const targetNight = isNightOrDusk ? 1.0 : 0.0;
       currentNightFactor = THREE.MathUtils.lerp(
@@ -153,6 +163,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
       }
       deliveryStations.update(dt, activeTargetIndex, isDelivering);
       trafficLights.update(dt, isNightOrDusk);
+      busStops.update(dt, playerPos);
     },
     getNightFactor() {
       return currentNightFactor;

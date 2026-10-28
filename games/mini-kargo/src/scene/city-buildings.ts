@@ -20,6 +20,103 @@ export type CityBuildingDef = {
 };
 
 /**
+ * Çatı Üstü Güneş Enerjisi Su Isıtma Sistemi (Solar Water Heater Termosifon)
+ */
+export function buildSolarWaterHeater(
+  parent: THREE.Object3D,
+  pos: [number, number, number],
+  rotationY = 0,
+) {
+  const g = new THREE.Group();
+  g.position.set(pos[0], pos[1], pos[2]);
+  g.rotation.y = rotationY;
+  parent.add(g);
+
+  // 1. Üçgen Çelik Taşıyıcı Ayaklar
+  for (const sx of [-0.45, 0.45]) {
+    box(g, [0.05, 0.45, 0.05], [sx, 0.22, -0.3], "#4a5568");
+    box(g, [0.05, 0.2, 0.05], [sx, 0.1, 0.3], "#4a5568");
+    const diag = box(g, [0.05, 0.05, 0.72], [sx, 0.22, 0], "#4a5568");
+    diag.rotation.x = -0.38;
+  }
+
+  // 2. Güneş Kollektör Paneli (Eğimli koyu mavi cam tüpler)
+  const panel = box(g, [1.1, 0.08, 0.75], [0, 0.24, 0.05], "#1e3a8a", 0.4);
+  panel.rotation.x = -0.38;
+  const frame = box(g, [1.14, 0.09, 0.79], [0, 0.24, 0.05], "#cbd5e0");
+  frame.rotation.x = -0.38;
+
+  // 3. Yatay Silindirik Sıcak Su Deposu (Boyler Tankı)
+  const tank = cylinder(g, 0.2, 0.2, 1.15, [0, 0.48, -0.28], "#e2e8f0", 12);
+  tank.rotation.z = Math.PI / 2;
+  for (const sx of [-0.38, 0.38]) {
+    const ring = cylinder(g, 0.21, 0.21, 0.04, [sx, 0.48, -0.28], "#4a5568", 12);
+    ring.rotation.z = Math.PI / 2;
+  }
+}
+
+/**
+ * Parabolik Çanak Anten (Residential Satellite Dish)
+ */
+export function buildSatelliteDish(
+  parent: THREE.Object3D,
+  pos: [number, number, number],
+  rotationY = 0.5,
+) {
+  const g = new THREE.Group();
+  g.position.set(pos[0], pos[1], pos[2]);
+  g.rotation.y = rotationY;
+  parent.add(g);
+
+  // 1. Zemin Montaj Flanşı & L-Borusu
+  cylinder(g, 0.025, 0.025, 0.5, [0, 0.25, 0], "#718096", 6);
+  const elbow = cylinder(g, 0.022, 0.022, 0.28, [0, 0.45, 0.1], "#718096", 6);
+  elbow.rotation.x = Math.PI / 4;
+
+  // 2. Parabolik Çanak Diski (Gökyüzüne dönük)
+  const dish = cylinder(g, 0.32, 0.32, 0.04, [0, 0.55, 0.18], "#f8fafc", 16);
+  dish.rotation.x = -Math.PI / 3;
+
+  // 3. LNB Besleme Kolu ve Alıcı Başlığı
+  const arm = cylinder(g, 0.012, 0.012, 0.24, [0, 0.58, 0.28], "#2d3748", 6);
+  arm.rotation.x = -Math.PI / 3;
+  cylinder(g, 0.035, 0.035, 0.06, [0, 0.65, 0.35], "#1a202c", 8);
+}
+
+/**
+ * Çatı Tipi Endüstriyel Havalandırma / Klima Dış Ünitesi (HVAC Compressor Chiller)
+ */
+export function buildHVACChiller(
+  parent: THREE.Object3D,
+  pos: [number, number, number],
+  rotationY = 0,
+) {
+  const g = new THREE.Group();
+  g.position.set(pos[0], pos[1], pos[2]);
+  g.rotation.y = rotationY;
+  parent.add(g);
+
+  // 1. Titreşim Emici Taban Takozları
+  for (const sx of [-0.38, 0.38]) {
+    box(g, [0.1, 0.06, 0.7], [sx, 0.03, 0], "#1a202c");
+  }
+
+  // 2. Ana Sac Gövde
+  box(g, [0.95, 0.65, 0.65], [0, 0.38, 0], "#e2e8f0");
+
+  // 3. Yan Havalandırma Panjurları (Izgara)
+  box(g, [0.04, 0.45, 0.5], [0.49, 0.38, 0], "#4a5568");
+  box(g, [0.04, 0.45, 0.5], [-0.49, 0.38, 0], "#4a5568");
+
+  // 4. Üst Dairesel Fan Izgarası
+  cylinder(g, 0.24, 0.24, 0.05, [0, 0.72, 0], "#2d3748", 12);
+  cylinder(g, 0.08, 0.08, 0.07, [0, 0.74, 0], "#718096", 8);
+
+  // 5. Bakır / Yalıtımlı Soğutma Borusu
+  cylinder(g, 0.02, 0.02, 0.45, [0.38, 0.25, 0.38], "#d97706", 6);
+}
+
+/**
  * 3-6 Katlı Modern Şehir Apartmanı:
  * Pencereler, balkonlar, yangın merdivenleri, giriş sundurması ve çatı parapeti.
  */
@@ -61,6 +158,11 @@ export function buildModernApartment(
   // Çatı anteni
   cylinder(g, 0.04, 0.06, 2.2, [w * 0.25, totalHeight + 1.6, -d * 0.2], "#718096", 6);
   cylinder(g, 0.02, 0.03, 1.0, [w * 0.25, totalHeight + 3.0, -d * 0.2], "#e53e3e", 6);
+
+  // Çatı Üstü Mimari Donatılar (Güneş enerjisi boyler, çanak anten ve klima dış ünitesi)
+  buildSolarWaterHeater(g, [w * 0.22, totalHeight + 0.35, d * 0.18], -0.2);
+  buildSatelliteDish(g, [-w * 0.28, totalHeight + 0.35, -d * 0.25], 0.4);
+  buildHVACChiller(g, [w * 0.05, totalHeight + 0.35, -d * 0.22], 0.1);
 
   // 5. Pencereler ve Balkonlar (Ön ve Arka Cephe)
   const windowColor = "#bee3f8"; // Açık parlak cam
@@ -208,6 +310,10 @@ export function buildPlazaTower(
       cylinder(g, 0.08, 0.08, 0.25, [hx * padSize * 0.46, totalHeight + 0.75, hz * padSize * 0.46], "#e53e3e", 8);
     }
   }
+
+  // Plaza Çatı Terası HVAC Chiller & Uydu İstasyonu
+  buildHVACChiller(g, [w * 0.38, totalHeight + 0.3, 0], 0);
+  buildSatelliteDish(g, [-w * 0.38, totalHeight + 0.3, 0], 0.8);
 
   // 4. Giriş Döner Kapısı ve Çelik Sundurma
   box(g, [3.2, 0.2, 1.6], [0, 2.7, halfD + 0.8], b.accentColor);

@@ -19,9 +19,10 @@ export function createHud(
     setNitro?(on: boolean): void;
     openCompanySheet?(): void;
     honk?(): void;
+    toggleRadio?(): void;
   },
 ) {
-  root.innerHTML = `<header class="topbar"><div class="brand"><span class="brand-icon">▣</span><div>mini kargo<small>MAHALLE TESLİMATLARI</small></div></div><div class="topbar-pills"><span class="district" id="district-name">GÜNEŞ MAHALLESİ <i></i></span><span class="time-pill" id="time-pill">☀️ ÖĞLE</span><span class="weather-pill" id="weather-pill">🌤️ AÇIK</span><span class="flash-pill" id="flash-pill" hidden>⚡ FLAŞ RUSH <b id="flash-timer">45s</b></span></div></header>
+  root.innerHTML = `<header class="topbar"><div class="brand"><span class="brand-icon">▣</span><div>mini kargo<small>MAHALLE TESLİMATLARI</small></div></div><div class="topbar-pills"><span class="district" id="district-name">GÜNEŞ MAHALLESİ <i></i></span><span class="time-pill" id="time-pill">☀️ ÖĞLE</span><span class="weather-pill" id="weather-pill">🌤️ AÇIK</span><button id="btn-radio" class="radio-pill" aria-label="Radyo Kanalı" title="Radyo (R)"><span class="radio-icon">📻</span><span id="radio-station-name" class="radio-name">RADYO: KAPALI</span><span class="radio-bars" aria-hidden="true"><span></span><span></span><span></span></span></button><span class="flash-pill" id="flash-pill" hidden>⚡ FLAŞ RUSH <b id="flash-timer">45s</b></span></div></header>
   <section class="task-card" aria-label="Aktif teslimat"><div class="task-heading"><span class="eyebrow">SIRADAKİ DURAK</span><span id="trip-count">01 / 03</span></div><div class="destination"><span class="destination-icon" id="nav-arrow">↑</span><div><h2 id="target-name">Kargo deposu</h2><p id="task-instruction">Paketini almak için alanda dur.</p></div></div><div class="loading-track"><span id="hold-progress"></span></div><div class="task-footer"><span id="distance">Depoda bekle</span><span class="package-status" id="package-status">▣ PAKET BEKLENİYOR</span></div></section>
   <section class="score-card"><div><span class="eyebrow">TUR PUANI</span><strong id="score">0</strong></div><div class="bonus-column"><span class="eyebrow">SÜRE BONUSU</span><strong id="timer">—</strong></div><div class="timer-track"><span id="timer-progress"></span></div></section>
   <div class="toolbar"><button id="sound" class="icon-button" aria-label="Sesi kapat" title="Ses"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="sound-waves" d="M16 8c3 2 3 6 0 8m3-11c5 4 5 10 0 14"/><path class="sound-slash" d="M4 3l17 18"/></svg></button><button id="recover" class="recovery-button" title="Takılırsan depoya dön">↶ <span>Depoya dön</span></button><button id="open-office" class="recovery-button office-button" title="Şirket Yönetim Merkezi">🏢 <span>Ofis</span></button></div>
@@ -31,7 +32,7 @@ export function createHud(
     <button id="btn-handbrake" class="touch-action-btn btn-drift" aria-label="El Freni / Drift" title="Drift"><span class="btn-icon">🛑</span><span class="btn-label">DRİFT</span></button>
     <button id="btn-nitro" class="touch-action-btn btn-nitro" aria-label="Nitro" title="Nitro"><span class="btn-icon">⚡</span><span class="btn-label">NİTRO</span></button>
   </div>
-  <div class="control-hint">W/S gaz-fren · A/D direksiyon · Space drift · Shift nitro · H korna</div>
+  <div class="control-hint">W/S gaz-fren · A/D direksiyon · Space drift · Shift nitro · H korna · R radyo</div>
   <div class="nitro-bar" aria-label="Nitro"><span class="eyebrow">NİTRO</span><div class="nitro-track"><span id="nitro-fill"></span></div></div>
   <div class="sheet welcome" id="welcome" hidden><div class="intro-card"><span class="eyebrow">KÜÇÜK ARABA. BÜYÜK İŞLER.</span><h1>Mahallenin<br>yeni kargocusu.</h1><p>Paketini al, sokaklara çık.<br>Üç teslimatla mahalleyi mutlu et.</p><div class="intro-rules"><span><b>01</b> Depodan paket al</span><span><b>02</b> İşaretli evde dur</span><span><b>03</b> Hızlı teslim et, bonus kazan</span></div><button class="primary-button" id="start">Hadi yola çık <span>→</span></button><small class="intro-controls">WASD / OK TUŞLARI · MOBİLDE JOYSTICK</small></div></div>
   <div class="sheet result" id="result" hidden><div class="result-card"><span class="result-badge">✓</span><span class="eyebrow">BUGÜNLÜK İŞLER TAMAM</span><h1>Eline sağlık,<br>kargocu!</h1><p>Üç paket, üç mutlu komşu.</p><div class="result-scores"><div><span>TUR PUANI</span><strong id="result-score">0</strong></div><div><span>EN İYİ TUR</span><strong id="best-score">0</strong></div><div><span>KAZANÇ</span><strong id="result-earnings">0 ₺</strong></div><div><span>İTİBAR</span><strong id="result-reputation">+0</strong></div></div><div class="quality-summary"><span>PAKET DURUMU <b id="package-quality">Hasarsız</b></span><span>GÜVENLİ SÜRÜŞ <b id="safe-bonus">+0 ₺</b></span></div><div class="company-summary"><span>ŞİRKET BAKİYESİ</span><strong id="company-money">0 ₺</strong><span>ŞİRKET SEVİYESİ <b id="company-level">1</b></span></div><section class="garage" aria-label="Garaj"><div class="garage-heading"><span class="eyebrow">GARAJ</span><span id="garage-status">Aracını geliştir</span></div><div class="upgrade-list"><button class="upgrade-button" data-upgrade="engine"><span><b>Motor</b><small id="engine-upgrade">Seviye 1 · 180 ₺</small></span><strong>+</strong></button><button class="upgrade-button" data-upgrade="brakes"><span><b>Fren</b><small id="brakes-upgrade">Seviye 1 · 160 ₺</small></span><strong>+</strong></button><button class="upgrade-button" data-upgrade="cargo"><span><b>Kapasite</b><small id="cargo-upgrade">Seviye 1 · 220 ₺</small></span><strong>+</strong></button></div></section><button class="primary-button" id="restart">Bir tur daha <span>↗</span></button><button class="primary-button btn-office-return" id="btn-office">🏢 Şirket Ofisine Dön</button></div></div>
@@ -143,6 +144,13 @@ export function createHud(
       actions.honk?.();
     });
   }
+
+  const radioBtn = el("btn-radio");
+  function toggleRadioHandler() {
+    actions.toggleRadio?.();
+    radioBtn?.blur();
+  }
+  radioBtn?.addEventListener("click", toggleRadioHandler);
 
   for (const button of root.querySelectorAll<HTMLButtonElement>(
     "[data-upgrade]",
@@ -269,6 +277,16 @@ export function createHud(
         elWeather.textContent = `${icon} ${name.toUpperCase()}`;
       }
     },
+    setRadio(name: string, active: boolean) {
+      const elRadio = el("radio-station-name");
+      const btnRadio = el("btn-radio");
+      if (elRadio) {
+        elRadio.textContent = name;
+      }
+      if (btnRadio) {
+        btnRadio.classList.toggle("active", active);
+      }
+    },
     setNitro(level: number, maxLevel = 1) {
       const max = Math.max(0.01, maxLevel);
       const percent = Math.max(0, Math.min(1, level / max)) * 100;
@@ -301,6 +319,7 @@ export function createHud(
       el("restart").removeEventListener("click", begin);
       el("recover").removeEventListener("click", recover);
       el("sound").removeEventListener("click", toggle);
+      radioBtn?.removeEventListener("click", toggleRadioHandler);
       el("btn-office")?.removeEventListener("click", returnToOffice);
       el("open-office")?.removeEventListener("click", returnToOffice);
       for (const button of root.querySelectorAll<HTMLButtonElement>(

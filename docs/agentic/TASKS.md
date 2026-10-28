@@ -122,7 +122,22 @@
   - **Scooter Courier AI Traffic**: Added autonomous AI delivery couriers (`kind: "courier"`) navigating Güneş, Çarşı and Sahil routes with dual wheels, thermal delivery box, animated rider mesh, lean/tilt roll physics, and interactive horn greeting (`onPlayerHonk` + `sound.courierBeep()`). Tested in `src/scene/traffic.test.ts`.
   - **Parcel Handoff Micro-Animations**: Enhanced `delivery-stations.ts` with customer eager receiving handoff posture, floating gratitude speech bubble badges (`"⭐⭐⭐⭐⭐ Harika Teslimat!"`, `"📦 Çok Teşekkürler!"`, etc.), parabolic swoop with squash-and-stretch bounce landing, and procedural `sound.packageDrop()` audio. Tested in `src/scene/delivery-stations.test.ts`, `src/scene/markers.test.ts`, and `src/audio/sound.test.ts`.
 
+- [x] **T29 — Audio Jukebox & In-Game Radio Channels**:
+  - Implemented `createRadio` (`src/audio/radio.ts`) featuring 3 distinct procedural radio stations (Cozy Chill ~76 BPM, Turbo FM ~126 BPM, City Vibes ~106 BPM) synthesized via Web Audio API.
+  - Interactive HUD radio pill (`#btn-radio`) with animated 3-bar audio visualizer equalizer, `R` keyboard toggle key, touch controls, and dynamic ducking during horn and fanfare events.
+  - Tested in `src/audio/radio.test.ts` and `src/audio/sound.test.ts`.
+
+- [x] **T30 — Living City Transit Infrastructure: Turkish Bus Stops & Commuter NPCs**:
+  - Implemented `createBusStops` (`src/scene/bus-stops.ts`) across 4 districts (Güneş, Çarşı, Sanayi, Sahil) with curved glass canopies, classic blue "D" (Durak) transit sign posts, route schedule boards, timber waiting benches, recycling bins, and curbside yellow zigzag bus bays.
+  - Interactive Commuter NPCs (seated and standing) featuring vehicle head tracking and friendly responsive arm waving when player honks (`H`).
+  - Tested in `src/scene/bus-stops.test.ts` and `src/scene/world.test.ts`.
+
+- [x] **T31 — Architectural Visual Detailing: Building Rooftops**:
+  - Enhanced `src/scene/city-buildings.ts` with rooftop solar water heating systems ("Güneş Enerjisi Termosifon"), parabolic satellite dishes ("Çanak Anten"), and HVAC compressor chillers across apartments and commercial plaza towers.
+  - Tested in `src/scene/city-buildings.test.ts`.
+
 ## Active / Next Tasks
-- [ ] **T29 — Audio Jukebox & Radio Station**: In-game radio channels (Cozy Chill, Arcade Turbo, City Vibes) toggleable in HUD.
+- [ ] **T32 — Dynamic Weather Puddle Splashes & Hydroplaning Micro-FX**: Road water puddles during rain with particle spray and tire sound.
+- [ ] **T33 — Delivery Customer Tipping Mechanic**: Fast, undamaged deliveries award tip bonuses (10–30 ₺) with customer tipping fanfare.
 - [ ] **T11 — Player Hands-on Playtesting & Feedback**: Solicit user evaluation on subjective driving feel, district ambiance, and gameplay pacing.
 - [ ] **T12 — Future YouTube Playables SDK Preparation**: (Pending explicit user instruction) integrate YouTube Playables SDK hooks when ready for distribution.

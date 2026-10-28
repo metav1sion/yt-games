@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 import * as THREE from "three";
 import {
   buildCityBuildings,
+  buildSolarWaterHeater,
+  buildSatelliteDish,
+  buildHVACChiller,
   CITY_BUILDINGS_CATALOG,
 } from "./city-buildings";
 import { createWorldContext } from "./world-kit";
@@ -40,5 +43,14 @@ describe("city buildings system", () => {
       expect(obs.maxX).toBeGreaterThan(obs.minX);
       expect(obs.maxZ).toBeGreaterThan(obs.minZ);
     }
+  });
+
+  it("builds rooftop architectural details (solar heater, satellite dish, HVAC chiller)", () => {
+    const parent = new THREE.Group();
+    buildSolarWaterHeater(parent, [0, 10, 0]);
+    buildSatelliteDish(parent, [2, 10, 2]);
+    buildHVACChiller(parent, [-2, 10, -2]);
+
+    expect(parent.children.length).toBe(3);
   });
 });
