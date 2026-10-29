@@ -33,6 +33,7 @@ import { createSchoolView, type SchoolView } from "./school";
 import { createBakeryView, type BakeryView } from "./bakery";
 import { createLighthouseView, type LighthouseView } from "./lighthouse";
 import { createMarketView, type MarketView } from "./market";
+import { createCarpenterView, type CarpenterView } from "./carpenter";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
@@ -57,6 +58,7 @@ export type { SchoolView } from "./school";
 export type { BakeryView } from "./bakery";
 export type { LighthouseView } from "./lighthouse";
 export type { MarketView } from "./market";
+export type { CarpenterView } from "./carpenter";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -87,6 +89,7 @@ export type World = {
   bakery: BakeryView;
   lighthouse: LighthouseView;
   market: MarketView;
+  carpenter: CarpenterView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -205,6 +208,11 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   group.add(market.group);
   ctx.baseObstacles.push(...market.obstacles);
 
+  // Sanayi "Tarihi Marangozlar Sitesi & Ahşap Kereste Atölyesi" (T55)
+  const carpenter = createCarpenterView();
+  group.add(carpenter.group);
+  ctx.baseObstacles.push(...carpenter.obstacles);
+
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;
   const unlockedSet = new Set<DistrictId>(["sunny"]);
@@ -289,6 +297,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     bakery,
     lighthouse,
     market,
+    carpenter,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);

@@ -383,5 +383,8 @@ describe("district traffic lanes", () => {
     expect(world.market).toBeDefined();
     expect(world.market.obstacles.length).toBeGreaterThan(0);
     expect(world.market.group.name).toBe("market-view");
+    expect(world.carpenter).toBeDefined();
+    expect(world.carpenter.obstacles.length).toBeGreaterThan(0);
+    expect(world.carpenter.group.name).toBe("carpenter-view");
   });
 });

@@ -462,3 +462,39 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
 
 
 
+
+---
+
+## 17. Güneş Mahallesi "Geleneksel Mahalle Semt Pazarı & Taze Manav Tezgahları" (T54)
+- **Konum ve Mimari Yapı (`createMarketView` & `src/game/market.ts`)**:
+  - Konum: X: -72.0, Z: -58.5 (Güneş Mahallesi batı bulvarı üzeri).
+  - 12.6m x 9.0m taş döşeli pazar meydanı tablası, granit taş bordürler, asfalt yanaşma peronu cebi (`MARKET_BAY`: X: -72.0, Z: -52.5).
+  - Sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku.
+  - Masif çam taşıyıcı direkler, çatı makasları, 3 canlı renkli kumaş tente (sarı/beyaz, kırmızı/beyaz, yeşil/beyaz) ve dalgalı fırfırlı saçaklar.
+  - Işıklı büyük çatı tabelası (`"🍉 GÜNEŞ MAHALLESİ SEMT PAZARI · CEMİL DAYI 🍋"`), altın sarısı pervaz çerçevesi ve gece PointLight fener armatürü.
+  - Kademeli ahşap kasalarda Akdeniz meyve/sebze yığınları (domates, limon, portakal, patlıcan, salatalık, taze maydanoz).
+  - Dev karpuz ve bal kavunu piramidi, dilimlenmiş kırmızı sulu karpuz dilimi.
+  - Asılı nostaljik çift kefeli pirinç terazi ve pirinç ağırlık seti.
+  - Tebeşirli fiyat şövalesi ve kraft kese kağıtları.
+- **Pazarcı Esnafı NPC ("Pazarcı Cemil Dayı") & Mola Bonusu**:
+  - Kadife kasket, çizgili gömlek, cepli esnaf önlüğü, pos bıyık, elinde taze sarı narenciye.
+  - 22m mesafeden kafa/gövde takibi, korna ve duraklamada iki kolunu havaya kaldırarak coşkulu selamlama ve 3D konuşma balonu.
+  - "Taze Pazar Bereketi" pitstop bonusu: +10 ₺ nakit bahşiş, +1 itibar, +0.45 nitro dolumu, 25s canlılık buff'ı ve prosedürel terazi sesi (`sound.marketScale()`). Minimap radarda `🧺`.
+
+---
+
+## 18. Sanayi "Tarihi Marangozlar Sitesi & Ahşap Kereste Atölyesi" (T55)
+- **Konum ve Mimari Yapı (`createCarpenterView` & `src/game/carpenter.ts`)**:
+  - Konum: X: 62.0, Z: -74.5 (Sanayi Organize Bölgesi, Sanayi Kuzey Sokağı Z: -66 bordürü).
+  - 12.0m x 9.0m endüstriyel ahşap talaşlı beton avlu, granit taş bordürler, asfalt servis yanaşma peronu (`CARPENTER_BAY`: X: 62.0, Z: -68.0).
+  - Sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku.
+  - 4 adet dikey masif ahşap kolon sütun (Douglas-fir), yatay lamine kirişler, A-çatı makasları ve oluklu galvaniz sanayi sacı gölgeliği.
+  - Işıklı büyük kurumsal çatı tabelası (`"🪵 SANAYİ TARİHİ MARANGOZLAR SİTESİ · RÜSTEM USTA 🪚"`), alt kurumsal şerit (`"MASİF AHŞAP İŞÇİLİĞİ · KERESTE & KARGO SANDIKLARI · 1968"`), gece tezgahı aydınlatan sıcak kehribar PointLight armatürü.
+  - Dikey kereste istif rafları (sarı çam, kızıl sedir, koyu meşe kalasları).
+  - Ahşap EUR palet üzerinde piramit şeklinde istiflenmiş silindirik kabuklu çam kütükleri ve çelik bağlama çemberleri.
+  - Dönen dairesel testere tezgahı (çelik daire bıçak, kırmızı koruyucu muhafaza, kesilen ahşap parça ve 8 adet savrulan dinamik altın sarısı talaş partikülü).
+  - Marangoz çalışma masası, mengene, el rendesi, ahşap tokmak ve dayanıklı ahşap Mini Kargo sandığı (`"📦 MK"`).
+- **Usta Marangoz NPC ("Marangoz Rüstem Usta") & Şasi Gücü Bonusu**:
+  - Askılı kot tulum, flanel iş gömleği, talaş tozu lekeleri, kulak arkasında marangoz kurşun kalemi, cepte katlanır sarı metre, heybetli usta bıyığı ve deri eldivenler.
+  - 22m mesafeden kafa/gövde takibi, korna ve yanaşmada kolunu kaldırarak usta selamı ve 3D konuşma balonu (`"🪵 Marangoz Rüstem Usta: Hoş geldin evlat! Fırınlanmış meşeden Mini Kargo kasası gibi sağlam kargo sandığı yapıyoruz! 🪚"`).
+  - "Sanayi İşçiliği Gücü" pitstop bonusu: +10 ₺ nakit desteği, +1 itibar, +0.45 nitro dolumu, 25s şasi takviyesi & çarpışma darbe hasarını %50 azaltma buff'ı, altın konfeti & para akışı ve prosedürel testere sesi (`sound.buzzSaw()`). Minimap radarda `🪵`.

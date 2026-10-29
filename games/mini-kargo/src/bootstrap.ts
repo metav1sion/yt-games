@@ -135,6 +135,12 @@ import {
   triggerMarketHonk,
   CEMIL_DAYI_POS,
 } from "./game/market";
+import {
+  createCarpenterState,
+  updateCarpenter,
+  triggerCarpenterHonk,
+  RUSTEM_USTA_POS,
+} from "./game/carpenter";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -203,6 +209,7 @@ export async function startGame(app: HTMLElement) {
   let bakeryState = createBakeryState();
   let lighthouseState = createLighthouseState();
   let marketState = createMarketState();
+  let carpenterState = createCarpenterState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -238,6 +245,11 @@ export async function startGame(app: HTMLElement) {
   scene.add(environmentalFX.group);
   let progression: CompanyProgression = asCompanyProgression(preferences);
   progression = applyOfflineEarnings(progression, Date.now());
+  // Haritadaki tüm evlere (Güneş, Çarşı, Sanayi, Sahil) teslimat yapılabilmesi için tüm bölgeleri açıyoruz
+  const allDistricts: DistrictId[] = ["sunny", "market", "industrial", "coastal"];
+  if (!progression.unlockedDistricts || progression.unlockedDistricts.length < 4) {
+    progression = { ...progression, unlockedDistricts: allDistricts };
+  }
   storage.save(progression);
 
   const currentVehType = (progression.currentVehicle as VehicleType) ?? "van";
@@ -292,6 +304,7 @@ export async function startGame(app: HTMLElement) {
       getBakeryState: () => bakeryState,
       getLighthouseState: () => lighthouseState,
       getMarketState: () => marketState,
+      getCarpenterState: () => carpenterState,
     };
   }
   const fleet = createCourierFleet({
@@ -693,6 +706,8 @@ export async function startGame(app: HTMLElement) {
       world.lighthouse.onPlayerHonk(vehicle.position);
       triggerMarketHonk(marketState, vehicle.position);
       world.market.onPlayerHonk(vehicle.position);
+      triggerCarpenterHonk(carpenterState, vehicle.position);
+      world.carpenter.onPlayerHonk(vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -1014,6 +1029,8 @@ export async function startGame(app: HTMLElement) {
       world.lighthouse.onPlayerHonk(vehicle.position);
       triggerMarketHonk(marketState, vehicle.position);
       world.market.onPlayerHonk(vehicle.position);
+      triggerCarpenterHonk(carpenterState, vehicle.position);
+      world.carpenter.onPlayerHonk(vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -1690,9 +1707,45 @@ export async function startGame(app: HTMLElement) {
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
 
+        // Sanayi "Tarihi Marangozlar Sitesi & Ahşap Kereste Atölyesi" (T55)
+        const carpenterRes = updateCarpenter(
+          carpenterState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (carpenterRes.sawSoundTriggered) {
+          sound.buzzSaw();
+        }
+        if (carpenterRes.awardedCarpenterBonus) {
+          sound.buzzSaw(1.1);
+          const maxNitro =
+            (1 + (progression.upgrades.nitro ?? 0) * (TUNING.nitroMaxBonus ?? 0.25)) *
+            (vehicle.supercharged ? 1.25 : 1.0);
+          vehicle.nitro = Math.min(maxNitro, vehicle.nitro + 0.45);
+          progression = {
+            ...progression,
+            money: progression.money + carpenterRes.cashBonus,
+            reputation: progression.reputation + carpenterRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          particles.spawnMoneyStream(RUSTEM_USTA_POS, vehicle.position);
+          hud.showToast("🪵 SANAYİ İŞÇİLİĞİ GÜCÜ! +10 ₺ (+1 İtibar, Gövde Takviyesi & Nitro)", 3500);
+        }
+        world.carpenter.update(
+          dt,
+          carpenterState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
         );
+        const effectiveImpact = carpenterState.buffTimer > 0 ? impact * 0.5 : impact;
         if (impact > 0.15) {
           sound.metalCrash();
           // Çarpışma noktasından kıvılcım patlaması ve kaza dumanı
@@ -1719,7 +1772,7 @@ export async function startGame(app: HTMLElement) {
           world.depot,
           world.homes,
           dt,
-          impact,
+          effectiveImpact,
           progression.companyLevel,
           selectedDistrict,
           progression.unlockedDistricts,
@@ -1939,6 +1992,12 @@ export async function startGame(app: HTMLElement) {
         world.market.update(
           dt,
           marketState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+        world.carpenter.update(
+          dt,
+          carpenterState,
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
@@ -2171,6 +2230,7 @@ export async function startGame(app: HTMLElement) {
       world.bakery.dispose();
       world.lighthouse.dispose();
       world.market.dispose();
+      world.carpenter.dispose();
       renderer.dispose();
     },
     { once: true },

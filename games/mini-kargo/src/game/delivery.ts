@@ -156,12 +156,23 @@ function pickTargetHome(
   unlockedDistricts?: DistrictId[] | Set<DistrictId>,
 ): number {
   const activeDistrict = resolveDistrict(companyLevel, selectedDistrict, unlockedDistricts);
-  const homesInDistrict = activeDistrict.homeIndices;
-  if (homesInDistrict && homesInDistrict.length > 0) {
-    return homesInDistrict[stepIndex % homesInDistrict.length];
+  if (selectedDistrict && activeDistrict.id === selectedDistrict) {
+    const homesInDistrict = activeDistrict.homeIndices;
+    if (homesInDistrict && homesInDistrict.length > 0) {
+      return homesInDistrict[stepIndex % homesInDistrict.length];
+    }
   }
+
   const available = getAvailableHomeIndices(companyLevel, unlockedDistricts);
-  return available[stepIndex % available.length] ?? 0;
+  if (available.length <= 4) {
+    return available[stepIndex % available.length] ?? 0;
+  }
+
+  const latestHomes = activeDistrict.homeIndices.filter((idx) => available.includes(idx));
+  const otherHomes = available.filter((idx) => !latestHomes.includes(idx));
+  const fullRotation = [...latestHomes, ...otherHomes];
+
+  return fullRotation[stepIndex % fullRotation.length] ?? 0;
 }
 
 export function createDeliveryState(

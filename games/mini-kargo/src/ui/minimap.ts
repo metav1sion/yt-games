@@ -323,6 +323,9 @@ export function createMinimap(
 
     const marketPos = worldToMinimap(-72.0, -58.5, size, bounds);
     ctx.fillText("🧺", marketPos.x, marketPos.y);
+
+    const carpenterPos = worldToMinimap(62.0, -74.5, size, bounds);
+    ctx.fillText("🪵", carpenterPos.x, carpenterPos.y);
     ctx.restore();
 
     // 6. AKTİF HEDEF GÖSTERGESİ (Nabız animasyonu)

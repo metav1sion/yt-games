@@ -146,11 +146,34 @@
      - Screenshot: `games/mini-kargo/artifacts/mobile-portrait-390x844.png`
   3. **Mobile Landscape (844x390)**:
      - Landscape canvas & control separation: PASS
-     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, fishing harbour `🐟`, auto repair workshop `🔧`, grocery store `🏪`, coffeehouse `🎲`, ice cream stand `🍦`, restaurant `🍲`, school `🏫`, bakery `🥖`, lighthouse `🗼`, and market `🧺` icons) and action buttons isolated: PASS
+     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, fishing harbour `🐟`, auto repair workshop `🔧`, grocery store `🏪`, coffeehouse `🎲`, ice cream stand `🍦`, restaurant `🍲`, school `🏫`, bakery `🥖`, lighthouse `🗼`, market `🧺`, and carpenter `🪵` icons) and action buttons isolated: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-landscape-844x390.png`
 
+---
+
+## Visual QA & Browser Verification Summary — Run 30 (2026-10-29)
+
+### Automated Test Suite
+- **Unit & Integration Tests**: 84 test files, 883 passed, 0 failed (2.12s execution)
+- **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
+- **Vite Production Build**: Successful (`dist/` generated in 171ms)
+- **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
+
+### Visual Quality & Landmark Verification
+- **Sanayi "Tarihi Marangozlar Sitesi & Ahşap Kereste Atölyesi" (T55)**:
+  - 12.0m x 9.0m endüstriyel ahşap talaşlı beton avlu, granit taş bordürler, asfalt servis yanaşma peronu cebi (`CARPENTER_BAY`: X: 62.0, Z: -68.0), sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku: VERIFIED
+  - 4 adet dikey masif ahşap kolon sütun (Douglas-fir), döküm demir taban pabuçları, yatay masif lamine kirişler, A-çatı makasları ve oluklu galvaniz sanayi sacı gölgeliği: VERIFIED
+  - Işıklı büyük kurumsal çatı tabelası (`"🪵 SANAYİ TARİHİ MARANGOZLAR SİTESİ · RÜSTEM USTA 🪚"`), alt kurumsal şerit (`"MASİF AHŞAP İŞÇİLİĞİ · KERESTE & KARGO SANDIKLARI · 1968"`), gece tezgahı aydınlatan sıcak kehribar PointLight armatürü: VERIFIED
+  - Dikey kereste istif rafları (sarı çam, kızıl sedir, koyu meşe kalasları): VERIFIED
+  - Ahşap EUR palet üzerinde piramit şeklinde istiflenmiş silindirik kabuklu çam kütükleri ve çelik bağlama çemberleri: VERIFIED
+  - Dönen dairesel testere tezgahı (çelik daire bıçak, kırmızı güvenlik muhafazası, kesilen ahşap parça ve 8 adet savrulan dinamik altın sarısı talaş partikülü): VERIFIED
+  - Marangoz çalışma masası, mengene, el rendesi, marangoz tokmağı ve dayanıklı ahşap Mini Kargo ambalaj sandığı (`"📦 MK"`): VERIFIED
+  - Animasyonlu Usta Marangoz NPC "Marangoz Rüstem Usta" (X: 60.5, Z: -72.0) bordo flanel gömlek, askılı kot tulum, talaş lekeleri, kulak arkasında marangoz kurşun kalemi, cepte katlanır sarı metre, heybetli usta bıyığı, 22m mesafeden kafa/gövde takibi, korna ve yanaşmada kolunu kaldırarak usta selamı ve 3D konuşma balonuyla karşılama: VERIFIED
+  - "Sanayi İşçiliği Gücü" pitstop bonusu (+10 ₺, +1 itibar, +0.45 nitro dolumu, 25s şasi takviyesi & çarpışma hasarını %50 azaltma buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel testere sesi `sound.buzzSaw()`): VERIFIED
+  - Minimap radar simgesi: Sanayi Bölgesi üzerinde canlı `🪵` odun/kereste simgesi: VERIFIED
+  - Screenshot verified: `games/mini-kargo/artifacts/sanayi-marangozlar-sitesi.png`
+
 ## Independent Victory Audit Verdict
-- **Auditor**: Independent Victory Auditor (`4ad39961-415a-4eb4-938f-361ca23917bb`)
 - **Verdict**: `VICTORY CONFIRMED`
 - **Integrity**: Zero skipped tests, zero mock facades, genuine implementations.

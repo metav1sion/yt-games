@@ -1263,39 +1263,7 @@ export function createSound() {
       } catch {}
     },
     trainHorn() {
-      const ctx = context;
-      if (!ctx || !enabled || paused || ctx.state !== "running") return;
-      try {
-        const t = ctx.currentTime;
-        radio.duck(0.45, 1.2);
-        // Ağır Sanayi Manevra Dizel Lokomotif Havalı Kornası (3 tonlu tok akor: D3, F#3, A3)
-        const chord = [146.83, 185.0, 220.0];
-        const dur = 0.75;
-        for (const freq of chord) {
-          const osc = ctx.createOscillator();
-          const filter = ctx.createBiquadFilter();
-          const gain = ctx.createGain();
-
-          osc.type = "sawtooth";
-          osc.frequency.setValueAtTime(freq, t);
-
-          filter.type = "lowpass";
-          filter.frequency.setValueAtTime(780, t);
-          filter.Q.setValueAtTime(2.2, t);
-
-          gain.gain.setValueAtTime(0.001, t);
-          gain.gain.linearRampToValueAtTime(0.12, t + 0.06);
-          gain.gain.setValueAtTime(0.12, t + dur - 0.15);
-          gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
-
-          osc.connect(filter);
-          filter.connect(gain);
-          gain.connect(ctx.destination);
-
-          osc.start(t);
-          osc.stop(t + dur + 0.05);
-        }
-      } catch {}
+      // Devre dışı bırakıldı: tekrarlayan piyanomsu korna sesi kaldırıldı
     },
     windChime() {
       const ctx = context;
@@ -1986,6 +1954,70 @@ export function createSound() {
         armOsc.onended = () => {
           armOsc.disconnect();
           armGain.disconnect();
+        };
+      } catch {}
+    },
+    buzzSaw(vol = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      const volume = Math.max(0, Math.min(1, vol));
+      if (volume <= 0.02) return;
+      try {
+        const at = ctx.currentTime;
+        radio.duck(0.4, 0.95);
+
+        // 1. Dönen metal daire testere bıçağı vızıltısı ve diş sürtünmesi (sawtooth + bandpass)
+        const sawOsc = ctx.createOscillator();
+        const sawFilter = ctx.createBiquadFilter();
+        const sawGain = ctx.createGain();
+
+        sawOsc.type = "sawtooth";
+        sawOsc.frequency.setValueAtTime(340, at);
+        sawOsc.frequency.linearRampToValueAtTime(520, at + 0.18);
+        sawOsc.frequency.exponentialRampToValueAtTime(280, at + 0.65);
+
+        sawFilter.type = "bandpass";
+        sawFilter.frequency.setValueAtTime(1450, at);
+        sawFilter.frequency.linearRampToValueAtTime(1850, at + 0.25);
+        sawFilter.Q.setValueAtTime(2.8, at);
+
+        sawGain.gain.setValueAtTime(0.001, at);
+        sawGain.gain.linearRampToValueAtTime(0.24 * volume, at + 0.04);
+        sawGain.gain.setValueAtTime(0.22 * volume, at + 0.35);
+        sawGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.68);
+
+        sawOsc.connect(sawFilter);
+        sawFilter.connect(sawGain);
+        sawGain.connect(ctx.destination);
+
+        sawOsc.start(at);
+        sawOsc.stop(at + 0.70);
+        sawOsc.onended = () => {
+          sawOsc.disconnect();
+          sawFilter.disconnect();
+          sawGain.disconnect();
+        };
+
+        // 2. Ahşap kesim gövdesi rezonansı & el rendesi tok talaş sesi (triangle wood bite)
+        const woodOsc = ctx.createOscillator();
+        const woodGain = ctx.createGain();
+
+        woodOsc.type = "triangle";
+        woodOsc.frequency.setValueAtTime(165, at);
+        woodOsc.frequency.linearRampToValueAtTime(110, at + 0.45);
+
+        woodGain.gain.setValueAtTime(0.001, at);
+        woodGain.gain.linearRampToValueAtTime(0.18 * volume, at + 0.03);
+        woodGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.50);
+
+        woodOsc.connect(woodGain);
+        woodGain.connect(ctx.destination);
+
+        woodOsc.start(at);
+        woodOsc.stop(at + 0.52);
+        woodOsc.onended = () => {
+          woodOsc.disconnect();
+          woodGain.disconnect();
         };
       } catch {}
     },

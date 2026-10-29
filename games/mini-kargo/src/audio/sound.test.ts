@@ -116,6 +116,8 @@ describe("audio system", () => {
     sound.schoolBell(1.0);
     sound.woodOven(1.0);
     sound.fogHorn(1.0);
+    sound.marketScale(1.0);
+    sound.buzzSaw(1.0);
     sound.setDistrict("coastal");
     sound.setRadioStation("cozy_chill");
     expect(sound.getRadioStation()).toBe("cozy_chill");
@@ -237,6 +239,18 @@ describe("audio system", () => {
     expect(() => {
       sound.marketScale(1.0);
       sound.marketScale(0.5);
+    }).not.toThrow();
+
+    sound.dispose();
+  });
+
+  it("plays circular buzz saw and hand plane sound without throwing", async () => {
+    const sound = createSound();
+    await sound.unlock();
+
+    expect(() => {
+      sound.buzzSaw(1.0);
+      sound.buzzSaw(0.5);
     }).not.toThrow();
 
     sound.dispose();
