@@ -62,6 +62,11 @@ import {
   updateFerrisWheel,
   triggerFerrisWheelHonk,
 } from "./game/ferris-wheel";
+import {
+  createTramState,
+  updateTram,
+  triggerTramHonk,
+} from "./game/tram";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -117,6 +122,7 @@ export async function startGame(app: HTMLElement) {
   let roadWorkState = createRoadWorkState();
   let seasideLifeState = createSeasideLifeState();
   let ferrisWheelState = createFerrisWheelState();
+  let tramState = createTramState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -185,6 +191,17 @@ export async function startGame(app: HTMLElement) {
   traffic.setCompanyLevel(progression.companyLevel, progression.unlockedDistricts);
   pedestrians.setCompanyLevel(progression.companyLevel, progression.unlockedDistricts);
   sound.setEnabled(soundEnabled);
+  if (typeof window !== "undefined") {
+    (window as any).__MINI_KARGO_DEV__ = {
+      setVehiclePos: (x: number, z: number, heading = 0) => {
+        vehicle.position.x = x;
+        vehicle.position.z = z;
+        vehicle.heading = heading;
+        resetCamera(vehicle.position, vehicle.heading);
+      },
+      getTramState: () => tramState,
+    };
+  }
   const fleet = createCourierFleet({
     onDelivery(ev) {
       progression = {
@@ -560,6 +577,7 @@ export async function startGame(app: HTMLElement) {
       triggerRoadWorkHonk(roadWorkState, vehicle.position);
       triggerSeasideHonk(seasideLifeState, vehicle.position, sound, particles);
       triggerFerrisWheelHonk(ferrisWheelState, vehicle.position);
+      triggerTramHonk(tramState, vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -857,6 +875,7 @@ export async function startGame(app: HTMLElement) {
           triggerRoadWorkHonk(roadWorkState, vehicle.position);
           triggerSeasideHonk(seasideLifeState, vehicle.position, sound, particles);
           triggerFerrisWheelHonk(ferrisWheelState, vehicle.position);
+      triggerTramHonk(tramState, vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -1087,6 +1106,38 @@ export async function startGame(app: HTMLElement) {
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
 
+        // Tarihi Çarşı Tramvay Hattı & Nostaljik Tramvay Simülasyonu (T42)
+        const tramRes = updateTram(
+          tramState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (tramRes.bellRung) {
+          sound.tramBell();
+        }
+        if (tramRes.sparkFired) {
+          particles.spawnImpactSparks({ x: tramState.position.x, z: tramState.position.z });
+        }
+        if (tramRes.awardedHeritageBonus) {
+          progression = {
+            ...progression,
+            money: progression.money + tramRes.cashBonus,
+            reputation: progression.reputation + tramRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          hud.showToast("🚋 NOSTALJİK HAT HATIRASI! +10 ₺ (+1 İtibar)", 3000);
+        }
+        world.tram.update(
+          dt,
+          tramState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
         );
@@ -1261,6 +1312,12 @@ export async function startGame(app: HTMLElement) {
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
+        world.tram.update(
+          dt,
+          tramState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
       }
       if (started) {
         const here = districtAt(vehicle.position.x, vehicle.position.z);
@@ -1416,6 +1473,7 @@ export async function startGame(app: HTMLElement) {
         dt,
         fleet.couriers.map((c) => c.position),
         progression.unlockedDistricts,
+        tramState.position,
       );
       hud.setNavigation(
         Math.hypot(
@@ -1475,6 +1533,7 @@ export async function startGame(app: HTMLElement) {
       pitstopView.dispose();
       streetVendorsView.dispose();
       world.ferrisWheel.dispose();
+      world.tram.dispose();
       renderer.dispose();
     },
     { once: true },

@@ -151,6 +151,7 @@ describe("audio system", () => {
       sound.fishingReel();
       sound.thunderRoll(1.2);
       sound.carnivalChime();
+      sound.tramBell();
     }).not.toThrow();
 
     sound.dispose();

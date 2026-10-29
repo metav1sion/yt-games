@@ -69,6 +69,7 @@ export type MinimapInstance = {
     dt: number,
     courierPositions?: Vec2[],
     unlockedDistricts?: DistrictId[] | Set<DistrictId>,
+    tramPos?: Vec2,
   ): void;
   dispose(): void;
 };
@@ -104,6 +105,7 @@ export function createMinimap(
     companyLevel: number,
     courierPositions?: Vec2[],
     unlockedDistricts?: DistrictId[] | Set<DistrictId>,
+    tramPos?: Vec2,
   ) {
     if (!ctx) return;
 
@@ -259,7 +261,7 @@ export function createMinimap(
     ctx.strokeRect(dp.x - 2.5, dp.y - 2.5, 5, 5);
     ctx.restore();
 
-    // 5.5. ŞEHİR İLGİ ODAKLARI (⛽ Akaryakıt, 🚧 Yol Çalışması, ☕ Sahil Çay Bahçesi, 🎡 Dönme Dolap)
+    // 5.5. ŞEHİR İLGİ ODAKLARI (⛽ Akaryakıt, 🚧 Yol Çalışması, ☕ Sahil Çay Bahçesi, 🎡 Dönme Dolap, 🚋 Tramvay)
     ctx.save();
     ctx.font = "8px sans-serif";
     ctx.textAlign = "center";
@@ -276,6 +278,11 @@ export function createMinimap(
 
     const fwp = worldToMinimap(-14, 92.5, size, bounds);
     ctx.fillText("🎡", fwp.x, fwp.y);
+
+    const tx = tramPos ? tramPos.x : 48;
+    const tz = tramPos ? tramPos.z : 34;
+    const tmp = worldToMinimap(tx, tz, size, bounds);
+    ctx.fillText("🚋", tmp.x, tmp.y);
     ctx.restore();
 
     // 6. AKTİF HEDEF GÖSTERGESİ (Nabız animasyonu)
@@ -375,6 +382,7 @@ export function createMinimap(
       dt,
       courierPositions,
       unlockedDistricts,
+      tramPos,
     ) {
       pulseTime += dt;
       draw(
@@ -385,6 +393,7 @@ export function createMinimap(
         companyLevel,
         courierPositions,
         unlockedDistricts,
+        tramPos,
       );
     },
     dispose() {

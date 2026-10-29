@@ -20,6 +20,7 @@ import { createGasStationView, type GasStationView } from "./gas-station";
 import { createRoadWorkView, type RoadWorkView } from "./road-work";
 import { createSeasideLifeView, type SeasideLifeView } from "./seaside-life";
 import { createFerrisWheelView, type FerrisWheelView } from "./ferris-wheel";
+import { createTramView, type TramView } from "./tram";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
@@ -31,6 +32,7 @@ export type { GasStationView } from "./gas-station";
 export type { RoadWorkView } from "./road-work";
 export type { SeasideLifeView } from "./seaside-life";
 export type { FerrisWheelView } from "./ferris-wheel";
+export type { TramView } from "./tram";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -48,6 +50,7 @@ export type World = {
   roadWork: RoadWorkView;
   seasideLife: SeasideLifeView;
   ferrisWheel: FerrisWheelView;
+  tram: TramView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -100,6 +103,11 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   const ferrisWheel = createFerrisWheelView();
   group.add(ferrisWheel.group);
   ctx.baseObstacles.push(...ferrisWheel.obstacles);
+
+  // Tarihi Çarşı Tramvay Hattı & Nostaljik Tramvay (T42)
+  const tram = createTramView();
+  group.add(tram.group);
+  ctx.baseObstacles.push(...tram.obstacles);
 
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;
@@ -172,6 +180,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     roadWork,
     seasideLife,
     ferrisWheel,
+    tram,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);

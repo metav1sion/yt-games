@@ -1196,6 +1196,42 @@ export function createSound() {
         });
       } catch {}
     },
+    tramBell() {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      try {
+        const at = ctx.currentTime;
+        radio.duck(0.4, 0.8);
+        // Nostaljik tramvay pirinç çan vuruşu ("Çan çan!" - çift vuruş)
+        const strikes = [0, 0.13];
+        for (const offset of strikes) {
+          const t = at + offset;
+          // Ana parlak metalik çan frekansı (1568 Hz [G6])
+          const osc1 = ctx.createOscillator();
+          const gain1 = ctx.createGain();
+          osc1.type = "sine";
+          osc1.frequency.setValueAtTime(1568, t);
+          gain1.gain.setValueAtTime(0.18, t);
+          gain1.gain.exponentialRampToValueAtTime(0.001, t + 0.38);
+          osc1.connect(gain1);
+          gain1.connect(ctx.destination);
+          osc1.start(t);
+          osc1.stop(t + 0.4);
+
+          // Üst harmonik zil çınlaması (3136 Hz [G7])
+          const osc2 = ctx.createOscillator();
+          const gain2 = ctx.createGain();
+          osc2.type = "triangle";
+          osc2.frequency.setValueAtTime(3136, t);
+          gain2.gain.setValueAtTime(0.08, t);
+          gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+          osc2.connect(gain2);
+          gain2.connect(ctx.destination);
+          osc2.start(t);
+          osc2.stop(t + 0.25);
+        }
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

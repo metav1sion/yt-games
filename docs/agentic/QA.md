@@ -54,9 +54,21 @@
   - `src/game/ferris-wheel.test.ts` (6 tests) — Ferris wheel rotation angle, chase light phase, 1.2s boarding dwell timer, Sahil Neşesi cash & rep bonus (+15 ₺, +1 rep), cooldown timer, operator greeting on honk
   - `src/scene/ferris-wheel.test.ts` (3 tests) — 3D pier foundation, twin A-frame steel lattice towers, rotating double-ring wheel truss, 12 passenger gondolas with gravity counter-rotation, 24 animated LED chase lights, ticket booth, operator NPC, and colliders
   - `src/audio/sound.test.ts` (4 tests) — Motor, horn, crash, money drain, jingle, launch/landing, clean driving bonus, combo fanfare, ambience, rain intensity, fauna cries (seagull, pigeon, cat, dog), leaf crunch, surf crash, welding arc buzz, package drop thud & tape rustle, scooter courier horn beep, puddle splash whoosh, customer tip coin chime, tea spoon clink, fishing reel click, multi-stage rolling thunder, carnival chime, radio integration
-  - `src/scene/world.test.ts` (18 tests) — Road connectivity, delivery zone clearance, boulevard clearance, district traffic & pedestrian paths, night factor emissive modulation, integrated traffic lights, bus stops, gas station, road work hazards, seaside life, and grand ferris wheel attraction
+  - `src/game/tram.test.ts` (7 tests) — Tram state machine initialization, cruising speed, station dwell timing, terminus direction reversal & departure bell, obstacle yielding/braking, player honk greetings, and "Nostaljik Hat Hatırası" proximity reward (+10 ₺, +1 rep) with cooldown
+  - `src/scene/tram.test.ts` (3 tests) — 3D hierarchy creation, embedded rails, catenary masts, overhead wire, station shelter & platform, animated tram car, driver posture, waving arm on honk, speech bubble, and disposal
+  - `src/scene/world.test.ts` (18 tests) — Road connectivity, delivery zone clearance, boulevard clearance, district traffic & pedestrian paths, night factor emissive modulation, integrated traffic lights, bus stops, gas station, road work hazards, seaside life, grand ferris wheel, and Çarşı heritage tramway
+  - `src/audio/sound.test.ts` (4 tests) — Motor, horn, crash, money drain, jingle, launch/landing, clean driving bonus, combo fanfare, ambience, rain intensity, fauna cries, leaf crunch, surf crash, welding arc buzz, package drop thud & tape rustle, scooter courier horn beep, puddle splash whoosh, customer tip coin chime, tea spoon clink, fishing reel click, multi-stage rolling thunder, carnival chime, nostalgic tram brass bell chime (`tramBell()`), radio integration
   - `tests/e2e/mini-kargo-e2e.test.ts` (242 tests) — Opaque-box E2E tests covering features F01–F21 across Tiers 1–4
-  - **Total**: 56 test files, 736 passed, 0 failed.
+  - **Total**: 58 test files, 746 passed, 0 failed.
+
+## Playwright Browser Testing & Visual QA
+- **Environment**: Chromium headless on local Vite preview server (`127.0.0.1:4173`).
+- **Viewports Verified**:
+  - Desktop: 1280x800 — PASS, 0 console errors (`desktop-1280x800.png`)
+  - Mobile Portrait: 390x844 — PASS, 0 console errors (`mobile-portrait-390x844.png`)
+  - Mobile Landscape: 844x390 — PASS, 0 console errors (`mobile-landscape-844x390.png`)
+- **Feature Visual QA**:
+  - `artifacts/carsi-nostalgic-tram.png`: Verified visual fidelity of Historic Çarşı Tram ("İETT 1923" Nostaljik Tramvay) in crimson red and ivory livery, clerestory monitor roof, diamond pantograph attached to overhead catenary wire, open driver vestibules with Vatman İhsan Efendi waving, 3D speech bubble callout (`"Vatman İhsan: Çan çan! Yol kargonun kaptan, buyur geç! 📦"`), raised timber passenger boarding platform with green canopy shelter ("Tarihi Çarşı Tramvay Durağı"), round stop sign post ("DURAK · T2"), waiting passenger NPC on timber bench, and live tracking icon (`🚋`) on the radar minimap. Zero clipping through boulevards or delivery routes.
 
 ## Browser Automation & Visual QA (Playwright)
 - **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser`

@@ -214,8 +214,22 @@
   - Radar minimap icon: `🎡` at X: -14, Z: 92.5.
   - Tested in `src/game/ferris-wheel.test.ts`, `src/scene/ferris-wheel.test.ts`, and `src/scene/world.test.ts`.
 
+- [x] **T42 — Historic Çarşı Tramway Heritage Line & Nostalgic Street Tram**:
+  - Implemented `createTramView` (`src/scene/tram.ts`) along the Çarşı commercial avenue (Z: 34.0, X: 16.0..82.0):
+    - **Embedded Steel Rail Track & Buffer Bumpers**: 67-meter embedded twin steel rails (1.3m narrow/meter gauge) flush with road surface, stone sleeper cross-ties every 2.2m, and heavy-duty steel terminus buffer stops with yellow/black hazard striping and red reflector discs at X: 15.5 and X: 82.5.
+    - **Overhead Catenary System**: 6 fluted cast-iron catenary masts with arched brackets along the sidewalk (Z: 37.35), white ceramic insulators, and tensioned copper contact wire suspended at Y: 4.2m.
+    - **Tarihi Çarşı Tramvay Durağı (X: 64.0, Z: 37.8)**: Raised 8.5m x 2.2m timber platform deck with ramped accessibility, yellow tactile safety curb warning edge, Victorian/Ottoman-era canopy shelter with 4 cast-iron columns and green arched roof, nostalgic route timetable board ("T2 NOSTALJİK TRAMVAY · ÇARŞI MEYDANI"), timber waiting bench, seated passenger NPC ("Güleryüzlü Yolcu"), round stop sign pole ("DURAK · T2"), and warm hanging lantern with night emissive glow.
+    - **İETT 1923 Nostaljik Tramvay Replica**: Crimson red lower hull (`#c0392b`), ivory/cream window band (`#fdfefe`), gold waist trim, clerestory monitor roof with ventilators, open-air vestibule driver platforms on both ends with black railings and folding gates, brass handbrake wheel, brass controller rheostat, illuminated front/rear route marquees ("T2 NOSTALJİK TRAMVAY"), vintage brass center headlamps with night emissive boost, warm illuminated passenger windows, and diamond pantograph mechanism with copper contact shoe touching the catenary wire.
+    - **Animated Vatman İhsan Efendi NPC**: Conductor in navy uniform, brass buttons, and peaked cap (`kasket`) who positions himself at the forward-facing platform, waves his right arm upon player honk (`H`) or approach, and displays a 3D speech bubble callout (`"🚋 Vatman İhsan: Çan çan! Yol kargonun kaptan, buyur geç! 📦"`).
+  - Implemented `src/game/tram.ts` state machine:
+    - Cruises along track at 3.6 m/s (~13 km/h), stops and dwells at Çarşı station for 4.0s with double bell, reverses direction at termini with 3.5s dwell and departure bell.
+    - Yielding behavior: If player vehicle blocks the track directly ahead, tram brakes and pauses safely until cleared.
+    - "Nostaljik Hat Hatırası" reward: Stopping alongside the station platform or tram (within 6.5m for 1.2s) awards +10 ₺ cash, +1 reputation, celebratory confetti, and nostalgic chime with 30s cooldown.
+  - Procedural Web Audio brass foot-gong bell in `sound.tramBell()` (dual strike at 1568Hz [G6] & 3136Hz with radio ducking).
+  - Live animated tracking icon on radar minimap (`🚋`).
+  - Tested in `src/game/tram.test.ts`, `src/scene/tram.test.ts`, `src/scene/world.test.ts`, `src/audio/sound.test.ts`, and verified in browser smoke tests.
+
 ## Active / Next Tasks
-- [ ] **T42 — Historic Çarşı Tramway Heritage Line & Nostalgic Street Tram**: Classic red nostalgic streetcar / tram (like the famous Taksim/Beyoğlu Nostaljik Tramvay "İETT 1923") running along a dedicated central rail line down the main Çarşı commercial thoroughfare with overhead catenary wire masts, animated bell ding ("Çan çan!" `sound.tramBell()`), passenger boarding station, and slow-moving historic heritage tram sharing the street, yielding to kargo van on horn.
 - [ ] **T43 — Industrial Sanayi Freight Rail Spur & Shunting Locomotive**: Industrial rail spur cutting through Sanayi with crossing gates, flashing red crossbuck signals (`sound.railCrossing()`), diesel shunter locomotive, and heavy flatcars loaded with cargo containers and machinery.
 - [ ] **T11 — Player Hands-on Playtesting & Feedback**: Solicit user evaluation on subjective driving feel, district ambiance, and gameplay pacing.
 - [ ] **T12 — Future YouTube Playables SDK Preparation**: (Pending explicit user instruction) integrate YouTube Playables SDK hooks when ready for distribution.

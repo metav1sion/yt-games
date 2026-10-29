@@ -344,5 +344,8 @@ describe("district traffic lanes", () => {
     expect(world.ferrisWheel).toBeDefined();
     expect(world.ferrisWheel.obstacles.length).toBeGreaterThan(0);
     expect(world.ferrisWheel.group.name).toBe("grand-ferris-wheel");
+    expect(world.tram).toBeDefined();
+    expect(world.tram.obstacles.length).toBeGreaterThan(0);
+    expect(world.tram.group.name).toBe("carsi-heritage-tram");
   });
 });

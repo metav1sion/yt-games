@@ -32,6 +32,25 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
 - **Visual Identity**: Dense, bustling urban market center. Storefront awnings, neon and wooden shop signage, outdoor cafe seating, streetlamps, colorful banners, authentic striped-canopy open-air market stalls (Pastane, Manav, Kitapçı, Hediyelik), festive overhead celebration bunting pennants across alleyways, A-frame chalkboard cafe menus, sidewalk flower planters, and the Historic Piazza Clock Tower.
 - **Centerpiece Landmark**: Historic Tiered Marble Fountain (`buildPiazzaFountain`) centered in the Piazza roundabout (X: 50, Z: 50) featuring an octagonal marble basin, turquoise pool water, and animated water spray droplets splashing into the bowl.
 - **Traditional Street Vendor — Simitçi Hasan Usta**: Situated at X: 42.0, Z: 47.0 facing the central square. Iconic crimson red pushcart with polished brass spoke wheels, clear glass vitrine containing tiers of freshly baked sesame simits, wicker display tray, red-and-white scalloped parasol umbrella, and friendly animated vendor NPC waving to approaching drivers and honks. Offers fresh simits for 5 ₺ granting +1 reputation and energy sprint doping.
+- **Tarihi Çarşı Tramvay Hattı & Nostaljik Tramvay (`createTramView` - T42)**:
+  - **Gömme Çelik Ray Hattı**: Çarşı ana caddesi (Z: 34.0) boyunca X: 16.0 .. 82.0 arasında uzanan 67 metrelik çift gömme çelik ray (1.3m ray açıklığı, meter/narrow gauge). Her 2.2 metrede bir gömme travers taşları ve iki hatta çelik/ahşap hat sonu emniyet tamponları (X: 15.5 ve X: 82.5) ile sarı-siyah reflektörler.
+  - **Katener Havai Hat ve Direkleri**: Kaldırım kenarı boyunca (Z: 37.35) X: 16, 29, 42, 55, 68, 82 koordinatlarında 6 adet ferforje döküm kaideli direk, yola uzanan konsol kolları, seramik izolatörler ve Y: 4.2m seviyesinde boydan boya uzanan bakır temas teli.
+  - **Tarihi Çarşı Tramvay Durağı (X: 64.0, Z: 37.8)**: 8.5m x 2.2m yükseltilmiş ahşap/taş yolcu peronu, sarı tırtıklı kabartmalı emniyet çizgisi, engelli/yolcu erişim rampaları, Victorian/Ottoman tarzı 4 flütlü döküm sütunlu yeşil metal tonoz çatı, nostaljik hat güzergah panosu, ahşap bekleme bankı, bekleyen yolcu NPC'si ("Güleryüzlü Yolcu"), kırmızı-beyaz nostaljik durak direği ("DURAK · T2") ve gece ışıyan asılı kehribar fener.
+  - **İETT 1923 Beyoğlu Nostaljik Tramvay Modeli**:
+    - Boyutlar: 5.4m uzunluk, 2.0m genişlik, 3.2m yükseklik (pantografla 4.2m).
+    - Orijinal Beyoğlu tramvayı bordo gövde rengi (`#c0392b`), fildişi/krem pencere kuşağı (`#fdfefe`), altın sarısı süs çıtası, fener çatılı ahşap tavan ve havalandırma menfezleri.
+    - Her iki uçta açık makinist sahanlıkları, siyah ferforje korkuluklar, katlanır emniyet kapıları, pirinç el freni çarkı ve vatman kontrol kolu (reosta).
+    - Katenere temas eden çelik/pirinç elmas pantograf ve bakır sürtünme pabucu.
+    - Aydınlatılmış ön/arka hat tabelası: `"T2 NOSTALJİK TRAMVAY"`, vintage pirinç ön/arka fenerler ve gece ışıyan sıcak sarı yolcu camları.
+    - Yol seviyesi emniyet ızgarası (cowcatcher).
+  - **Vatman İhsan Efendi NPC**: Lacivert vatman ceketi, altın düğmeler, kasketli şapka ve pala bıyık. Tramvayın gidiş yönüne göre ön sahanlıkta yer alır. Oyuncu yaklaşıp korna (`H`) çaldığında sağ kolunu kaldırarak el sallar ve konuşma balonu gösterir (`"🚋 Vatman İhsan: Çan çan! Yol kargonun kaptan, buyur geç!"`).
+  - **Oynanış & Etkileşim (`src/game/tram.ts`)**:
+    - Tramvay hızı: ~3.6 m/s (~13 km/h).
+    - İstasyonda ~4 saniye duraklama yapar, varış ve kalkışta nostaljik pirinç çan çalar (`sound.tramBell()`).
+    - Terminus uçlarında yön değiştirir, kalkış çanı çalar.
+    - Oyuncu ray üzerinde önünü kapatırsa durup yol verir (`phase: "yielding"`).
+    - Durakta veya tramvay yanında duraklama (1.2s) "Nostaljik Hat Hatırası" bonusu kazandırır (+10 ₺, +1 itibar, konfeti patlaması).
+    - Şehir radarı / minimap üzerinde canlı hareket eden `🚋` simgesi.
 - **Architecture**: Multi-story commercial buildings, bakeries, cafes, boutique shops, and a central plaza with a marble statue column, tiered fountain, and historic clock tower at the alley entrance.
 - **Road & Traffic**: Dual-lane thoroughfares, heavy pedestrian crossings, active delivery loading zones, curbside parked vehicles.
 - **Soundscape**: Bustling market crowd murmur, distant cafe cup chimes, and lively merchant activity.
