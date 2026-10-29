@@ -112,10 +112,14 @@ export function label(text: string, color = "#23443d", bg = "#fff9e7") {
   c.fill();
   c.fillStyle = color;
   let fontSize = 52;
-  c.font = `bold ${fontSize}px system-ui`;
-  while (c.measureText(text).width > 470 && fontSize > 24) {
-    fontSize -= 2;
+  if (typeof c.measureText === "function") {
     c.font = `bold ${fontSize}px system-ui`;
+    while (c.measureText(text).width > 470 && fontSize > 24) {
+      fontSize -= 2;
+      c.font = `bold ${fontSize}px system-ui`;
+    }
+  } else {
+    c.font = "bold 52px system-ui";
   }
   c.textAlign = "center";
   c.textBaseline = "middle";
