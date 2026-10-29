@@ -2,57 +2,48 @@
 
 **Date**: 2026-10-29  
 **Branch**: `feat/mini-kargo`  
-**Latest Git Commit**: `c58a3ba`  
-**Current Milestone**: Dynamic Traffic Incidents, Road Work Hazards & Seaside Marina Boardwalk Life (Execution Run 15)  
+**Latest Git Commit**: `1db5cf9`  
+**Current Milestone**: Dynamic Weather Thunderstorm Lightning System & Grand Sahil Ferris Wheel (Execution Run 16)  
 **Victory Audit Status**: `VICTORY CONFIRMED`
 
 ## Verification Summary
-- **Unit & Integration Tests**: 54 test files, 726 passed, 0 failed (1.27s execution)
+- **Unit & Integration Tests**: 56 test files, 736 passed, 0 failed (1.31s execution)
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 144ms)
+- **Vite Production Build**: Successful (`dist/` generated in 146ms)
 - **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
 - **Persistence Compatibility**: Verified backwards compatibility for `localStorage` key `mini-kargo:v1`.
 
 ## Completed Improvements in this Run
-1. **Dynamic Traffic Incidents & Road Construction Hazards (T38)**:
-   - Established realistic municipal road work hazard zone ("🚧 YOL ÇALIŞMASI / BELEDİYE FEN İŞLERİ") at the Sanayi southern artery (X: 26, Z: -16):
-     - **Closed Lane Excavation & Debris**: Dark asphalt excavation trench (6.5m x 2.2m) covering the northern lane (Z: -14.5), layered gravel and sand mounds, red brick fragments, and construction rubble. Leaves the southern lane (Z: -18.0) open as a narrow single-lane bottleneck for traffic and player navigation.
-     - **Flashing Hazard Warning Tower**: Steel lattice mast with yellow/black diagonal hazard stripes, dual safety rails, warning sign ("TEK ŞERİT DİKKAT"), overhead amber LED flasher lens, and dynamic pulsing PointLight (1.5x day / 2.5x night emissive boost) oscillating at 0.4s intervals.
-     - **Reflective Safety Cones & Chevron Barricades**: 4 fluorescent orange traffic cones with dual white retroreflective bands and square weighted bases; 2 heavy timber A-frame barricades with alternating diagonal red and white stripes.
-     - **Municipal Road Crew NPCs ("Belediye Fen İşleri")**:
-       - *Kadir Usta (Flagman / Yönlendirici)*: High-visibility fluorescent vest with silver retroreflective safety stripes, orange hard hat, animated right-arm flag waving holding a dual-sided STOP/SLOW paddle. Callouts: *"👷 Kadir Usta: Kolay gelsin kaptan! Tek şeride dikkat! 🚧"* when honked at, and *"👷 Kadir Usta: Yavaş kaptan, şantiye burası!"* when speeding.
-       - *Murat Usta (Jackhammer Operator / Kazı Ustası)*: Orange work coveralls, yellow hard hat, holding a pneumatic jackhammer vibrating rhythmically against the asphalt with synchronous particle dust bursts.
-   - **Simulation & Gameplay (`src/game/road-work.ts`)**:
-     - Proximity audio & FX: Approaching within 18m triggers procedural pneumatic jackhammer drill audio (`sound.constructionDrill()`) and stone/concrete pulverization dust (`spawnConstructionDust`).
-     - "Dikkatli Şantiye Geçişi" Bonus: Passing through the single-lane bottleneck at a controlled safe speed (<=12.5 m/s) without reckless collisions awards +15 ₺ cash reward, +1 reputation bonus, and celebratory confetti with a 25-second cooldown.
-     - Radar minimap icon: `🚧` hazard icon at X: 26, Z: -16.
+1. **Dynamic Weather Thunderstorm & Lightning Flash System (T40)**:
+   - Implemented dynamic summer thunderstorms (`WeatherType: "storm"`) in `src/scene/weather.ts`:
+     - **Volumetric Downpour with Wind Tilt**: 420 volumetric rain drop streaks tracking player car with wind slant angle (`mesh.rotation.z = -0.16`), increased fall velocity (~40 m/s), and intense precipitation factor (1.35).
+     - **Procedural 3D Jagged Lightning Bolt**: 7-segment jagged lightning bolt procedurally generated in the sky branching down through storm clouds with dynamic double-strike flash decay.
+     - **Dynamic Sky Flash Illumination**: Spikes directional sun light intensity (+4.2) and hemisphere ambient light (+2.8) in `src/bootstrap.ts`, casting an electric blue-white sheen across wet tarmac, buildings, and vehicles.
+     - **Procedural Web Audio Thunder Roll (`sound.thunderRoll`)**: Multi-stage sound synthesis with initial 2200Hz discharge crackle, low sub-bass (sub-48Hz) rolling rumble tail, and dynamic car radio ducking.
+     - **Dynamic Road Puddle Expansion & Waves (`src/scene/puddles.ts`)**: Road puddles expand up to 18% in surface area during storms with heightened ripple ring frequencies.
+     - **HUD Weather Pill**: `⛈️ GÖK GÜRÜLTÜLÜ FIRTINA` badge.
 
-2. **Seaside Marina Boardwalk Cafe & Fishing NPCs (T39)**:
-   - Built authentic coastal promenade tea garden and pier fishing life in Sahil Şeridi:
-     - **Nostalgic Seaside Tea Garden ("☕ YALI ÇAY BAHÇESİ" - X: -60, Z: 83.2)**:
-       - 5.2m x 3.6m elevated timber deck platform along the shoreline, 4 rustic timber pergola pillars, red-and-white scalloped canvas shade awning, and marquee title sign ("☕ YALI ÇAY BAHÇESİ").
-       - Nostalgic A-frame chalkboard menu ("☕ Taze Çay 5₺ · Çıtır Simit 5₺ · 🌊 Deniz Havası Bedava").
-       - 3 round wooden tables with 6 woven wicker stools; each table topped with porcelain saucers, tulip-shaped glass cups with hot crimson tea, and brass stirring spoons.
-       - Heavy copper Turkish tea samovar station (*Semaver Tezgahı*) with polished marble counter, steam vents, and brass spigot.
-       - Animated Tea Master NPC *Rıza Dayı* in traditional white apron and flat cap, carrying a steel suspension tea tray (*Askılı Çay Tepsisi*) and greeting approaching drivers.
-       - 1-second pitstop in front of the tea garden serves fresh tea, triggers teaspoon clinking audio (`sound.teaSpoonClink()`), awards +1 reputation, and activates a 20-second "Tavşan Kanı Çay" refreshment buff (`#tea-pill`) improving vehicle steering stability and resetting fatigue.
-     - **Boardwalk Pier Fishing NPCs ("🎣 RASTGELE BALIKÇILAR")**:
-       - *Salih Reis (X: -48.5, Z: 96.0)*: Located at the pier edge in a yellow waterproof oilskin raincoat and sea captain's cap, holding a 2.8m carbon fishing rod angled over the water, floating red-and-white bobber, and galvanized bait bucket. Rhythmic rod tugging animation and periodic splash particles.
-       - *Kemal Ağabey (X: -51.5, Z: 92.0)*: Seated on a green folding canvas stool fishing with a pole rod along the western pier edge.
-       - Honking near the pier prompts Salih Reis to reel in his line with reel audio (`sound.fishingReel()`), water splash particles (`spawnWaterSplash`), and speech bubble: *"🎣 Salih Reis: Rastgele evlat! Bugün lüfer bol!"*.
-     - **Moored Wooden Rowboats ("Meltem" & "Poyraz")**:
-       - Traditional clinker-built wooden rowboats moored with hemp ropes to timber pier bollards (X: -46.4, Z: 93.0 and X: -53.6, Z: 94.2) featuring painted nameplates, oars, and dynamic harmonic wave bobbing physics (heave, pitch, roll).
-     - Radar minimap icon: `☕` seaside cafe icon at X: -60, Z: 83.2.
+2. **Grand Sahil Ferris Wheel & Amusement Pier Attraction (T41)**:
+   - Built landmark coastal attraction at Sahil Şeridi (X: -14.0, Z: 92.5):
+     - **Octagonal Lunapark Pier Foundation ("Lunapark İskelesi")**: 8.5m radius timber and granite platform over turquoise sea water, arched timber footbridge connector from the promenade (Z: 85 -> 89), cast-iron perimeter safety balusters, and 4 ornate amber globes.
+     - **A-Frame Structural Steel Lattice Towers**: Twin 15m turquoise (`#00cec9`) and white (`#f5f6fa`) towers with heavy cross-bracing, base anchor plates, and 3.4m central axle bearing hub.
+     - **Rotating 16m Double-Ring Wheel Truss**: Concentric outer (7.5m radius) and inner (6.1m radius) rims with diamond lattice trussing, 12 radial tubular spokes revolving continuously at 0.18 rad/s (~35s per revolution).
+     - **12 Passenger Gondolas with Upright Counter-Rotation**: Alternating bright colors (yellow, blue, red) with fiberglass tub, canopy roof, safety grab bar, acrylic windows, and strict gravity counter-rotation (`gondola.rotation.z = -wheelGroup.rotation.z`) keeping passengers level.
+     - **24 Animated LED Chase Lights**: Perimeter rim LED spheres pulsating in cyclic waves of gold, cyan, pink, and white with 2.4x night emissive boost.
+     - **Nostalgic Ticket Booth ("🎡 BİLET GİŞESİ · 15₺")**: Classic crimson timber kiosk with red-and-white striped awning and marquee signage.
+     - **Animated Operator NPC ("🎡 Lunaparkçı Şevket Usta")**: Stands at boarding deck in striped festival vest and straw boater hat, greeting drivers upon proximity or honk with waving arm and speech bubble: *"🎡 Lunaparkçı Şevket: Hoş geldin kaptan! Şehir manzarası buradan harika! 🎡"*.
+     - **"Sahil Neşesi" Gameplay Reward (`src/game/ferris-wheel.ts`)**: Stopping at boarding deck (within 6.5m for 1.2s) awards +15 ₺ cash reward, +1 reputation bonus, celebratory confetti, and procedural 4-note ascending carnival chime (`sound.carnivalChime()`).
+     - **Radar Minimap Icon**: `🎡` icon at X: -14, Z: 92.5.
 
 ## Exact Next Development Task
-- **T40 — Dynamic Weather Day-to-Night Thunderstorm & Lightning Flash System**: Emergent summer thunderstorms with volumetric heavy rain, distant procedural rolling thunder audio, dynamic sky flash illumination, and wet puddle expansion.
-- **T41 — Grand Sahil Ferris Wheel & Amusement Pier Attraction**: Animated revolving Ferris wheel with illuminated gondolas on the coastal breakwater.
+- **T42 — Historic Çarşı Tramway Heritage Line & Nostalgic Street Tram**: Classic red nostalgic streetcar / tram (like the famous Taksim/Beyoğlu Nostaljik Tramvay "İETT 1923") running along a dedicated central rail line down the main Çarşı commercial thoroughfare with overhead catenary wire masts, animated bell ding ("Çan çan!" `sound.tramBell()`), passenger boarding station, and slow-moving historic streetcar sharing the boulevard, yielding to kargo van on horn.
+- **T43 — Industrial Sanayi Freight Rail Spur & Shunting Locomotive**: Industrial rail spur cutting through Sanayi with crossing gates, flashing red crossbuck signals (`sound.railCrossing()`), diesel shunter locomotive, and heavy flatcars loaded with cargo containers and machinery.
 
 ## Quick Resume Instructions
 To test and run locally:
 ```bash
 cd games/mini-kargo
-npm test                # Run 726 unit & E2E tests
+npm test                # Run 736 unit & E2E tests
 npm run typecheck       # Verify TypeScript types
 npm run build           # Build client bundle
 npm run test:browser    # Run Playwright visual smoke tests
