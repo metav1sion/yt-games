@@ -82,6 +82,11 @@ import {
   updateFishingHarbour,
   triggerChefTemelHonk,
 } from "./game/fishing-harbour";
+import {
+  createAutoRepairState,
+  updateAutoRepair,
+  triggerMechanicHonk,
+} from "./game/auto-repair";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -141,6 +146,7 @@ export async function startGame(app: HTMLElement) {
   let trainState = createTrainState();
   let communityParkState = createCommunityParkState();
   let fishingHarbourState = createFishingHarbourState();
+  let autoRepairState = createAutoRepairState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -221,6 +227,7 @@ export async function startGame(app: HTMLElement) {
       getTrainState: () => trainState,
       getCommunityParkState: () => communityParkState,
       getFishingHarbourState: () => fishingHarbourState,
+      getAutoRepairState: () => autoRepairState,
     };
   }
   const fleet = createCourierFleet({
@@ -604,6 +611,8 @@ export async function startGame(app: HTMLElement) {
       world.communityPark.onPlayerHonk(vehicle.position);
       triggerChefTemelHonk(fishingHarbourState, vehicle.position);
       world.fishingHarbour.onPlayerHonk(vehicle.position);
+      triggerMechanicHonk(autoRepairState, vehicle.position);
+      world.autoRepair.onPlayerHonk(vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -907,6 +916,8 @@ export async function startGame(app: HTMLElement) {
       world.communityPark.onPlayerHonk(vehicle.position);
       triggerChefTemelHonk(fishingHarbourState, vehicle.position);
       world.fishingHarbour.onPlayerHonk(vehicle.position);
+      triggerMechanicHonk(autoRepairState, vehicle.position);
+      world.autoRepair.onPlayerHonk(vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -1262,6 +1273,47 @@ export async function startGame(app: HTMLElement) {
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
 
+        // Sanayi "Usta Eller Oto Sanayi" Tamirhanesi & Araç Bakım Lifti Simülasyonu (T46)
+        const autoRepairRes = updateAutoRepair(
+          autoRepairState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (autoRepairRes.wrenchPlayed) {
+          sound.wrenchClick();
+        }
+        if (autoRepairRes.awardedRepairBonus) {
+          sound.wrenchClick(1.0);
+          delivery = {
+            ...delivery,
+            packageDamage: 0,
+            vehicleDamage: 0,
+          };
+          const maxNitro =
+            (1 + (progression.upgrades.nitro ?? 0) * (TUNING.nitroMaxBonus ?? 0.25)) *
+            (vehicle.supercharged ? 1.25 : 1.0);
+          vehicle.nitro = maxNitro;
+          contactDamage.reset();
+          progression = {
+            ...progression,
+            money: progression.money + autoRepairRes.cashBonus,
+            reputation: progression.reputation + autoRepairRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          particles.spawnImpactSparks(vehicle.position);
+          hud.showToast("🔧 SANAYİ BAKIMI TAMAMLANDI! +10 ₺ (+1 İtibar, Kargo Tamiri & Nitro Full)", 3500);
+        }
+        world.autoRepair.update(
+          dt,
+          autoRepairState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
         );
@@ -1457,6 +1509,12 @@ export async function startGame(app: HTMLElement) {
         world.fishingHarbour.update(
           dt,
           fishingHarbourState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+        world.autoRepair.update(
+          dt,
+          autoRepairState,
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
@@ -1680,6 +1738,7 @@ export async function startGame(app: HTMLElement) {
       world.train.dispose();
       world.communityPark.dispose();
       world.fishingHarbour.dispose();
+      world.autoRepair.dispose();
       renderer.dispose();
     },
     { once: true },

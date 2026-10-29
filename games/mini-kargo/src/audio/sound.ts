@@ -1393,6 +1393,47 @@ export function createSound() {
         }
       } catch {}
     },
+    wrenchClick(volume = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      const vol = Math.max(0, Math.min(1, volume));
+      if (vol <= 0.02) return;
+      try {
+        const at = ctx.currentTime;
+        // Cırcır lokma anahtar dişli dönüş tıklamaları (4-5 hızlı mikro-tıkırtı)
+        const clicks = [0, 0.045, 0.09, 0.14, 0.195];
+        for (let i = 0; i < clicks.length; i++) {
+          const t = at + clicks[i];
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const filter = ctx.createBiquadFilter();
+
+          osc.type = "triangle";
+          const baseFreq = 3400 + i * 160 + (Math.random() * 80 - 40);
+          osc.frequency.setValueAtTime(baseFreq, t);
+          osc.frequency.exponentialRampToValueAtTime(1400, t + 0.022);
+
+          filter.type = "bandpass";
+          filter.frequency.setValueAtTime(baseFreq, t);
+          filter.Q.setValueAtTime(6.0, t);
+
+          gain.gain.setValueAtTime(0.12 * vol, t);
+          gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.025);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.03);
+          osc.onended = () => {
+            osc.disconnect();
+            filter.disconnect();
+            gain.disconnect();
+          };
+        }
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

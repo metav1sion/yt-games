@@ -356,5 +356,8 @@ describe("district traffic lanes", () => {
     expect(world.fishingHarbour).toBeDefined();
     expect(world.fishingHarbour.obstacles.length).toBeGreaterThan(0);
     expect(world.fishingHarbour.group.name).toBe("fishing-harbour");
+    expect(world.autoRepair).toBeDefined();
+    expect(world.autoRepair.obstacles.length).toBeGreaterThan(0);
+    expect(world.autoRepair.group.name).toBe("auto-repair-view");
   });
 });

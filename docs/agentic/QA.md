@@ -75,22 +75,30 @@
   - `artifacts/carsi-nostalgic-tram.png`: Verified visual fidelity of Historic Çarşı Tram ("İETT 1923" Nostaljik Tramvay) in crimson red and ivory livery, clerestory monitor roof, diamond pantograph attached to overhead catenary wire, open driver vestibules with Vatman İhsan Efendi waving, 3D speech bubble callout (`"Vatman İhsan: Çan çan! Yol kargonun kaptan, buyur geç! 📦"`), raised timber passenger boarding platform with green canopy shelter ("Tarihi Çarşı Tramvay Durağı"), round stop sign post ("DURAK · T2"), waiting passenger NPC on timber bench, and live tracking icon (`🚋`) on the radar minimap. Zero clipping through boulevards or delivery routes.
   - `artifacts/sanayi-freight-train.png`: Verified visual fidelity of Industrial Sanayi Freight Rail Spur and TCDD-style Diesel Shunter Locomotive in industrial safety yellow and orange livery, heavy underframe chassis with yellow/black hazard chevron pilot beams, dual 2-axle bogies with flanged wheels, illuminated operator cab, Makinist Cemal Usta NPC waving with speech bubble (`"🚂 Makinist Cemal: Düüüt! Sanayi Ekspresi seyrinde, hemzemin geçide dikkat! 📦"`), automated level crossing at X: 50 with St. Andrew's crossbuck signs and lowered red/white striped barrier arms, coupled 20ft Intermodal Container Flatcar in cobalt blue with "TCDD TAŞIMACILIK" lettering, heavy machinery flatcar with giant timber cable spool and tie-down strapped cargo crate, elevated yellow industrial pipeline, and real-time radar minimap tracking icon (`🚂`). Zero clipping or road blockages.
   - `artifacts/gunes-community-park.png`: Verified visual fidelity of Güneş Mahallesi Community Park, Traditional Timber Gazebo / Kamelya with octagonal terracotta pitched roof and finial, multi-tier children's playground fortress with climbing ladder and bright yellow slide, dynamic red A-frame swing set with suspended seats, orange spring rocker pony ("Atlı Zıpzıp"), rotating carousel, wooden sandbox, grand entrance arch ("🏡 GÜNEŞ MAHALLESİ PARK & ÇOCUK ALANI"), white picket fence, raised rose and lavender flowerbeds, Hayrat stone drinking fountain, Bahçıvan Selahattin Efendi NPC in olive-green overalls and straw hat watering flowers and waving with active speech bubble callout (`"🌻 Bahçıvan Selahattin: Hoş geldin evlat! Parkımızın gülleri gibi açtın, kolay gelsin! 🌹"`), and real-time radar tracking icon (`🌳`). Zero clipping, wide clear peripheral roads (>4.5m distance).
+  - `artifacts/sahil-fishing-harbour.png`: Verified visual fidelity of Sahil Marina Balıkçı Barınağı & Taze Balık-Ekmek Teknesi ("Tarihi Marmara Balıkçısı") with scalloped canopy, sizzling mackerel fillets, bread halves, Chef NPC Balıkçı Temel Reis, 2 moored wooden trawlers ("Karadenizli" & "Albatros"), hovering seagull flock, and minimap tracking icon (`🐟`).
+  - `artifacts/sanayi-auto-repair.png`: Verified visual fidelity of Sanayi "Usta Eller Oto Sanayi" Tamirhanesi & Araç Bakım Lifti (X: 78.0, Z: -57.5) facing the Sanayi boulevard (Z: -50) directly adjacent to the Container Gantry Crane:
+    - Workshop hangar concrete apron with oil stain decals, yellow/black hazard perimeter curbs, corrugated steel siding, and large illuminated marquee sign ("🔧 USTA ELLER OTO SANAYİ · MOTOR & MEKANİK 🚗").
+    - Two-post working hydraulic vehicle lift in safety blue with dynamic elevating classic turquoise coupe.
+    - Full mechanical workshop detailing: red 5-drawer rolling tool chest, tire changing machine with turntable and bead breaker, digital wheel balancer, heavy workbench with cast iron bench vise and tool shadow board, tire storage rack with 4 tires, stacked loose wheels, 3 industrial 200L oil drum barrels (Castrol, Mobil, Opet) with rotary hand pumps, and dual oxygen/acetylene gas cylinders.
+    - Chief Mechanic NPC "Tamirci Muharrem Usta" in navy coveralls and red bandana holding a chrome ratchet socket wrench with animated tightening motion, vehicle head tracking, celebratory wrench-waving upon player honk (`H`) or approach, and 3D speech bubble callout (`"🔧 Tamirci Muharrem Usta: Gel kaptan geeel! Motorun sesinden anlarım, saat gibi çalışacak! 🚗💨"`).
+    - Player service bay with floor marking box, white directional arrow, and curbside digital air & water inflator tower (32 PSI).
+    - Real-time radar tracking icon (`🔧`) at X: 78, Z: -57.5.
 
 ## Browser Automation & Visual QA (Playwright)
 - **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser`
-- **Execution Date**: 2026-10-29 (Execution Run 20 Verification — Sahil Marina Balıkçı Barınağı & Taze Balık-Ekmek Teknesi T45)
-- **Automated Tests**: 64 test files, 776 passed, 0 failed
+- **Execution Date**: 2026-10-29 (Execution Run 21 Verification — Sanayi "Usta Eller Oto Sanayi" Tamirhanesi & Araç Bakım Lifti T46)
+- **Automated Tests**: 66 test files, 785 passed, 0 failed
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 161ms)
+- **Vite Production Build**: Successful (`dist/` generated in 147ms)
 - **Viewports Tested**:
   1. **Desktop (1280x800)**:
      - Shift start button click: PASS
      - 3D WebGL canvas initialization: PASS
      - HUD, minimap, topbar time pill (`☀️ ÖĞLE`), weather pill (`🌤️ AÇIK` / `🌧️ YAZ YAĞMURU` / `⛈️ FIRTINA`), radio pill (`📻 RADYO: KAPALI`), supercharge pill (`⚡ SÜPER ŞARJ`), snack buff pill (`🥨 ENERJİ`), wash buff pill (`✨ PIRIL PIRIL`), tea buff pill (`☕ TAZE ÇAY`): PASS
      - Keyboard driving controls (W, A, D, Arrow keys), Horn (`H` key), and Radio toggle (`R` key): PASS
-     - Sahil Marina Balıkçı Barınağı & Taze Balık-Ekmek Teknesi (T45): Weathered cedar boardwalk pier, entrance arch ("⚓ MARİNA BALIKÇI BARINAĞI"), floating fish-bread boat ("Tarihi Marmara Balıkçısı") with scalloped green/gold canopy, sizzling mackerel fillets, bread halves, Chef NPC Balıkçı Temel Reis, 2 moored wooden trawlers ("Karadenizli" & "Albatros"), hovering seagull flock, and minimap tracking icon (`🐟`): VERIFIED
+     - Sanayi "Usta Eller Oto Sanayi" Tamirhanesi & Araç Bakım Lifti (T46): Two-post working hydraulic vehicle lift, hoisted turquoise coupe with dynamic elevation, tire changing machine, wheel balancer, tool chest, oil barrels, workbench, Chief Mechanic Muharrem Usta with chrome socket wrench & speech bubble, player pitstop service bay, and minimap tracking icon (`🔧`): VERIFIED
      - Console errors: 0
-     - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png` and `games/mini-kargo/artifacts/sahil-fishing-harbour.png`
+     - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png` and `games/mini-kargo/artifacts/sanayi-auto-repair.png`
   2. **Mobile Portrait (390x844)**:
      - Responsive canvas & UI scaling: PASS
      - Touch joystick, drift, nitro & dedicated horn button (`📢 KORNA`): PASS
@@ -100,7 +108,7 @@
      - Screenshot: `games/mini-kargo/artifacts/mobile-portrait-390x844.png`
   3. **Mobile Landscape (844x390)**:
      - Landscape canvas & control separation: PASS
-     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, and fishing harbour `🐟` icons) and action buttons isolated: PASS
+     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, fishing harbour `🐟`, and auto repair workshop `🔧` icons) and action buttons isolated: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-landscape-844x390.png`
 

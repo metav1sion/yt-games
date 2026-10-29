@@ -24,6 +24,7 @@ import { createTramView, type TramView } from "./tram";
 import { createTrainView, type TrainView } from "./train";
 import { createCommunityParkView, type CommunityParkView } from "./community-park";
 import { createFishingHarbourView, type FishingHarbourView } from "./fishing-harbour";
+import { createAutoRepairView, type AutoRepairView } from "./auto-repair";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
@@ -39,6 +40,7 @@ export type { TramView } from "./tram";
 export type { TrainView } from "./train";
 export type { CommunityParkView } from "./community-park";
 export type { FishingHarbourView } from "./fishing-harbour";
+export type { AutoRepairView } from "./auto-repair";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -60,6 +62,7 @@ export type World = {
   train: TrainView;
   communityPark: CommunityParkView;
   fishingHarbour: FishingHarbourView;
+  autoRepair: AutoRepairView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -132,6 +135,11 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   const fishingHarbour = createFishingHarbourView();
   group.add(fishingHarbour.group);
   ctx.baseObstacles.push(...fishingHarbour.obstacles);
+
+  // Sanayi "Usta Eller Oto Sanayi" Tamirhanesi & Araç Bakım Lifti (T46)
+  const autoRepair = createAutoRepairView();
+  group.add(autoRepair.group);
+  ctx.baseObstacles.push(...autoRepair.obstacles);
 
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;
@@ -208,6 +216,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     train,
     communityPark,
     fishingHarbour,
+    autoRepair,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);

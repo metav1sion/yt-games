@@ -111,6 +111,7 @@ describe("audio system", () => {
     sound.trainHorn();
     sound.windChime();
     sound.fishSizzle(0.9);
+    sound.wrenchClick(1.0);
     sound.setDistrict("coastal");
     sound.setRadioStation("cozy_chill");
     expect(sound.getRadioStation()).toBe("cozy_chill");
@@ -159,6 +160,7 @@ describe("audio system", () => {
       sound.railCrossing();
       sound.trainHorn();
       sound.fishSizzle(1.0);
+      sound.wrenchClick(1.0);
     }).not.toThrow();
 
     sound.dispose();
