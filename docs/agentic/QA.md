@@ -50,21 +50,24 @@
   - `src/game/seaside-life.test.ts` (5 tests) — Seaside cafe dwell timer, 1s tea serving threshold, 20s tea buff duration, reputation bonus, fisherman reel sound on honk, and cafe greeting
   - `src/scene/seaside-life.test.ts` (2 tests) — 3D tea garden deck, pergola columns, red/white canvas awning, tables with wicker stools, saucers with tulip glasses, copper samovar counter, Tea Master Rıza Dayı, fishing NPCs (Salih Reis & Kemal Ağabey), moored wooden rowboats with wave physics, and non-blocking colliders
   - `src/scene/particles.test.ts` (11 tests) — Money stream, confetti, drift, nitro, sparks, crash smoke, landing dust, puddle splash, EV sparks, wash foam spray, car shine sparkles, floating hearts, construction dust, and coastal water splash
-  - `src/scene/world.test.ts` (18 tests) — Road connectivity, delivery zone clearance, boulevard clearance, district traffic & pedestrian paths, night factor emissive modulation, integrated traffic lights, bus stops, gas station, road work hazards, and seaside life
+  - `src/scene/weather.test.ts` (3 tests) — Dynamic weather transitions (clear / summer rain / thunderstorm), 420 volumetric rain streaks with wind tilt, 3D jagged lightning bolt, road wetness & specular reflection, disposal
+  - `src/game/ferris-wheel.test.ts` (6 tests) — Ferris wheel rotation angle, chase light phase, 1.2s boarding dwell timer, Sahil Neşesi cash & rep bonus (+15 ₺, +1 rep), cooldown timer, operator greeting on honk
+  - `src/scene/ferris-wheel.test.ts` (3 tests) — 3D pier foundation, twin A-frame steel lattice towers, rotating double-ring wheel truss, 12 passenger gondolas with gravity counter-rotation, 24 animated LED chase lights, ticket booth, operator NPC, and colliders
+  - `src/audio/sound.test.ts` (4 tests) — Motor, horn, crash, money drain, jingle, launch/landing, clean driving bonus, combo fanfare, ambience, rain intensity, fauna cries (seagull, pigeon, cat, dog), leaf crunch, surf crash, welding arc buzz, package drop thud & tape rustle, scooter courier horn beep, puddle splash whoosh, customer tip coin chime, tea spoon clink, fishing reel click, multi-stage rolling thunder, carnival chime, radio integration
+  - `src/scene/world.test.ts` (18 tests) — Road connectivity, delivery zone clearance, boulevard clearance, district traffic & pedestrian paths, night factor emissive modulation, integrated traffic lights, bus stops, gas station, road work hazards, seaside life, and grand ferris wheel attraction
   - `tests/e2e/mini-kargo-e2e.test.ts` (242 tests) — Opaque-box E2E tests covering features F01–F21 across Tiers 1–4
-  - **Total**: 54 test files, 726 passed, 0 failed.
+  - **Total**: 56 test files, 736 passed, 0 failed.
 
 ## Browser Automation & Visual QA (Playwright)
 - **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser`
-- **Execution Date**: 2026-10-29 (Sprint 15 Verification — Road Work Hazards, Flasher Tower, Municipal Crew & Seaside Marina Boardwalk Life)
+- **Execution Date**: 2026-10-29 (Sprint 16 Verification — Thunderstorm Lightning System & Grand Sahil Ferris Wheel)
 - **Viewports Tested**:
   1. **Desktop (1280x800)**:
      - Shift start button click: PASS
      - 3D WebGL canvas initialization: PASS
-     - HUD, minimap, topbar time pill (`☀️ ÖĞLE`), weather pill (`🌤️ AÇIK`), radio pill (`📻 RADYO: KAPALI`), supercharge pill (`⚡ SÜPER ŞARJ`), snack buff pill (`🥨 ENERJİ`), wash buff pill (`✨ PIRIL PIRIL`), tea buff pill (`☕ TAZE ÇAY`): PASS
+     - HUD, minimap, topbar time pill (`☀️ ÖĞLE`), weather pill (`🌤️ AÇIK` / `🌧️ YAZ YAĞMURU` / `⛈️ FIRTINA`), radio pill (`📻 RADYO: KAPALI`), supercharge pill (`⚡ SÜPER ŞARJ`), snack buff pill (`🥨 ENERJİ`), wash buff pill (`✨ PIRIL PIRIL`), tea buff pill (`☕ TAZE ÇAY`): PASS
      - Keyboard driving controls (W, A, D, Arrow keys), Horn (`H` key), and Radio toggle (`R` key): PASS
-     - Sanayi southern artery Road Work Hazard Zone with asphalt excavation trench, rubble piles, flashing amber warning tower, retroreflective cones, A-frame chevron barricades, and municipal crew (Kadir Usta & Murat Usta): VERIFIED
-     - Sahil Şeridi "☕ Yalı Çay Bahçesi" with pergola posts, canvas awning, tables with tulip glasses of hot tea, copper samovar counter, Tea Master Rıza Dayı, pier fishing anglers (Salih Reis & Kemal Ağabey), and moored wooden rowboats ("Meltem" & "Poyraz") bobbing on waves: VERIFIED
+     - Grand Sahil Ferris Wheel & Amusement Pier ("🎡 BÜYÜK SAHİL DÖNME DOLABI") with octagonal pier, 15m turquoise/white A-frame towers, rotating 16m wheel truss, 12 colorful gondolas with upright counter-rotation, 24 pulsing chase lights, ticket booth, and operator NPC Lunaparkçı Şevket Usta: VERIFIED
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png`
   2. **Mobile Portrait (390x844)**:
@@ -76,7 +79,7 @@
      - Screenshot: `games/mini-kargo/artifacts/mobile-portrait-390x844.png`
   3. **Mobile Landscape (844x390)**:
      - Landscape canvas & control separation: PASS
-     - Minimap (with gas station `⛽`, road work `🚧`, and tea cafe `☕` icons) and action buttons isolated: PASS
+     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, and ferris wheel `🎡` icons) and action buttons isolated: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-landscape-844x390.png`
 

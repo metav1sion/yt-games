@@ -19,6 +19,7 @@ import { createBusStops, type BusStopsView } from "./bus-stops";
 import { createGasStationView, type GasStationView } from "./gas-station";
 import { createRoadWorkView, type RoadWorkView } from "./road-work";
 import { createSeasideLifeView, type SeasideLifeView } from "./seaside-life";
+import { createFerrisWheelView, type FerrisWheelView } from "./ferris-wheel";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
@@ -29,6 +30,7 @@ export type { BusStopsView } from "./bus-stops";
 export type { GasStationView } from "./gas-station";
 export type { RoadWorkView } from "./road-work";
 export type { SeasideLifeView } from "./seaside-life";
+export type { FerrisWheelView } from "./ferris-wheel";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -45,6 +47,7 @@ export type World = {
   gasStation: GasStationView;
   roadWork: RoadWorkView;
   seasideLife: SeasideLifeView;
+  ferrisWheel: FerrisWheelView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -92,6 +95,11 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   const seasideLife = createSeasideLifeView();
   group.add(seasideLife.group);
   ctx.baseObstacles.push(...seasideLife.obstacles);
+
+  // Büyük Sahil Dönme Dolabı & Lunapark İskelesi (T41)
+  const ferrisWheel = createFerrisWheelView();
+  group.add(ferrisWheel.group);
+  ctx.baseObstacles.push(...ferrisWheel.obstacles);
 
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;
@@ -163,6 +171,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     gasStation,
     roadWork,
     seasideLife,
+    ferrisWheel,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);

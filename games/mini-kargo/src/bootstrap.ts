@@ -57,6 +57,11 @@ import {
   updateSeasideLife,
   triggerSeasideHonk,
 } from "./game/seaside-life";
+import {
+  createFerrisWheelState,
+  updateFerrisWheel,
+  triggerFerrisWheelHonk,
+} from "./game/ferris-wheel";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -111,6 +116,7 @@ export async function startGame(app: HTMLElement) {
   let gasStationState = createGasStationState();
   let roadWorkState = createRoadWorkState();
   let seasideLifeState = createSeasideLifeState();
+  let ferrisWheelState = createFerrisWheelState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -553,6 +559,7 @@ export async function startGame(app: HTMLElement) {
       world.gasStation.onPlayerHonk(vehicle.position);
       triggerRoadWorkHonk(roadWorkState, vehicle.position);
       triggerSeasideHonk(seasideLifeState, vehicle.position, sound, particles);
+      triggerFerrisWheelHonk(ferrisWheelState, vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -677,6 +684,16 @@ export async function startGame(app: HTMLElement) {
       // Dinamik Gökyüzü, Atmosfer (Sabah/Öğle/Gün Batımı/Alacakaranlık), Hava Durumu ve Şehir Animasyonları
       const atmoState = atmosphere.update(dt, vehicle.position);
       const weatherState = weather.update(dt, vehicle.position);
+
+      // Fırtına Şimşek Parlaması & Gök Gürültüsü Sentezi (T40)
+      if (weatherState.lightningFlash > 0.01) {
+        sun.intensity += weatherState.lightningFlash * 4.2;
+        hemi.intensity += weatherState.lightningFlash * 2.8;
+      }
+      if (weatherState.lightningTriggered) {
+        sound.thunderRoll(1.0);
+      }
+
       world.update(
         dt,
         atmoState.isNightOrDusk,
@@ -839,6 +856,7 @@ export async function startGame(app: HTMLElement) {
           world.gasStation.onPlayerHonk(vehicle.position);
           triggerRoadWorkHonk(roadWorkState, vehicle.position);
           triggerSeasideHonk(seasideLifeState, vehicle.position, sound, particles);
+          triggerFerrisWheelHonk(ferrisWheelState, vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -1042,6 +1060,33 @@ export async function startGame(app: HTMLElement) {
           atmoState.isNightOrDusk,
         );
 
+        // Büyük Sahil Dönme Dolabı & Lunapark İskelesi Simülasyonu (T41)
+        const fwRes = updateFerrisWheel(
+          ferrisWheelState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (fwRes.awardedJoyBonus) {
+          progression = {
+            ...progression,
+            money: progression.money + fwRes.cashBonus,
+            reputation: progression.reputation + fwRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          sound.carnivalChime();
+          particles.spawnConfetti(vehicle.position);
+          hud.showToast("🎡 SAHİL NEŞESİ! +15 ₺ (+1 İtibar)", 3200);
+        }
+        world.ferrisWheel.update(
+          dt,
+          ferrisWheelState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
         );
@@ -1210,6 +1255,12 @@ export async function startGame(app: HTMLElement) {
         puddles.update(dt, vehicle.position, 0, 0, weatherState.wetness);
         pitstopView.update(dt, pitstopState, vehicle.position);
         streetVendorsView.update(dt, streetVendorsState, vehicle.position);
+        world.ferrisWheel.update(
+          dt,
+          ferrisWheelState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
       }
       if (started) {
         const here = districtAt(vehicle.position.x, vehicle.position.z);
@@ -1423,6 +1474,7 @@ export async function startGame(app: HTMLElement) {
       urbanFauna.dispose();
       pitstopView.dispose();
       streetVendorsView.dispose();
+      world.ferrisWheel.dispose();
       renderer.dispose();
     },
     { once: true },

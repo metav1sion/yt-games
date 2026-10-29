@@ -71,7 +71,8 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
   - Traditional Street Vendor — Kestaneci & Mısır Recep Usta: Situated along the promenade at X: -44.0, Z: 83.2. Turkish crimson dual-compartment street cart with brass trim, charcoal roasting grill with glowing embers and sizzling chestnuts, steaming sweet corn cauldron with animated steam puffs, striped umbrella, and animated vendor NPC with tongs. Sells hot chestnuts/corn for 5 ₺ with cheerful callouts, +1 reputation, and energy boost.
   - Seaside Boardwalk Tea Garden ("☕ Yalı Çay Bahçesi" - X: -60, Z: 83.2): 5.2m x 3.6m elevated timber deck along shoreline, pergola pillars, red-and-white canvas canopy, 3 round tables with 6 woven wicker stools, porcelain saucers with tulip glasses of hot tea, copper samovar station with steam vents, and Tea Master NPC Rıza Dayı. 1s pitstop awards +1 reputation, clinking spoon audio (`sound.teaSpoonClink()`), and 20s "Tavşan Kanı Çay" buff (`#tea-pill`) improving vehicle steering stability and fatigue.
   - Boardwalk Pier Fishing Life: Salih Reis (X: -48.5, Z: 96.0) at the pier edge in yellow waterproof oilskin raincoat with 2.8m carbon rod, floating bobber, bait bucket, rod tugging, and reel sound (`sound.fishingReel()`) with splash particles (`spawnWaterSplash`); Kemal Ağabey on folding canvas stool. Moored wooden rowboats ("Meltem" & "Poyraz") bobbing harmonically on ocean waves.
-- **Architecture**: Waterfront restaurants, marina harbor master station, boardwalk pavilions, resort beach huts, canoes, seaside lounging decks, and lifeguard watchtower.
+  - Grand Sahil Ferris Wheel & Amusement Pier ("🎡 BÜYÜK SAHİL DÖNME DOLABI" - X: -14.0, Z: 92.5): Historic timber & stone amusement pier foundation (radius 8.5m) extending into the ocean with footbridge connector from the promenade. 15m towering turquoise/white dual A-frame steel lattice towers, rotating 16m diameter wheel truss with 12 radial spokes, 12 colorful passenger gondolas (yellow, blue, red) counter-rotating to remain upright with gravity, 24 animated perimeter LED chase lights with night emissive boost, nostalgic ticket booth ("🎡 BİLET GİŞESİ · 15₺"), and animated Operator NPC Lunaparkçı Şevket Usta waving and greeting drivers upon honk. Stopping at boarding platform awards "Sahil Neşesi" bonus (+15 ₺ & +1 rep) with celebratory confetti and procedural carnival chime (`sound.carnivalChime()`). Radar icon: `🎡`.
+- **Architecture**: Waterfront restaurants, marina harbor master station, boardwalk pavilions, resort beach huts, canoes, seaside lounging decks, lifeguard watchtower, and amusement pier.
 - **Road & Traffic**: Winding scenic coastal boulevard, bridge crossings, promenade sidewalks, seaside view benches.
 - **Soundscape**: Gentle rhythmic rolling ocean waves (LFO-modulated pink noise surf) and occasional distant seagull calls.
 - **Key Delivery Points**: 4 marina piers, seafood bistro patios, and coastal boardwalk kiosks.
@@ -89,12 +90,13 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
 
 ---
 
-## 6. Dynamic Weather & Wet Road Reflection System
-- **Weather Cycle**: Natural dynamic transitions between clear skies ("Açık Hava" `🌤️`) and refreshing summer rain showers ("Yaz Yağmuru" `🌧️`).
-- **3D Rain Particles**: 350 volumetric falling rain streaks tracking vehicle position with speed ~30 m/s and ground resets.
-- **Wet Road Specular Sheen**: Real-time asphalt surface reflectivity shader adaptation (`setWorldWetness`). As rain falls, road roughness drops from 0.85 to 0.22 with 0.2 metalness, producing glistening specular tarmac reflections under sunlight and headlights.
-- **Procedural Rain Audio**: Bandpass-filtered Web Audio synthesis at 2400Hz simulating continuous soothing rain patter on the vehicle body.
-- **HUD Weather Pill**: Real-time weather status badge displayed in topbar (`🌤️ AÇIK` / `🌧️ YAZ YAĞMURU`).
+## 6. Dynamic Weather, Thunderstorm & Wet Road Reflection System
+- **Weather Cycle**: Natural dynamic transitions between clear skies ("Açık Hava" `🌤️`), refreshing summer rain showers ("Yaz Yağmuru" `🌧️`), and sudden summer thunderstorms ("Gök Gürültülü Fırtına" `⛈️`).
+- **3D Rain Particles & Wind Tilt**: 420 volumetric falling rain streaks tracking vehicle position with speed ~30 m/s (normal rain) and ~40 m/s with wind slant (`mesh.rotation.z = -0.16`) during thunderstorms.
+- **3D Procedural Lightning & Flash Illumination**: Procedural 7-segment jagged lightning bolt in the clouds with dynamic double-strike flash illumination, spiking directional sun and hemisphere light intensity (+4.2 / +2.8) and casting brilliant electric blue-white sheen across the wet city.
+- **Procedural Thunder Web Audio**: Multi-stage audio synthesis featuring initial sharp lightning discharge crackle (2200Hz bandpass) followed by deep sub-bass rolling rumble (sub-48Hz triangle & filtered brown noise) echoing across districts with radio ducking.
+- **Wet Road Specular Sheen & Dynamic Puddle Expansion**: Real-time asphalt surface reflectivity shader adaptation (`setWorldWetness`). Road roughness drops from 0.85 to 0.22 with 0.2 metalness. Puddles dynamically expand by up to 18% during thunderstorms with heightened ripple frequency.
+- **HUD Weather Pill**: Real-time weather status badge displayed in topbar (`🌤️ AÇIK` / `🌧️ YAZ YAĞMURU` / `⛈️ GÖK GÜRÜLTÜLÜ FIRTINA`).
 
 ---
 

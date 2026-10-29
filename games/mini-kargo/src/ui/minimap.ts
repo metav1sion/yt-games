@@ -259,7 +259,7 @@ export function createMinimap(
     ctx.strokeRect(dp.x - 2.5, dp.y - 2.5, 5, 5);
     ctx.restore();
 
-    // 5.5. ŞEHİR İLGİ ODAKLARI (⛽ Akaryakıt, 🚧 Yol Çalışması, ☕ Sahil Çay Bahçesi)
+    // 5.5. ŞEHİR İLGİ ODAKLARI (⛽ Akaryakıt, 🚧 Yol Çalışması, ☕ Sahil Çay Bahçesi, 🎡 Dönme Dolap)
     ctx.save();
     ctx.font = "8px sans-serif";
     ctx.textAlign = "center";
@@ -273,6 +273,9 @@ export function createMinimap(
 
     const tcp = worldToMinimap(-60, 83.2, size, bounds);
     ctx.fillText("☕", tcp.x, tcp.y);
+
+    const fwp = worldToMinimap(-14, 92.5, size, bounds);
+    ctx.fillText("🎡", fwp.x, fwp.y);
     ctx.restore();
 
     // 6. AKTİF HEDEF GÖSTERGESİ (Nabız animasyonu)

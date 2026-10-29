@@ -149,6 +149,8 @@ describe("audio system", () => {
       sound.constructionDrill();
       sound.teaSpoonClink();
       sound.fishingReel();
+      sound.thunderRoll(1.2);
+      sound.carnivalChime();
     }).not.toThrow();
 
     sound.dispose();

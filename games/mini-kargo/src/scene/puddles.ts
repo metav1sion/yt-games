@@ -140,11 +140,14 @@ export function createPuddlesView(puddleDefs: PuddleDef[] = CITY_PUDDLES): Puddl
         puddleMat.opacity = currentOpacity;
         rippleMat.opacity = currentOpacity * 0.45;
 
-        // Dalga ve hafif hareket simülasyonu
+        // Dalga ve hafif hareket simülasyonu (Fırtına ve yüksek ıslaklıkta genişleme ve hızlı dalgalanma)
+        const rippleSpeed = wetness > 0.8 ? 4.2 : 2.2;
+        const sizeMultiplier = wetness > 0.85 ? 1.18 : (wetness > 0.5 ? 1.08 : 1.0);
         for (const item of puddleMeshes) {
-          item.rippleTimer += dt * 2.2;
-          const scale = 0.95 + Math.sin(item.rippleTimer) * 0.05;
+          item.rippleTimer += dt * rippleSpeed;
+          const scale = (0.95 + Math.sin(item.rippleTimer) * 0.05) * sizeMultiplier;
           item.rippleMesh.scale.set(scale, 1, scale);
+          item.mesh.scale.set(sizeMultiplier, 1, sizeMultiplier);
         }
       } else {
         group.visible = false;

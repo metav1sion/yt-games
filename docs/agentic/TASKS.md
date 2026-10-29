@@ -197,8 +197,25 @@
   - Radar minimap cafe icon (`☕`).
   - Tested in `src/game/seaside-life.test.ts` and `src/scene/seaside-life.test.ts`.
 
+- [x] **T40 — Dynamic Weather Day-to-Night Thunderstorm & Lightning Flash System**:
+  - Implemented dynamic summer thunderstorms (`WeatherType: "storm"`) in `src/scene/weather.ts` featuring 420 volumetric rain streaks with wind tilt (`rotation.z = -0.16`), increased fall velocity, and higher rain intensity (1.35).
+  - Procedural 3D 7-segment jagged lightning bolt in the clouds with multi-stage double-strike flash illumination (`lightningFlash`), spiking sun and hemisphere light intensity (+4.2 / +2.8) in `src/bootstrap.ts`.
+  - Synthesized procedural Web Audio thunder in `sound.thunderRoll(intensity)` with initial 2200Hz discharge crackle, low sub-bass (sub-48Hz) rolling rumble, and radio audio ducking.
+  - Dynamic road puddle expansion by up to 18% with intensified surface ripples during storms in `src/scene/puddles.ts`.
+  - Tested in `src/scene/weather.test.ts`, `src/scene/puddles.test.ts`, and `src/audio/sound.test.ts`.
+
+- [x] **T41 — Grand Sahil Ferris Wheel & Amusement Pier Attraction**:
+  - Implemented `createFerrisWheelView` (`src/scene/ferris-wheel.ts`) on the coastal pier (X: -14.0, Z: 92.5) with 8.5m radius octagonal timber/stone pier platform, footbridge connector from promenade, cast-iron railings, and 4 corner nostalgic lanterns.
+  - Twin 15m A-frame steel lattice towers in vibrant turquoise and white with heavy cross-bracing and axle hub bearing.
+  - 16m diameter double-ring wheel truss revolving at 0.18 rad/s with 12 radial spokes and 24 perimeter LED chase lights pulsing with night emissive boost.
+  - 12 suspended passenger gondolas in alternating colors (yellow, blue, red) with canopy roofs, safety glass, and strict upright gravity counter-rotation (`gondola.rotation.z = -wheelGroup.rotation.z`).
+  - Nostalgic ticket booth ("🎡 BİLET GİŞESİ · 15₺") and animated Operator NPC Lunaparkçı Şevket Usta waving and greeting drivers upon honk (`H`).
+  - Implemented `src/game/ferris-wheel.ts` with "Sahil Neşesi" bonus: 1.2s stop at boarding platform awards +15 ₺, +1 rep, celebratory confetti, and festive carnival chime (`sound.carnivalChime()`).
+  - Radar minimap icon: `🎡` at X: -14, Z: 92.5.
+  - Tested in `src/game/ferris-wheel.test.ts`, `src/scene/ferris-wheel.test.ts`, and `src/scene/world.test.ts`.
+
 ## Active / Next Tasks
-- [ ] **T40 — Dynamic Weather Day-to-Night Thunderstorm & Lightning Flash System**: Emergent summer thunderstorms with volumetric heavy rain, distant procedural rolling thunder audio, dynamic sky flash illumination, and wet puddle expansion.
-- [ ] **T41 — Grand Sahil Ferris Wheel & Amusement Pier Attraction**: Animated revolving Ferris wheel with illuminated gondolas on the coastal breakwater.
+- [ ] **T42 — Historic Çarşı Tramway Heritage Line & Nostalgic Street Tram**: Classic red nostalgic streetcar / tram (like the famous Taksim/Beyoğlu Nostaljik Tramvay "İETT 1923") running along a dedicated central rail line down the main Çarşı commercial thoroughfare with overhead catenary wire masts, animated bell ding ("Çan çan!" `sound.tramBell()`), passenger boarding station, and slow-moving historic heritage tram sharing the street, yielding to kargo van on horn.
+- [ ] **T43 — Industrial Sanayi Freight Rail Spur & Shunting Locomotive**: Industrial rail spur cutting through Sanayi with crossing gates, flashing red crossbuck signals (`sound.railCrossing()`), diesel shunter locomotive, and heavy flatcars loaded with cargo containers and machinery.
 - [ ] **T11 — Player Hands-on Playtesting & Feedback**: Solicit user evaluation on subjective driving feel, district ambiance, and gameplay pacing.
 - [ ] **T12 — Future YouTube Playables SDK Preparation**: (Pending explicit user instruction) integrate YouTube Playables SDK hooks when ready for distribution.

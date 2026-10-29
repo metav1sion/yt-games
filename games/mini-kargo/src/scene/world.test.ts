@@ -335,11 +335,14 @@ describe("district traffic lanes", () => {
     expect(world.busStops.onHonk({ x: -44, z: -14 })).toBe(true);
   });
 
-  it("integrates road work hazard and seaside life into world hierarchy", () => {
+  it("integrates road work hazard, seaside life and ferris wheel into world hierarchy", () => {
     const world = createWorld();
     expect(world.roadWork).toBeDefined();
     expect(world.roadWork.obstacles.length).toBeGreaterThan(0);
     expect(world.seasideLife).toBeDefined();
     expect(world.seasideLife.obstacles.length).toBeGreaterThan(0);
+    expect(world.ferrisWheel).toBeDefined();
+    expect(world.ferrisWheel.obstacles.length).toBeGreaterThan(0);
+    expect(world.ferrisWheel.group.name).toBe("grand-ferris-wheel");
   });
 });

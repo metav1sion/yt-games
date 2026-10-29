@@ -1103,6 +1103,99 @@ export function createSound() {
         }
       } catch {}
     },
+    thunderRoll(intensity = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      try {
+        const at = ctx.currentTime;
+        radio.duck(0.2, 2.5);
+
+        // 1. Şimşek ilk darbe / keskin çıtırtı (Initial sharp lightning discharge crack)
+        const crackLen = 0.12;
+        const crackBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * crackLen), ctx.sampleRate);
+        const crackData = crackBuf.getChannelData(0);
+        for (let i = 0; i < crackData.length; i++) {
+          crackData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.025));
+        }
+        const crackSource = ctx.createBufferSource();
+        crackSource.buffer = crackBuf;
+        const crackFilter = ctx.createBiquadFilter();
+        crackFilter.type = "bandpass";
+        crackFilter.frequency.setValueAtTime(2200, at);
+        crackFilter.Q.setValueAtTime(2.0, at);
+        const crackGain = ctx.createGain();
+        crackGain.gain.setValueAtTime(0.25 * intensity, at);
+        crackGain.gain.exponentialRampToValueAtTime(0.001, at + crackLen);
+        crackSource.connect(crackFilter);
+        crackFilter.connect(crackGain);
+        crackGain.connect(ctx.destination);
+        crackSource.start(at);
+
+        // 2. Derin gök gürültüsü uğultusu ve yankısı (Sub-bass rolling rumble & reverberation)
+        const rumbleDur = 2.4;
+        const rumbleBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * rumbleDur), ctx.sampleRate);
+        const rumbleData = rumbleBuf.getChannelData(0);
+        let last = 0;
+        for (let i = 0; i < rumbleData.length; i++) {
+          const white = Math.random() * 2 - 1;
+          last = (last + 0.04 * white) / 1.04;
+          rumbleData[i] = last * 3.5;
+        }
+        const rumbleSource = ctx.createBufferSource();
+        rumbleSource.buffer = rumbleBuf;
+
+        const rumbleFilter = ctx.createBiquadFilter();
+        rumbleFilter.type = "lowpass";
+        rumbleFilter.frequency.setValueAtTime(220, at);
+        rumbleFilter.frequency.exponentialRampToValueAtTime(45, at + rumbleDur);
+        rumbleFilter.Q.setValueAtTime(3.2, at);
+
+        const rumbleGain = ctx.createGain();
+        rumbleGain.gain.setValueAtTime(0.35 * intensity, at + 0.04);
+        rumbleGain.gain.exponentialRampToValueAtTime(0.001, at + rumbleDur);
+
+        rumbleSource.connect(rumbleFilter);
+        rumbleFilter.connect(rumbleGain);
+        rumbleGain.connect(ctx.destination);
+        rumbleSource.start(at + 0.04);
+
+        // 3. Sub-bass darbe osilatörü (48Hz -> 32Hz)
+        const subOsc = ctx.createOscillator();
+        subOsc.type = "triangle";
+        subOsc.frequency.setValueAtTime(52, at + 0.02);
+        subOsc.frequency.exponentialRampToValueAtTime(28, at + 0.9);
+        const subGain = ctx.createGain();
+        subGain.gain.setValueAtTime(0.22 * intensity, at + 0.02);
+        subGain.gain.exponentialRampToValueAtTime(0.001, at + 1.2);
+        subOsc.connect(subGain);
+        subGain.connect(ctx.destination);
+        subOsc.start(at + 0.02);
+        subOsc.stop(at + 1.25);
+      } catch {}
+    },
+    carnivalChime() {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      try {
+        const at = ctx.currentTime;
+        radio.duck(0.35, 1.2);
+        // 4 notalı neşeli lunapark çan akoru (C5 -> E5 -> G5 -> C6)
+        const freqs = [523.25, 659.25, 783.99, 1046.5];
+        freqs.forEach((freq, i) => {
+          const t = at + i * 0.085;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(freq, t);
+          gain.gain.setValueAtTime(0.13, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.38);
+        });
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },
