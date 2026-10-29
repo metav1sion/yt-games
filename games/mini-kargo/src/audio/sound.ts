@@ -1873,6 +1873,60 @@ export function createSound() {
         }
       } catch {}
     },
+    fogHorn(vol = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      const volume = Math.max(0, Math.min(1, vol));
+      if (volume <= 0.02) return;
+      try {
+        const at = ctx.currentTime;
+        radio.duck(0.25, 2.2);
+
+        // 1. Deniz sis düdüğü kalın rezonans akoru (140Hz & 146.8Hz hafif vuruşlu ton, 70Hz göğüs bası)
+        const tones = [
+          { freq: 140.0, type: "sawtooth" as OscillatorType, g: 0.35, detune: 0 },
+          { freq: 146.8, type: "sawtooth" as OscillatorType, g: 0.30, detune: 4 },
+          { freq: 70.0, type: "triangle" as OscillatorType, g: 0.40, detune: 0 },
+          { freq: 280.0, type: "sine" as OscillatorType, g: 0.18, detune: 2 },
+        ];
+
+        const dur = 1.8;
+        const filter = ctx.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(320, at);
+        filter.frequency.linearRampToValueAtTime(720, at + 0.35);
+        filter.frequency.exponentialRampToValueAtTime(260, at + dur);
+        filter.Q.setValueAtTime(3.5, at);
+
+        const hornGain = ctx.createGain();
+        hornGain.gain.setValueAtTime(0.001, at);
+        hornGain.gain.linearRampToValueAtTime(0.45 * volume, at + 0.28);
+        hornGain.gain.setValueAtTime(0.42 * volume, at + 1.1);
+        hornGain.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+
+        filter.connect(hornGain);
+        hornGain.connect(ctx.destination);
+
+        for (const t of tones) {
+          const osc = ctx.createOscillator();
+          osc.type = t.type;
+          osc.frequency.setValueAtTime(t.freq, at);
+          if (t.detune) osc.detune.setValueAtTime(t.detune, at);
+
+          const tGain = ctx.createGain();
+          tGain.gain.setValueAtTime(t.g, at);
+          osc.connect(tGain);
+          tGain.connect(filter);
+
+          osc.start(at);
+          osc.stop(at + dur + 0.05);
+          osc.onended = () => {
+            osc.disconnect();
+            tGain.disconnect();
+          };
+        }
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

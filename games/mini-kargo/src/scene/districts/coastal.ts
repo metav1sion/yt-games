@@ -8,10 +8,8 @@ import {
   buildStaticCar,
   buildLifeguardTower,
   buildPromenadeLantern,
-  buildLighthouse,
   buildMarinaBoats,
   buildLifebuoyStation,
-  type LighthouseView,
   type MarinaBoatsView,
 } from "../city-details";
 
@@ -67,11 +65,6 @@ export function buildCoastalDistrict(ctx: WorldContext) {
   baseObstacles.push({ minX: -100, maxX: -52.5, minZ: 88.6, maxZ: 100 });
   baseObstacles.push({ minX: -47.5, maxX: -8, minZ: 88.6, maxZ: 100 });
   baseObstacles.push({ minX: -52.5, maxX: -47.5, minZ: 98.2, maxZ: 100 });
-
-  // Deniz içinde dalgakıran kaidesi ve Tarihi Deniz Feneri (Coastal Maritime Lighthouse)
-  cylinder(group, 3.6, 3.8, 0.5, [-28, 0.25, 91], "#4a5568", 12);
-  const lighthouse = buildLighthouse(group, -28, 91, 0);
-  baseObstacles.push({ minX: -30.5, maxX: -25.5, minZ: 88.5, maxZ: 93.5 });
 
   // Denizdeki rengarenk kanolar
   ctx.addModel(group, "nature/canoe", -62, 92, 5, 0.5);
@@ -152,5 +145,5 @@ export function buildCoastalDistrict(ctx: WorldContext) {
   buildStaticCar(group, -7.6, 26, Math.PI / 2, "#00cec9"); // Turkuaz sedan
   buildStaticCar(group, -7.6, 68, Math.PI / 2, "#e84393"); // Pembe/kırmızı yaz arabası
 
-  return { lighthouse, marinaBoats };
+  return { marinaBoats };
 }

@@ -123,6 +123,12 @@ import {
   triggerBakeryHonk,
   SABAN_USTA_POS,
 } from "./game/bakery";
+import {
+  createLighthouseState,
+  updateLighthouse,
+  triggerLighthouseHonk,
+  RIZA_KAPTAN_POS,
+} from "./game/lighthouse";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -189,6 +195,7 @@ export async function startGame(app: HTMLElement) {
   let restaurantState = createRestaurantState();
   let schoolState = createSchoolState();
   let bakeryState = createBakeryState();
+  let lighthouseState = createLighthouseState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -276,6 +283,7 @@ export async function startGame(app: HTMLElement) {
       getRestaurantState: () => restaurantState,
       getSchoolState: () => schoolState,
       getBakeryState: () => bakeryState,
+      getLighthouseState: () => lighthouseState,
     };
   }
   const fleet = createCourierFleet({
@@ -673,6 +681,8 @@ export async function startGame(app: HTMLElement) {
       world.school.onPlayerHonk(vehicle.position);
       triggerBakeryHonk(bakeryState, vehicle.position);
       world.bakery.onPlayerHonk(vehicle.position);
+      triggerLighthouseHonk(lighthouseState, vehicle.position);
+      world.lighthouse.onPlayerHonk(vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -990,6 +1000,8 @@ export async function startGame(app: HTMLElement) {
       world.school.onPlayerHonk(vehicle.position);
       triggerBakeryHonk(bakeryState, vehicle.position);
       world.bakery.onPlayerHonk(vehicle.position);
+      triggerLighthouseHonk(lighthouseState, vehicle.position);
+      world.lighthouse.onPlayerHonk(vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -1596,6 +1608,41 @@ export async function startGame(app: HTMLElement) {
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
 
+        // Sahil "Tarihi Deniz Feneri & Kıyı Kurtarma Rıhtımı" (T53)
+        const lighthouseRes = updateLighthouse(
+          lighthouseState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (lighthouseRes.fogHornTriggered) {
+          sound.fogHorn();
+        }
+        if (lighthouseRes.awardedGuidanceBonus) {
+          sound.fogHorn(1.1);
+          const maxNitro =
+            (1 + (progression.upgrades.nitro ?? 0) * (TUNING.nitroMaxBonus ?? 0.25)) *
+            (vehicle.supercharged ? 1.25 : 1.0);
+          vehicle.nitro = Math.min(maxNitro, vehicle.nitro + 0.45);
+          progression = {
+            ...progression,
+            money: progression.money + lighthouseRes.cashBonus,
+            reputation: progression.reputation + lighthouseRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          particles.spawnMoneyStream(RIZA_KAPTAN_POS, vehicle.position);
+          hud.showToast("🏮 FENER REHBERLİĞİ! +10 ₺ (+1 İtibar, Gece Görüşü & Nitro)", 3500);
+        }
+        world.lighthouse.update(
+          dt,
+          lighthouseState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
         );
@@ -1836,6 +1883,12 @@ export async function startGame(app: HTMLElement) {
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
+        world.lighthouse.update(
+          dt,
+          lighthouseState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
       }
       if (started) {
         const here = districtAt(vehicle.position.x, vehicle.position.z);
@@ -2063,6 +2116,7 @@ export async function startGame(app: HTMLElement) {
       world.restaurant.dispose();
       world.school.dispose();
       world.bakery.dispose();
+      world.lighthouse.dispose();
       renderer.dispose();
     },
     { once: true },

@@ -31,6 +31,7 @@ import { createIceCreamStandView, type IceCreamStandView } from "./ice-cream-sta
 import { createRestaurantView, type RestaurantView } from "./restaurant";
 import { createSchoolView, type SchoolView } from "./school";
 import { createBakeryView, type BakeryView } from "./bakery";
+import { createLighthouseView, type LighthouseView } from "./lighthouse";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
@@ -53,6 +54,7 @@ export type { IceCreamStandView } from "./ice-cream-stand";
 export type { RestaurantView } from "./restaurant";
 export type { SchoolView } from "./school";
 export type { BakeryView } from "./bakery";
+export type { LighthouseView } from "./lighthouse";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -81,6 +83,7 @@ export type World = {
   restaurant: RestaurantView;
   school: SchoolView;
   bakery: BakeryView;
+  lighthouse: LighthouseView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -111,7 +114,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   const { depot } = buildSunnyDistrict(ctx);
   const { fountain } = buildMarketDistrict(ctx);
   const { chimneySmokes } = buildIndustrialDistrict(ctx);
-  const { lighthouse, marinaBoats } = buildCoastalDistrict(ctx);
+  const { marinaBoats } = buildCoastalDistrict(ctx);
   buildCityBuildings(ctx);
 
   // Akaryakıt İstasyonu & Oto Yıkama (T36)
@@ -188,6 +191,11 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   const bakery = createBakeryView();
   group.add(bakery.group);
   ctx.baseObstacles.push(...bakery.obstacles);
+
+  // Sahil "Tarihi Deniz Feneri & Kıyı Kurtarma Rıhtımı" (T53)
+  const lighthouse = createLighthouseView();
+  group.add(lighthouse.group);
+  ctx.baseObstacles.push(...lighthouse.obstacles);
 
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;
@@ -271,6 +279,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     restaurant,
     school,
     bakery,
+    lighthouse,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);

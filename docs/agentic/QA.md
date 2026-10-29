@@ -123,30 +123,30 @@
     - Real-time radar tracking icon (`🍲`) at X: 30.0, Z: -57.0.
 
 ## Browser Automation & Visual QA (Playwright)
-- **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser` and `scripts/capture-carsi-simit-firini.cjs`
-- **Execution Date**: 2026-10-29 (Execution Run 27 Verification — Çarşı "Meşhur Tarihi Simit Fırını & Taş Fırın Odun Ateşi" T52)
-- **Automated Tests**: 78 test files, 847 passed, 0 failed
+- **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser` and `scripts/capture-sahil-lighthouse.cjs`
+- **Execution Date**: 2026-10-29 (Execution Run 28 Verification — Sahil "Tarihi Deniz Feneri & Kıyı Kurtarma Rıhtımı" T53)
+- **Automated Tests**: 80 test files, 859 passed, 0 failed
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 168ms)
+- **Vite Production Build**: Successful (`dist/` generated in 166ms)
 - **Viewports Tested**:
   1. **Desktop (1280x800)**:
      - Shift start button click: PASS
      - 3D WebGL canvas initialization: PASS
-     - HUD, minimap, topbar time pill, weather pill, radio pill, supercharge pill, simit buff pill: PASS
+     - HUD, minimap, topbar time pill, weather pill, radio pill, supercharge pill, lighthouse buff pill: PASS
      - Keyboard driving controls (W, A, D, Arrow keys), Horn (`H` key), and Radio toggle (`R` key): PASS
-     - Çarşı "Meşhur Tarihi Simit Fırını & Taş Fırın Odun Ateşi" (T52): Historic brick & stone bakery building, cut limestone foundation plinth, klinker red brick facade, corner quoins, hipped terracotta roof, forward-tilted illuminated marquee ("🥖 MEŞHUR TARİHİ SİMİT FIRINI · TAŞ FIRIN ODUN ATEŞİ 🥨"), sub-banner ("GELENEKSEL ODUN TAŞ FIRINI · ÇITIR SİMİT & RAMAZAN PİDESİ · 1928"), red-and-cream striped fabric awning with scalloped fringe, front-projecting arched refractory brick dome oven with burning oak ember hearth, dynamic amber flickering flame light (PointLight), baking sesame simits and ramazan pideleri on stone hearth floor, tall masonry chimney with rotating cowl and rising smoke particle puffs, glass-fronted simit/bread vitrine counter ("TAZE ÇITIR SİMİT"), vertical cedar simit pole ("Simit Ağacı") with hanging sesame simit rings, jute burlap flour sacks ("UN 50 KG"), stacked oak firewood logs, A-frame chalkboard menu easel ("🥨 SİMİT: 7₺ | 🍞 EKMEK: 12₺ | 🫓 PİDE: 15₺"), brass samovar, animated Baker Master NPC "Fırıncı Şaban Usta" with white baker's cap, shirt, flour-smudged apron, pos bıyık, 2.4m wooden baker's peel (fırın küreği) holding a hot smoking sesame simit, peel sliding in-and-out motion, vehicle head tracking within 22m, celebratory peel raising and wave on player honk (`H`) or dwell, 3D speech bubble callout ("🥖 Fırıncı Şaban Usta: Gel kaptan geel! Fırından yeni çıktı, çıtır susamlı simitler yakıyor! 🥨"), dedicated service bay (`BAKERY_BAY`: X: 59.5, Z: 31.2) on the northern shoulder of the historic tram street (Z: 34), procedural wood-fire crackle, stone hearth tap & bakery chime audio (`sound.woodOven()`), and radar minimap icon (`🥖`): VERIFIED
+     - Sahil "Tarihi Deniz Feneri & Kıyı Kurtarma Rıhtımı" (T53): Historic conical red-and-white spiraled lighthouse tower (15m), breakwater octagonal plinth, granite riprap boulders in water, stone causeway walkway, timber door with "1884" plaka, observation windows, maritime signal flags line, cast-iron gallery balcony, glass lantern room with Fresnel lens, warm PointLight and rotating sweeping searchlight beam, verdigris copper dome with brass sailing ship weathervane finial, service bay at `X: -28.0, Z: 82.0` with Compass Rose pavement mosaic, historic bronze monument plaque, lifebuoy rescue station, mooring bollards, animated NPC "Fenerci Rıza Kaptan" with yellow oilskin slicker, peaked captain's visor cap, pos bıyık, brass maritime tripod telescope with horizon scan animation, 26m head tracking, wave & dual-arm salute on honk/dwell, 3D speech bubble callout ("⚓ Fenerci Rıza Kaptan: Heyy gidi deniz kurdu! Fenerin ışığı pruvana rehber olsun! 🌊"), +10 ₺, +1 rep, +0.45 nitro, 25s "Fener Rehberliği" buff, procedural nautical foghorn (`sound.fogHorn()`), and radar icon (`🗼`): VERIFIED
      - Console errors: 0
-     - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png` and `games/mini-kargo/artifacts/carsi-tarihi-simit-firini.png`
+     - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png` and `games/mini-kargo/artifacts/sahil-tarihi-deniz-feneri.png`
   2. **Mobile Portrait (390x844)**:
      - Responsive canvas & UI scaling: PASS
      - Touch joystick, drift, nitro & dedicated horn button (`📢 KORNA`): PASS
-     - Topbar radio equalizer pill touch interaction, simit buff pill: PASS
+     - Topbar radio equalizer pill touch interaction, lighthouse buff pill: PASS
      - Company sheet "🏆 Başarılar & Garaj" tab and livery applicator: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-portrait-390x844.png`
   3. **Mobile Landscape (844x390)**:
      - Landscape canvas & control separation: PASS
-     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, fishing harbour `🐟`, auto repair workshop `🔧`, grocery store `🏪`, coffeehouse `🎲`, ice cream stand `🍦`, restaurant `🍲`, school `🏫`, and bakery `🥖` icons) and action buttons isolated: PASS
+     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, fishing harbour `🐟`, auto repair workshop `🔧`, grocery store `🏪`, coffeehouse `🎲`, ice cream stand `🍦`, restaurant `🍲`, school `🏫`, bakery `🥖`, and lighthouse `🗼` icons) and action buttons isolated: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-landscape-844x390.png`
 

@@ -115,6 +115,7 @@ describe("audio system", () => {
     sound.soupLadle(1.0);
     sound.schoolBell(1.0);
     sound.woodOven(1.0);
+    sound.fogHorn(1.0);
     sound.setDistrict("coastal");
     sound.setRadioStation("cozy_chill");
     expect(sound.getRadioStation()).toBe("cozy_chill");

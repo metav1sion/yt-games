@@ -377,5 +377,8 @@ describe("district traffic lanes", () => {
     expect(world.bakery).toBeDefined();
     expect(world.bakery.obstacles.length).toBeGreaterThan(0);
     expect(world.bakery.group.name).toBe("bakery-view");
+    expect(world.lighthouse).toBeDefined();
+    expect(world.lighthouse.obstacles.length).toBeGreaterThan(0);
+    expect(world.lighthouse.group.name).toBe("lighthouse-view");
   });
 });

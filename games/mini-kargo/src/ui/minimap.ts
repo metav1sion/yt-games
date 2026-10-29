@@ -317,6 +317,9 @@ export function createMinimap(
 
     const firinPos = worldToMinimap(59.5, 24.5, size, bounds);
     ctx.fillText("🥖", firinPos.x, firinPos.y);
+
+    const fenerPos = worldToMinimap(-28.0, 91.0, size, bounds);
+    ctx.fillText("🗼", fenerPos.x, fenerPos.y);
     ctx.restore();
 
     // 6. AKTİF HEDEF GÖSTERGESİ (Nabız animasyonu)
