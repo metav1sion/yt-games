@@ -22,6 +22,7 @@ import { createSeasideLifeView, type SeasideLifeView } from "./seaside-life";
 import { createFerrisWheelView, type FerrisWheelView } from "./ferris-wheel";
 import { createTramView, type TramView } from "./tram";
 import { createTrainView, type TrainView } from "./train";
+import { createCommunityParkView, type CommunityParkView } from "./community-park";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
@@ -35,6 +36,7 @@ export type { SeasideLifeView } from "./seaside-life";
 export type { FerrisWheelView } from "./ferris-wheel";
 export type { TramView } from "./tram";
 export type { TrainView } from "./train";
+export type { CommunityParkView } from "./community-park";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -54,6 +56,7 @@ export type World = {
   ferrisWheel: FerrisWheelView;
   tram: TramView;
   train: TrainView;
+  communityPark: CommunityParkView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -116,6 +119,11 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   const train = createTrainView();
   group.add(train.group);
   ctx.baseObstacles.push(...train.obstacles);
+
+  // Güneş Mahallesi Çocuk Parkı, Kamelya & Bahçıvan Selahattin (T44)
+  const communityPark = createCommunityParkView();
+  group.add(communityPark.group);
+  ctx.baseObstacles.push(...communityPark.obstacles);
 
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;
@@ -190,6 +198,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     ferrisWheel,
     tram,
     train,
+    communityPark,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);

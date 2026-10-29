@@ -109,6 +109,7 @@ describe("audio system", () => {
     sound.carWash();
     sound.railCrossing();
     sound.trainHorn();
+    sound.windChime();
     sound.setDistrict("coastal");
     sound.setRadioStation("cozy_chill");
     expect(sound.getRadioStation()).toBe("cozy_chill");

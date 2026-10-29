@@ -242,7 +242,25 @@
     - **Radar Minimap Freight Train Icon**: Real-time animated `🚂` tracking icon navigating the Sanayi industrial sector.
     - Tested in `src/game/train.test.ts`, `src/scene/train.test.ts`, `src/scene/world.test.ts`, `src/audio/sound.test.ts`, `src/ui/minimap.test.ts`, and verified in browser smoke tests.
 
+- [x] **T44 — Güneş Mahallesi Community Park, Children's Playground & Gazebo**:
+  - Implemented `createCommunityParkView` (`src/scene/community-park.ts`) in Güneş Mahallesi (X: -35.0, Z: -65.0):
+    - **Park Grounds & Landscaping**: 18.6m x 18.6m lush grass lawn with stone curbs, 2.6m paved pathways connecting North, South, East, West, grand timber entrance archway ("🏡 GÜNEŞ MAHALLESİ PARK & ÇOCUK ALANI") with night-illuminated amber lanterns, white picket perimeter fences, raised wooden flowerbeds with blooming roses, marigolds, and lavenders, cast-iron park benches, and stone Hayrat street drinking fountain.
+    - **Traditional Timber Gazebo / Kamelya (X: -31.0, Z: -62.0)**: Raised octagonal timber platform deck with dual steps, 8 carved support columns, balustrade railings, terracotta-tiled octagonal hipped roof with apex brass finial spike, perimeter interior bench seating, picnic table with copper samovar, warm ceiling lantern, and suspended pentatonic metallic wind chimes swaying gently.
+    - **Enriched Children's Playground Area (X: -38.0, Z: -67.0)**:
+      - 10.5m x 8.5m dual-tone soft safety rubber tile surfacing in brick red and ocean blue grid pattern.
+      - Play fortress & slide: Elevated timber platform, climbing ladder, colorful pyramid tent canopy, and vibrant yellow curved tube slide ramp.
+      - Twin classic swings: Crimson A-frame timber/steel posts, suspended chains, and animated swinging rubber seats (`state.swingAngle`).
+      - Spring rocker pony (Atlı Zıpzıp): Heavy helical steel spring base, bright orange pony silhouette body with red saddle, safety handlebars, and oscillating rocking animation (`state.rockerAngle`).
+      - Rotating carousel / merry-go-round (Dönen Çark): Circular revolving deck with colorful grab bar arches and continuous rotation (`state.carouselAngle`).
+      - Wooden sandbox (Kum Havuzu): Cedar border box with golden sand, toy plastic bucket and shovel.
+    - **Gardener NPC ("Bahçıvan Selahattin Efendi" - X: -34.0, Z: -60.5)**: Olive green gardener dungarees, straw hat with green band, white mustache, holding galvanized watering can with brass rose. Animated watering arm motion, player vehicle head tracking, waving arm on player honk (`H`) or approach, and 3D speech bubble callout (`"🌻 Bahçıvan Selahattin: Hoş geldin evlat! Parkımızın gülleri gibi açtın, kolay gelsin! 🌹"`).
+  - Implemented `src/game/community-park.ts` state machine:
+    - 1.2s stationary dwell near gazebo/entrance awards "Mahalle Huzuru" pitstop bonus: +10 ₺ cash tip, +1 reputation, celebratory confetti, 20s serene buff, and 30s cooldown.
+  - Synthesized procedural Web Audio wind chimes in `sound.windChime()` (pentatonic C6, E6, G6, C7, A6 crystal chime arpeggio).
+  - Radar minimap park tracking icon (`🌳`).
+  - Tested in `src/game/community-park.test.ts`, `src/scene/community-park.test.ts`, `src/scene/world.test.ts`, `src/audio/sound.test.ts`, and verified in browser smoke tests.
+
 ## Active / Next Tasks
-- [ ] **T44 — Güneş Mahallesi Community Park, Children's Playground & Gazebo**: Vibrant neighbourhood park with paved paths, entrance arch, timber gazebo / kamelya, swing set, spiral slide, spring rocker pony, gardener NPC ("Bahçıvan Selahattin"), procedural birdsong/wind chime audio, and "Mahalle Huzuru" pitstop bonus (+10 ₺, +1 rep).
+- [ ] **T45 — Sahil Marina Balıkçı Barınağı & Taze Balık-Ekmek Teknesi**: Traditional coastal fishing boat harbour pier with moored wooden trawlers, floating grill barge ("Marmara Balıkçısı"), Chef NPC ("Balıkçı Temel Reis"), sizzling fish grill audio (`sound.fishSizzle()`), hovering seagull flocks, and "Balık Ekmek Ziyafeti" pitstop bonus (+15 ₺, +1 rep).
 - [ ] **T11 — Player Hands-on Playtesting & Feedback**: Solicit user evaluation on subjective driving feel, district ambiance, and gameplay pacing.
 - [ ] **T12 — Future YouTube Playables SDK Preparation**: (Pending explicit user instruction) integrate YouTube Playables SDK hooks when ready for distribution.

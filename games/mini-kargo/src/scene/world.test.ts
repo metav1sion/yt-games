@@ -350,5 +350,8 @@ describe("district traffic lanes", () => {
     expect(world.train).toBeDefined();
     expect(world.train.obstacles.length).toBeGreaterThan(0);
     expect(world.train.group.name).toBe("sanayi-freight-railway");
+    expect(world.communityPark).toBeDefined();
+    expect(world.communityPark.obstacles.length).toBeGreaterThan(0);
+    expect(world.communityPark.group.name).toBe("community-park");
   });
 });

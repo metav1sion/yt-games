@@ -22,6 +22,19 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
 - **Architecture**: Single-family houses, small apartment blocks, neighborhood grocery shops, local park benches, kids playground, and welcoming arch monument ("🏡 GÜNEŞ MAHALLESİ").
 - **Logistics Headquarters Campus**: Situated at X: -67..-50, Z: -42..-26. Features the main sorting hub, truck loading dock, corporate monument signage, security guard checkpoint, and an organized 2x2 upgrade apron.
 - **Logistics Depot EV Quick-Charger & Pitstop**: Situated at X: -66.5, Z: -25.5. Features twin fast EV charging kiosks with cyan/green LED status rings, flexible charging conduits, ground wireless inductive charging pad, cantilever solar photovoltaic canopy, and dynamic 25-second Supercharge overdrive boost.
+- **Güneş Mahallesi Çocuk ve Aile Parkı & Ahşap Kamelya (`createCommunityParkView` - T44)**: Situated in the central residential square at X: -35.0, Z: -65.0:
+  - **Peyzaj ve Yürüyüş Yolları**: 18.6m x 18.6m çim ada, taş bordürler, Güney caddeden (Z: -55.5) kuzeye ve doğu-batıya bağlanan 2.6m taş döşeli yürüyüş yolları, merkez dairesel meydan döşemesi, güney giriş ahşap karşılama takı ("🏡 GÜNEŞ MAHALLESİ PARK & ÇOCUK ALANI"), gece yanan kehribar asılı fenerler, beyaz köşe bahçe çitleri, ahşap yükseltilmiş gül ve lavanta tarhları, döküm ayaklı park bankları ve mermer Hayrat Sokak Çeşmesi.
+  - **Geleneksel Ahşap Kamelya (Gazebo - X: -31.0, Z: -62.0)**: Yükseltilmiş sekizgen ahşap güverte platformu, 8 adet döküm ahşap taşıyıcı sütun, oymalı ahşap korkuluklar, kiremit kaplı sekizgen çatı, pirinç alem süsü, iç çevre ahşap oturma bankları, piknik masası, bakır çay semaveri, sıcak tavan feneri ve saçağa asılı pentatonik pirinç rüzgar çanları.
+  - **Zenginleştirilmiş Çocuk Oyun Alanı (Playground - X: -38.0, Z: -67.0)**:
+    - Bordo ve okyanus mavisi çift renkli darbe emici kauçuk karo zemin (10.5m x 8.5m).
+    - Çok katlı ahşap oyun kulesi: Tırmanma merdiveni, renkli kumaş çadır çatısı ve canlı sarı helezon/eğimli kaydırak rampası.
+    - İkili dinamik salıncak (Swings): Kırmızı A-şeklinde yan direkler, çelik askı zincirleri ve senkron salınan kauçuk oturaklar.
+    - Yaylı atlı zıpzıp (Spring Rocker Pony): Ağır çelik helezon yay kaidesi, turuncu at silüeti, kırmızı eyer, tutunma kolları ve dinamik yaylanma animasyonu.
+    - Dönen çocuk karuseli (Rotating Merry-Go-Round): Dairesel dönen platform, renkli tutunma parmaklıkları ve sürekli dönüş mekanizması.
+    - Ahşap kum havuzu: Sedir ağacı çerçeve, sarı deniz kumu, oyuncak kova ve kürek.
+  - **Bahçıvan Selahattin Efendi NPC (X: -34.0, Z: -60.5)**: Zeytin yeşili bahçıvan tulumu, hasır güneş şapkası, pala bıyığı ve elinde galvanizli sulama ibriği ile gül tarhlarını sulayan mahalle bahçıvanı. Yaklaşan oyuncu arabasına kafa çevirme takibi, oyuncu korna çaldığında (`H`) sağ kolunu kaldırarak el sallama ve 3B konuşma balonuyla karşılama (`"🌻 Bahçıvan Selahattin: Hoş geldin evlat! Parkımızın gülleri gibi açtın, kolay gelsin! 🌹"`).
+  - **"Mahalle Huzuru" Pitstop Molası & Rüzgar Çanı Ezgisi (`src/game/community-park.ts`)**: Kamelya veya park girişinde 1.2 saniye duraklamak oyuncuya +10 ₺ bahşiş, +1 itibar, pentatonik Web Audio rüzgar çanı ezgisi (`sound.windChime()`), konfeti patlaması ve 20 saniyelik "Mahalle Huzuru" ferahlık bonusu kazandırır (30s soğuma süresi).
+  - **Minimap Radar Simgesi**: Güneş Mahallesi üzerinde canlı `🌳` park simgesi.
 - **Road & Traffic**: Calm residential streets, cul-de-sacs, residential speed bumps, pedestrian crosswalks, and an unblocked stunt jump ramp (`ramp_sunny_depot` at X=-50, Z=-22) equipped with high-visibility reflector bollards.
 - **Soundscape**: Soft summer breeze whisper, rustling trees, and cheerful morning bird chirps.
 - **Key Delivery Points**: 4 residential house front porches and garden gates with clear driveways.

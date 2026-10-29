@@ -290,6 +290,9 @@ export function createMinimap(
     const trZ = trainPos ? trainPos.z : -38;
     const trmp = worldToMinimap(trX, trZ, size, bounds);
     ctx.fillText("🚂", trmp.x, trmp.y);
+
+    const pkp = worldToMinimap(-35, -65, size, bounds);
+    ctx.fillText("🌳", pkp.x, pkp.y);
     ctx.restore();
 
     // 6. AKTİF HEDEF GÖSTERGESİ (Nabız animasyonu)

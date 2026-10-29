@@ -15,7 +15,6 @@ import {
   buildBusStop,
   buildBillboard,
   buildStaticCar,
-  buildPlayground,
   buildMailbox,
   buildWelcomeArch,
   buildRooftopSolarPanels,
@@ -213,11 +212,8 @@ export function buildSunnyDistrict(ctx: WorldContext): { depot: Vec2 } {
   });
 
   // =========================================================================
-  // 5. Çocuk Oyun Parkı ve Mahalle Sokak Mobilyaları
+  // 5. Mahalle Sokak Mobilyaları (Park ve Kamelya createCommunityParkView ile T44'te yönetilir)
   // =========================================================================
-  // Çocuk Parkı (Güneş Mahallesi yeşil alanı: X=-36, Z=-64)
-  buildPlayground(group, -36, -64);
-
   // Otobüs Durağı
   buildBusStop(group, -48, -13, Math.PI, "GÜNEŞ MH. · MİNİ KARGO");
 

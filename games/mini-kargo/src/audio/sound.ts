@@ -1297,6 +1297,35 @@ export function createSound() {
         }
       } catch {}
     },
+    windChime() {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      try {
+        const at = ctx.currentTime;
+        radio.duck(0.5, 0.9);
+        // Huzurlu bahçe rüzgar çanı ezgisi (pentatonik C6, E6, G6, C7, A6 kristal çınlama)
+        const notes = [
+          { freq: 1046.5, delay: 0.00 }, // C6
+          { freq: 1318.5, delay: 0.08 }, // E6
+          { freq: 1567.9, delay: 0.16 }, // G6
+          { freq: 2093.0, delay: 0.26 }, // C7
+          { freq: 1760.0, delay: 0.38 }, // A6
+        ];
+        for (const n of notes) {
+          const t = at + n.delay;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(n.freq, t);
+          gain.gain.setValueAtTime(0.09, t);
+          gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.65);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.7);
+        }
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

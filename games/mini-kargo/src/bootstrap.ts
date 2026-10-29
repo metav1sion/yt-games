@@ -72,6 +72,11 @@ import {
   updateTrain,
   triggerTrainHonk,
 } from "./game/train";
+import {
+  createCommunityParkState,
+  updateCommunityPark,
+  triggerGardenerHonk,
+} from "./game/community-park";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -129,6 +134,7 @@ export async function startGame(app: HTMLElement) {
   let ferrisWheelState = createFerrisWheelState();
   let tramState = createTramState();
   let trainState = createTrainState();
+  let communityParkState = createCommunityParkState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -207,6 +213,7 @@ export async function startGame(app: HTMLElement) {
       },
       getTramState: () => tramState,
       getTrainState: () => trainState,
+      getCommunityParkState: () => communityParkState,
     };
   }
   const fleet = createCourierFleet({
@@ -586,6 +593,8 @@ export async function startGame(app: HTMLElement) {
       triggerFerrisWheelHonk(ferrisWheelState, vehicle.position);
       triggerTramHonk(tramState, vehicle.position);
       triggerTrainHonk(trainState, vehicle.position);
+      triggerGardenerHonk(communityParkState, vehicle.position);
+      world.communityPark.onPlayerHonk(vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -885,6 +894,8 @@ export async function startGame(app: HTMLElement) {
           triggerFerrisWheelHonk(ferrisWheelState, vehicle.position);
       triggerTramHonk(tramState, vehicle.position);
       triggerTrainHonk(trainState, vehicle.position);
+      triggerGardenerHonk(communityParkState, vehicle.position);
+      world.communityPark.onPlayerHonk(vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -1182,6 +1193,35 @@ export async function startGame(app: HTMLElement) {
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
 
+        // Güneş Mahallesi Çocuk Parkı, Kamelya & Bahçıvan Selahattin Simülasyonu (T44)
+        const parkRes = updateCommunityPark(
+          communityParkState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (parkRes.windChimePlayed) {
+          sound.windChime();
+        }
+        if (parkRes.awardedPeaceBonus) {
+          progression = {
+            ...progression,
+            money: progression.money + parkRes.cashBonus,
+            reputation: progression.reputation + parkRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          hud.showToast("🌳 MAHALLE HUZURU! +10 ₺ (+1 İtibar, 20s Huzur)", 3000);
+        }
+        world.communityPark.update(
+          dt,
+          communityParkState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
         );
@@ -1365,6 +1405,12 @@ export async function startGame(app: HTMLElement) {
         world.train.update(
           dt,
           trainState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+        world.communityPark.update(
+          dt,
+          communityParkState,
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
@@ -1586,6 +1632,7 @@ export async function startGame(app: HTMLElement) {
       world.ferrisWheel.dispose();
       world.tram.dispose();
       world.train.dispose();
+      world.communityPark.dispose();
       renderer.dispose();
     },
     { once: true },
