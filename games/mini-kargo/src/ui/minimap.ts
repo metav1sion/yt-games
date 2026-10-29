@@ -293,6 +293,9 @@ export function createMinimap(
 
     const pkp = worldToMinimap(-35, -65, size, bounds);
     ctx.fillText("🌳", pkp.x, pkp.y);
+
+    const fhp = worldToMinimap(-78, 88, size, bounds);
+    ctx.fillText("🐟", fhp.x, fhp.y);
     ctx.restore();
 
     // 6. AKTİF HEDEF GÖSTERGESİ (Nabız animasyonu)

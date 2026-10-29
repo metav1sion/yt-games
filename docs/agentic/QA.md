@@ -78,16 +78,19 @@
 
 ## Browser Automation & Visual QA (Playwright)
 - **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser`
-- **Execution Date**: 2026-10-29 (Sprint 16 Verification — Thunderstorm Lightning System & Grand Sahil Ferris Wheel)
+- **Execution Date**: 2026-10-29 (Execution Run 20 Verification — Sahil Marina Balıkçı Barınağı & Taze Balık-Ekmek Teknesi T45)
+- **Automated Tests**: 64 test files, 776 passed, 0 failed
+- **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
+- **Vite Production Build**: Successful (`dist/` generated in 161ms)
 - **Viewports Tested**:
   1. **Desktop (1280x800)**:
      - Shift start button click: PASS
      - 3D WebGL canvas initialization: PASS
      - HUD, minimap, topbar time pill (`☀️ ÖĞLE`), weather pill (`🌤️ AÇIK` / `🌧️ YAZ YAĞMURU` / `⛈️ FIRTINA`), radio pill (`📻 RADYO: KAPALI`), supercharge pill (`⚡ SÜPER ŞARJ`), snack buff pill (`🥨 ENERJİ`), wash buff pill (`✨ PIRIL PIRIL`), tea buff pill (`☕ TAZE ÇAY`): PASS
      - Keyboard driving controls (W, A, D, Arrow keys), Horn (`H` key), and Radio toggle (`R` key): PASS
-     - Grand Sahil Ferris Wheel & Amusement Pier ("🎡 BÜYÜK SAHİL DÖNME DOLABI") with octagonal pier, 15m turquoise/white A-frame towers, rotating 16m wheel truss, 12 colorful gondolas with upright counter-rotation, 24 pulsing chase lights, ticket booth, and operator NPC Lunaparkçı Şevket Usta: VERIFIED
+     - Sahil Marina Balıkçı Barınağı & Taze Balık-Ekmek Teknesi (T45): Weathered cedar boardwalk pier, entrance arch ("⚓ MARİNA BALIKÇI BARINAĞI"), floating fish-bread boat ("Tarihi Marmara Balıkçısı") with scalloped green/gold canopy, sizzling mackerel fillets, bread halves, Chef NPC Balıkçı Temel Reis, 2 moored wooden trawlers ("Karadenizli" & "Albatros"), hovering seagull flock, and minimap tracking icon (`🐟`): VERIFIED
      - Console errors: 0
-     - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png`
+     - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png` and `games/mini-kargo/artifacts/sahil-fishing-harbour.png`
   2. **Mobile Portrait (390x844)**:
      - Responsive canvas & UI scaling: PASS
      - Touch joystick, drift, nitro & dedicated horn button (`📢 KORNA`): PASS
@@ -97,7 +100,7 @@
      - Screenshot: `games/mini-kargo/artifacts/mobile-portrait-390x844.png`
   3. **Mobile Landscape (844x390)**:
      - Landscape canvas & control separation: PASS
-     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, and ferris wheel `🎡` icons) and action buttons isolated: PASS
+     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, and fishing harbour `🐟` icons) and action buttons isolated: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-landscape-844x390.png`
 

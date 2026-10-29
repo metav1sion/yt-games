@@ -77,6 +77,11 @@ import {
   updateCommunityPark,
   triggerGardenerHonk,
 } from "./game/community-park";
+import {
+  createFishingHarbourState,
+  updateFishingHarbour,
+  triggerChefTemelHonk,
+} from "./game/fishing-harbour";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -135,6 +140,7 @@ export async function startGame(app: HTMLElement) {
   let tramState = createTramState();
   let trainState = createTrainState();
   let communityParkState = createCommunityParkState();
+  let fishingHarbourState = createFishingHarbourState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -214,6 +220,7 @@ export async function startGame(app: HTMLElement) {
       getTramState: () => tramState,
       getTrainState: () => trainState,
       getCommunityParkState: () => communityParkState,
+      getFishingHarbourState: () => fishingHarbourState,
     };
   }
   const fleet = createCourierFleet({
@@ -595,6 +602,8 @@ export async function startGame(app: HTMLElement) {
       triggerTrainHonk(trainState, vehicle.position);
       triggerGardenerHonk(communityParkState, vehicle.position);
       world.communityPark.onPlayerHonk(vehicle.position);
+      triggerChefTemelHonk(fishingHarbourState, vehicle.position);
+      world.fishingHarbour.onPlayerHonk(vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -896,6 +905,8 @@ export async function startGame(app: HTMLElement) {
       triggerTrainHonk(trainState, vehicle.position);
       triggerGardenerHonk(communityParkState, vehicle.position);
       world.communityPark.onPlayerHonk(vehicle.position);
+      triggerChefTemelHonk(fishingHarbourState, vehicle.position);
+      world.fishingHarbour.onPlayerHonk(vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -1222,6 +1233,35 @@ export async function startGame(app: HTMLElement) {
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
 
+        // Sahil Marina Balıkçı Barınağı & Taze Balık-Ekmek Teknesi Simülasyonu (T45)
+        const harbourRes = updateFishingHarbour(
+          fishingHarbourState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (harbourRes.sizzlePlayed) {
+          sound.fishSizzle();
+        }
+        if (harbourRes.awardedFeastBonus) {
+          progression = {
+            ...progression,
+            money: progression.money + harbourRes.cashBonus,
+            reputation: progression.reputation + harbourRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          hud.showToast("🐟 BALIK-EKMEK ZİYAFETİ! +15 ₺ (+1 İtibar, 20s Derya Kuzusu Gücü)", 3000);
+        }
+        world.fishingHarbour.update(
+          dt,
+          fishingHarbourState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
         );
@@ -1411,6 +1451,12 @@ export async function startGame(app: HTMLElement) {
         world.communityPark.update(
           dt,
           communityParkState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+        world.fishingHarbour.update(
+          dt,
+          fishingHarbourState,
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
@@ -1633,6 +1679,7 @@ export async function startGame(app: HTMLElement) {
       world.tram.dispose();
       world.train.dispose();
       world.communityPark.dispose();
+      world.fishingHarbour.dispose();
       renderer.dispose();
     },
     { once: true },

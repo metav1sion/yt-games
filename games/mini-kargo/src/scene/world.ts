@@ -23,6 +23,7 @@ import { createFerrisWheelView, type FerrisWheelView } from "./ferris-wheel";
 import { createTramView, type TramView } from "./tram";
 import { createTrainView, type TrainView } from "./train";
 import { createCommunityParkView, type CommunityParkView } from "./community-park";
+import { createFishingHarbourView, type FishingHarbourView } from "./fishing-harbour";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
@@ -37,6 +38,7 @@ export type { FerrisWheelView } from "./ferris-wheel";
 export type { TramView } from "./tram";
 export type { TrainView } from "./train";
 export type { CommunityParkView } from "./community-park";
+export type { FishingHarbourView } from "./fishing-harbour";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -57,6 +59,7 @@ export type World = {
   tram: TramView;
   train: TrainView;
   communityPark: CommunityParkView;
+  fishingHarbour: FishingHarbourView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -124,6 +127,11 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   const communityPark = createCommunityParkView();
   group.add(communityPark.group);
   ctx.baseObstacles.push(...communityPark.obstacles);
+
+  // Sahil Marina Balıkçı Barınağı & Taze Balık-Ekmek Teknesi (T45)
+  const fishingHarbour = createFishingHarbourView();
+  group.add(fishingHarbour.group);
+  ctx.baseObstacles.push(...fishingHarbour.obstacles);
 
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;
@@ -199,6 +207,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     tram,
     train,
     communityPark,
+    fishingHarbour,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);

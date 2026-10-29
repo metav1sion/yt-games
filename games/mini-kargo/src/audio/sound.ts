@@ -1326,6 +1326,73 @@ export function createSound() {
         }
       } catch {}
     },
+    fishSizzle(volume = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      const vol = Math.max(0, Math.min(1, volume));
+      if (vol <= 0.02) return;
+      try {
+        const at = ctx.currentTime;
+        radio.duck(0.5, 1.2);
+        const dur = 1.1;
+
+        // 1. Taze palamut balığı sac ızgara cızırtısı (Bandpass gürültü sentezi)
+        const sampleRate = ctx.sampleRate || 44100;
+        const bufLen = Math.floor(sampleRate * dur);
+        const buf = ctx.createBuffer(1, bufLen, sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < bufLen; i++) {
+          // Çatırdayan mikro yağ damlacıkları ve cızırtı greni
+          const grain = (Math.random() * 2 - 1) * (Math.random() > 0.88 ? 1.6 : 0.7);
+          data[i] = grain;
+        }
+
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(4200, at);
+        filter.Q.setValueAtTime(3.2, at);
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.001, at);
+        gain.gain.linearRampToValueAtTime(0.18 * vol, at + 0.15);
+        gain.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+
+        src.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+
+        src.start(at);
+        src.stop(at + dur);
+        src.onended = () => {
+          src.disconnect();
+          filter.disconnect();
+          gain.disconnect();
+        };
+
+        // 2. Sıcak ızgaradaki balık yağı fokurdaması (Micro-pop bubbler)
+        for (let j = 0; j < 4; j++) {
+          const popTime = at + 0.08 + j * 0.22 + Math.random() * 0.06;
+          const osc = ctx.createOscillator();
+          const popGain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(380 + Math.random() * 240, popTime);
+          osc.frequency.exponentialRampToValueAtTime(120, popTime + 0.05);
+          popGain.gain.setValueAtTime(0.04 * vol, popTime);
+          popGain.gain.exponentialRampToValueAtTime(0.0001, popTime + 0.05);
+          osc.connect(popGain);
+          popGain.connect(ctx.destination);
+          osc.start(popTime);
+          osc.stop(popTime + 0.06);
+          osc.onended = () => {
+            osc.disconnect();
+            popGain.disconnect();
+          };
+        }
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

@@ -111,7 +111,12 @@ export function label(text: string, color = "#23443d", bg = "#fff9e7") {
   c.roundRect(0, 0, 512, 128, 24);
   c.fill();
   c.fillStyle = color;
-  c.font = "bold 52px system-ui";
+  let fontSize = 52;
+  c.font = `bold ${fontSize}px system-ui`;
+  while (c.measureText(text).width > 470 && fontSize > 24) {
+    fontSize -= 2;
+    c.font = `bold ${fontSize}px system-ui`;
+  }
   c.textAlign = "center";
   c.textBaseline = "middle";
   c.fillText(text, 256, 66);
