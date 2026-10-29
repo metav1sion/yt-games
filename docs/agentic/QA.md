@@ -93,21 +93,35 @@
     - Pitstop interaction: 1.2s stationary dwell near service bay (X: -55.0, Z: -54.0) awards +10 ₺ cash bonus, +1 reputation, +0.45 nitro refill, 25s "Buz Gibi Gazoz Enerjisi" stamina buff, procedural brass shop bell chime (`sound.shopBell()`), celebratory confetti and golden coin stream, and 35s cooldown.
     - Real-time radar tracking icon (`🏪`) at X: -58.5, Z: -57.0.
 
+- **Çarşı "Tarihi Çınaraltı Kıraathanesi" & Tavla/Kahve Meydanı (T48)**:
+  - `src/game/coffee-house.test.ts` (6 tests) — Coffee house state machine, dwell timing, pitstop bonus rewards (+10 ₺, +1 rep, full stamina/nitro), 25s buff duration, cooldown timing, interactive honk greeting, and periodic dice roll audio events.
+  - `src/scene/coffee-house.test.ts` (4 tests) — 3D hierarchy, stone building, monumental plane tree, terrace tables, coffee master NPC, proximity head tracking, arm waving, night lighting, and cleanup disposal.
+  - Verification:
+    - 14.0m x 12.0m cobblestone plaza terrace with dark timber/granite curbs and dedicated player parking stall (`COFFEE_HOUSE_BAY`: X: 43.0, Z: 56.5) with guide arrow.
+    - Historic stone coffeehouse building in weathered limestone masonry, darker ashlar quoins, tiled hipped roof, brick chimney with coffee aroma vents, arched transom windows with warm interior PointLight illumination, and carved wooden entrance doors.
+    - Large illuminated marquee sign ("☕ TARİHİ ÇINARALTI KIRAATHANESİ · 1923 🌿"), secondary goods banner ("KUMDA TÜRK KAHVESİ · TAZE ÇAY · TAVLA KEYFİ"), and emerald green and cream striped entrance awning.
+    - Monumental ancient plane tree ("Ulu Çınar Ağacı" - X: 36.8, Z: 58.8): 5.8m tall gnarled tree trunk with root buttresses, sprawling branches, 7 lush foliage clusters, 8-segment circular wooden surround bench ("Halka Sedir"), and 3 suspended brass/amber glass lanterns casting warm amber glow.
+    - Outdoor tables and wicker stools: intense backgammon table with mother-of-pearl inlaid board, checkers, and miniature dice; coffee and tulip tea glass table; daily newspaper reading corner.
+    - "Kumda Kahve" roasting sand hearth with embedded copper cezves, twin-faucet copper tea samovar, and A-frame chalkboard menu easel (`"☕ Kumda Kahve: 15₺ | 🍵 Tavşan Kanı Çay: 5₺ | 🎲 Tavla: Müesseseden"`).
+    - Friendly animated Coffee Master NPC "Kahveci Bekir Usta" with burgundy/brown embroidered vest, white shirt, black trousers, apron, Ottoman kasket/fez, holding iconic swinging brass tea tray with tulip glasses, arm waving animation, vehicle head tracking, celebratory waving upon player honk (`H`) or approach, and 3D speech bubble callouts (`"☕ Kahveci Bekir Usta: Hoş geldin evlat! Közde kahvemiz taze, tavla masası hazır! 🎲"`).
+    - Pitstop interaction: 1.2s stationary dwell near service bay (X: 43.0, Z: 56.5) awards +10 ₺ cash bonus, +1 reputation, +0.45 nitro refill, 25s "Közde Kahve Zindeliği" stamina buff, procedural backgammon dice roll clatter (`sound.diceRoll()`), celebratory confetti and golden coin stream, and 35s cooldown.
+    - Real-time radar tracking icon (`🎲`) at X: 38.5, Z: 62.0.
+
 ## Browser Automation & Visual QA (Playwright)
 - **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser`
-- **Execution Date**: 2026-10-29 (Execution Run 22 Verification — Güneş Mahallesi "Bizim Bakkal" Mahalle Bakkaliyesi & Ekmek/Gazete Tezgahı T47)
-- **Automated Tests**: 68 test files, 796 passed, 0 failed
+- **Execution Date**: 2026-10-29 (Execution Run 23 Verification — Çarşı "Tarihi Çınaraltı Kıraathanesi" & Tavla/Kahve Meydanı T48)
+- **Automated Tests**: 70 test files, 807 passed, 0 failed
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 151ms)
+- **Vite Production Build**: Successful (`dist/` generated in 172ms)
 - **Viewports Tested**:
   1. **Desktop (1280x800)**:
      - Shift start button click: PASS
      - 3D WebGL canvas initialization: PASS
-     - HUD, minimap, topbar time pill (`☀️ ÖĞLE`), weather pill (`🌤️ AÇIK` / `🌧️ YAZ YAĞMURU` / `⛈️ FIRTINA`), radio pill (`📻 RADYO: KAPALI`), supercharge pill (`⚡ SÜPER ŞARJ`), snack buff pill (`🥨 ENERJİ`), wash buff pill (`✨ PIRIL PIRIL`), tea buff pill (`☕ TAZE ÇAY`): PASS
+     - HUD, minimap, topbar time pill, weather pill, radio pill, supercharge pill, snack buff pill, wash buff pill, tea buff pill: PASS
      - Keyboard driving controls (W, A, D, Arrow keys), Horn (`H` key), and Radio toggle (`R` key): PASS
-     - Güneş Mahallesi "Bizim Bakkal" Mahalle Bakkaliyesi & Ekmek/Gazete Tezgahı (T47): Shop building with pastel cream masonry, striped awning, illuminated marquee, display window with warm interior light, bread/simit cabinet, newspaper rack, fruit/vegetable crates, A-frame blackboard, beverage cooler, Grocer Hüsnü Amca NPC with pencil behind ear & speech bubble, player pitstop bay, and minimap tracking icon (`🏪`): VERIFIED
+     - Çarşı "Tarihi Çınaraltı Kıraathanesi" & Tavla/Kahve Meydanı (T48): Historic stone coffeehouse building with weathered limestone, ashlar quoins, tiled hipped roof, chimney, arched windows, illuminated marquee, striped awning, monumental ancient plane tree ("Ulu Çınar Ağacı") with circular wooden bench, suspended amber lanterns, backgammon table with checkers & dice, coffee & tea tables, sand coffee hearth, samovar, Coffee Master Bekir Usta NPC with swinging tea tray & speech bubble, player pitstop bay, and minimap tracking icon (`🎲`): VERIFIED
      - Console errors: 0
-     - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png` and `games/mini-kargo/artifacts/gunes-bizim-bakkal.png`
+     - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png` and `games/mini-kargo/artifacts/carsi-cinaralti-kiraathane.png`
   2. **Mobile Portrait (390x844)**:
      - Responsive canvas & UI scaling: PASS
      - Touch joystick, drift, nitro & dedicated horn button (`📢 KORNA`): PASS
@@ -117,7 +131,7 @@
      - Screenshot: `games/mini-kargo/artifacts/mobile-portrait-390x844.png`
   3. **Mobile Landscape (844x390)**:
      - Landscape canvas & control separation: PASS
-     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, fishing harbour `🐟`, auto repair workshop `🔧`, and grocery store `🏪` icons) and action buttons isolated: PASS
+     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, fishing harbour `🐟`, auto repair workshop `🔧`, grocery store `🏪`, and coffeehouse `🎲` icons) and action buttons isolated: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-landscape-844x390.png`
 

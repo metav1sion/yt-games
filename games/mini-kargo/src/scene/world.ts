@@ -26,6 +26,7 @@ import { createCommunityParkView, type CommunityParkView } from "./community-par
 import { createFishingHarbourView, type FishingHarbourView } from "./fishing-harbour";
 import { createAutoRepairView, type AutoRepairView } from "./auto-repair";
 import { createGroceryStoreView, type GroceryStoreView } from "./grocery-store";
+import { createCoffeeHouseView, type CoffeeHouseView } from "./coffee-house";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
@@ -43,6 +44,7 @@ export type { CommunityParkView } from "./community-park";
 export type { FishingHarbourView } from "./fishing-harbour";
 export type { AutoRepairView } from "./auto-repair";
 export type { GroceryStoreView } from "./grocery-store";
+export type { CoffeeHouseView } from "./coffee-house";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -66,6 +68,7 @@ export type World = {
   fishingHarbour: FishingHarbourView;
   autoRepair: AutoRepairView;
   groceryStore: GroceryStoreView;
+  coffeeHouse: CoffeeHouseView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -149,6 +152,11 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   group.add(groceryStore.group);
   ctx.baseObstacles.push(...groceryStore.obstacles);
 
+  // Çarşı "Tarihi Çınaraltı Kıraathanesi" & Tavla/Kahve Meydanı (T48)
+  const coffeeHouse = createCoffeeHouseView();
+  group.add(coffeeHouse.group);
+  ctx.baseObstacles.push(...coffeeHouse.obstacles);
+
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;
   const unlockedSet = new Set<DistrictId>(["sunny"]);
@@ -226,6 +234,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     fishingHarbour,
     autoRepair,
     groceryStore,
+    coffeeHouse,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);

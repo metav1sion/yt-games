@@ -79,6 +79,19 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
     - Oyuncu ray üzerinde önünü kapatırsa durup yol verir (`phase: "yielding"`).
     - Durakta veya tramvay yanında duraklama (1.2s) "Nostaljik Hat Hatırası" bonusu kazandırır (+10 ₺, +1 itibar, konfeti patlaması).
     - Şehir radarı / minimap üzerinde canlı hareket eden `🚋` simgesi.
+- **Tarihi Çınaraltı Kıraathanesi & Tavla/Kahve Meydanı (`createCoffeeHouseView` - T48 - X: 38.5, Z: 62.0)**:
+  - **Arnavut Kaldırımı Meydan Terası**: 14.0m x 12.0m genişliğinde rustik arnavut kaldırımı meydan döşemesi, koyu granit/ahşap bordürler, oyuncu servis peronu (`COFFEE_HOUSE_BAY`: X: 43.0, Z: 56.5), park sınır çizgileri ve zemin beyaz kılavuz yön oku.
+  - **Tarihi Kesme Taş Kıraathane Binası**: 8.4m genişlik, 4.4m yükseklik, 4.8m derinlik. Açık kireçtaşı/traverten kesme taş duvarlar (`#d7ccc8`), koyu tuğla köşe taşları (`#8d6e63`), alaturka kiremit kırma çatı (`#a04000`), ahşap saçak frizi, taş köz bacası, oymalı kemerli pencereler, sıcak sarı iç aydınlatma (PointLight) ve oymalı çift kanatlı ahşap giriş kapısı.
+  - **Aydınlatmalı Tabela ve Yeşil-Krem Tente**: Çatı üstünde aydınlatmalı tabela (`"☕ TARİHİ ÇINARALTI KIRAATHANESİ · 1923 🌿"`), alt ürün bandı (`"KUMDA TÜRK KAHVESİ · TAZE ÇAY · TAVLA KEYFİ"`), koyu yeşil ve krem çizgili kumaş tente ve fırfırlı saçak.
+  - **Anıtsal Ulu Çınar Ağacı (X: 36.8, Z: 58.8)**: 5.8m boyunda heybetli yaşlı çınar gövdesi, zemin kök payandaları, kalın ana dallar, 7 kümeli geniş yeşil yaprak kubbesi (`#2e7d32`, `#388e3c`, `#43a047`, sonbahar sarısı dokunuş), gövdeyi çevreleyen 8 parçalı ahşap halka sedir (tree surround bench) ve dallardan sarkan 3 adet pirinç asılı kehribar cam kandil (gece dinamik ışıyan PointLight).
+  - **Açık Hava Hasır Tabureli Masalar**:
+    - *Kızışmalı Tavla Masası*: Yuvarlak ahşap masa, açık sedef kakmalı tavla tahtası, kumaş zemin, siyah-beyaz pullar, minyatür zarlar ve 2 adet hasır örgülü tabure.
+    - *Kumda Kahve & Çay Masası*: Yuvarlak masa, uzun saplı bakır cezve, kırmızı-beyaz tabaklı ince belli cam çay bardakları ve kesme şekerler.
+    - *Gazete & Kahve Masası*: Yuvarlak masa, açık günlük gazete ve pirinç zarflı porselen kahve fincanı.
+  - **"Kumda Kahve" Ocağı & Bakır Semaver**: Tuğla tezgah kaidesi üzerinde sıcak kavurma kumu dolu bakır kum teknesi, kuma gömülü cezveler, çift musluklu bacalı bakır çay semaveri ve karataş tebeşir menü tabelası (`"☕ Kumda Kahve: 15₺ | 🍵 Tavşan Kanı Çay: 5₺ | 🎲 Tavla: Müesseseden"`).
+  - **Kahveci Bekir Usta NPC (X: 40.5, Z: 58.5)**: Lacivert kumaş pantolon, beyaz gömlek, kahverengi işlemeli esnaf yeleği, beyaz önlük, pos bıyık, bordo Osmanlı esnaf kasketi/fezi, sol elinde 3 telli pirinç askılı çay tepsisi ve üzerinde buharı tüten 3 ince belli çay! Ritmik tepsi salınım animasyonu, oyuncu arabasına 18m mesafeden kafa çevirme takibi, oyuncu korna çaldığında (`H`) sağ kolunu kaldırıp el sallama ve 3B konuşma balonlarıyla karşılama (`"☕ Kahveci Bekir Usta: Hoş geldin evlat! Közde kahvemiz taze, tavla masası hazır! 🎲"`).
+  - **"Esnaf Kahvesi" Pitstop Etkileşimi (`src/game/coffee-house.ts`)**: Kıraathane servis peronunda (X: 43.0, Z: 56.5) 1.2 saniye duraklamak oyuncuya +10 ₺ bahşiş/esnaf ikramı, +1 itibar, +0.45 nitro dolumu, 25 saniyelik "Közde Kahve Zindeliği" buff'ı, prosedürel ahşap tavla zarı yuvarlanma sesi (`sound.diceRoll()`), konfeti ve altın sikke yağmuru kazandırır (35s soğuma süresi).
+  - **Minimap Radar Simgesi**: Çarşı meydanında canlı `🎲` tavla/kıraathane simgesi.
 - **Architecture**: Multi-story commercial buildings, bakeries, cafes, boutique shops, and a central plaza with a marble statue column, tiered fountain, and historic clock tower at the alley entrance.
 - **Road & Traffic**: Dual-lane thoroughfares, heavy pedestrian crossings, active delivery loading zones, curbside parked vehicles.
 - **Soundscape**: Bustling market crowd murmur, distant cafe cup chimes, and lively merchant activity.

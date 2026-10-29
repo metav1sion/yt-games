@@ -1481,6 +1481,76 @@ export function createSound() {
         }
       } catch {}
     },
+    diceRoll(volume = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      const vol = Math.max(0, Math.min(1, volume));
+      if (vol <= 0.02) return;
+      try {
+        const at = ctx.currentTime;
+        radio.duck(0.75, 0.4);
+        // Geleneksel sedef kakmalı ahşap tavla zarlarının tıkırtısı (Tavla Zarları Çalkalama & Yuvarlanma)
+        const bounces = [
+          { delay: 0.000, freq: 1950, dur: 0.028, gain: 0.28 },
+          { delay: 0.040, freq: 2350, dur: 0.025, gain: 0.24 },
+          { delay: 0.085, freq: 1720, dur: 0.024, gain: 0.20 },
+          { delay: 0.135, freq: 2180, dur: 0.022, gain: 0.16 },
+          { delay: 0.190, freq: 1850, dur: 0.020, gain: 0.12 },
+          { delay: 0.250, freq: 2050, dur: 0.018, gain: 0.09 },
+        ];
+        for (const b of bounces) {
+          const t = at + b.delay;
+          // 1. Tok ahşap kasa rezonansı
+          const lowOsc = ctx.createOscillator();
+          const lowGain = ctx.createGain();
+          lowOsc.type = "sine";
+          lowOsc.frequency.setValueAtTime(310, t);
+          lowOsc.frequency.exponentialRampToValueAtTime(140, t + b.dur);
+
+          lowGain.gain.setValueAtTime(0.001, t);
+          lowGain.gain.linearRampToValueAtTime(b.gain * 0.4 * vol, t + 0.002);
+          lowGain.gain.exponentialRampToValueAtTime(0.0001, t + b.dur);
+
+          lowOsc.connect(lowGain);
+          lowGain.connect(ctx.destination);
+          lowOsc.start(t);
+          lowOsc.stop(t + b.dur + 0.02);
+          lowOsc.onended = () => {
+            lowOsc.disconnect();
+            lowGain.disconnect();
+          };
+
+          // 2. Sert kemik/ahşap zar vuruş kliği
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const filter = ctx.createBiquadFilter();
+
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(b.freq, t);
+          osc.frequency.exponentialRampToValueAtTime(b.freq * 0.5, t + b.dur);
+
+          filter.type = "bandpass";
+          filter.frequency.setValueAtTime(b.freq, t);
+          filter.Q.setValueAtTime(6.0, t);
+
+          gain.gain.setValueAtTime(0.001, t);
+          gain.gain.linearRampToValueAtTime(b.gain * vol, t + 0.001);
+          gain.gain.exponentialRampToValueAtTime(0.0001, t + b.dur);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(t);
+          osc.stop(t + b.dur + 0.03);
+          osc.onended = () => {
+            osc.disconnect();
+            filter.disconnect();
+            gain.disconnect();
+          };
+        }
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

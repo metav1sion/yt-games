@@ -93,6 +93,12 @@ import {
   triggerGrocerHonk,
   GROCER_HUSNU_POS,
 } from "./game/grocery-store";
+import {
+  createCoffeeHouseState,
+  updateCoffeeHouse,
+  triggerCoffeeHouseHonk,
+  COFFEE_MASTER_BEKIR_POS,
+} from "./game/coffee-house";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -154,6 +160,7 @@ export async function startGame(app: HTMLElement) {
   let fishingHarbourState = createFishingHarbourState();
   let autoRepairState = createAutoRepairState();
   let groceryStoreState = createGroceryStoreState();
+  let coffeeHouseState = createCoffeeHouseState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -236,6 +243,7 @@ export async function startGame(app: HTMLElement) {
       getFishingHarbourState: () => fishingHarbourState,
       getAutoRepairState: () => autoRepairState,
       getGroceryStoreState: () => groceryStoreState,
+      getCoffeeHouseState: () => coffeeHouseState,
     };
   }
   const fleet = createCourierFleet({
@@ -623,6 +631,8 @@ export async function startGame(app: HTMLElement) {
       world.autoRepair.onPlayerHonk(vehicle.position);
       triggerGrocerHonk(groceryStoreState, vehicle.position);
       world.groceryStore.onPlayerHonk(vehicle.position);
+      triggerCoffeeHouseHonk(coffeeHouseState, vehicle.position);
+      world.coffeeHouse.onPlayerHonk(vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -930,6 +940,8 @@ export async function startGame(app: HTMLElement) {
       world.autoRepair.onPlayerHonk(vehicle.position);
       triggerGrocerHonk(groceryStoreState, vehicle.position);
       world.groceryStore.onPlayerHonk(vehicle.position);
+      triggerCoffeeHouseHonk(coffeeHouseState, vehicle.position);
+      world.coffeeHouse.onPlayerHonk(vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -1361,6 +1373,41 @@ export async function startGame(app: HTMLElement) {
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
 
+        // Çarşı "Tarihi Çınaraltı Kıraathanesi" & Tavla/Kahve Meydanı (T48)
+        const coffeeRes = updateCoffeeHouse(
+          coffeeHouseState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (coffeeRes.dicePlayed) {
+          sound.diceRoll();
+        }
+        if (coffeeRes.awardedCoffeeBonus) {
+          sound.diceRoll(1.0);
+          const maxNitro =
+            (1 + (progression.upgrades.nitro ?? 0) * (TUNING.nitroMaxBonus ?? 0.25)) *
+            (vehicle.supercharged ? 1.25 : 1.0);
+          vehicle.nitro = Math.min(maxNitro, vehicle.nitro + 0.45);
+          progression = {
+            ...progression,
+            money: progression.money + coffeeRes.cashBonus,
+            reputation: progression.reputation + coffeeRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          particles.spawnMoneyStream(COFFEE_MASTER_BEKIR_POS, vehicle.position);
+          hud.showToast("☕ ESNAF KAHVESİ MOLASI! +10 ₺ (+1 İtibar, Közde Kahve Zindeliği & Nitro)", 3500);
+        }
+        world.coffeeHouse.update(
+          dt,
+          coffeeHouseState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
         );
@@ -1568,6 +1615,12 @@ export async function startGame(app: HTMLElement) {
         world.groceryStore.update(
           dt,
           groceryStoreState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+        world.coffeeHouse.update(
+          dt,
+          coffeeHouseState,
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
@@ -1793,6 +1846,7 @@ export async function startGame(app: HTMLElement) {
       world.fishingHarbour.dispose();
       world.autoRepair.dispose();
       world.groceryStore.dispose();
+      world.coffeeHouse.dispose();
       renderer.dispose();
     },
     { once: true },

@@ -210,4 +210,16 @@ describe("audio system", () => {
 
     sound.dispose();
   });
+
+  it("plays backgammon dice roll sound without throwing", async () => {
+    const sound = createSound();
+    await sound.unlock();
+
+    expect(() => {
+      sound.diceRoll(1.0);
+      sound.diceRoll(0.5);
+    }).not.toThrow();
+
+    sound.dispose();
+  });
 });
