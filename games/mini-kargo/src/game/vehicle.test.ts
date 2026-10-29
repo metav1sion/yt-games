@@ -618,5 +618,46 @@ describe("scooter physics profile", () => {
   });
 });
 
+describe("supercharged vehicle physics", () => {
+  it("provides higher maximum nitro capacity when supercharged", () => {
+    const normal = stepVehicle(
+      { ...car(), nitro: 1.0, supercharged: false },
+      drive({ throttle: 0 }),
+      1.0,
+    );
+    const supercharged = stepVehicle(
+      { ...car(), nitro: 1.25, supercharged: true },
+      drive({ throttle: 0 }),
+      1.0,
+    );
+    expect(supercharged.nitro).toBeGreaterThan(normal.nitro);
+    expect(supercharged.supercharged).toBe(true);
+  });
+
+  it("boosts acceleration and top speed more when supercharged", () => {
+    const startNormal: VehicleState = { ...car(), nitro: 1.0, supercharged: false };
+    const startSuper: VehicleState = { ...car(), nitro: 1.0, supercharged: true };
+
+    const endNormal = run(startNormal, drive({ throttle: 1, nitro: true }), 0.8);
+    const endSuper = run(startSuper, drive({ throttle: 1, nitro: true }), 0.8);
+
+    expect(speedOf(endSuper)).toBeGreaterThan(speedOf(endNormal));
+  });
+
+  it("consumes nitro more efficiently when supercharged", () => {
+    const startNormal: VehicleState = { ...car(), nitro: 1.0, supercharged: false };
+    const startSuper: VehicleState = { ...car(), nitro: 1.0, supercharged: true };
+
+    const endNormal = run(startNormal, drive({ throttle: 1, nitro: true }), 0.5);
+    const endSuper = run(startSuper, drive({ throttle: 1, nitro: true }), 0.5);
+
+    const normalConsumed = 1.0 - endNormal.nitro;
+    const superConsumed = 1.0 - endSuper.nitro;
+
+    expect(superConsumed).toBeLessThan(normalConsumed);
+  });
+});
+
+
 
 

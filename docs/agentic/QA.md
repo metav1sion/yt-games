@@ -37,26 +37,30 @@
   - `src/scene/world.test.ts` (17 tests) — Road connectivity, delivery zone clearance, boulevard clearance, district traffic & pedestrian paths, night factor emissive modulation, integrated traffic lights, integrated bus stops
   - `tests/adversarial-challenger2.test.ts` (35 tests) — 1,521 BFS node pairs tested with 0 disconnections; 10,000 tick courier simulation with 0 deadlocks
   - `tests/stress/adversarial_simulation.test.ts` (22 tests) — Simulation stress tests
+  - `src/game/pitstop.test.ts` (6 tests) — EV quick-charger pad proximity, charge speed thresholds, 1.5s charge duration, 25s supercharge buff timer & events
+  - `src/scene/pitstop.test.ts` (1 test) — 3D EV charging pad mesh hierarchy, kiosk displays, status LEDs, and disposal
+  - `src/game/street-vendors.test.ts` (6 tests) — Simitçi & Kestaneci proximity interaction, 5₺ purchase cost, cooldown timers, reputation bonus & 15s energy buff
+  - `src/scene/street-vendors.test.ts` (1 test) — 3D street cart models, glass showcases, umbrellas, vendor NPCs, horn interaction & disposal
   - `tests/e2e/mini-kargo-e2e.test.ts` (242 tests) — Opaque-box E2E tests covering features F01–F21 across Tiers 1–4
-  - **Total**: 44 test files, 679 passed, 0 failed.
+  - **Total**: 48 test files, 697 passed, 0 failed.
 
 ## Browser Automation & Visual QA (Playwright)
 - **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser`
-- **Execution Date**: 2026-10-29 (Sprint 12 Verification — Dynamic Weather Puddles, Hydroplaning & Customer Tipping)
+- **Execution Date**: 2026-10-29 (Sprint 13 Verification — Logistics Depot EV Quick-Charger & Street Vendors)
 - **Viewports Tested**:
   1. **Desktop (1280x800)**:
      - Shift start button click: PASS
      - 3D WebGL canvas initialization: PASS
-     - HUD, minimap, topbar time pill (`☀️ ÖĞLE`), weather pill (`🌤️ AÇIK`), radio pill (`📻 RADYO: KAPALI` / active equalizer bars) and flash rush badge: PASS
+     - HUD, minimap, topbar time pill (`☀️ ÖĞLE`), weather pill (`🌤️ AÇIK`), radio pill (`📻 RADYO: KAPALI`), supercharge pill (`⚡ SÜPER ŞARJ`), snack buff pill (`🥨 ENERJİ`): PASS
      - Keyboard driving controls (W, A, D, Arrow keys), Horn (`H` key), and Radio toggle (`R` key): PASS
-     - 12 Dynamic road puddles glistening with wet road reflections during rain with wheel water spray particles & procedural splash audio: VERIFIED
-     - Fast delivery customer tipping fanfare, speech bubble badges, and coin stream rewards: VERIFIED
+     - Logistics Depot EV Quick-Charger pad with cyan inductive ring and kiosk status LEDs: VERIFIED
+     - Çarşı Simitçi Hasan Usta & Sahil Kestaneci Recep Usta authentic 3D carts, NPC waving & street snacks: VERIFIED
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png`
   2. **Mobile Portrait (390x844)**:
      - Responsive canvas & UI scaling: PASS
      - Touch joystick, drift, nitro & dedicated horn button (`📢 KORNA`): PASS
-     - Topbar radio equalizer pill touch interaction: PASS
+     - Topbar radio equalizer pill touch interaction & buff pills: PASS
      - Company sheet "🏆 Başarılar & Garaj" tab and livery applicator: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-portrait-390x844.png`

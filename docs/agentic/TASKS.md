@@ -150,8 +150,25 @@
   - Cash tipping toast and parabolic coin streams upon delivery completion in `src/bootstrap.ts`.
   - Tested in `src/game/delivery.test.ts`, `src/scene/delivery-stations.test.ts`, and `src/audio/sound.test.ts`.
 
+- [x] **T34 — Logistics Depot EV Quick-Charger & Fuel Pitstop**:
+  - Implemented `createPitstopView` (`src/scene/pitstop.ts`) featuring twin EV rapid charging kiosks with cyan/green LED status halos, flexible conduits, charging nozzle holsters, ground inductive power ring, and cantilever solar canopy roof.
+  - Implemented `src/game/pitstop.ts` managing charging proximity, rapid 1.5s charge progress, and 25-second Supercharge overdrive buff (+25% nitro capacity, +15% boost acceleration, 35% reduced nitro drain).
+  - Added electric arc / recharge spark physics in `src/scene/particles.ts` (`spawnElectricSparks`).
+  - Synthesized procedural rising Web Audio charge hum (`sound.chargerHum`) and 4-note ascending futuristic completion arpeggio (`sound.chargeComplete`).
+  - Added real-time glowing HUD supercharge pill (`#supercharge-pill`) and pulsing cyan/green nitro track styling.
+  - Tested in `src/game/pitstop.test.ts`, `src/scene/pitstop.test.ts`, `src/game/vehicle.test.ts`, `src/scene/particles.test.ts`, and `src/audio/sound.test.ts`.
+
+- [x] **T35 — Traditional Turkish Street Vendors (Simitçi & Kestaneci)**:
+  - Implemented `createStreetVendorsView` (`src/scene/street-vendors.ts`) placing authentic Turkish street pushcarts:
+    - **Simitçi Hasan Usta** (Çarşı Meydanı - X: 42, Z: 47): Classic red wheeled pushcart, brass spokes, glass display case with tiered golden baked sesame simits, top wicker tray, red/white parasol umbrella, and apron/kasket NPC.
+    - **Kestaneci & Mısır Recep Usta** (Sahil Kordonu - X: -44, Z: 83.2): Deep crimson metal street cart with brass trim, charcoal roasting grill with glowing embers and scored chestnuts, steaming yellow sweet corn cauldron with animated steam puffs, and striped umbrella.
+  - Interactive NPC animations: vendors turn and wave their arm when player approaches or honks (`onPlayerHonk`), displaying cozy 3D speech bubble callouts (`"🥨 Taze çıtır simit!"`, `"🌰 Kestane kebap yemesi sevap!"`).
+  - Street snack purchase mechanic in `src/game/street-vendors.ts`: 1-second stop awards fresh street snack for 5 ₺, granting +1 reputation, instant +0.45 nitro refill, and 15-second "Sokak Lezzeti Enerjisi" buff (`#snack-pill`).
+  - Synthesized crispy snack crunch & coin chime in `sound.streetSnack()`.
+  - Tested in `src/game/street-vendors.test.ts` and `src/scene/street-vendors.test.ts`.
+
 ## Active / Next Tasks
-- [ ] **T34 — Logistics Depot EV Quick-Charger & Fuel Pitstop**: Interactive depot refueling pad with visual charge cables, battery HUD indicator, and temporary super-nitro boost buff.
-- [ ] **T35 — Traditional Turkish Street Vendors (Simitçi & Kestaneci)**: Iconic red street vending carts with glass display cases, umbrellas, and friendly interactive street vendor NPCs in Çarşı and Sahil.
+- [ ] **T36 — Interactive Gas Station & Convenience Store**: Sanayi/Çarşı junction full-service fuel stop with overhead canopy, fuel pumps, glowing convenience store interior, and vehicle wash bay.
+- [ ] **T37 — Dynamic Street Fauna Snack Feeding & Petting**: Interactive feeding of street cats in Güneş and Karabaş the Anatolian Shepherd in Sanayi using purchased street snacks for heartwarming animations and reputation.
 - [ ] **T11 — Player Hands-on Playtesting & Feedback**: Solicit user evaluation on subjective driving feel, district ambiance, and gameplay pacing.
 - [ ] **T12 — Future YouTube Playables SDK Preparation**: (Pending explicit user instruction) integrate YouTube Playables SDK hooks when ready for distribution.

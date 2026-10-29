@@ -150,4 +150,18 @@ describe("particles system", () => {
 
     particles.dispose();
   });
+
+  it("spawns electric recharge sparks when vehicle is in EV pitstop", () => {
+    const scene = new THREE.Scene();
+    const particles = createParticles(scene);
+
+    expect(() => {
+      particles.spawnElectricSparks({ x: -66.5, z: -25.5 }, 16);
+      for (let i = 0; i < 15; i++) {
+        particles.update(dummyState, false, 0.04);
+      }
+    }).not.toThrow();
+
+    particles.dispose();
+  });
 });

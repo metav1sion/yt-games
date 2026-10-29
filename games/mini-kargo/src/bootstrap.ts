@@ -42,6 +42,10 @@ import { createParkedVehicle } from "./scene/parked-vehicle";
 import { createAtmosphereController } from "./scene/atmosphere";
 import { createWeatherSystem } from "./scene/weather";
 import { createPuddlesView } from "./scene/puddles";
+import { createPitstopView } from "./scene/pitstop";
+import { createPitstopState, stepPitstop } from "./game/pitstop";
+import { createStreetVendorsView } from "./scene/street-vendors";
+import { createStreetVendorState, stepStreetVendors } from "./game/street-vendors";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -85,6 +89,12 @@ export async function startGame(app: HTMLElement) {
   scene.add(weather.group);
   const puddles = createPuddlesView();
   scene.add(puddles.group);
+  const pitstopView = createPitstopView();
+  scene.add(pitstopView.group);
+  let pitstopState = createPitstopState();
+  const streetVendorsView = createStreetVendorsView();
+  scene.add(streetVendorsView.group);
+  let streetVendorsState = createStreetVendorState();
   const world = createWorld();
   scene.add(world.group);
   const marker = createMarkers();
@@ -806,6 +816,7 @@ export async function startGame(app: HTMLElement) {
           sound.carHorn();
           urbanFauna.onHonk(vehicle.position);
           world.busStops.onHonk(vehicle.position);
+          streetVendorsView.onPlayerHonk();
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -813,6 +824,60 @@ export async function startGame(app: HTMLElement) {
         if (input.consumeRadio?.()) {
           cycleRadio();
         }
+
+        // Hızlı Şarj (EV Quick-Charger) & Süper Pitstop Simülasyonu (T34)
+        const pitstopRes = stepPitstop(
+          pitstopState,
+          vehicle.position,
+          currentSpeed,
+          dt,
+        );
+        pitstopState = pitstopRes.state;
+        if (pitstopRes.event === "charging") {
+          sound.chargerHum(pitstopState.chargeProgress);
+          particles.spawnElectricSparks(vehicle.position, 2);
+        } else if (pitstopRes.event === "charge_completed") {
+          sound.chargeComplete();
+          particles.spawnElectricSparks(vehicle.position, 28);
+          const maxNitro = (1 + (progression.upgrades.nitro ?? 0) * (TUNING.nitroMaxBonus ?? 0.25)) * 1.25;
+          vehicle.nitro = maxNitro;
+          hud.showToast("⚡ HIZLI ŞARJ TAMAMLANDI! SÜPER NİTRO AKTİF (+%25 HIZ & KAPASİTE)", 4000);
+        }
+        vehicle.supercharged = pitstopState.isSupercharged;
+        pitstopView.update(dt, pitstopState, vehicle.position);
+        hud.setSupercharge(pitstopState.isSupercharged, pitstopState.superchargeTimer);
+
+        // Geleneksel Seyyar Sokak Satıcıları (Simitçi & Kestaneci) Simülasyonu (T35)
+        const vendorRes = stepStreetVendors(
+          streetVendorsState,
+          vehicle.position,
+          currentSpeed,
+          progression.money,
+          dt,
+        );
+        streetVendorsState = vendorRes.state;
+        if (vendorRes.event && vendorRes.event.type === "snack_purchased") {
+          const v = vendorRes.event.vendor;
+          progression = {
+            ...progression,
+            money: Math.max(0, progression.money - v.cost),
+            reputation: progression.reputation + v.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          sound.streetSnack();
+          particles.spawnConfetti(vehicle.position);
+          const maxNitro = 1 + (progression.upgrades.nitro ?? 0) * (TUNING.nitroMaxBonus ?? 0.25);
+          vehicle.nitro = Math.min(maxNitro, vehicle.nitro + 0.45);
+          const toastMsg = v.id === "simit_carsi"
+            ? "🥨 ÇITIR SİMİT ALINDI! (+1 İtibar & Enerji Dopingi)"
+            : "🌰 SICAK KESTANE ALINDI! (+1 İtibar & Enerji Dopingi)";
+          hud.showToast(toastMsg, 3500);
+        }
+        streetVendorsView.update(dt, streetVendorsState, vehicle.position);
+        hud.setSnackBuff(streetVendorsState.energyBuffTimer > 0, streetVendorsState.energyBuffTimer);
+
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
         );
@@ -979,6 +1044,8 @@ export async function startGame(app: HTMLElement) {
         currentNitro = false;
         props.update(dt, vehicle);
         puddles.update(dt, vehicle.position, 0, 0, weatherState.wetness);
+        pitstopView.update(dt, pitstopState, vehicle.position);
+        streetVendorsView.update(dt, streetVendorsState, vehicle.position);
       }
       if (started) {
         const here = districtAt(vehicle.position.x, vehicle.position.z);
@@ -1190,6 +1257,8 @@ export async function startGame(app: HTMLElement) {
       weather.dispose();
       puddles.dispose();
       urbanFauna.dispose();
+      pitstopView.dispose();
+      streetVendorsView.dispose();
       renderer.dispose();
     },
     { once: true },

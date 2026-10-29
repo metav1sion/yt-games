@@ -95,7 +95,8 @@ export function stepVehicle(
   const brakePower = (T.brake + upgrades.brakes * T.brakePower) * brakeMult;
   const gripLevel = upgrades.grip ?? 0;
   const nitroLevel = upgrades.nitro ?? 0;
-  const maxNitro = 1 + nitroLevel * (T.nitroMaxBonus ?? 0.25);
+  const isSupercharged = Boolean(state.supercharged);
+  const maxNitro = (1 + nitroLevel * (T.nitroMaxBonus ?? 0.25)) * (isSupercharged ? 1.25 : 1.0);
 
   // Nitro: tükenince doluluk nitroResume üstüne çıkana kadar kilitli.
   let nitro = clamp(state.nitro, 0, maxNitro);
@@ -103,16 +104,19 @@ export function stepVehicle(
   if (locked && nitro > T.nitroResume) locked = false;
   const boosting = input.nitro && !locked && nitro > 0 && throttle > 0.1;
   if (boosting) {
-    const drain = Math.max(0.14, T.nitroDrain - nitroLevel * T.nitroDrainReduction);
+    const drain = Math.max(
+      0.12,
+      (T.nitroDrain - nitroLevel * T.nitroDrainReduction) * (isSupercharged ? 0.65 : 1.0),
+    );
     nitro = Math.max(0, nitro - drain * dt);
     if (nitro <= 0) locked = true;
   } else {
     const refill =
-      (state.drifting ? T.nitroDriftRefill : T.nitroRefill) +
-      nitroLevel * T.nitroRefillBonus;
+      ((state.drifting ? T.nitroDriftRefill : T.nitroRefill) +
+      nitroLevel * T.nitroRefillBonus) * (isSupercharged ? 1.5 : 1.0);
     nitro = Math.min(maxNitro, nitro + refill * dt);
   }
-  const boost = boosting ? T.nitroBoost : 1;
+  const boost = boosting ? (T.nitroBoost * (isSupercharged ? 1.15 : 1.0)) : 1;
 
   // Dikey hareket ve zıplama fiziği
   let altitude = state.altitude ?? 0;
@@ -226,6 +230,7 @@ export function stepVehicle(
     verticalVelocity,
     airborne,
     type: vehicleType,
+    supercharged: state.supercharged,
   };
 }
 
@@ -242,5 +247,6 @@ export function resetVehicle(depot: Vec2, type: VehicleType = "van"): VehicleSta
     verticalVelocity: 0,
     airborne: false,
     type,
+    supercharged: false,
   };
 }

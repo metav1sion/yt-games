@@ -19,6 +19,7 @@ export type VehicleState = {
   verticalVelocity: number;
   airborne: boolean;
   type?: VehicleType;
+  supercharged?: boolean;
 };
 export type DriveInput = {
   throttle: number;

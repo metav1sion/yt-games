@@ -860,6 +860,83 @@ export function createSound() {
         osc2.stop(at + 0.46);
       } catch {}
     },
+    chargerHum(progress = 0.5) {
+      if (!context || !enabled || paused || context.state !== "running") return;
+      try {
+        const at = context.currentTime;
+        const osc = context.createOscillator();
+        const gain = context.createGain();
+        const filter = context.createBiquadFilter();
+
+        osc.type = "sine";
+        const freq = 220 + Math.max(0, Math.min(1, progress)) * 480;
+        osc.frequency.setValueAtTime(freq, at);
+        osc.frequency.exponentialRampToValueAtTime(freq + 40, at + 0.12);
+
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(freq * 1.5, at);
+        filter.Q.setValueAtTime(3.0, at);
+
+        gain.gain.setValueAtTime(0.08, at);
+        gain.gain.exponentialRampToValueAtTime(0.001, at + 0.14);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(context.destination);
+
+        osc.start(at);
+        osc.stop(at + 0.15);
+      } catch {}
+    },
+    chargeComplete() {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      try {
+        const at = ctx.currentTime;
+        radio.duck(0.35, 0.8);
+
+        // Geleceğin elektrikli hızlı şarj tamamlama arpej jingle'ı (E5 659Hz, A5 880Hz, E6 1318Hz, A6 1760Hz)
+        const notes = [659, 880, 1318, 1760];
+        notes.forEach((freq, idx) => {
+          const t = at + idx * 0.07;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(freq, t);
+
+          gain.gain.setValueAtTime(0.001, t);
+          gain.gain.setValueAtTime(0.12, t + 0.01);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.38);
+        });
+      } catch {}
+    },
+    streetSnack() {
+      if (!context || !enabled || paused || context.state !== "running") return;
+      try {
+        const at = context.currentTime;
+        radio.duck(0.4, 0.6);
+
+        // Çıtır simit / sıcak kestane atıştırma sesi (İki çıtır rezonans tıkırtısı ve neşeli majör akor)
+        const osc = context.createOscillator();
+        const gain = context.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(1046, at); // C6
+        osc.frequency.exponentialRampToValueAtTime(1318, at + 0.1); // E6
+
+        gain.gain.setValueAtTime(0.14, at);
+        gain.gain.exponentialRampToValueAtTime(0.001, at + 0.28);
+
+        osc.connect(gain);
+        gain.connect(context.destination);
+        osc.start(at);
+        osc.stop(at + 0.3);
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

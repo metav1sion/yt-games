@@ -121,6 +121,43 @@ body {
   box-shadow: 0 0 14px #f39c1277;
   animation: flashPulse 1.2s infinite alternate ease-in-out;
 }
+.supercharge-pill {
+  background: linear-gradient(135deg, #0984e3, #00cec9);
+  color: #ffffff;
+  border: 1px solid #00f0ff;
+  border-radius: 30px;
+  padding: 10px 14px;
+  font-size: 10px;
+  letter-spacing: 1.1px;
+  font-weight: 850;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 0 14px rgba(0, 240, 255, 0.6);
+  animation: superchargePulse 1.1s infinite alternate ease-in-out;
+}
+@keyframes superchargePulse {
+  0% { transform: scale(1); box-shadow: 0 0 8px rgba(0, 206, 201, 0.5); }
+  100% { transform: scale(1.04); box-shadow: 0 0 18px rgba(0, 240, 255, 0.85); }
+}
+.snack-pill {
+  background: linear-gradient(135deg, #d35400, #e67e22);
+  color: #ffffff;
+  border: 1px solid #f39c12;
+  border-radius: 30px;
+  padding: 10px 14px;
+  font-size: 10px;
+  letter-spacing: 1.1px;
+  font-weight: 850;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 0 12px rgba(230, 126, 34, 0.5);
+}
+.nitro-track.supercharged #nitro-fill {
+  background: linear-gradient(90deg, #00f0ff, #2ed573);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.85);
+}
 @keyframes flashPulse {
   0% { transform: scale(1); box-shadow: 0 0 8px #f39c1266; }
   100% { transform: scale(1.04); box-shadow: 0 0 18px #f1c40faa; }

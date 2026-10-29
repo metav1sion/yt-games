@@ -11,11 +11,12 @@ export type ParticleSystem = {
   spawnCrashSmoke(pos: Vec2 | THREE.Vector3): void;
   spawnLandingDust(pos: Vec2 | THREE.Vector3, speed?: number): void;
   spawnPuddleSplash(pos: Vec2 | THREE.Vector3, speed?: number, heading?: number): void;
+  spawnElectricSparks(pos: Vec2 | THREE.Vector3, count?: number): void;
 };
 
 const MAX_PARTICLES = 450;
 
-type ParticleType = "dust" | "nitro" | "money" | "confetti" | "spark" | "smoke" | "puddle_splash";
+type ParticleType = "dust" | "nitro" | "money" | "confetti" | "spark" | "smoke" | "puddle_splash" | "electric";
 
 type Particle = {
   active: boolean;
@@ -131,6 +132,14 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
     new THREE.Color("#c7ecee"), // Berrak açık su mavisi
     new THREE.Color("#7ed6df"), // Canlı akuamarin
     new THREE.Color("#70a1ff"), // İnce asfalt suyu mavisi
+  ];
+
+  const ELECTRIC_COLORS = [
+    new THREE.Color("#00f0ff"), // Canlı neon camgöbeği
+    new THREE.Color("#00d2d3"), // Elektrik turkuazı
+    new THREE.Color("#54a0ff"), // Şimşek mavisi
+    new THREE.Color("#2ed573"), // Yeşil eko enerji
+    new THREE.Color("#ffffff"), // Akkor ark beyazı
   ];
 
   function spawnDust(x: number, y: number, z: number, forwardX: number, forwardZ: number) {
@@ -404,6 +413,36 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
     }
   }
 
+  function spawnElectricSparks(pos: Vec2 | THREE.Vector3, count = 14) {
+    const px = "x" in pos ? pos.x : 0;
+    const py = "y" in pos ? (pos as THREE.Vector3).y : 0.35;
+    const pz = "z" in pos ? pos.z : 0;
+
+    for (let k = 0; k < count; k++) {
+      const p = particles[head];
+      p.active = true;
+      p.type = "electric";
+      p.pos.set(
+        px + (Math.random() - 0.5) * 0.8,
+        py + Math.random() * 0.4,
+        pz + (Math.random() - 0.5) * 0.8,
+      );
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 2.2 + Math.random() * 3.8;
+      p.vel.set(
+        Math.cos(angle) * speed,
+        2.5 + Math.random() * 3.2,
+        Math.sin(angle) * speed,
+      );
+      p.age = 0;
+      p.maxLife = 0.25 + Math.random() * 0.35;
+      p.startScale = 0.12 + Math.random() * 0.08;
+      p.endScale = 0.02;
+      p.color.copy(ELECTRIC_COLORS[Math.floor(Math.random() * ELECTRIC_COLORS.length)]);
+      head = (head + 1) % MAX_PARTICLES;
+    }
+  }
+
   function reset() {
     for (let i = 0; i < MAX_PARTICLES; i++) {
       particles[i].active = false;
@@ -555,6 +594,21 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
             p.vel.set(0, 0, 0);
           }
           currentScale = THREE.MathUtils.lerp(p.startScale, p.endScale, t);
+        } else if (p.type === "electric") {
+          // Elektrik arkı / kıvılcım: Yüksek hızlı zikzak yayılma
+          p.vel.y -= 10.0 * dt;
+          p.vel.x *= Math.exp(-3.0 * dt);
+          p.vel.z *= Math.exp(-3.0 * dt);
+
+          p.pos.x += p.vel.x * dt;
+          p.pos.y += p.vel.y * dt;
+          p.pos.z += p.vel.z * dt;
+
+          if (p.pos.y < 0.04) {
+            p.pos.y = 0.04;
+            p.vel.set(0, 0, 0);
+          }
+          currentScale = THREE.MathUtils.lerp(p.startScale, p.endScale, t);
         } else {
           // dust ve nitro
           p.pos.x += p.vel.x * dt;
@@ -587,6 +641,7 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
     spawnCrashSmoke,
     spawnLandingDust,
     spawnPuddleSplash,
+    spawnElectricSparks,
     reset,
     dispose() {
       reset();

@@ -136,6 +136,9 @@ describe("audio system", () => {
       sound.courierBeep();
       sound.puddleSplash(8.0);
       sound.customerTip();
+      sound.chargerHum(0.7);
+      sound.chargeComplete();
+      sound.streetSnack();
     }).not.toThrow();
 
     sound.dispose();

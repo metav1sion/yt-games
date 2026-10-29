@@ -21,6 +21,7 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
 - **Visual Identity**: Warm, welcoming suburban atmosphere. Soft pastel and terracotta roofs, picket fences, front gardens, flowerbeds, deciduous green trees, authentic American-suburban curbside mailboxes with red alert flags, rooftop solar water-heating panels, and a grand timber entrance welcome archway.
 - **Architecture**: Single-family houses, small apartment blocks, neighborhood grocery shops, local park benches, kids playground, and welcoming arch monument ("🏡 GÜNEŞ MAHALLESİ").
 - **Logistics Headquarters Campus**: Situated at X: -67..-50, Z: -42..-26. Features the main sorting hub, truck loading dock, corporate monument signage, security guard checkpoint, and an organized 2x2 upgrade apron.
+- **Logistics Depot EV Quick-Charger & Pitstop**: Situated at X: -66.5, Z: -25.5. Features twin fast EV charging kiosks with cyan/green LED status rings, flexible charging conduits, ground wireless inductive charging pad, cantilever solar photovoltaic canopy, and dynamic 25-second Supercharge overdrive boost.
 - **Road & Traffic**: Calm residential streets, cul-de-sacs, residential speed bumps, pedestrian crosswalks, and an unblocked stunt jump ramp (`ramp_sunny_depot` at X=-50, Z=-22) equipped with high-visibility reflector bollards.
 - **Soundscape**: Soft summer breeze whisper, rustling trees, and cheerful morning bird chirps.
 - **Key Delivery Points**: 4 residential house front porches and garden gates with clear driveways.
@@ -30,6 +31,7 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
 ## 2. Çarşı Bölgesi (Commercial District)
 - **Visual Identity**: Dense, bustling urban market center. Storefront awnings, neon and wooden shop signage, outdoor cafe seating, streetlamps, colorful banners, authentic striped-canopy open-air market stalls (Pastane, Manav, Kitapçı, Hediyelik), festive overhead celebration bunting pennants across alleyways, A-frame chalkboard cafe menus, sidewalk flower planters, and the Historic Piazza Clock Tower.
 - **Centerpiece Landmark**: Historic Tiered Marble Fountain (`buildPiazzaFountain`) centered in the Piazza roundabout (X: 50, Z: 50) featuring an octagonal marble basin, turquoise pool water, and animated water spray droplets splashing into the bowl.
+- **Traditional Street Vendor — Simitçi Hasan Usta**: Situated at X: 42.0, Z: 47.0 facing the central square. Iconic crimson red pushcart with polished brass spoke wheels, clear glass vitrine containing tiers of freshly baked sesame simits, wicker display tray, red-and-white scalloped parasol umbrella, and friendly animated vendor NPC waving to approaching drivers and honks. Offers fresh simits for 5 ₺ granting +1 reputation and energy sprint doping.
 - **Architecture**: Multi-story commercial buildings, bakeries, cafes, boutique shops, and a central plaza with a marble statue column, tiered fountain, and historic clock tower at the alley entrance.
 - **Road & Traffic**: Dual-lane thoroughfares, heavy pedestrian crossings, active delivery loading zones, curbside parked vehicles.
 - **Soundscape**: Bustling market crowd murmur, distant cafe cup chimes, and lively merchant activity.
@@ -52,6 +54,7 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
 - **Centerpiece Landmarks**:
   - Classic Maritime Coastal Lighthouse (`buildLighthouse`) on a breakwater stone jetty at X: -28, Z: 91 with alternating bold crimson and white bands, cast-iron gallery observation deck, glass lantern housing, copper cupola, and a sweeping volumetric rotating searchlight beam illuminating the waves at sunset and dusk.
   - Active Marina Boats (`buildMarinaBoats`): A classic 6.2m sailing yacht with cabin, tall mast, boom, and furled sails alongside a sporty red-and-white speedboat moored to the wooden pier with animated harmonic wave bobbing physics.
+  - Traditional Street Vendor — Kestaneci & Mısır Recep Usta: Situated along the promenade at X: -44.0, Z: 83.2. Turkish crimson dual-compartment street cart with brass trim, charcoal roasting grill with glowing embers and sizzling chestnuts, steaming sweet corn cauldron with animated steam puffs, striped umbrella, and animated vendor NPC with tongs. Sells hot chestnuts/corn for 5 ₺ with cheerful callouts, +1 reputation, and energy boost.
 - **Architecture**: Waterfront restaurants, marina harbor master station, boardwalk pavilions, resort beach huts, canoes, seaside lounging decks, and lifeguard watchtower.
 - **Road & Traffic**: Winding scenic coastal boulevard, bridge crossings, promenade sidewalks, seaside view benches.
 - **Soundscape**: Gentle rhythmic rolling ocean waves (LFO-modulated pink noise surf) and occasional distant seagull calls.
@@ -246,6 +249,30 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
   - Prompt, zero-damage deliveries award generous customer cash tips (15 ₺ for fast deliveries, 25 ₺ for lightning-fast deliveries, +5 ₺ extra for Special Contracts up to 30 ₺).
   - Customer NPC displays custom floating speech bubble: `"💵 +{tip} ₺ Bahşiş!"` with a vibrant green badge.
   - Procedural bright two-tone coin chime (1760 Hz & 2637 Hz) and parabolic gold coin stream towards player vehicle.
+
+---
+
+## 16. Logistics EV Quick-Charger Pitstop & Traditional Turkish Street Vendors (T34 & T35)
+- **Logistics Depot EV Quick-Charger & Fuel Pitstop (`createPitstopView` & `stepPitstop`)**:
+  - Located on the logistics depot apron at X: -66.5, Z: -25.5.
+  - Features dark reinforced concrete foundation (6.4m x 4.8m) with hazard safety borders, turquoise induction lane lines, and dual high-tech EV quick-charging kiosks with blue digital displays, green status LEDs, and heavy flexible charging cables.
+  - Glowing turquoise induction charging ring (`#00f0ff`) with dynamic rotation and pulsing inner disc.
+  - 3D progress disc sweeps 0-100% when vehicle is stationary or crawling (<= 2.8 m/s) on the pad.
+  - Completes in 1.5 seconds, triggering an electric blue spark surge (`spawnSuperchargeEnergy`), rising charging hum (`sound.chargerHum`), and futuristic 4-note completion chime (`sound.chargeComplete`).
+  - Grants a 25-second Supercharge buff: +25% top speed, +30% acceleration, and unlimited nitro boost with cyan particle trail and topbar HUD pill (`⚡ SÜPER ŞARJ 25s`).
+- **Traditional Turkish Street Vendors — Simitçi & Kestaneci (`createStreetVendorsView` & `stepStreetVendors`)**:
+  - **Tarihi Taşfırın Simitçisi (Simitçi Hasan Usta)**:
+    - Located in Çarşı at X: 42.0, Z: 47.0 near the historic piazza.
+    - Features iconic red-and-white wheeled street vendor cart, 4-sided transparent showcase stacked with golden sesame-encrusted simits, striped red/white umbrella canopy, and an apron-clad vendor NPC with chef hat.
+    - Approaching vendor triggers welcoming arm wave and callouts ("🥨 Taze çıtır simit!", "🥨 Fırından yeni çıktı!").
+  - **Közde Kestaneci & Süt Mısır (Kestaneci Recep Usta)**:
+    - Located along Sahil promenade at X: -44.0, Z: 83.2.
+    - Features traditional street cart with glowing copper charcoal roasting tray, smoking chimney pipe with animated steam particles, steaming corn on the cob pot, roasted chestnut paper bags, and vendor NPC.
+    - Callouts: "🌰 Kestane kebap yemesi sevap!", "🌽 Taze süt mısır!".
+  - **Interaction & Energy Buff**:
+    - Pausing near vendor purchases fresh street snack for 5 ₺, awarding +1 reputation and a 15-second energy stamina buff (`snackBuff` / `🥨 ENERJİ 15s`).
+    - Procedural crisp bite and cheerful chime in `sound.streetSnack()` and golden snack sparkle particles (`spawnSnackCrunch`).
+
 
 
 
