@@ -83,22 +83,31 @@
     - Chief Mechanic NPC "Tamirci Muharrem Usta" in navy coveralls and red bandana holding a chrome ratchet socket wrench with animated tightening motion, vehicle head tracking, celebratory wrench-waving upon player honk (`H`) or approach, and 3D speech bubble callout (`"🔧 Tamirci Muharrem Usta: Gel kaptan geeel! Motorun sesinden anlarım, saat gibi çalışacak! 🚗💨"`).
     - Player service bay with floor marking box, white directional arrow, and curbside digital air & water inflator tower (32 PSI).
     - Real-time radar tracking icon (`🔧`) at X: 78, Z: -57.5.
+  - **Güneş Mahallesi "Bizim Bakkal" Mahalle Bakkaliyesi & Ekmek/Gazete Tezgahı (T47)**:
+    - 10.6m x 7.6m terracotta/limestone sidewalk apron, granite perimeter curbs, terracotta tiled entrance paving, white/yellow parking stall lines (`GROCERY_STORE_BAY`: X: -55.0, Z: -54.0), and white ground guide arrow.
+    - Traditional grocery store building (8.2m wide x 4.2m tall x 4.6m deep) with warm pastel cream masonry (`#fef9e7`), brick base plinth, white corner pilasters, terracotta tiled eaves, brick chimney, upper-floor blue shuttered window, and blooming geranium flowerpot.
+    - Large illuminated roof marquee sign (`"🏪 BİZİM BAKKAL · HÜSNÜ AMCA 🥖"`), secondary goods banner (`"EKMEK · GAZETE · MANAV · SOĞUK MEŞRUBAT"`), 3.6m x 2.0m shop display window with warm interior PointLight illumination, and interior silhouette shelves stocked with packaged groceries and tea tins.
+    - Nostalgic crimson red and white striped fabric awning (7.4m wide x 2.2m projection) with scalloped valance fringe and white support columns.
+    - Sidewalk goods: wooden bread & simit cabinet with sourdough loaves, baguettes, and simits; 3-tier chrome revolving wire newspaper rack; slanted wooden crates with apples, oranges, and greens; A-frame chalkboard menu; retro red beverage cooler with soda bottles; and classic yellow PTT post box.
+    - Friendly Grocer NPC "Bakkal Hüsnü Amca" in navy trousers, sky-blue collared shirt, white grocer apron, gray mustache, holding fresh crusty bread, and iconic yellow pencil tucked behind his right ear (`#f1c40f`). Animated arm waving, player vehicle head tracking within 18m, celebratory waving upon player honk (`H`) or approach, and 3D speech bubble callout (`"🥖 Bakkal Hüsnü Amca: Hoş geldin evlat! Fırından yeni çıktı ekmekler, çıtır çıtır! 🥐"`).
+    - Pitstop interaction: 1.2s stationary dwell near service bay (X: -55.0, Z: -54.0) awards +10 ₺ cash bonus, +1 reputation, +0.45 nitro refill, 25s "Buz Gibi Gazoz Enerjisi" stamina buff, procedural brass shop bell chime (`sound.shopBell()`), celebratory confetti and golden coin stream, and 35s cooldown.
+    - Real-time radar tracking icon (`🏪`) at X: -58.5, Z: -57.0.
 
 ## Browser Automation & Visual QA (Playwright)
 - **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser`
-- **Execution Date**: 2026-10-29 (Execution Run 21 Verification — Sanayi "Usta Eller Oto Sanayi" Tamirhanesi & Araç Bakım Lifti T46)
-- **Automated Tests**: 66 test files, 785 passed, 0 failed
+- **Execution Date**: 2026-10-29 (Execution Run 22 Verification — Güneş Mahallesi "Bizim Bakkal" Mahalle Bakkaliyesi & Ekmek/Gazete Tezgahı T47)
+- **Automated Tests**: 68 test files, 796 passed, 0 failed
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 147ms)
+- **Vite Production Build**: Successful (`dist/` generated in 151ms)
 - **Viewports Tested**:
   1. **Desktop (1280x800)**:
      - Shift start button click: PASS
      - 3D WebGL canvas initialization: PASS
      - HUD, minimap, topbar time pill (`☀️ ÖĞLE`), weather pill (`🌤️ AÇIK` / `🌧️ YAZ YAĞMURU` / `⛈️ FIRTINA`), radio pill (`📻 RADYO: KAPALI`), supercharge pill (`⚡ SÜPER ŞARJ`), snack buff pill (`🥨 ENERJİ`), wash buff pill (`✨ PIRIL PIRIL`), tea buff pill (`☕ TAZE ÇAY`): PASS
      - Keyboard driving controls (W, A, D, Arrow keys), Horn (`H` key), and Radio toggle (`R` key): PASS
-     - Sanayi "Usta Eller Oto Sanayi" Tamirhanesi & Araç Bakım Lifti (T46): Two-post working hydraulic vehicle lift, hoisted turquoise coupe with dynamic elevation, tire changing machine, wheel balancer, tool chest, oil barrels, workbench, Chief Mechanic Muharrem Usta with chrome socket wrench & speech bubble, player pitstop service bay, and minimap tracking icon (`🔧`): VERIFIED
+     - Güneş Mahallesi "Bizim Bakkal" Mahalle Bakkaliyesi & Ekmek/Gazete Tezgahı (T47): Shop building with pastel cream masonry, striped awning, illuminated marquee, display window with warm interior light, bread/simit cabinet, newspaper rack, fruit/vegetable crates, A-frame blackboard, beverage cooler, Grocer Hüsnü Amca NPC with pencil behind ear & speech bubble, player pitstop bay, and minimap tracking icon (`🏪`): VERIFIED
      - Console errors: 0
-     - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png` and `games/mini-kargo/artifacts/sanayi-auto-repair.png`
+     - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png` and `games/mini-kargo/artifacts/gunes-bizim-bakkal.png`
   2. **Mobile Portrait (390x844)**:
      - Responsive canvas & UI scaling: PASS
      - Touch joystick, drift, nitro & dedicated horn button (`📢 KORNA`): PASS
@@ -108,7 +117,7 @@
      - Screenshot: `games/mini-kargo/artifacts/mobile-portrait-390x844.png`
   3. **Mobile Landscape (844x390)**:
      - Landscape canvas & control separation: PASS
-     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, fishing harbour `🐟`, and auto repair workshop `🔧` icons) and action buttons isolated: PASS
+     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, fishing harbour `🐟`, auto repair workshop `🔧`, and grocery store `🏪` icons) and action buttons isolated: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-landscape-844x390.png`
 

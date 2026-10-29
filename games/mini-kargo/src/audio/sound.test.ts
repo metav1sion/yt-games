@@ -198,4 +198,16 @@ describe("audio system", () => {
 
     sound.dispose();
   });
+
+  it("plays shop door bell chime without throwing", async () => {
+    const sound = createSound();
+    await sound.unlock();
+
+    expect(() => {
+      sound.shopBell(1.0);
+      sound.shopBell(0.5);
+    }).not.toThrow();
+
+    sound.dispose();
+  });
 });

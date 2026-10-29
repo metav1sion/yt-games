@@ -359,5 +359,8 @@ describe("district traffic lanes", () => {
     expect(world.autoRepair).toBeDefined();
     expect(world.autoRepair.obstacles.length).toBeGreaterThan(0);
     expect(world.autoRepair.group.name).toBe("auto-repair-view");
+    expect(world.groceryStore).toBeDefined();
+    expect(world.groceryStore.obstacles.length).toBeGreaterThan(0);
+    expect(world.groceryStore.group.name).toBe("grocery-store-view");
   });
 });

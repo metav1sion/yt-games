@@ -1434,6 +1434,53 @@ export function createSound() {
         }
       } catch {}
     },
+    shopBell(volume = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      const vol = Math.max(0, Math.min(1, volume));
+      if (vol <= 0.02) return;
+      try {
+        const at = ctx.currentTime;
+        radio.duck(0.7, 0.5);
+        // Geleneksel pirinç bakkal kapı çıngırağı (neşeli C7, E7, G7 kristal çan vuruşları)
+        const strikes = [
+          { freq: 2093.0, delay: 0.000, dur: 0.35, gain: 0.22 }, // C7
+          { freq: 2637.0, delay: 0.075, dur: 0.45, gain: 0.26 }, // E7
+          { freq: 3136.0, delay: 0.150, dur: 0.30, gain: 0.16 }, // G7
+        ];
+        for (const s of strikes) {
+          const t = at + s.delay;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const filter = ctx.createBiquadFilter();
+
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(s.freq, t);
+          // Doğal pirinç çan mikro-eğrisi
+          osc.frequency.exponentialRampToValueAtTime(s.freq * 0.985, t + s.dur);
+
+          filter.type = "bandpass";
+          filter.frequency.setValueAtTime(s.freq, t);
+          filter.Q.setValueAtTime(8.0, t);
+
+          gain.gain.setValueAtTime(0.001, t);
+          gain.gain.linearRampToValueAtTime(s.gain * vol, t + 0.003);
+          gain.gain.exponentialRampToValueAtTime(0.0001, t + s.dur);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(t);
+          osc.stop(t + s.dur + 0.05);
+          osc.onended = () => {
+            osc.disconnect();
+            filter.disconnect();
+            gain.disconnect();
+          };
+        }
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

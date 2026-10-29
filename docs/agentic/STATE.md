@@ -2,39 +2,46 @@
 
 **Date**: 2026-10-29  
 **Branch**: `feat/mini-kargo`  
-**Latest Git Commit**: `a17c7da`  
-**Current Milestone**: Sanayi "Usta Eller Oto Sanayi" Tamirhanesi & Araç Bakım Lifti (Execution Run 21)  
+**Latest Git Commit**: Pending commit for T47  
+**Current Milestone**: Güneş Mahallesi "Bizim Bakkal" Mahalle Bakkaliyesi & Ekmek/Gazete Tezgahı (Execution Run 22)  
 **Victory Audit Status**: `VICTORY CONFIRMED`
 
 ## Verification Summary
-- **Unit & Integration Tests**: 66 test files, 785 passed, 0 failed (1.55s execution)
+- **Unit & Integration Tests**: 68 test files, 796 passed, 0 failed (1.56s execution)
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 147ms)
+- **Vite Production Build**: Successful (`dist/` generated in 151ms)
 - **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
 - **Persistence Compatibility**: Verified backwards compatibility for `localStorage` key `mini-kargo:v1`.
-- **Visual QA Capture**: Verified `artifacts/sanayi-auto-repair.png` with live rendered 3D workshop concrete apron slab, industrial dark steel hangar frame with corrugated siding, illuminated marquee sign ("🔧 USTA ELLER OTO SANAYİ · MOTOR & MEKANİK 🚗"), working two-post hydraulic vehicle lift in safety blue with dynamic elevating classic turquoise coupe, red 5-drawer rolling tool chest, tire changing machine with turntable and bead breaker, digital wheel balancer, heavy workbench with cast iron bench vise and tool shadow board, tire storage rack with 4 tires, stacked loose wheels, 3 industrial 200L oil drum barrels (Castrol, Mobil, Opet) with rotary hand pumps, dual oxygen/acetylene gas cylinders, Chief Mechanic NPC "Tamirci Muharrem Usta" with chrome socket wrench, tightening animation, vehicle head tracking, celebratory waving upon player honk (`H`) or approach, 3D speech bubble callout (`"🔧 Tamirci Muharrem Usta: Gel kaptan geeel! Motorun sesinden anlarım, saat gibi çalışacak! 🚗💨"`), player service bay with floor markings, digital air/water tower, and real-time radar tracking icon (`🔧`).
+- **Visual QA Capture**: Verified `artifacts/gunes-bizim-bakkal.png` with live rendered 3D grocery store building in pastel cream masonry, brick base plinth, corner pilasters, upper-floor blue shuttered window with geranium planter box, roof chimney, large illuminated marquee sign ("🏪 BİZİM BAKKAL · HÜSNÜ AMCA 🥖"), secondary goods banner, display vitrine window with warm interior PointLight illumination and product shelves, crimson and white striped awning with valance fringe, sidewalk bread/simit cabinet with loaves and simits, 3-tier chrome revolving newspaper rack, slanted wooden fruit/vegetable crates, A-frame chalkboard menu easel, retro red beverage cooler, yellow PTT post box, friendly Grocer NPC "Bakkal Hüsnü Amca" with pencil behind ear, arm waving animation, vehicle head tracking, celebratory waving upon player honk (`H`) or approach, 3D speech bubble callouts (`"🥖 Bakkal Hüsnü Amca: Hoş geldin evlat! Fırından yeni çıktı ekmekler, çıtır çıtır! 🥐"`), player service bay with parking lines, guide arrow, and real-time radar tracking icon (`🏪`).
 
 ## Completed Improvements in this Run
-1. **Sanayi "Usta Eller Oto Sanayi" Tamirhanesi & Araç Bakım Lifti (T46)**:
-   - Built authentic industrial vehicle repair workshop complex (`src/scene/auto-repair.ts`, `src/game/auto-repair.ts`) at X: 78.0, Z: -57.5 facing the Sanayi boulevard (Z: -50):
-     - **Workshop Apron & Structure**: 15.4m x 8.6m industrial dark concrete apron slab with dark slate blue steel hangar frame, corrugated siding, roof trusses, hazard yellow/black perimeter curbs, oil stain decals, and large illuminated marquee sign ("🔧 USTA ELLER OTO SANAYİ · MOTOR & MEKANİK 🚗").
-     - **Two-Post Working Hydraulic Vehicle Lift (X: 74.5, Z: -58.5)**: Safety blue steel C-channel posts (3.6m tall) with top crossbeam cable tray, push-button power unit, carriage tracks, and 4 articulated lifting arms.
-     - **Hoisted Customer Project Vehicle**: Classic turquoise coupe hoisted on the lift arms, elevating and lowering dynamically with `state.liftHeight` (0.45m - 1.75m).
-     - **Workshop Detailing & Equipment**: Red 5-drawer rolling tool chest with top socket tray, tire changing machine with turntable and bead breaker arm, wheel balancer with digital LED display, heavy-duty timber workbench with cast iron bench vise and tool shadow board, steel tire display rack with 4 tires, stacked wheels, 3 industrial 200L oil drum barrels (Castrol, Mobil, Opet) with rotary hand pumps, and dual oxygen/acetylene gas cylinders.
-     - **Chief Mechanic NPC ("Tamirci Muharrem Usta" - X: 76.0, Z: -56.5)**: Navy mechanic coveralls with grease smudges, red bandana/cap, gray mustache, holding a chrome ratchet socket wrench. Animated tightening motion, vehicle head tracking within 18m, celebratory wrench-waving upon player honk (`H`) or approach, and 3D speech bubble callouts (`"🔧 Tamirci Muharrem Usta: Gel kaptan geeel! Motorun sesinden anlarım, saat gibi çalışacak! 🚗💨"`).
-     - **Player Service Bay & "Sanayi Bakımı" Interaction (X: 81.0, Z: -56.0)**: Drive-in service stall with floor marking box, white directional arrow, and curbside digital air & water inflator tower (32 PSI). 1.2s stationary dwell awards +10 ₺ cash bonus, +1 reputation, full nitro refill, instant vehicle package damage restoration (repairs in-transit cargo to 0 damage), 30s "Sanayi Turbo Ayarı" buff, confetti and spark shower, and 40s cooldown.
-     - **Procedural Socket Wrench Audio**: Rapid synthesized ratchet micro-clicks (3400Hz - 4800Hz) in `sound.wrenchClick()`.
-     - **Radar Minimap Icon**: Real-time `🔧` tracking icon at X: 78, Z: -57.5.
-   - Tested in `src/game/auto-repair.test.ts`, `src/scene/auto-repair.test.ts`, `src/scene/world.test.ts`, `src/audio/sound.test.ts`, `src/ui/minimap.test.ts`, and verified in browser smoke tests.
+1. **Güneş Mahallesi "Bizim Bakkal" Mahalle Bakkaliyesi & Ekmek/Gazete Tezgahı (T47)**:
+   - Built authentic traditional Turkish neighborhood grocery store complex (`src/scene/grocery-store.ts`, `src/game/grocery-store.ts`) at X: -58.5, Z: -57.0 facing the central Güneş crossroad:
+     - **Veranda Apron & Structure**: 10.6m x 7.6m terracotta/limestone sidewalk apron with granite curbs, terracotta entrance paving, parking lines (`GROCERY_STORE_BAY`: X: -55.0, Z: -54.0), and white ground guide arrow.
+     - **Traditional Grocery Store Building**: 8.2m wide x 4.2m tall x 4.6m deep shop building with warm pastel cream masonry (`#fef9e7`), brick base plinth, white corner pilasters, terracotta tiled eaves, brick chimney, upper-floor blue shuttered window, and blooming geranium flowerpot.
+     - **Illuminated Marquee & Display Window**: Large illuminated roof marquee sign (`"🏪 BİZİM BAKKAL · HÜSNÜ AMCA 🥖"`), secondary goods banner (`"EKMEK · GAZETE · MANAV · SOĞUK MEŞRUBAT"`), 3.6m x 2.0m shop display window with warm interior PointLight illumination, and interior silhouette shelves stocked with packaged groceries and tea tins.
+     - **Nostalgic Striped Fabric Awning (Awning)**: 7.4m wide x 2.2m projection crimson red and white striped awning with scalloped valance fringe and white support columns.
+     - **Sidewalk Goods & Displays**:
+       - *Taze Ekmek & Simit Dolabı*: Crimson wooden bread cabinet with glass door, golden sourdough loaves, baguettes, simit rings, and `"🥖 TAZE EKMEK"` sign.
+       - *Döner Tel Gazete Standı*: 3-tier chrome revolving wire newspaper rack with daily broadsheets and red headline banners.
+       - *Slanted Manav Crates*: Slanted wooden crates displaying red apples, orange oranges, and fresh greens.
+       - *A-Frame Chalkboard Easel*: Wooden chalkboard with menu (`"🥖 EKMEK: 8₺ | 🥤 GAZOZ: 12₺ | 📰 GAZETE"`).
+       - *Retro Beverage Cooler*: Red beverage cooler with green soda and ayran bottles and illuminated marquee.
+       - *Yellow PTT Mailbox*: Classic nostalgic curbside post box.
+     - **Grocer NPC ("Bakkal Hüsnü Amca" - X: -56.5, Z: -55.0)**: Navy trousers, sky-blue collared shirt, white grocer apron with front pocket, friendly gray mustache, gray hair, holding fresh crusty bread, and iconic yellow pencil tucked behind his right ear (`#f1c40f`). Animated arm waving, player vehicle head tracking within 18m, celebratory waving upon player honk (`H`) or approach, and 3D speech bubble callouts (`"🥖 Bakkal Hüsnü Amca: Hoş geldin evlat! Fırından yeni çıktı ekmekler, çıtır çıtır! 🥐"`).
+     - **"Bakkal Molası" Pitstop Interaction**: 1.2s stationary dwell near service bay (X: -55.0, Z: -54.0) awards +10 ₺ cash bonus, +1 reputation, +0.45 nitro refill, 25s "Buz Gibi Gazoz Enerjisi" stamina buff, brass shop bell chime (`sound.shopBell()`), celebratory confetti and golden coin stream, and 35s cooldown.
+     - **Procedural Brass Shop Bell Audio**: Sparkling high-pitch brass door bell chime (C7 2093Hz, E7 2637Hz, G7 3136Hz) in `sound.shopBell()`.
+     - **Radar Minimap Icon**: Real-time `🏪` tracking icon on the radar minimap.
+   - Tested in `src/game/grocery-store.test.ts`, `src/scene/grocery-store.test.ts`, `src/scene/world.test.ts`, `src/audio/sound.test.ts`, `src/ui/minimap.test.ts`, and verified in browser smoke tests.
 
 ## Exact Next Development Task
-- **T47 — Güneş Mahallesi "Bizim Bakkal" Mahalle Bakkaliyesi & Ekmek/Gazete Tezgahı**: Authentic traditional neighborhood grocery store at Güneş Mahallesi crossroad with front veranda awning, bread/newspaper display wire racks, fruit/vegetable crates, A-frame blackboard, friendly Bakkal NPC "Hüsnü Amca" with pencil behind ear, procedural shop entrance bell chime audio (`sound.shopBell()`), and "Bakkal Molası" pitstop bonus (+10 ₺, +1 rep, cold beverage stamina buff).
+- **T48 — Çarşı "Tarihi Çınaraltı Kıraathanesi" & Tavla/Kahve Meydanı**: Authentic historic stone coffeehouse under a monumental ancient plane tree (Ulu Çınar Ağacı) in Çarşı with outdoor cobblestone terrace, wicker stool tables, copper cezve sand coffee stove (Kumda Kahve), backgammon board games, animated Coffee Master NPC ("Kahveci Bekir Usta") with swinging brass tea tray, procedural dice roll audio (`sound.diceRoll()`), and "Esnaf Kahvesi" pitstop bonus (+10 ₺, +1 rep, stamina boost).
 
 ## Quick Resume Instructions
 To test and run locally:
 ```bash
 cd games/mini-kargo
-npm test                # Run 785 unit & E2E tests
+npm test                # Run 796 unit & E2E tests
 npm run typecheck       # Verify TypeScript types
 npm run build           # Build client bundle
 npm run test:browser    # Run Playwright visual smoke tests
