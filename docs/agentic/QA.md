@@ -123,30 +123,30 @@
     - Real-time radar tracking icon (`🍲`) at X: 30.0, Z: -57.0.
 
 ## Browser Automation & Visual QA (Playwright)
-- **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser`
-- **Execution Date**: 2026-10-29 (Execution Run 25 Verification — Sanayi "Bereket Sanayi Lokantası" & Sulu Yemek / Döner Ocağı T50)
-- **Automated Tests**: 74 test files, 827 passed, 0 failed
+- **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser` and `scripts/capture-gunes-school.cjs`
+- **Execution Date**: 2026-10-29 (Execution Run 26 Verification — Güneş Mahallesi "Tarihi Taş Mektep & Mahalle Okulu" T51)
+- **Automated Tests**: 76 test files, 837 passed, 0 failed
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 164ms)
+- **Vite Production Build**: Successful (`dist/` generated in 163ms)
 - **Viewports Tested**:
   1. **Desktop (1280x800)**:
      - Shift start button click: PASS
      - 3D WebGL canvas initialization: PASS
-     - HUD, minimap, topbar time pill, weather pill, radio pill, supercharge pill, snack buff pill, wash buff pill, tea buff pill: PASS
+     - HUD, minimap, topbar time pill, weather pill, radio pill, supercharge pill, courtesy buff pill: PASS
      - Keyboard driving controls (W, A, D, Arrow keys), Horn (`H` key), and Radio toggle (`R` key): PASS
-     - Sanayi "Bereket Sanayi Lokantası" & Sulu Yemek / Döner Ocağı (T50): Canteen building, brick plinth, cream walls, hipped tile roof, forward-tilted illuminated marquee ("🍲 BEREKET SANAYİ LOKANTASI · HAKKI USTA 🥩"), sub-banner, red-and-yellow awning, stainless steel bain-marie steam table with 4 GN pans & rising steam puffs, vertical rotating döner spit with glowing radiant heaters, outdoor tables with red checkered tablecloths, bread baskets, A-frame chalkboard menu easel, retro beverage cooler, animated Chef NPC "Aşçı Hakkı Usta" with toque hat, jacket, red neckerchief, mustache, carving knife, animated carving/waving motions, head tracking, 3D speech bubble callouts, dedicated service bay (`RESTAURANT_BAY`: X: 30.0, Z: -52.5), and minimap tracking icon (`🍲`): VERIFIED
+     - Güneş Mahallesi "Tarihi Taş Mektep & Mahalle Okulu" (T51): Cut-stone masonry building, foundation plinth, corner quoins, hipped terracotta roof, copper bell tower / belfry with verdigris patina, suspended swinging brass school bell, forward-tilted illuminated marquee ("🏫 GÜNEŞ MAHALLESİ İLKOKULU 🔔"), sub-banner ("T.C. MİLLİ EĞİTİM BAKANLIĞI · TARİHİ TAŞ MEKTEP · 1938"), marble flagpole with dynamic waving Turkish flag, 10-square colorful chalk hopscotch court (seksek alanı), parked yellow municipal school bus ("34 MK 2026 - OKUL TAŞITI") with octagonal STOP sign, marble drinking fountain, bicycle rack, notice board, animated Crossing Guard NPC "Hasan Dayı" with reflective safety vest, white peaked cap, bushy mustache, dual-sided STOP/GO paddle ("DUR / GEÇ"), animated paddle raising, vehicle head tracking within 20m, celebratory waving on honk, 3D speech bubble callout ("🏫 Hasan Dayı: Aferin evlat! Okul geçidinde yavaşlayan şoförün başımızın üstünde yeri var! ⭐"), dedicated service bay (`SCHOOL_BAY`: X: -35.0, Z: -46.5), procedural brass school bell chime (`sound.schoolBell()`), and minimap tracking icon (`🏫`): VERIFIED
      - Console errors: 0
-     - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png` and `games/mini-kargo/artifacts/sanayi-bereket-lokantasi.png`
+     - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png` and `games/mini-kargo/artifacts/gunes-tarihi-tas-mektep.png`
   2. **Mobile Portrait (390x844)**:
      - Responsive canvas & UI scaling: PASS
      - Touch joystick, drift, nitro & dedicated horn button (`📢 KORNA`): PASS
-     - Topbar radio equalizer pill touch interaction, wash buff pill & tea buff pill: PASS
+     - Topbar radio equalizer pill touch interaction, courtesy buff pill: PASS
      - Company sheet "🏆 Başarılar & Garaj" tab and livery applicator: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-portrait-390x844.png`
   3. **Mobile Landscape (844x390)**:
      - Landscape canvas & control separation: PASS
-     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, fishing harbour `🐟`, auto repair workshop `🔧`, grocery store `🏪`, coffeehouse `🎲`, ice cream stand `🍦`, and restaurant `🍲` icons) and action buttons isolated: PASS
+     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, fishing harbour `🐟`, auto repair workshop `🔧`, grocery store `🏪`, coffeehouse `🎲`, ice cream stand `🍦`, restaurant `🍲`, and school `🏫` icons) and action buttons isolated: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-landscape-844x390.png`
 

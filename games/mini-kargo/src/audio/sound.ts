@@ -1709,6 +1709,72 @@ export function createSound() {
         };
       } catch {}
     },
+    schoolBell(volume = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      const vol = Math.max(0, Math.min(1, volume));
+      if (vol <= 0.02) return;
+      try {
+        const at = ctx.currentTime;
+        radio.duck(0.75, 0.55);
+        // Geleneksel Türk taş mektep pirinç okul zili (recess bell / teneffüs zili melodisi)
+        // C6 (1046Hz) -> E6 (1318Hz) -> G6 (1568Hz) arpej ve pirinç çan çınlaması
+        const strikes = [
+          { delay: 0.000, freq: 1046.5, overtone: 2093.0, dur: 0.28, gain: 0.38 },
+          { delay: 0.135, freq: 1318.5, overtone: 2637.0, dur: 0.28, gain: 0.40 },
+          { delay: 0.270, freq: 1568.0, overtone: 3136.0, dur: 0.42, gain: 0.44 },
+        ];
+        for (const s of strikes) {
+          const t = at + s.delay;
+          // 1. Ana pirinç çan gövde tonu (sine)
+          const osc1 = ctx.createOscillator();
+          const gain1 = ctx.createGain();
+          osc1.type = "sine";
+          osc1.frequency.setValueAtTime(s.freq, t);
+          osc1.frequency.exponentialRampToValueAtTime(s.freq * 0.99, t + s.dur);
+
+          gain1.gain.setValueAtTime(0.001, t);
+          gain1.gain.linearRampToValueAtTime(s.gain * vol, t + 0.003);
+          gain1.gain.exponentialRampToValueAtTime(0.0001, t + s.dur);
+
+          osc1.connect(gain1);
+          gain1.connect(ctx.destination);
+          osc1.start(t);
+          osc1.stop(t + s.dur + 0.04);
+          osc1.onended = () => {
+            osc1.disconnect();
+            gain1.disconnect();
+          };
+
+          // 2. Pirinç çan parlak metalik üst harmonik (triangle + bandpass filtre)
+          const osc2 = ctx.createOscillator();
+          const gain2 = ctx.createGain();
+          const filter = ctx.createBiquadFilter();
+
+          osc2.type = "triangle";
+          osc2.frequency.setValueAtTime(s.overtone, t);
+
+          filter.type = "bandpass";
+          filter.frequency.setValueAtTime(s.overtone, t);
+          filter.Q.setValueAtTime(4.0, t);
+
+          gain2.gain.setValueAtTime(0.001, t);
+          gain2.gain.linearRampToValueAtTime(s.gain * 0.45 * vol, t + 0.002);
+          gain2.gain.exponentialRampToValueAtTime(0.0001, t + s.dur * 0.9);
+
+          osc2.connect(filter);
+          filter.connect(gain2);
+          gain2.connect(ctx.destination);
+          osc2.start(t);
+          osc2.stop(t + s.dur + 0.04);
+          osc2.onended = () => {
+            osc2.disconnect();
+            filter.disconnect();
+            gain2.disconnect();
+          };
+        }
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

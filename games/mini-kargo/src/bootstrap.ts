@@ -111,6 +111,12 @@ import {
   triggerRestaurantHonk,
   CHEF_HAKKI_POS,
 } from "./game/restaurant";
+import {
+  createSchoolState,
+  updateSchool,
+  triggerSchoolHonk,
+  HASAN_DAYI_POS,
+} from "./game/school";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -175,6 +181,7 @@ export async function startGame(app: HTMLElement) {
   let coffeeHouseState = createCoffeeHouseState();
   let iceCreamStandState = createIceCreamStandState();
   let restaurantState = createRestaurantState();
+  let schoolState = createSchoolState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -260,6 +267,7 @@ export async function startGame(app: HTMLElement) {
       getCoffeeHouseState: () => coffeeHouseState,
       getIceCreamStandState: () => iceCreamStandState,
       getRestaurantState: () => restaurantState,
+      getSchoolState: () => schoolState,
     };
   }
   const fleet = createCourierFleet({
@@ -653,6 +661,8 @@ export async function startGame(app: HTMLElement) {
       world.iceCreamStand.onPlayerHonk(vehicle.position);
       triggerRestaurantHonk(restaurantState, vehicle.position);
       world.restaurant.onPlayerHonk(vehicle.position);
+      triggerSchoolHonk(schoolState, vehicle.position);
+      world.school.onPlayerHonk(vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -966,6 +976,8 @@ export async function startGame(app: HTMLElement) {
       world.iceCreamStand.onPlayerHonk(vehicle.position);
       triggerRestaurantHonk(restaurantState, vehicle.position);
       world.restaurant.onPlayerHonk(vehicle.position);
+      triggerSchoolHonk(schoolState, vehicle.position);
+      world.school.onPlayerHonk(vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -1502,6 +1514,41 @@ export async function startGame(app: HTMLElement) {
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
 
+        // Güneş Mahallesi "Tarihi Taş Mektep & Mahalle Okulu" (T51)
+        const schoolRes = updateSchool(
+          schoolState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (schoolRes.bellSoundTriggered) {
+          sound.schoolBell();
+        }
+        if (schoolRes.awardedCourtesyBonus) {
+          sound.schoolBell(1.0);
+          const maxNitro =
+            (1 + (progression.upgrades.nitro ?? 0) * (TUNING.nitroMaxBonus ?? 0.25)) *
+            (vehicle.supercharged ? 1.25 : 1.0);
+          vehicle.nitro = Math.min(maxNitro, vehicle.nitro + 0.45);
+          progression = {
+            ...progression,
+            money: progression.money + schoolRes.cashBonus,
+            reputation: progression.reputation + schoolRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          particles.spawnMoneyStream(HASAN_DAYI_POS, vehicle.position);
+          hud.showToast("🏫 OKUL YOLU SAYGISI! +10 ₺ (+1 İtibar, Nezaket & Nitro)", 3500);
+        }
+        world.school.update(
+          dt,
+          schoolState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
         );
@@ -1730,6 +1777,12 @@ export async function startGame(app: HTMLElement) {
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
+        world.school.update(
+          dt,
+          schoolState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
       }
       if (started) {
         const here = districtAt(vehicle.position.x, vehicle.position.z);
@@ -1955,6 +2008,7 @@ export async function startGame(app: HTMLElement) {
       world.coffeeHouse.dispose();
       world.iceCreamStand.dispose();
       world.restaurant.dispose();
+      world.school.dispose();
       renderer.dispose();
     },
     { once: true },

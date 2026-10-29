@@ -113,6 +113,7 @@ describe("audio system", () => {
     sound.fishSizzle(0.9);
     sound.wrenchClick(1.0);
     sound.soupLadle(1.0);
+    sound.schoolBell(1.0);
     sound.setDistrict("coastal");
     sound.setRadioStation("cozy_chill");
     expect(sound.getRadioStation()).toBe("cozy_chill");
