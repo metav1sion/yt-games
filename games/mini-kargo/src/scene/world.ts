@@ -30,6 +30,7 @@ import { createCoffeeHouseView, type CoffeeHouseView } from "./coffee-house";
 import { createIceCreamStandView, type IceCreamStandView } from "./ice-cream-stand";
 import { createRestaurantView, type RestaurantView } from "./restaurant";
 import { createSchoolView, type SchoolView } from "./school";
+import { createBakeryView, type BakeryView } from "./bakery";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
@@ -51,6 +52,7 @@ export type { CoffeeHouseView } from "./coffee-house";
 export type { IceCreamStandView } from "./ice-cream-stand";
 export type { RestaurantView } from "./restaurant";
 export type { SchoolView } from "./school";
+export type { BakeryView } from "./bakery";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -78,6 +80,7 @@ export type World = {
   iceCreamStand: IceCreamStandView;
   restaurant: RestaurantView;
   school: SchoolView;
+  bakery: BakeryView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -181,6 +184,11 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   group.add(school.group);
   ctx.baseObstacles.push(...school.obstacles);
 
+  // Çarşı "Meşhur Tarihi Simit Fırını & Taş Fırın Odun Ateşi" (T52)
+  const bakery = createBakeryView();
+  group.add(bakery.group);
+  ctx.baseObstacles.push(...bakery.obstacles);
+
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;
   const unlockedSet = new Set<DistrictId>(["sunny"]);
@@ -262,6 +270,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     iceCreamStand,
     restaurant,
     school,
+    bakery,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);

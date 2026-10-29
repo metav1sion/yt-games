@@ -1775,6 +1775,104 @@ export function createSound() {
         }
       } catch {}
     },
+    woodOven(volume = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      const vol = Math.max(0, Math.min(1, volume));
+      if (vol <= 0.02) return;
+      try {
+        const at = ctx.currentTime;
+        radio.duck(0.75, 0.55);
+
+        // 1. Taş taban fırın küreği tınısı (woody peel tap on brick stone hearth floor)
+        const tapOsc = ctx.createOscillator();
+        const tapGain = ctx.createGain();
+        const tapFilter = ctx.createBiquadFilter();
+
+        tapOsc.type = "sine";
+        tapOsc.frequency.setValueAtTime(240, at);
+        tapOsc.frequency.exponentialRampToValueAtTime(80, at + 0.18);
+
+        tapFilter.type = "lowpass";
+        tapFilter.frequency.setValueAtTime(450, at);
+
+        tapGain.gain.setValueAtTime(0.001, at);
+        tapGain.gain.linearRampToValueAtTime(0.42 * vol, at + 0.004);
+        tapGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.18);
+
+        tapOsc.connect(tapFilter);
+        tapFilter.connect(tapGain);
+        tapGain.connect(ctx.destination);
+        tapOsc.start(at);
+        tapOsc.stop(at + 0.2);
+        tapOsc.onended = () => {
+          tapOsc.disconnect();
+          tapFilter.disconnect();
+          tapGain.disconnect();
+        };
+
+        // 2. Meşe odunu ateşi kor çıtırtısı (hearth ember crackle bursts)
+        const crackleCount = 4;
+        for (let i = 0; i < crackleCount; i++) {
+          const cAt = at + 0.02 + i * 0.045 + Math.random() * 0.02;
+          const noiseBuffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.025), ctx.sampleRate);
+          const data = noiseBuffer.getChannelData(0);
+          for (let s = 0; s < data.length; s++) {
+            data[s] = (Math.random() * 2 - 1) * Math.exp(-s / (data.length * 0.3));
+          }
+          const noiseSrc = ctx.createBufferSource();
+          noiseSrc.buffer = noiseBuffer;
+
+          const nFilter = ctx.createBiquadFilter();
+          nFilter.type = "bandpass";
+          nFilter.frequency.setValueAtTime(1400 + i * 400, cAt);
+          nFilter.Q.setValueAtTime(6.0, cAt);
+
+          const nGain = ctx.createGain();
+          nGain.gain.setValueAtTime(0.001, cAt);
+          nGain.gain.linearRampToValueAtTime(0.22 * vol, cAt + 0.002);
+          nGain.gain.exponentialRampToValueAtTime(0.0001, cAt + 0.03);
+
+          noiseSrc.connect(nFilter);
+          nFilter.connect(nGain);
+          nGain.connect(ctx.destination);
+          noiseSrc.start(cAt);
+          noiseSrc.stop(cAt + 0.035);
+          noiseSrc.onended = () => {
+            noiseSrc.disconnect();
+            nFilter.disconnect();
+            nGain.disconnect();
+          };
+        }
+
+        // 3. Fırın kapak & simitçi çıngırak melodisi (G5 784Hz -> C6 1046Hz)
+        const bellNotes = [
+          { delay: 0.08, freq: 784.0, dur: 0.22, g: 0.3 },
+          { delay: 0.20, freq: 1046.5, dur: 0.32, g: 0.35 },
+        ];
+        for (const b of bellNotes) {
+          const bAt = at + b.delay;
+          const bOsc = ctx.createOscillator();
+          const bGain = ctx.createGain();
+
+          bOsc.type = "sine";
+          bOsc.frequency.setValueAtTime(b.freq, bAt);
+
+          bGain.gain.setValueAtTime(0.001, bAt);
+          bGain.gain.linearRampToValueAtTime(b.g * vol, bAt + 0.003);
+          bGain.gain.exponentialRampToValueAtTime(0.0001, bAt + b.dur);
+
+          bOsc.connect(bGain);
+          bGain.connect(ctx.destination);
+          bOsc.start(bAt);
+          bOsc.stop(bAt + b.dur + 0.02);
+          bOsc.onended = () => {
+            bOsc.disconnect();
+            bGain.disconnect();
+          };
+        }
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

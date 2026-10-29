@@ -362,6 +362,26 @@
   - Tested in `src/game/school.test.ts`, `src/scene/school.test.ts`, `src/scene/world.test.ts`, `src/audio/sound.test.ts`, `src/ui/minimap.ts`, and verified in browser smoke tests across 3 viewports with 0 errors.
 
 ## Active / Next Tasks
-- [ ] **T52 — Çarşı "Meşhur Tarihi Simit Fırını & Taş Fırın Odun Ateşi"**: Authentic historic 24/7 wood-fired stone oven bakery ("Meşhur Tarihi Simit Fırını") in Çarşı with glowing ember wood-fire oven aperture, baking sesame simits, ramazan pidesi, crusty bread racks, flour sacks, animated Baker Master NPC ("Fırıncı Şaban Usta") with long wooden baker's peel (fırın küreği), procedural crackling hearth & oven chime audio (`sound.woodOven()`), service bay, and "Sıcak Simit Çıtırı" pitstop stamina & speed buff.
+- [x] **T52 — Çarşı "Meşhur Tarihi Simit Fırını & Taş Fırın Odun Ateşi"**:
+  - Implemented `createBakeryView` (`src/scene/bakery.ts`) and `src/game/bakery.ts` at X: 59.5, Z: 24.5 along the northern curb of the historic tram street (Z: 34):
+    - **Kaldırım Tablası ve Yanaşma Peronu**: 8.0m x 9.5m pişmiş toprak klinker tuğla kaldırım tablası, asfalt servis peronu cebi (`BAKERY_BAY`: X: 59.5, Z: 31.2), sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku.
+    - **Geleneksel Taş & Tuğla Fırın Mimarisi**: 7.6m genişlik x 4.8m yükseklik x 5.2m derinlik. Kesme kireçtaşı ve moloz taş kaide süpürgeliği (`#795548`), pişmiş kırmızı-kahve klinker tuğla duvarlar (`#a04000`), taş köşe silmeleri (`#d7ccc8`), ahşap saçak kornişi (`#5d4037`), kiremit kırma çatı (`#b03a2e`), üst kat lojman kemerli pencereleri ve ferforje pencere korkulukları.
+    - **Köz Odun Ateşli Kubbeli Taş Fırın Gözü (Wood-Fired Brick Dome Oven)**: Ön cepheye uzanan kemerli refrakter tuğla kubbe fırın gövdesi (`#c0392b`), kemerli fırın ağzı taş silmesi, iç haznede yanan meşe odunu közleri yatağı (`#e65100`, `#ff5722`), dinamik titreyen kehribar/turuncu alev ışığı (PointLight), taş taban üzerinde pişen taze susamlı simitler ve Ramazan pideleri.
+    - **Fırın Bacası ve Canlı Odun Dumanı**: 3.6m yüksekliğinde tuğla baca (`#6d4c41`), metal döner duman külahı (`#37474f`) ve bacadan gökyüzüne ritmik yükselen 5 adet yarı saydam beyaz odun dumanı partikülü.
+    - **Aydınlatmalı Çatı Tabelası & Nostaljik Tente**: Çatıda öne eğimli büyük ışıklı tabela (`"🥖 MEŞHUR TARİHİ SİMİT FIRINI · TAŞ FIRIN ODUN ATEŞİ 🥨"`), alt kurumsal şerit (`"GELENEKSEL ODUN TAŞ FIRINI · ÇITIR SİMİT & RAMAZAN PİDESİ · 1928"`), gece PointLight tabela armatürü, kırmızı-krem çizgili kumaş tente ve dalgalı fırfırlı saçak.
+    - **Fırın Önü Sergi ve Donatıları**:
+      - *Camlı Ahşap Simit & Ekmek Vitrini*: Sıcak sarı iç aydınlatmalı vitrin camı ve `"TAZE ÇITIR SİMİT"` tabelası.
+      - *Dikey Ahşap Simit Askılık Direği ("Simit Ağacı")*: 2.3m sedir direk, çapraz kollar ve üzerlerinde asılı susamlı simit halkaları.
+      - *İstiflenmiş Jüt Un Çuvalları*: Duvar dibinde yığılmış 3 adet un çuvalı ve `"UN 50 KG"` dokusu.
+      - *Meşe Odunları Yığını*: Fırın közü için istiflenmiş yarılmış meşe kütükleri.
+      - *Tebeşirli Karataş A-Frame Fiyat Tabelası*: `"🥨 SİMİT: 7₺ | 🍞 EKMEK: 12₺ | 🫓 PİDE: 15₺"`.
+      - *Geleneksel Pirinç Çay Semaveri*: Mermer sehpa üzerinde çift demlikli pirinç semaver.
+    - **Fırıncı Şaban Usta NPC (X: 57.8, Z: 28.5)**: Beyaz fırıncı pantolonu, gömleği, un lekeli önlüğü, beyaz kumaş fırıncı bonesi, pos bıyığı, elinde tuttuğu 2.4m ahşap fırın küreği (baker's peel) ve kürek üstünde fırına sürülüp çıkarılan dumanı tüten çıtır susamlı simit! Fırına simit sürme animasyonu, oyuncu arabasına 22m mesafeden kafa/gövde takibi, korna ve duraklamada küreği havaya kaldırıp coşkuyla selamlama ve 3D konuşma balonuyla karşılama (`"🥖 Fırıncı Şaban Usta: Gel kaptan geel! Fırından yeni çıktı, çıtır susamlı simitler yakıyor! 🥨"`).
+    - **"Sıcak Simit Çıtırı" Mola Etkileşimi (`src/game/bakery.ts`)**: Servis peronunda (X: 59.5, Z: 31.2) 1.2 saniye duraklamak oyuncuya +10 ₺ bahşiş/esnaf desteği, +1 itibar, +0.45 nitro dolumu, 25 saniyelik "Sıcak Simit Çıtırı" zindelik ve çeviklik buff'ı, prosedürel taş taban fırın küreği & odun ateşi çıtırtısı sesi (`sound.woodOven()`), konfeti ve altın sikke yağmuru kazandırır (35s soğuma süresi).
+    - **Minimap Radar Simgesi**: Çarşı bölgesinde tarihi tramvay caddesi üzerinde canlı `🥖` fırın simgesi.
+  - Tested in `src/game/bakery.test.ts`, `src/scene/bakery.test.ts`, `src/scene/world.test.ts`, `src/audio/sound.test.ts`, `src/ui/minimap.ts`, and verified in browser smoke tests across 3 viewports with 0 errors.
+
+## Active / Next Tasks
+- [ ] **T53 — Sahil "Tarihi Deniz Feneri & Kıyı Kurtarma Rıhtımı"**: Authentic coastal maritime landmark at Sahil breakwater pier: spiraled red-and-white historic lighthouse tower, rotating Fresnel lens beam with volumetric cone, observation catwalk, maritime signal flags, animated Lighthouse Keeper NPC ("Fenerci Rıza Kaptan") with yellow oilskin slicker & brass nautical telescope, procedural nautical foghorn audio (`sound.fogHorn()`), service bay, and "Fener Rehberliği" night navigation & high-beam nitro buff.
 - [ ] **T11 — Player Hands-on Playtesting & Feedback**: Solicit user evaluation on subjective driving feel, district ambiance, and gameplay pacing.
 - [ ] **T12 — Future YouTube Playables SDK Preparation**: (Pending explicit user instruction) integrate YouTube Playables SDK hooks when ready for distribution.

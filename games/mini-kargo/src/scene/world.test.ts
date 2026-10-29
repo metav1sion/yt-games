@@ -368,5 +368,14 @@ describe("district traffic lanes", () => {
     expect(world.iceCreamStand).toBeDefined();
     expect(world.iceCreamStand.obstacles.length).toBeGreaterThan(0);
     expect(world.iceCreamStand.group.name).toBe("ice-cream-stand-view");
+    expect(world.restaurant).toBeDefined();
+    expect(world.restaurant.obstacles.length).toBeGreaterThan(0);
+    expect(world.restaurant.group.name).toBe("restaurant-view");
+    expect(world.school).toBeDefined();
+    expect(world.school.obstacles.length).toBeGreaterThan(0);
+    expect(world.school.group.name).toBe("school-view");
+    expect(world.bakery).toBeDefined();
+    expect(world.bakery.obstacles.length).toBeGreaterThan(0);
+    expect(world.bakery.group.name).toBe("bakery-view");
   });
 });

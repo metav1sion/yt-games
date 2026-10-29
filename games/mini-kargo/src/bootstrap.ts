@@ -117,6 +117,12 @@ import {
   triggerSchoolHonk,
   HASAN_DAYI_POS,
 } from "./game/school";
+import {
+  createBakeryState,
+  updateBakery,
+  triggerBakeryHonk,
+  SABAN_USTA_POS,
+} from "./game/bakery";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -182,6 +188,7 @@ export async function startGame(app: HTMLElement) {
   let iceCreamStandState = createIceCreamStandState();
   let restaurantState = createRestaurantState();
   let schoolState = createSchoolState();
+  let bakeryState = createBakeryState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -268,6 +275,7 @@ export async function startGame(app: HTMLElement) {
       getIceCreamStandState: () => iceCreamStandState,
       getRestaurantState: () => restaurantState,
       getSchoolState: () => schoolState,
+      getBakeryState: () => bakeryState,
     };
   }
   const fleet = createCourierFleet({
@@ -663,6 +671,8 @@ export async function startGame(app: HTMLElement) {
       world.restaurant.onPlayerHonk(vehicle.position);
       triggerSchoolHonk(schoolState, vehicle.position);
       world.school.onPlayerHonk(vehicle.position);
+      triggerBakeryHonk(bakeryState, vehicle.position);
+      world.bakery.onPlayerHonk(vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -978,6 +988,8 @@ export async function startGame(app: HTMLElement) {
       world.restaurant.onPlayerHonk(vehicle.position);
       triggerSchoolHonk(schoolState, vehicle.position);
       world.school.onPlayerHonk(vehicle.position);
+      triggerBakeryHonk(bakeryState, vehicle.position);
+      world.bakery.onPlayerHonk(vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -1549,6 +1561,41 @@ export async function startGame(app: HTMLElement) {
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
 
+        // Çarşı "Meşhur Tarihi Simit Fırını & Taş Fırın Odun Ateşi" (T52)
+        const bakeryRes = updateBakery(
+          bakeryState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (bakeryRes.ovenSoundTriggered) {
+          sound.woodOven();
+        }
+        if (bakeryRes.awardedSimitBonus) {
+          sound.woodOven(1.0);
+          const maxNitro =
+            (1 + (progression.upgrades.nitro ?? 0) * (TUNING.nitroMaxBonus ?? 0.25)) *
+            (vehicle.supercharged ? 1.25 : 1.0);
+          vehicle.nitro = Math.min(maxNitro, vehicle.nitro + 0.45);
+          progression = {
+            ...progression,
+            money: progression.money + bakeryRes.cashBonus,
+            reputation: progression.reputation + bakeryRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          particles.spawnMoneyStream(SABAN_USTA_POS, vehicle.position);
+          hud.showToast("🥖 SICAK SİMİT ÇITIRI! +10 ₺ (+1 İtibar, Odun Ateşi & Nitro)", 3500);
+        }
+        world.bakery.update(
+          dt,
+          bakeryState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
         );
@@ -1783,6 +1830,12 @@ export async function startGame(app: HTMLElement) {
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
+        world.bakery.update(
+          dt,
+          bakeryState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
       }
       if (started) {
         const here = districtAt(vehicle.position.x, vehicle.position.z);
@@ -2009,6 +2062,7 @@ export async function startGame(app: HTMLElement) {
       world.iceCreamStand.dispose();
       world.restaurant.dispose();
       world.school.dispose();
+      world.bakery.dispose();
       renderer.dispose();
     },
     { once: true },

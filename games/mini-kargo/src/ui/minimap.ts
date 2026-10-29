@@ -314,6 +314,9 @@ export function createMinimap(
 
     const scp = worldToMinimap(-35.0, -36.5, size, bounds);
     ctx.fillText("🏫", scp.x, scp.y);
+
+    const firinPos = worldToMinimap(59.5, 24.5, size, bounds);
+    ctx.fillText("🥖", firinPos.x, firinPos.y);
     ctx.restore();
 
     // 6. AKTİF HEDEF GÖSTERGESİ (Nabız animasyonu)

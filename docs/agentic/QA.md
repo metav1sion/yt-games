@@ -123,30 +123,30 @@
     - Real-time radar tracking icon (`🍲`) at X: 30.0, Z: -57.0.
 
 ## Browser Automation & Visual QA (Playwright)
-- **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser` and `scripts/capture-gunes-school.cjs`
-- **Execution Date**: 2026-10-29 (Execution Run 26 Verification — Güneş Mahallesi "Tarihi Taş Mektep & Mahalle Okulu" T51)
-- **Automated Tests**: 76 test files, 837 passed, 0 failed
+- **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser` and `scripts/capture-carsi-simit-firini.cjs`
+- **Execution Date**: 2026-10-29 (Execution Run 27 Verification — Çarşı "Meşhur Tarihi Simit Fırını & Taş Fırın Odun Ateşi" T52)
+- **Automated Tests**: 78 test files, 847 passed, 0 failed
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 163ms)
+- **Vite Production Build**: Successful (`dist/` generated in 168ms)
 - **Viewports Tested**:
   1. **Desktop (1280x800)**:
      - Shift start button click: PASS
      - 3D WebGL canvas initialization: PASS
-     - HUD, minimap, topbar time pill, weather pill, radio pill, supercharge pill, courtesy buff pill: PASS
+     - HUD, minimap, topbar time pill, weather pill, radio pill, supercharge pill, simit buff pill: PASS
      - Keyboard driving controls (W, A, D, Arrow keys), Horn (`H` key), and Radio toggle (`R` key): PASS
-     - Güneş Mahallesi "Tarihi Taş Mektep & Mahalle Okulu" (T51): Cut-stone masonry building, foundation plinth, corner quoins, hipped terracotta roof, copper bell tower / belfry with verdigris patina, suspended swinging brass school bell, forward-tilted illuminated marquee ("🏫 GÜNEŞ MAHALLESİ İLKOKULU 🔔"), sub-banner ("T.C. MİLLİ EĞİTİM BAKANLIĞI · TARİHİ TAŞ MEKTEP · 1938"), marble flagpole with dynamic waving Turkish flag, 10-square colorful chalk hopscotch court (seksek alanı), parked yellow municipal school bus ("34 MK 2026 - OKUL TAŞITI") with octagonal STOP sign, marble drinking fountain, bicycle rack, notice board, animated Crossing Guard NPC "Hasan Dayı" with reflective safety vest, white peaked cap, bushy mustache, dual-sided STOP/GO paddle ("DUR / GEÇ"), animated paddle raising, vehicle head tracking within 20m, celebratory waving on honk, 3D speech bubble callout ("🏫 Hasan Dayı: Aferin evlat! Okul geçidinde yavaşlayan şoförün başımızın üstünde yeri var! ⭐"), dedicated service bay (`SCHOOL_BAY`: X: -35.0, Z: -46.5), procedural brass school bell chime (`sound.schoolBell()`), and minimap tracking icon (`🏫`): VERIFIED
+     - Çarşı "Meşhur Tarihi Simit Fırını & Taş Fırın Odun Ateşi" (T52): Historic brick & stone bakery building, cut limestone foundation plinth, klinker red brick facade, corner quoins, hipped terracotta roof, forward-tilted illuminated marquee ("🥖 MEŞHUR TARİHİ SİMİT FIRINI · TAŞ FIRIN ODUN ATEŞİ 🥨"), sub-banner ("GELENEKSEL ODUN TAŞ FIRINI · ÇITIR SİMİT & RAMAZAN PİDESİ · 1928"), red-and-cream striped fabric awning with scalloped fringe, front-projecting arched refractory brick dome oven with burning oak ember hearth, dynamic amber flickering flame light (PointLight), baking sesame simits and ramazan pideleri on stone hearth floor, tall masonry chimney with rotating cowl and rising smoke particle puffs, glass-fronted simit/bread vitrine counter ("TAZE ÇITIR SİMİT"), vertical cedar simit pole ("Simit Ağacı") with hanging sesame simit rings, jute burlap flour sacks ("UN 50 KG"), stacked oak firewood logs, A-frame chalkboard menu easel ("🥨 SİMİT: 7₺ | 🍞 EKMEK: 12₺ | 🫓 PİDE: 15₺"), brass samovar, animated Baker Master NPC "Fırıncı Şaban Usta" with white baker's cap, shirt, flour-smudged apron, pos bıyık, 2.4m wooden baker's peel (fırın küreği) holding a hot smoking sesame simit, peel sliding in-and-out motion, vehicle head tracking within 22m, celebratory peel raising and wave on player honk (`H`) or dwell, 3D speech bubble callout ("🥖 Fırıncı Şaban Usta: Gel kaptan geel! Fırından yeni çıktı, çıtır susamlı simitler yakıyor! 🥨"), dedicated service bay (`BAKERY_BAY`: X: 59.5, Z: 31.2) on the northern shoulder of the historic tram street (Z: 34), procedural wood-fire crackle, stone hearth tap & bakery chime audio (`sound.woodOven()`), and radar minimap icon (`🥖`): VERIFIED
      - Console errors: 0
-     - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png` and `games/mini-kargo/artifacts/gunes-tarihi-tas-mektep.png`
+     - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png` and `games/mini-kargo/artifacts/carsi-tarihi-simit-firini.png`
   2. **Mobile Portrait (390x844)**:
      - Responsive canvas & UI scaling: PASS
      - Touch joystick, drift, nitro & dedicated horn button (`📢 KORNA`): PASS
-     - Topbar radio equalizer pill touch interaction, courtesy buff pill: PASS
+     - Topbar radio equalizer pill touch interaction, simit buff pill: PASS
      - Company sheet "🏆 Başarılar & Garaj" tab and livery applicator: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-portrait-390x844.png`
   3. **Mobile Landscape (844x390)**:
      - Landscape canvas & control separation: PASS
-     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, fishing harbour `🐟`, auto repair workshop `🔧`, grocery store `🏪`, coffeehouse `🎲`, ice cream stand `🍦`, restaurant `🍲`, and school `🏫` icons) and action buttons isolated: PASS
+     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, fishing harbour `🐟`, auto repair workshop `🔧`, grocery store `🏪`, coffeehouse `🎲`, ice cream stand `🍦`, restaurant `🍲`, school `🏫`, and bakery `🥖` icons) and action buttons isolated: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-landscape-844x390.png`
 
