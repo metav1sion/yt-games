@@ -365,5 +365,8 @@ describe("district traffic lanes", () => {
     expect(world.coffeeHouse).toBeDefined();
     expect(world.coffeeHouse.obstacles.length).toBeGreaterThan(0);
     expect(world.coffeeHouse.group.name).toBe("coffee-house-view");
+    expect(world.iceCreamStand).toBeDefined();
+    expect(world.iceCreamStand.obstacles.length).toBeGreaterThan(0);
+    expect(world.iceCreamStand.group.name).toBe("ice-cream-stand-view");
   });
 });

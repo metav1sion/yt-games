@@ -145,6 +145,7 @@ async function ensureServer() {
 
     const reports = [];
 
+    let currentConsoleErrors = [];
     for (const vp of viewports) {
       console.log(`\n=== Testing Viewport: ${vp.name} (${vp.width}x${vp.height}) ===`);
       const page = await browser.newPage({
@@ -152,12 +153,17 @@ async function ensureServer() {
       });
 
       const consoleErrors = [];
+      currentConsoleErrors = consoleErrors;
       page.on("pageerror", (err) => {
+        console.error(`[PAGEERROR] ${err.message}`);
         consoleErrors.push(`[pageerror] ${err.message}`);
       });
       page.on("console", (msg) => {
         if (msg.type() === "error") {
+          console.error(`[CONSOLE.ERROR] ${msg.text()}`);
           consoleErrors.push(`[console.error] ${msg.text()}`);
+        } else {
+          console.log(`[CONSOLE.${msg.type()}] ${msg.text()}`);
         }
       });
 
@@ -327,6 +333,9 @@ async function ensureServer() {
     console.log(JSON.stringify(reportSummary, null, 2));
   } catch (error) {
     console.error("Tarayıcı duman testi başarısız oldu:", error);
+    if (typeof consoleErrors !== "undefined" && consoleErrors.length > 0) {
+      console.error("Browser console errors:", consoleErrors);
+    }
     process.exitCode = 1;
   } finally {
     if (browser) {

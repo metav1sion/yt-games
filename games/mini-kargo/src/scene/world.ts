@@ -27,6 +27,7 @@ import { createFishingHarbourView, type FishingHarbourView } from "./fishing-har
 import { createAutoRepairView, type AutoRepairView } from "./auto-repair";
 import { createGroceryStoreView, type GroceryStoreView } from "./grocery-store";
 import { createCoffeeHouseView, type CoffeeHouseView } from "./coffee-house";
+import { createIceCreamStandView, type IceCreamStandView } from "./ice-cream-stand";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
@@ -45,6 +46,7 @@ export type { FishingHarbourView } from "./fishing-harbour";
 export type { AutoRepairView } from "./auto-repair";
 export type { GroceryStoreView } from "./grocery-store";
 export type { CoffeeHouseView } from "./coffee-house";
+export type { IceCreamStandView } from "./ice-cream-stand";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -69,6 +71,7 @@ export type World = {
   autoRepair: AutoRepairView;
   groceryStore: GroceryStoreView;
   coffeeHouse: CoffeeHouseView;
+  iceCreamStand: IceCreamStandView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -157,6 +160,11 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   group.add(coffeeHouse.group);
   ctx.baseObstacles.push(...coffeeHouse.obstacles);
 
+  // Sahil "Kordon Boyu Hakiki Maraş Dondurmacısı" & Plaj Voleybolu / Güneşlenme Terası (T49)
+  const iceCreamStand = createIceCreamStandView();
+  group.add(iceCreamStand.group);
+  ctx.baseObstacles.push(...iceCreamStand.obstacles);
+
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;
   const unlockedSet = new Set<DistrictId>(["sunny"]);
@@ -235,6 +243,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     autoRepair,
     groceryStore,
     coffeeHouse,
+    iceCreamStand,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);

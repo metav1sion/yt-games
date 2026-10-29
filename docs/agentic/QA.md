@@ -109,19 +109,19 @@
 
 ## Browser Automation & Visual QA (Playwright)
 - **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser`
-- **Execution Date**: 2026-10-29 (Execution Run 23 Verification — Çarşı "Tarihi Çınaraltı Kıraathanesi" & Tavla/Kahve Meydanı T48)
-- **Automated Tests**: 70 test files, 807 passed, 0 failed
+- **Execution Date**: 2026-10-29 (Execution Run 24 Verification — Sahil "Kordon Boyu Hakiki Maraş Dondurmacısı" & Plaj Voleybolu / Güneşlenme Terası T49)
+- **Automated Tests**: 72 test files, 817 passed, 0 failed
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 172ms)
+- **Vite Production Build**: Successful (`dist/` generated in 183ms)
 - **Viewports Tested**:
   1. **Desktop (1280x800)**:
      - Shift start button click: PASS
      - 3D WebGL canvas initialization: PASS
      - HUD, minimap, topbar time pill, weather pill, radio pill, supercharge pill, snack buff pill, wash buff pill, tea buff pill: PASS
      - Keyboard driving controls (W, A, D, Arrow keys), Horn (`H` key), and Radio toggle (`R` key): PASS
-     - Çarşı "Tarihi Çınaraltı Kıraathanesi" & Tavla/Kahve Meydanı (T48): Historic stone coffeehouse building with weathered limestone, ashlar quoins, tiled hipped roof, chimney, arched windows, illuminated marquee, striped awning, monumental ancient plane tree ("Ulu Çınar Ağacı") with circular wooden bench, suspended amber lanterns, backgammon table with checkers & dice, coffee & tea tables, sand coffee hearth, samovar, Coffee Master Bekir Usta NPC with swinging tea tray & speech bubble, player pitstop bay, and minimap tracking icon (`🎲`): VERIFIED
+     - Sahil "Kordon Boyu Hakiki Maraş Dondurmacısı" & Plaj Voleybolu / Güneşlenme Terası (T49): Kiosk with mahogany body, brass trim, marble counter, twin cooling cauldrons, dry-ice vapor puffs, hanging cone stacks, topping vitrine, brass service bell, striped Ottoman burgundy/cream awning, illuminated marquee sign ("🍦 HAKİKİ MARAŞ DONDURMACISI · ALİ USTA 🍨"), sub-banner, A-frame menu easel, animated Ice Cream Master NPC "Maraşlı Ali Usta" with embroidered cepken vest, tall fez, burma bıyık, 1.4m ice cream paddle with stretchy dövme ice cream, paddle trick animation, head tracking, celebratory bell chime & speech bubble callouts, fine sand beach volleyball court with net, antenna poles, ball, umpire tower, spectator bench, sun lounger terrace with striped loungers, parasol, coconut drink, palm tree, fairy lanterns, directional signboard, dedicated service bay (`ICE_CREAM_BAY`: X: -21.0, Z: 80.5), and minimap tracking icon (`🍦`): VERIFIED
      - Console errors: 0
-     - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png` and `games/mini-kargo/artifacts/carsi-cinaralti-kiraathane.png`
+     - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png` and `games/mini-kargo/artifacts/sahil-maras-dondurmacisi.png`
   2. **Mobile Portrait (390x844)**:
      - Responsive canvas & UI scaling: PASS
      - Touch joystick, drift, nitro & dedicated horn button (`📢 KORNA`): PASS
@@ -131,7 +131,7 @@
      - Screenshot: `games/mini-kargo/artifacts/mobile-portrait-390x844.png`
   3. **Mobile Landscape (844x390)**:
      - Landscape canvas & control separation: PASS
-     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, fishing harbour `🐟`, auto repair workshop `🔧`, grocery store `🏪`, and coffeehouse `🎲` icons) and action buttons isolated: PASS
+     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, fishing harbour `🐟`, auto repair workshop `🔧`, grocery store `🏪`, coffeehouse `🎲`, and ice cream stand `🍦` icons) and action buttons isolated: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-landscape-844x390.png`
 

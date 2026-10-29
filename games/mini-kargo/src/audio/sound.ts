@@ -1551,6 +1551,69 @@ export function createSound() {
         }
       } catch {}
     },
+    iceCreamBell(volume = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      const vol = Math.max(0, Math.min(1, volume));
+      if (vol <= 0.02) return;
+      try {
+        const at = ctx.currentTime;
+        radio.duck(0.7, 0.45);
+        // Geleneksel Maraş dondurmacısı pirinç çıngırak sesi (Çift vuruşlu şıngırtı)
+        const strikes = [
+          { delay: 0.000, freq: 2637, overtone: 5274, dur: 0.18, gain: 0.35 },
+          { delay: 0.085, freq: 3136, overtone: 6272, dur: 0.22, gain: 0.38 },
+        ];
+        for (const s of strikes) {
+          const t = at + s.delay;
+          // 1. Temel pirinç çan tınısı
+          const osc1 = ctx.createOscillator();
+          const gain1 = ctx.createGain();
+          osc1.type = "sine";
+          osc1.frequency.setValueAtTime(s.freq, t);
+          osc1.frequency.exponentialRampToValueAtTime(s.freq * 0.98, t + s.dur);
+
+          gain1.gain.setValueAtTime(0.001, t);
+          gain1.gain.linearRampToValueAtTime(s.gain * vol, t + 0.002);
+          gain1.gain.exponentialRampToValueAtTime(0.0001, t + s.dur);
+
+          osc1.connect(gain1);
+          gain1.connect(ctx.destination);
+          osc1.start(t);
+          osc1.stop(t + s.dur + 0.04);
+          osc1.onended = () => {
+            osc1.disconnect();
+            gain1.disconnect();
+          };
+
+          // 2. Parlak metalik üst harmonik (shimmer)
+          const osc2 = ctx.createOscillator();
+          const gain2 = ctx.createGain();
+          const filter = ctx.createBiquadFilter();
+
+          osc2.type = "triangle";
+          osc2.frequency.setValueAtTime(s.overtone, t);
+
+          filter.type = "highpass";
+          filter.frequency.setValueAtTime(2200, t);
+
+          gain2.gain.setValueAtTime(0.001, t);
+          gain2.gain.linearRampToValueAtTime(s.gain * 0.45 * vol, t + 0.001);
+          gain2.gain.exponentialRampToValueAtTime(0.0001, t + s.dur * 0.85);
+
+          osc2.connect(filter);
+          filter.connect(gain2);
+          gain2.connect(ctx.destination);
+          osc2.start(t);
+          osc2.stop(t + s.dur + 0.04);
+          osc2.onended = () => {
+            osc2.disconnect();
+            filter.disconnect();
+            gain2.disconnect();
+          };
+        }
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

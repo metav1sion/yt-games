@@ -24,7 +24,7 @@ export function buildCoastalDistrict(ctx: WorldContext) {
   // 1. Kumsal Şeridi: Palmiyeler, Banklar, Çadırlar, Şezlonglar ve Kayalar
   // =========================================================================
   for (let x = -90; x <= -10; x += 10) {
-    if (Math.abs(x + 50) < 8 || Math.abs(x + 80) < 8) continue; // Yol/iskele ve Balıkçı Barınağı girişi açık kalsın
+    if (Math.abs(x + 50) < 8 || Math.abs(x + 80) < 8 || Math.abs(x + 20) < 8) continue; // Yol/iskele, Balıkçı Barınağı ve Maraş Dondurmacısı alanı açık kalsın
     addPalmTree(x, 85);
     // Sahil yürüyüş yolu bankları
     buildParkBench(group, x + 4, 83.4, 0);
@@ -36,13 +36,11 @@ export function buildCoastalDistrict(ctx: WorldContext) {
   }
 
   ctx.addModel(group, "nature/tent_smallOpen", -88, 86.5, 5, 0.3);
-  ctx.addModel(group, "nature/tent_smallOpen", -22, 86.5, 5, -0.4);
   ctx.addModel(group, "nature/rock_largeA", -92, 87, 4, 1.2);
   ctx.addModel(group, "nature/rock_largeA", -12, 87.5, 4, 0.2);
 
   // Plaj Şemsiyeleri
   ctx.addModel(group, "commercial/detail-parasol-a", -89, 85, 4.5, 0.2);
-  ctx.addModel(group, "commercial/detail-parasol-b", -28, 85, 4.5, -0.3);
 
   // Kordon Boyu Nostaljik Döküm Fener Direkleri
   for (const lx of [-70, -58, -42, -30]) {

@@ -99,6 +99,12 @@ import {
   triggerCoffeeHouseHonk,
   COFFEE_MASTER_BEKIR_POS,
 } from "./game/coffee-house";
+import {
+  createIceCreamStandState,
+  updateIceCreamStand,
+  triggerIceCreamStandHonk,
+  ICE_CREAM_MASTER_ALI_POS,
+} from "./game/ice-cream-stand";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -161,6 +167,7 @@ export async function startGame(app: HTMLElement) {
   let autoRepairState = createAutoRepairState();
   let groceryStoreState = createGroceryStoreState();
   let coffeeHouseState = createCoffeeHouseState();
+  let iceCreamStandState = createIceCreamStandState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -244,6 +251,7 @@ export async function startGame(app: HTMLElement) {
       getAutoRepairState: () => autoRepairState,
       getGroceryStoreState: () => groceryStoreState,
       getCoffeeHouseState: () => coffeeHouseState,
+      getIceCreamStandState: () => iceCreamStandState,
     };
   }
   const fleet = createCourierFleet({
@@ -633,6 +641,8 @@ export async function startGame(app: HTMLElement) {
       world.groceryStore.onPlayerHonk(vehicle.position);
       triggerCoffeeHouseHonk(coffeeHouseState, vehicle.position);
       world.coffeeHouse.onPlayerHonk(vehicle.position);
+      triggerIceCreamStandHonk(iceCreamStandState, vehicle.position);
+      world.iceCreamStand.onPlayerHonk(vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -942,6 +952,8 @@ export async function startGame(app: HTMLElement) {
       world.groceryStore.onPlayerHonk(vehicle.position);
       triggerCoffeeHouseHonk(coffeeHouseState, vehicle.position);
       world.coffeeHouse.onPlayerHonk(vehicle.position);
+      triggerIceCreamStandHonk(iceCreamStandState, vehicle.position);
+      world.iceCreamStand.onPlayerHonk(vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -1408,6 +1420,41 @@ export async function startGame(app: HTMLElement) {
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
 
+        // Sahil "Kordon Boyu Hakiki Maraş Dondurmacısı" & Plaj Voleybolu / Güneşlenme Terası (T49)
+        const iceCreamRes = updateIceCreamStand(
+          iceCreamStandState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (iceCreamRes.bellRung) {
+          sound.iceCreamBell();
+        }
+        if (iceCreamRes.awardedIceCreamBonus) {
+          sound.iceCreamBell(1.0);
+          const maxNitro =
+            (1 + (progression.upgrades.nitro ?? 0) * (TUNING.nitroMaxBonus ?? 0.25)) *
+            (vehicle.supercharged ? 1.25 : 1.0);
+          vehicle.nitro = Math.min(maxNitro, vehicle.nitro + 0.45);
+          progression = {
+            ...progression,
+            money: progression.money + iceCreamRes.cashBonus,
+            reputation: progression.reputation + iceCreamRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          particles.spawnMoneyStream(ICE_CREAM_MASTER_ALI_POS, vehicle.position);
+          hud.showToast("🍦 BUZ GİBİ MARAŞ DONDURMASI! +10 ₺ (+1 İtibar, Dövme Dondurma Serinliği & Nitro)", 3500);
+        }
+        world.iceCreamStand.update(
+          dt,
+          iceCreamStandState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
         );
@@ -1621,6 +1668,12 @@ export async function startGame(app: HTMLElement) {
         world.coffeeHouse.update(
           dt,
           coffeeHouseState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+        world.iceCreamStand.update(
+          dt,
+          iceCreamStandState,
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
@@ -1847,6 +1900,7 @@ export async function startGame(app: HTMLElement) {
       world.autoRepair.dispose();
       world.groceryStore.dispose();
       world.coffeeHouse.dispose();
+      world.iceCreamStand.dispose();
       renderer.dispose();
     },
     { once: true },

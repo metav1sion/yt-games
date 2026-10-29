@@ -161,6 +161,8 @@ describe("audio system", () => {
       sound.trainHorn();
       sound.fishSizzle(1.0);
       sound.wrenchClick(1.0);
+      sound.diceRoll(1.0);
+      sound.iceCreamBell(1.0);
     }).not.toThrow();
 
     sound.dispose();
