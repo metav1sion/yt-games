@@ -308,6 +308,9 @@ export function createMinimap(
 
     const icp = worldToMinimap(-23.5, 83.2, size, bounds);
     ctx.fillText("🍦", icp.x, icp.y);
+
+    const rsp = worldToMinimap(30.0, -57.0, size, bounds);
+    ctx.fillText("🍲", rsp.x, rsp.y);
     ctx.restore();
 
     // 6. AKTİF HEDEF GÖSTERGESİ (Nabız animasyonu)

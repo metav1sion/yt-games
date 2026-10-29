@@ -1614,6 +1614,101 @@ export function createSound() {
         }
       } catch {}
     },
+    soupLadle(volume = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      const vol = Math.max(0, Math.min(1, volume));
+      if (vol <= 0.02) return;
+      try {
+        const at = ctx.currentTime;
+        radio.duck(0.7, 0.45);
+        // Geleneksel esnaf lokantası paslanmaz çelik çorba kepçesi tıkırtısı ve sıcak yemek cızırtısı
+        const strikes = [
+          { delay: 0.000, freq: 1864, overtone: 3728, dur: 0.14, gain: 0.32 },
+          { delay: 0.075, freq: 2093, overtone: 4186, dur: 0.16, gain: 0.35 },
+        ];
+        for (const s of strikes) {
+          const t = at + s.delay;
+          // 1. Metalik tencere/kepçe vuruş tınısı
+          const osc1 = ctx.createOscillator();
+          const gain1 = ctx.createGain();
+          osc1.type = "sine";
+          osc1.frequency.setValueAtTime(s.freq, t);
+          osc1.frequency.exponentialRampToValueAtTime(s.freq * 0.95, t + s.dur);
+
+          gain1.gain.setValueAtTime(0.001, t);
+          gain1.gain.linearRampToValueAtTime(s.gain * vol, t + 0.002);
+          gain1.gain.exponentialRampToValueAtTime(0.0001, t + s.dur);
+
+          osc1.connect(gain1);
+          gain1.connect(ctx.destination);
+          osc1.start(t);
+          osc1.stop(t + s.dur + 0.03);
+          osc1.onended = () => {
+            osc1.disconnect();
+            gain1.disconnect();
+          };
+
+          // 2. Çelik tını ve rezonans (triangle yüksek harmonik)
+          const osc2 = ctx.createOscillator();
+          const gain2 = ctx.createGain();
+          const filter = ctx.createBiquadFilter();
+
+          osc2.type = "triangle";
+          osc2.frequency.setValueAtTime(s.overtone, t);
+
+          filter.type = "bandpass";
+          filter.frequency.setValueAtTime(2600, t);
+          filter.Q.setValueAtTime(3.0, t);
+
+          gain2.gain.setValueAtTime(0.001, t);
+          gain2.gain.linearRampToValueAtTime(s.gain * 0.4 * vol, t + 0.001);
+          gain2.gain.exponentialRampToValueAtTime(0.0001, t + s.dur * 0.8);
+
+          osc2.connect(filter);
+          filter.connect(gain2);
+          gain2.connect(ctx.destination);
+          osc2.start(t);
+          osc2.stop(t + s.dur + 0.03);
+          osc2.onended = () => {
+            osc2.disconnect();
+            filter.disconnect();
+            gain2.disconnect();
+          };
+        }
+
+        // 3. Sıcak sulu yemek ve döner cızırtısı / kaynama kabarcığı
+        const bufferSize = Math.floor(ctx.sampleRate * 0.28);
+        const noiseBuf = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const out = noiseBuf.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          out[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+        }
+        const noiseSrc = ctx.createBufferSource();
+        noiseSrc.buffer = noiseBuf;
+
+        const noiseFilter = ctx.createBiquadFilter();
+        noiseFilter.type = "bandpass";
+        noiseFilter.frequency.setValueAtTime(1550, at);
+        noiseFilter.Q.setValueAtTime(2.5, at);
+
+        const noiseGain = ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.001, at);
+        noiseGain.gain.linearRampToValueAtTime(0.18 * vol, at + 0.03);
+        noiseGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.28);
+
+        noiseSrc.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(ctx.destination);
+        noiseSrc.start(at);
+        noiseSrc.stop(at + 0.3);
+        noiseSrc.onended = () => {
+          noiseSrc.disconnect();
+          noiseFilter.disconnect();
+          noiseGain.disconnect();
+        };
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

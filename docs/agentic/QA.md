@@ -107,21 +107,36 @@
     - Pitstop interaction: 1.2s stationary dwell near service bay (X: 43.0, Z: 56.5) awards +10 ₺ cash bonus, +1 reputation, +0.45 nitro refill, 25s "Közde Kahve Zindeliği" stamina buff, procedural backgammon dice roll clatter (`sound.diceRoll()`), celebratory confetti and golden coin stream, and 35s cooldown.
     - Real-time radar tracking icon (`🎲`) at X: 38.5, Z: 62.0.
 
+- **Sanayi "Bereket Sanayi Lokantası" & Sulu Yemek / Döner Ocağı (T50)**:
+  - `src/game/restaurant.test.ts` (6 tests) — Sanayi Bereket Lokantası state machine, 1.2s dwell timer at service bay, +10 ₺ cash tip, +1 rep, +0.45 nitro refill, 25s "Sanayi Tabldot Zindeliği" stamina & speed buff, 35s cooldown, rotating vertical döner spit simulation, and Chef Hakkı Usta honk greeting.
+  - `src/scene/restaurant.test.ts` (4 tests) — 3D hierarchy creation, brick plinth, cream stucco walls, terracotta tile hipped roof, chimney, forward-tilted illuminated marquee ("🍲 BEREKET SANAYİ LOKANTASI · HAKKI USTA 🥩"), red-and-yellow striped awning with scalloped valance fringe, stainless steel bain-marie counter with 4 GN pans and rising steam puffs, vertical döner kebab spit with glowing infrared heaters, outdoor dining tables with red checkered tablecloths and bread baskets, animated Chef NPC "Aşçı Hakkı Usta" with toque hat, apron, mustache, carving knife, head tracking, 3D speech bubble callouts, and non-blocking colliders.
+  - Verification:
+    - 11.5m x 9.0m concrete veranda slab, granite curbs, player service bay (`RESTAURANT_BAY`: X: 30.0, Z: -52.5), yellow-and-black hazard striping, white stall borders, and ground directional guide arrow.
+    - Traditional industrial canteen building in red brick plinth, warm cream stucco walls, terracotta tile hipped roof, and brick chimney with metal rain cowl.
+    - Large illuminated marquee sign tilted 12° forward ("🍲 BEREKET SANAYİ LOKANTASI · HAKKI USTA 🥩"), sub-banner ("GÜNLÜK TABLDOT · SULU YEMEK · YAPRAK DÖNER & PİLAV"), gold trim, and night PointLight.
+    - Red-and-yellow striped awning with scalloped valance fringe and steel support columns.
+    - Stainless steel bain-marie steam table with 4 GN food pans (Pilav, Kuru Fasulye, Güveç, Mercimek Çorbası) venting animated rising steam puffs.
+    - Rotating vertical döner spit with glowing radiant heating elements, meat roll, and tomato/onion garnishes.
+    - 2 outdoor dining tables with red checkered tablecloths (kırmızı pötikare), bread baskets, condiment shakers, A-frame chalkboard menu easel, and retro beverage cooler.
+    - Animated Chef NPC "Aşçı Hakkı Usta" with chef's tall toque hat, white double-breasted jacket, red neckerchief, apron, handlebar mustache, carving knife, döner carving animation, vehicle head tracking within 20m, celebratory waving on honk, and 3D speech bubble callout.
+    - Pitstop interaction: 1.2s stationary dwell near service bay (X: 30.0, Z: -52.5) awards +10 ₺ cash bonus, +1 reputation, +0.45 nitro refill, 25s "Sanayi Tabldot Zindeliği" stamina & speed buff, procedural metallic ladle tap & simmering stew sizzle (`sound.soupLadle()`), celebratory confetti and golden coin stream, and 35s cooldown.
+    - Real-time radar tracking icon (`🍲`) at X: 30.0, Z: -57.0.
+
 ## Browser Automation & Visual QA (Playwright)
 - **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser`
-- **Execution Date**: 2026-10-29 (Execution Run 24 Verification — Sahil "Kordon Boyu Hakiki Maraş Dondurmacısı" & Plaj Voleybolu / Güneşlenme Terası T49)
-- **Automated Tests**: 72 test files, 817 passed, 0 failed
+- **Execution Date**: 2026-10-29 (Execution Run 25 Verification — Sanayi "Bereket Sanayi Lokantası" & Sulu Yemek / Döner Ocağı T50)
+- **Automated Tests**: 74 test files, 827 passed, 0 failed
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 183ms)
+- **Vite Production Build**: Successful (`dist/` generated in 164ms)
 - **Viewports Tested**:
   1. **Desktop (1280x800)**:
      - Shift start button click: PASS
      - 3D WebGL canvas initialization: PASS
      - HUD, minimap, topbar time pill, weather pill, radio pill, supercharge pill, snack buff pill, wash buff pill, tea buff pill: PASS
      - Keyboard driving controls (W, A, D, Arrow keys), Horn (`H` key), and Radio toggle (`R` key): PASS
-     - Sahil "Kordon Boyu Hakiki Maraş Dondurmacısı" & Plaj Voleybolu / Güneşlenme Terası (T49): Kiosk with mahogany body, brass trim, marble counter, twin cooling cauldrons, dry-ice vapor puffs, hanging cone stacks, topping vitrine, brass service bell, striped Ottoman burgundy/cream awning, illuminated marquee sign ("🍦 HAKİKİ MARAŞ DONDURMACISI · ALİ USTA 🍨"), sub-banner, A-frame menu easel, animated Ice Cream Master NPC "Maraşlı Ali Usta" with embroidered cepken vest, tall fez, burma bıyık, 1.4m ice cream paddle with stretchy dövme ice cream, paddle trick animation, head tracking, celebratory bell chime & speech bubble callouts, fine sand beach volleyball court with net, antenna poles, ball, umpire tower, spectator bench, sun lounger terrace with striped loungers, parasol, coconut drink, palm tree, fairy lanterns, directional signboard, dedicated service bay (`ICE_CREAM_BAY`: X: -21.0, Z: 80.5), and minimap tracking icon (`🍦`): VERIFIED
+     - Sanayi "Bereket Sanayi Lokantası" & Sulu Yemek / Döner Ocağı (T50): Canteen building, brick plinth, cream walls, hipped tile roof, forward-tilted illuminated marquee ("🍲 BEREKET SANAYİ LOKANTASI · HAKKI USTA 🥩"), sub-banner, red-and-yellow awning, stainless steel bain-marie steam table with 4 GN pans & rising steam puffs, vertical rotating döner spit with glowing radiant heaters, outdoor tables with red checkered tablecloths, bread baskets, A-frame chalkboard menu easel, retro beverage cooler, animated Chef NPC "Aşçı Hakkı Usta" with toque hat, jacket, red neckerchief, mustache, carving knife, animated carving/waving motions, head tracking, 3D speech bubble callouts, dedicated service bay (`RESTAURANT_BAY`: X: 30.0, Z: -52.5), and minimap tracking icon (`🍲`): VERIFIED
      - Console errors: 0
-     - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png` and `games/mini-kargo/artifacts/sahil-maras-dondurmacisi.png`
+     - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png` and `games/mini-kargo/artifacts/sanayi-bereket-lokantasi.png`
   2. **Mobile Portrait (390x844)**:
      - Responsive canvas & UI scaling: PASS
      - Touch joystick, drift, nitro & dedicated horn button (`📢 KORNA`): PASS
@@ -131,7 +146,7 @@
      - Screenshot: `games/mini-kargo/artifacts/mobile-portrait-390x844.png`
   3. **Mobile Landscape (844x390)**:
      - Landscape canvas & control separation: PASS
-     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, fishing harbour `🐟`, auto repair workshop `🔧`, grocery store `🏪`, coffeehouse `🎲`, and ice cream stand `🍦` icons) and action buttons isolated: PASS
+     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, fishing harbour `🐟`, auto repair workshop `🔧`, grocery store `🏪`, coffeehouse `🎲`, ice cream stand `🍦`, and restaurant `🍲` icons) and action buttons isolated: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-landscape-844x390.png`
 

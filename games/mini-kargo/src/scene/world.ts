@@ -28,6 +28,7 @@ import { createAutoRepairView, type AutoRepairView } from "./auto-repair";
 import { createGroceryStoreView, type GroceryStoreView } from "./grocery-store";
 import { createCoffeeHouseView, type CoffeeHouseView } from "./coffee-house";
 import { createIceCreamStandView, type IceCreamStandView } from "./ice-cream-stand";
+import { createRestaurantView, type RestaurantView } from "./restaurant";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
@@ -47,6 +48,7 @@ export type { AutoRepairView } from "./auto-repair";
 export type { GroceryStoreView } from "./grocery-store";
 export type { CoffeeHouseView } from "./coffee-house";
 export type { IceCreamStandView } from "./ice-cream-stand";
+export type { RestaurantView } from "./restaurant";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -72,6 +74,7 @@ export type World = {
   groceryStore: GroceryStoreView;
   coffeeHouse: CoffeeHouseView;
   iceCreamStand: IceCreamStandView;
+  restaurant: RestaurantView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -165,6 +168,11 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   group.add(iceCreamStand.group);
   ctx.baseObstacles.push(...iceCreamStand.obstacles);
 
+  // Sanayi "Bereket Sanayi Lokantası" & Sulu Yemek / Döner Ocağı (T50)
+  const restaurant = createRestaurantView();
+  group.add(restaurant.group);
+  ctx.baseObstacles.push(...restaurant.obstacles);
+
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;
   const unlockedSet = new Set<DistrictId>(["sunny"]);
@@ -244,6 +252,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     groceryStore,
     coffeeHouse,
     iceCreamStand,
+    restaurant,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);

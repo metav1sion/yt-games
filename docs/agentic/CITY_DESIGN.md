@@ -134,6 +134,24 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
   - **Player Service Bay & "Sanayi Bakımı" Interaction (X: 81.0, Z: -56.0)**: Drive-in service stall with floor marking box, white directional arrow, and curbside digital air & water inflator tower (32 PSI). 1.2s stationary dwell awards +10 ₺ cash bonus, +1 reputation, full nitro refill, instant vehicle package damage restoration (repairs in-transit cargo to 0 damage), 30s "Sanayi Turbo Ayarı" buff, confetti and spark shower, and 40s cooldown.
   - **Procedural Socket Wrench Audio**: Rapid synthesized ratchet micro-clicks (3400Hz - 4800Hz) in `sound.wrenchClick()`.
   - **Radar Minimap Icon**: Real-time `🔧` tracking icon at X: 78, Z: -57.5.
+- **Sanayi "Bereket Sanayi Lokantası" & Sulu Yemek / Döner Ocağı (`createRestaurantView` - T50)**: Situated along the northern curb of the Sanayi boulevard at X: 30.0, Z: -57.0 (facing South towards Z: -50):
+  - **Kaldırım Verandası ve Servis Yanaşma Peronu**: 11.5m x 9.0m beton veranda tablası, granit bordürler, oyuncu servis peronu (`RESTAURANT_BAY`: X: 30.0, Z: -52.5), sarı-siyah sanayi emniyet çizgileri, beyaz park sınır çizgileri ve zemin beyaz kılavuz yön oku.
+  - **Geleneksel Esnaf Lokantası Mimarisi**: 9.2m genişlik, 4.2m yükseklik, 5.2m derinlik. Sıcak kiremit kırmızısı tuğla süpürgelik kaidesi (`#9c3d23`), krem sıvalı ana duvarlar (`#fdfbf7`), ahşap saçak frizi, alaturka kiremit kırma çatı (`#b03a2e`), tuğla havalandırma bacası ve metal yağmur siperliği.
+  - **Aydınlatmalı Tabela ve Çift Şerit**: Çatı üstünde kameraya doğru 12° öne eğimli büyük tabela (`"🍲 BEREKET SANAYİ LOKANTASI · HAKKI USTA 🥩"`), alt ürün bandı (`"GÜNLÜK TABLDOT · SULU YEMEK · YAPRAK DÖNER & PİLAV"`), altın çerçeve ve gece yanan PointLight spot ışığı.
+  - **Kırmızı-Sarı Çizgili Esnaf Tentesi (Awning)**: 8.2m genişlik x 1.65m çıkıntılı kırmızı ve sarı çizgili kumaş tente, dalgalı fırfırlı ön saçak ve siyah döküm çelik taşıyıcı sütunlar.
+  - **Büyük Vitrin Camı & İç Aydınlatma**: 4.8m genişliğinde vitrin çerçevesi, şeffaf cam, çift kanatlı ahşap giriş kapısı ve sıcak samimi iç aydınlatma (PointLight).
+  - **Paslanmaz Çelik Benmari Sıcak Yemek Tezgahı**: 3.4m uzunluğunda fırçalanmış paslanmaz çelik tezgah, şeffaf pleksi hijyen siperliği (sneeze guard) ve 4 adet Gastro-Norm (GN) sıcak yemek küveti:
+    - *Şehriyeli Pirinç Pilavı*: Tane tane tereyağlı altın pirinç pilavı.
+    - *Geleneksel Kuru Fasulye*: Nar gibi kırmızı soslu sucuklu kuru fasulye.
+    - *Kuzu Güveç*: Sebzeli fırın güveç.
+    - *Süzme Mercimek Çorbası*: Kırmızı biberli tereyağ soslu sıcak mercimek çorbası.
+    - *Canlı Yemek Buharı*: Küvetlerden yükselen 4 adet ritmik buhar partikülü.
+  - **Döner Ocağı & Dönen Yaprak Döner Eti**: Dikey paslanmaz çelik ocak arkalığı ve davlumbaz tavanı, akkor yanan 3 katlı dikey kızılötesi rezistanslar (PointLight ısı titreşimi), dikey çelik şiş üzerinde sürekli dönen marine yaprak döner eti, tepede domates/soğan ve tepside kızarmış et kırıntıları.
+  - **Açık Hava Yemek Masaları & Kırmızı Pötikare Örtüler**: Veranda doğu kanadında 2 adet masa, kırmızı-beyaz pötikare masa örtüleri, ahşap dilim ekmek sepetleri, tuzluk ve kürdanlıklar, 4 adet bistro sandalye.
+  - **A-Frame Karataş Menü & Retro Meşrubat Dolabı**: Kaldırım kenarında tebeşir menü şövalesi (`"GÜNÜN TABLDOTU: KURU PİLAV 25₺ | YAPRAK DÖNER 35₺ | MERCİMEK 15₺"`), kırmızı cam kapaklı soğuk ayran ve Uludağ gazoz dolabı.
+  - **Animasyonlu Aşçı NPC — "Aşçı Hakkı Usta" (X: 28.5, Z: -53.6)**: Yüksek beyaz aşçı kepi, çift düğmeli aşçı ceketi, kırmızı boyun fuları, beyaz önlük, siyah kumaş pantolon, pala bıyık, elinde uzun çelik döner bıçağı tutar. Ritmik döner kesme animasyonu, oyuncu aracına 20m mesafeden yönelen baş/gövde takibi, korna ve duraklamada coşkulu el sallama ve 3D konuşma balonuyla karşılama (`"🍲 Aşçı Hakkı Usta: Gel kaptan geeel! Kuru fasulye fırından yeni çıktı, pilav tane tane! 🍚"`).
+  - **"Sanayi Tabldot Menüsü" Mola Bonusu & Kepçe Sesi**: Servis peronunda 1.2 saniye duraklama: +10 ₺ nakit bahşiş, +1 itibar, +0.45 nitro dolumu, 25s "Sanayi Tabldot Zindeliği" güç ve hızlanma buff'ı, altın konfeti/para akışı, 35s soğuma ve prosedürel çelik kepçe tıkırtısı ve sıcak yemek cızırtısı (`sound.soupLadle()`).
+  - **Radar Minimap İkonu**: `🍲` sembolü ile haritada gerçek zamanlı gösterilir.
 - **Environmental Activity**: Factory smokestacks and crane diesel generator actively vent animated rising steam/smoke plumes (`buildFactoryChimneySmoke`).
 - **Architecture**: Large warehouse complexes, cargo depots, repair garages, crane rigs, elevated steel pipe corridors, transformer substation, and heavy storage yards.
 - **Road & Traffic**: Wide truck lanes, concrete barrier curbs, industrial jump ramps, forklift traffic lanes, breakable wooden crates.
