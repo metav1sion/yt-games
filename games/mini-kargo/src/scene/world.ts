@@ -21,6 +21,7 @@ import { createRoadWorkView, type RoadWorkView } from "./road-work";
 import { createSeasideLifeView, type SeasideLifeView } from "./seaside-life";
 import { createFerrisWheelView, type FerrisWheelView } from "./ferris-wheel";
 import { createTramView, type TramView } from "./tram";
+import { createTrainView, type TrainView } from "./train";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
@@ -33,6 +34,7 @@ export type { RoadWorkView } from "./road-work";
 export type { SeasideLifeView } from "./seaside-life";
 export type { FerrisWheelView } from "./ferris-wheel";
 export type { TramView } from "./tram";
+export type { TrainView } from "./train";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -51,6 +53,7 @@ export type World = {
   seasideLife: SeasideLifeView;
   ferrisWheel: FerrisWheelView;
   tram: TramView;
+  train: TrainView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -108,6 +111,11 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   const tram = createTramView();
   group.add(tram.group);
   ctx.baseObstacles.push(...tram.obstacles);
+
+  // Sanayi Bölgesi Ağır Demiryolu Manevra Hattı & Dizel Lokomotif (T43)
+  const train = createTrainView();
+  group.add(train.group);
+  ctx.baseObstacles.push(...train.obstacles);
 
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;
@@ -181,6 +189,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     seasideLife,
     ferrisWheel,
     tram,
+    train,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);

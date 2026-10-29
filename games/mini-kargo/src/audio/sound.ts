@@ -1232,6 +1232,71 @@ export function createSound() {
         }
       } catch {}
     },
+    railCrossing() {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      try {
+        const t = ctx.currentTime;
+        // Elektronik hemzemin geçit çan vuruşu (880 Hz [A5] berrak çınlama)
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(880, t);
+        gain.gain.setValueAtTime(0.14, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.32);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.35);
+
+        // Üst harmonik (1760 Hz [A6])
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.type = "triangle";
+        osc2.frequency.setValueAtTime(1760, t);
+        gain2.gain.setValueAtTime(0.06, t);
+        gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        osc2.start(t);
+        osc2.stop(t + 0.2);
+      } catch {}
+    },
+    trainHorn() {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      try {
+        const t = ctx.currentTime;
+        radio.duck(0.45, 1.2);
+        // Ağır Sanayi Manevra Dizel Lokomotif Havalı Kornası (3 tonlu tok akor: D3, F#3, A3)
+        const chord = [146.83, 185.0, 220.0];
+        const dur = 0.75;
+        for (const freq of chord) {
+          const osc = ctx.createOscillator();
+          const filter = ctx.createBiquadFilter();
+          const gain = ctx.createGain();
+
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(freq, t);
+
+          filter.type = "lowpass";
+          filter.frequency.setValueAtTime(780, t);
+          filter.Q.setValueAtTime(2.2, t);
+
+          gain.gain.setValueAtTime(0.001, t);
+          gain.gain.linearRampToValueAtTime(0.12, t + 0.06);
+          gain.gain.setValueAtTime(0.12, t + dur - 0.15);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(t);
+          osc.stop(t + dur + 0.05);
+        }
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

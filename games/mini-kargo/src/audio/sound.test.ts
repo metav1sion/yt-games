@@ -107,6 +107,8 @@ describe("audio system", () => {
     sound.streetSnack();
     sound.fuelPump();
     sound.carWash();
+    sound.railCrossing();
+    sound.trainHorn();
     sound.setDistrict("coastal");
     sound.setRadioStation("cozy_chill");
     expect(sound.getRadioStation()).toBe("cozy_chill");
@@ -152,6 +154,8 @@ describe("audio system", () => {
       sound.thunderRoll(1.2);
       sound.carnivalChime();
       sound.tramBell();
+      sound.railCrossing();
+      sound.trainHorn();
     }).not.toThrow();
 
     sound.dispose();

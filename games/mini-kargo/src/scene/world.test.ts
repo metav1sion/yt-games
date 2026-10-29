@@ -347,5 +347,8 @@ describe("district traffic lanes", () => {
     expect(world.tram).toBeDefined();
     expect(world.tram.obstacles.length).toBeGreaterThan(0);
     expect(world.tram.group.name).toBe("carsi-heritage-tram");
+    expect(world.train).toBeDefined();
+    expect(world.train.obstacles.length).toBeGreaterThan(0);
+    expect(world.train.group.name).toBe("sanayi-freight-railway");
   });
 });

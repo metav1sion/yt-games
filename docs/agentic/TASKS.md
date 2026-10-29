@@ -229,7 +229,20 @@
   - Live animated tracking icon on radar minimap (`🚋`).
   - Tested in `src/game/tram.test.ts`, `src/scene/tram.test.ts`, `src/scene/world.test.ts`, `src/audio/sound.test.ts`, and verified in browser smoke tests.
 
+- [x] **T43 — Industrial Sanayi Freight Rail Spur & Shunting Locomotive**:
+  - Implemented `createTrainView` (`src/scene/train.ts`) and `src/game/train.ts` cutting through Sanayi (Z: -38.0, X: 15.0..83.0):
+    - **Ballasted Rail Line & Heavy Terminus Buffers**: 68m crushed granite ballast bed, creosote timber sleepers every 1.5m, standard 1.435m gauge twin steel T-rails, rubber flangeway road deck crossing panels, and heavy steel buffer stops with hazard chevrons and red reflector discs.
+    - **Automated Level Crossing (Hemzemin Geçit - X: 50.0, Z: -38.0)**: Dual crossing signal masts, St. Andrew's crossbuck signs ("DUR · DİKKAT TREN"), alternating flashing red LED warning lamps, electronic bell audio (`sound.railCrossing()`), and articulated barrier arms lowering from 85° to 0° when trains approach or occupy crossing.
+    - **Sanayi Freight Siding Platform & Dispatch (X: 26.0, Z: -34.8)**: Raised 13m x 3.6m concrete dock platform, yellow/black safety curb edge, vehicular loading ramp, canopy shelter with floodlight downlight, parked yellow forklift, wooden EUR pallets with chemical/oil drums, banded timber crates, and animated Supervisor NPC Antrepo Şefi Necati waving his arm. Lingering near platform awards "Sanayi Demiryolu Lojistik Bonusu" (+15 ₺, +1 rep) with 35s cooldown.
+    - **TCDD DE 11000 / DH 7000 Heavy Shunter Diesel Locomotive**: Safety orange and industrial yellow body, dark steel underframe, dual 2-axle heavy cast-steel bogies with 8 rotating flanged wheels, front/rear hazard chevron pilot beams, automatic knuckle couplers, radiator cooling louvers, roof exhaust fan, vertical exhaust stack emitting dynamic diesel smoke puffs, sealed-beam headlights with night emissive boost, rotating amber beacon, illuminated cab, and animated driver Makinist Cemal Usta NPC who waves upon player honk (`H`) and displays 3D speech bubble callout (`"🚂 Makinist Cemal: Düüüt! Sanayi Ekspresi seyrinde, hemzemin geçide dikkat! 📦"`).
+    - **Coupled Heavy Freight Flatcars**:
+      - *Flatcar 1*: Heavy steel flatbed platform on dual bogies carrying a 20ft Intermodal Shipping Container in bold cobalt blue (`#2980b9`) with silver corner castings, locking rods, and "TCDD TAŞIMACILIK · 20FT" stencils.
+      - *Flatcar 2*: Heavy steel machinery flatcar on dual bogies carrying a giant 2.2m diameter timber cable spool wound with copper wire (`#d35400`) and a crated industrial machinery unit secured with yellow ratchet tie-down straps.
+    - **Multi-Tone Diesel Air Horn & Crossing Bell**: Synthesized procedural Web Audio 3-tone locomotive air horn (`sound.trainHorn()`) with low chord (147Hz, 185Hz, 220Hz) and electronic crossing bell ding (`sound.railCrossing()`).
+    - **Radar Minimap Freight Train Icon**: Real-time animated `🚂` tracking icon navigating the Sanayi industrial sector.
+    - Tested in `src/game/train.test.ts`, `src/scene/train.test.ts`, `src/scene/world.test.ts`, `src/audio/sound.test.ts`, `src/ui/minimap.test.ts`, and verified in browser smoke tests.
+
 ## Active / Next Tasks
-- [ ] **T43 — Industrial Sanayi Freight Rail Spur & Shunting Locomotive**: Industrial rail spur cutting through Sanayi with crossing gates, flashing red crossbuck signals (`sound.railCrossing()`), diesel shunter locomotive, and heavy flatcars loaded with cargo containers and machinery.
+- [ ] **T44 — Güneş Mahallesi Community Park, Children's Playground & Gazebo**: Vibrant neighbourhood park with paved paths, entrance arch, timber gazebo / kamelya, swing set, spiral slide, spring rocker pony, gardener NPC ("Bahçıvan Selahattin"), procedural birdsong/wind chime audio, and "Mahalle Huzuru" pitstop bonus (+10 ₺, +1 rep).
 - [ ] **T11 — Player Hands-on Playtesting & Feedback**: Solicit user evaluation on subjective driving feel, district ambiance, and gameplay pacing.
 - [ ] **T12 — Future YouTube Playables SDK Preparation**: (Pending explicit user instruction) integrate YouTube Playables SDK hooks when ready for distribution.

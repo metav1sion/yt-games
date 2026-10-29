@@ -67,6 +67,11 @@ import {
   updateTram,
   triggerTramHonk,
 } from "./game/tram";
+import {
+  createTrainState,
+  updateTrain,
+  triggerTrainHonk,
+} from "./game/train";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -123,6 +128,7 @@ export async function startGame(app: HTMLElement) {
   let seasideLifeState = createSeasideLifeState();
   let ferrisWheelState = createFerrisWheelState();
   let tramState = createTramState();
+  let trainState = createTrainState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -200,6 +206,7 @@ export async function startGame(app: HTMLElement) {
         resetCamera(vehicle.position, vehicle.heading);
       },
       getTramState: () => tramState,
+      getTrainState: () => trainState,
     };
   }
   const fleet = createCourierFleet({
@@ -578,6 +585,7 @@ export async function startGame(app: HTMLElement) {
       triggerSeasideHonk(seasideLifeState, vehicle.position, sound, particles);
       triggerFerrisWheelHonk(ferrisWheelState, vehicle.position);
       triggerTramHonk(tramState, vehicle.position);
+      triggerTrainHonk(trainState, vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -876,6 +884,7 @@ export async function startGame(app: HTMLElement) {
           triggerSeasideHonk(seasideLifeState, vehicle.position, sound, particles);
           triggerFerrisWheelHonk(ferrisWheelState, vehicle.position);
       triggerTramHonk(tramState, vehicle.position);
+      triggerTrainHonk(trainState, vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -1138,6 +1147,41 @@ export async function startGame(app: HTMLElement) {
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
 
+        // Sanayi Demiryolu Manevra Hattı & Lokomotif Simülasyonu (T43)
+        const trainRes = updateTrain(
+          trainState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (trainRes.hornBlown) {
+          sound.trainHorn();
+        }
+        if (trainRes.crossingBellRung) {
+          sound.railCrossing();
+        }
+        if (trainRes.smokePuffed) {
+          particles.spawnLandingDust({ x: trainState.position.x, z: trainState.position.z }, 3);
+        }
+        if (trainRes.awardedLogisticsBonus) {
+          progression = {
+            ...progression,
+            money: progression.money + trainRes.cashBonus,
+            reputation: progression.reputation + trainRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          hud.showToast("🚂 SANAYİ DEMİRYOLU LOJİSTİK! +15 ₺ (+1 İtibar)", 3000);
+        }
+        world.train.update(
+          dt,
+          trainState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
         );
@@ -1318,6 +1362,12 @@ export async function startGame(app: HTMLElement) {
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
+        world.train.update(
+          dt,
+          trainState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
       }
       if (started) {
         const here = districtAt(vehicle.position.x, vehicle.position.z);
@@ -1474,6 +1524,7 @@ export async function startGame(app: HTMLElement) {
         fleet.couriers.map((c) => c.position),
         progression.unlockedDistricts,
         tramState.position,
+        trainState.position,
       );
       hud.setNavigation(
         Math.hypot(
@@ -1534,6 +1585,7 @@ export async function startGame(app: HTMLElement) {
       streetVendorsView.dispose();
       world.ferrisWheel.dispose();
       world.tram.dispose();
+      world.train.dispose();
       renderer.dispose();
     },
     { once: true },

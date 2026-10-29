@@ -2,42 +2,40 @@
 
 **Date**: 2026-10-29  
 **Branch**: `feat/mini-kargo`  
-**Latest Git Commit**: `aa5f1a8`  
-**Current Milestone**: Historic Çarşı Tramway Heritage Line & Nostalgic Street Tram (Execution Run 17)  
+**Latest Git Commit**: `81fe182` (Pre-T43 HEAD)  
+**Current Milestone**: Industrial Sanayi Freight Rail Spur & Shunting Locomotive (Execution Run 18)  
 **Victory Audit Status**: `VICTORY CONFIRMED`
 
 ## Verification Summary
-- **Unit & Integration Tests**: 58 test files, 746 passed, 0 failed (1.36s execution)
+- **Unit & Integration Tests**: 60 test files, 756 passed, 0 failed (1.38s execution)
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 138ms)
+- **Vite Production Build**: Successful (`dist/` generated in 137ms)
 - **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
 - **Persistence Compatibility**: Verified backwards compatibility for `localStorage` key `mini-kargo:v1`.
-- **Visual QA Capture**: Verified `artifacts/carsi-nostalgic-tram.png` with live rendered 3D nostalgic tram, catenary wires, passenger station, Vatman İhsan NPC greeting, and radar minimap tracking icon (`🚋`).
+- **Visual QA Capture**: Verified `artifacts/sanayi-freight-train.png` with live rendered 3D diesel shunter locomotive, automated level crossing, articulated lowered barrier gates, St. Andrew's crossbuck signs, intermodal container flatcar, cable spool flatcar, Antrepo Şefi Necati NPC, Makinist Cemal greeting callout, and real-time radar tracking icon (`🚂`).
 
 ## Completed Improvements in this Run
-1. **Historic Çarşı Tramway Heritage Line & Nostalgic Street Tram (T42)**:
-   - Built landmark heritage transit line through the Çarşı commercial thoroughfare (`src/scene/tram.ts`):
-     - **Embedded Steel Rail Track & Buffer Bumpers**: 67-meter embedded twin steel rails (1.3m gauge, Z: 34.0, X: 16.0..82.0) flush with cobblestone/asphalt road bed, stone sleeper cross-ties every 2.2m, and heavy-duty steel terminus buffer stops with yellow/black hazard striping and red reflector discs at X: 15.5 and X: 82.5.
-     - **Overhead Catenary System**: 6 fluted cast-iron catenary masts with arched brackets along the sidewalk (Z: 37.35), white ceramic insulators, and tensioned copper contact wire suspended at Y: 4.2m.
-     - **Tarihi Çarşı Tramvay Durağı (X: 64.0, Z: 37.8)**: Raised 8.5m x 2.2m timber platform deck with ramped accessibility, yellow tactile safety curb warning edge, Victorian/Ottoman-era canopy shelter with 4 cast-iron columns and green arched roof, nostalgic route timetable board ("T2 NOSTALJİK TRAMVAY · ÇARŞI MEYDANI"), timber waiting bench, seated passenger NPC ("Güleryüzlü Yolcu"), round stop sign pole ("DURAK · T2"), and warm hanging lantern with night emissive glow.
-     - **İETT 1923 Nostaljik Tramvay Replica**: Crimson red lower hull (`#c0392b`), ivory/cream window band (`#fdfefe`), gold waist trim, clerestory monitor roof with ventilators, open-air vestibule driver platforms on both ends with black railings and folding gates, brass handbrake wheel, brass controller rheostat, illuminated front/rear route marquees ("T2 NOSTALJİK TRAMVAY"), vintage brass center headlamps with night emissive boost, warm illuminated passenger windows, and diamond pantograph mechanism with copper contact shoe touching the catenary wire.
-     - **Animated Vatman İhsan Efendi NPC**: Conductor in navy uniform, brass buttons, and peaked cap (`kasket`) who positions himself at the forward-facing platform, waves his right arm upon player honk (`H`) or approach, and displays a 3D speech bubble callout (`"🚋 Vatman İhsan: Çan çan! Yol kargonun kaptan, buyur geç! 📦"`).
-   - Implemented `src/game/tram.ts` state machine:
-     - Cruises along track at 3.6 m/s (~13 km/h), stops and dwells at Çarşı station for 4.0s with double bell, reverses direction at termini with 3.5s dwell and departure bell.
-     - Yielding behavior: If player vehicle blocks the track directly ahead, tram brakes and pauses safely until cleared.
-     - "Nostaljik Hat Hatırası" reward: Stopping alongside the station platform or tram (within 6.5m for 1.2s) awards +10 ₺ cash, +1 reputation, celebratory confetti, and nostalgic chime with 30s cooldown.
-   - Procedural Web Audio brass foot-gong bell in `sound.tramBell()` (dual strike at 1568Hz [G6] & 3136Hz with radio ducking).
-   - Live animated tracking icon on radar minimap (`🚋`).
-   - Tested in `src/game/tram.test.ts`, `src/scene/tram.test.ts`, `src/scene/world.test.ts`, `src/audio/sound.test.ts`, and verified in browser smoke tests.
+1. **Industrial Sanayi Freight Rail Spur & Shunting Locomotive (T43)**:
+   - Built dedicated industrial freight rail line through Sanayi (`src/scene/train.ts`, `src/game/train.ts`):
+     - **Ballasted Steel Rail Track & Heavy Buffer Stops**: 68-meter crushed dark granite ballast bed (Z: -38.0, X: 15.0..83.0), creosote-treated timber sleepers every 1.5m, standard 1.435m gauge twin steel T-rails, rubber flangeway road deck crossing panels flush with asphalt at X = 50, and heavy steel terminus buffer stops with yellow/black hazard chevrons and red reflector discs at X: 15.0 and X: 83.0.
+     - **Automated Level Crossing (Hemzemin Geçit - X: 50.0, Z: -38.0)**: Dual crossing signal masts facing northbound and southbound traffic on the main boulevard. Equipped with St. Andrew's crossbuck signs ("DUR · DİKKAT TREN"), alternating flashing red LED warning lamps, electronic bell audio (`sound.railCrossing()`), and articulated barrier arms lowering from 85° to 0° to block traffic when trains approach or occupy crossing.
+     - **Sanayi Freight Siding Platform & Dispatch (X: 26.0, Z: -34.8)**: Raised 13m x 3.6m reinforced concrete dock platform with yellow/black safety curb edge, vehicular loading ramp, steel canopy shelter with floodlight downlight, route sign ("SANAYİ YÜKLEME RAMPASI"), parked yellow forklift, wooden EUR pallets with chemical/oil drums, banded timber crates, and animated Supervisor NPC Antrepo Şefi Necati waving his arm. Lingering near platform awards "Sanayi Demiryolu Lojistik Bonusu" (+15 ₺, +1 rep) with 35s cooldown.
+     - **TCDD DE 11000 / DH 7000 Heavy Shunter Diesel Locomotive**: Safety orange and industrial yellow body (`#f39c12`), dark underframe chassis (`#2d3436`), dual 2-axle heavy cast-steel bogies with 8 rotating flanged wheels, front/rear hazard chevron pilot beams, automatic knuckle couplers, radiator cooling louvers, roof exhaust fan, vertical exhaust stack emitting dynamic diesel smoke puffs, sealed-beam headlights with night emissive boost, rotating amber beacon, illuminated cab, and animated driver Makinist Cemal Usta NPC who waves upon player honk (`H`) and displays 3D speech bubble callout (`"🚂 Makinist Cemal: Düüüt! Sanayi Ekspresi seyrinde, hemzemin geçide dikkat! 📦"`).
+     - **Coupled Heavy Freight Flatcars**:
+       - *Flatcar 1*: Heavy steel flatbed platform on dual bogies carrying a 20ft Intermodal Shipping Container in bold cobalt blue (`#2980b9`) with silver corner castings, locking rods, and "TCDD TAŞIMACILIK · 20FT" stencils.
+       - *Flatcar 2*: Heavy steel machinery flatcar on dual bogies carrying a giant 2.2m diameter timber cable spool wound with copper wire (`#d35400`) and a crated industrial machinery unit secured with yellow ratchet tie-down straps.
+     - **Multi-Tone Diesel Air Horn & Crossing Bell**: Synthesized procedural Web Audio 3-tone locomotive air horn (`sound.trainHorn()`) with low chord (147Hz, 185Hz, 220Hz) and electronic crossing bell ding (`sound.railCrossing()`).
+     - **Radar Minimap Freight Train Icon**: Real-time animated `🚂` tracking icon navigating the Sanayi industrial sector.
+   - Tested in `src/game/train.test.ts`, `src/scene/train.test.ts`, `src/scene/world.test.ts`, `src/audio/sound.test.ts`, `src/ui/minimap.test.ts`, and verified in browser smoke tests.
 
 ## Exact Next Development Task
-- **T43 — Industrial Sanayi Freight Rail Spur & Shunting Locomotive**: Industrial rail spur cutting through Sanayi with crossing gates, flashing red crossbuck signals (`sound.railCrossing()`), diesel shunter locomotive, and heavy flatcars loaded with cargo containers and machinery.
+- **T44 — Güneş Mahallesi Community Park, Children's Playground & Gazebo**: Vibrant neighbourhood park with paved paths, entrance arch, timber gazebo / kamelya, children's swing set, spiral slide, spring rocker pony, gardener NPC ("Bahçıvan Selahattin Efendi"), procedural birdsong/wind chime audio, and "Mahalle Huzuru" pitstop bonus (+10 ₺, +1 rep).
 
 ## Quick Resume Instructions
 To test and run locally:
 ```bash
 cd games/mini-kargo
-npm test                # Run 746 unit & E2E tests
+npm test                # Run 756 unit & E2E tests
 npm run typecheck       # Verify TypeScript types
 npm run build           # Build client bundle
 npm run test:browser    # Run Playwright visual smoke tests

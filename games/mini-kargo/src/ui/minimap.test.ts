@@ -165,6 +165,10 @@ describe("Minimap", () => {
           "delivering",
           1,
           0.016,
+          [{ x: 10, z: 10 }],
+          ["sunny", "market", "industrial"],
+          { x: 42, z: 34 },
+          { x: 30, z: -38 },
         );
       }).not.toThrow();
     });

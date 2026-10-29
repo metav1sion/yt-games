@@ -70,6 +70,7 @@ export type MinimapInstance = {
     courierPositions?: Vec2[],
     unlockedDistricts?: DistrictId[] | Set<DistrictId>,
     tramPos?: Vec2,
+    trainPos?: Vec2,
   ): void;
   dispose(): void;
 };
@@ -106,6 +107,7 @@ export function createMinimap(
     courierPositions?: Vec2[],
     unlockedDistricts?: DistrictId[] | Set<DistrictId>,
     tramPos?: Vec2,
+    trainPos?: Vec2,
   ) {
     if (!ctx) return;
 
@@ -283,6 +285,11 @@ export function createMinimap(
     const tz = tramPos ? tramPos.z : 34;
     const tmp = worldToMinimap(tx, tz, size, bounds);
     ctx.fillText("🚋", tmp.x, tmp.y);
+
+    const trX = trainPos ? trainPos.x : 34;
+    const trZ = trainPos ? trainPos.z : -38;
+    const trmp = worldToMinimap(trX, trZ, size, bounds);
+    ctx.fillText("🚂", trmp.x, trmp.y);
     ctx.restore();
 
     // 6. AKTİF HEDEF GÖSTERGESİ (Nabız animasyonu)
@@ -383,6 +390,7 @@ export function createMinimap(
       courierPositions,
       unlockedDistricts,
       tramPos,
+      trainPos,
     ) {
       pulseTime += dt;
       draw(
@@ -394,6 +402,7 @@ export function createMinimap(
         courierPositions,
         unlockedDistricts,
         tramPos,
+        trainPos,
       );
     },
     dispose() {
