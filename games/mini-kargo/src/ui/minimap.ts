@@ -259,13 +259,20 @@ export function createMinimap(
     ctx.strokeRect(dp.x - 2.5, dp.y - 2.5, 5, 5);
     ctx.restore();
 
-    // 5.5. AKARYAKIT İSTASYONU & OTO YIKAMA (⛽)
+    // 5.5. ŞEHİR İLGİ ODAKLARI (⛽ Akaryakıt, 🚧 Yol Çalışması, ☕ Sahil Çay Bahçesi)
     ctx.save();
-    const gsp = worldToMinimap(64, -9, size, bounds);
     ctx.font = "8px sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
+
+    const gsp = worldToMinimap(64, -9, size, bounds);
     ctx.fillText("⛽", gsp.x, gsp.y);
+
+    const rwp = worldToMinimap(26, -16, size, bounds);
+    ctx.fillText("🚧", rwp.x, rwp.y);
+
+    const tcp = worldToMinimap(-60, 83.2, size, bounds);
+    ctx.fillText("☕", tcp.x, tcp.y);
     ctx.restore();
 
     // 6. AKTİF HEDEF GÖSTERGESİ (Nabız animasyonu)

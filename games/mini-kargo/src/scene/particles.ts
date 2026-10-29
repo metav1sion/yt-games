@@ -15,11 +15,26 @@ export type ParticleSystem = {
   spawnWashSpray(pos: Vec2 | THREE.Vector3, count?: number): void;
   spawnCarShine(pos: Vec2 | THREE.Vector3, count?: number): void;
   spawnHeartParticles(pos: Vec2 | THREE.Vector3, count?: number): void;
+  spawnConstructionDust(pos: Vec2 | THREE.Vector3, count?: number): void;
+  spawnWaterSplash(pos: Vec2 | THREE.Vector3, count?: number): void;
 };
 
 const MAX_PARTICLES = 450;
 
-type ParticleType = "dust" | "nitro" | "money" | "confetti" | "spark" | "smoke" | "puddle_splash" | "electric" | "wash_spray" | "shine" | "heart";
+type ParticleType =
+  | "dust"
+  | "nitro"
+  | "money"
+  | "confetti"
+  | "spark"
+  | "smoke"
+  | "puddle_splash"
+  | "electric"
+  | "wash_spray"
+  | "shine"
+  | "heart"
+  | "construction_dust"
+  | "water_splash";
 
 type Particle = {
   active: boolean;
@@ -166,6 +181,21 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
     new THREE.Color("#ff78cb"), // Şeker pembesi
     new THREE.Color("#ffffff"), // Saf sevgi beyazı
     new THREE.Color("#ffa502"), // Sıcak sarımsı pembe
+  ];
+
+  const CONSTRUCTION_COLORS = [
+    new THREE.Color("#7f8c8d"), // Beton grisi
+    new THREE.Color("#95a5a6"), // Açık çimento tozu
+    new THREE.Color("#bdc3c7"), // Kireç / taş tozu
+    new THREE.Color("#d35400"), // Tuğla / kiremit parçası
+    new THREE.Color("#e67e22"), // Sarımsı kum
+  ];
+
+  const SEASIDE_WATER_COLORS = [
+    new THREE.Color("#ffffff"), // Dalga köpüğü
+    new THREE.Color("#dff9fb"), // Berrak deniz damlası
+    new THREE.Color("#c7ecee"), // İskele suyu mavisi
+    new THREE.Color("#48dbfb"), // Canlı turkuaz su
   ];
 
   function spawnDust(x: number, y: number, z: number, forwardX: number, forwardZ: number) {
@@ -555,6 +585,64 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
     }
   }
 
+  function spawnConstructionDust(pos: Vec2 | THREE.Vector3, count = 6) {
+    const px = "x" in pos ? pos.x : 0;
+    const py = "y" in pos ? (pos as THREE.Vector3).y : 0.2;
+    const pz = "z" in pos ? pos.z : 0;
+
+    for (let k = 0; k < count; k++) {
+      const p = particles[head];
+      p.active = true;
+      p.type = "construction_dust";
+      p.pos.set(
+        px + (Math.random() - 0.5) * 0.4,
+        py + Math.random() * 0.2,
+        pz + (Math.random() - 0.5) * 0.4,
+      );
+      p.vel.set(
+        (Math.random() - 0.5) * 1.5,
+        1.0 + Math.random() * 1.8,
+        (Math.random() - 0.5) * 1.5,
+      );
+      p.age = 0;
+      p.maxLife = 0.35 + Math.random() * 0.25;
+      p.startScale = 0.12 + Math.random() * 0.08;
+      p.endScale = 0.03;
+      p.color.copy(CONSTRUCTION_COLORS[Math.floor(Math.random() * CONSTRUCTION_COLORS.length)]);
+      head = (head + 1) % MAX_PARTICLES;
+    }
+  }
+
+  function spawnWaterSplash(pos: Vec2 | THREE.Vector3, count = 8) {
+    const px = "x" in pos ? pos.x : 0;
+    const py = "y" in pos ? (pos as THREE.Vector3).y : 0.15;
+    const pz = "z" in pos ? pos.z : 0;
+
+    for (let k = 0; k < count; k++) {
+      const p = particles[head];
+      p.active = true;
+      p.type = "water_splash";
+      p.pos.set(
+        px + (Math.random() - 0.5) * 0.3,
+        py,
+        pz + (Math.random() - 0.5) * 0.3,
+      );
+      const angle = Math.random() * Math.PI * 2;
+      const spd = 0.6 + Math.random() * 1.2;
+      p.vel.set(
+        Math.cos(angle) * spd,
+        1.4 + Math.random() * 1.6,
+        Math.sin(angle) * spd,
+      );
+      p.age = 0;
+      p.maxLife = 0.3 + Math.random() * 0.25;
+      p.startScale = 0.11 + Math.random() * 0.06;
+      p.endScale = 0.02;
+      p.color.copy(SEASIDE_WATER_COLORS[Math.floor(Math.random() * SEASIDE_WATER_COLORS.length)]);
+      head = (head + 1) % MAX_PARTICLES;
+    }
+  }
+
   function reset() {
     for (let i = 0; i < MAX_PARTICLES; i++) {
       particles[i].active = false;
@@ -750,6 +838,30 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
           p.pos.y += p.vel.y * dt;
           p.pos.z += (p.vel.z + Math.cos(t * 10) * 0.3) * dt;
           currentScale = THREE.MathUtils.lerp(p.startScale, p.endScale, t);
+        } else if (p.type === "construction_dust") {
+          // Şantiye tozu: Yerçekimi ve hava sürtünmesi
+          p.vel.y -= 7.5 * dt;
+          p.vel.x *= Math.exp(-2.0 * dt);
+          p.vel.z *= Math.exp(-2.0 * dt);
+          p.pos.x += p.vel.x * dt;
+          p.pos.y += p.vel.y * dt;
+          p.pos.z += p.vel.z * dt;
+          if (p.pos.y < 0.04) {
+            p.pos.y = 0.04;
+            p.vel.set(0, 0, 0);
+          }
+          currentScale = THREE.MathUtils.lerp(p.startScale, p.endScale, t);
+        } else if (p.type === "water_splash") {
+          // Deniz sıçraması: Hızlı yerçekimiyle suya düşüş
+          p.vel.y -= 9.5 * dt;
+          p.pos.x += p.vel.x * dt;
+          p.pos.y += p.vel.y * dt;
+          p.pos.z += p.vel.z * dt;
+          if (p.pos.y < 0.04) {
+            p.pos.y = 0.04;
+            p.vel.set(0, 0, 0);
+          }
+          currentScale = THREE.MathUtils.lerp(p.startScale, p.endScale, t);
         } else {
           // dust ve nitro
           p.pos.x += p.vel.x * dt;
@@ -786,6 +898,8 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
     spawnWashSpray,
     spawnCarShine,
     spawnHeartParticles,
+    spawnConstructionDust,
+    spawnWaterSplash,
     reset,
     dispose() {
       reset();

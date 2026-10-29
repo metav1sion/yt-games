@@ -179,4 +179,19 @@ describe("particles system", () => {
 
     particles.dispose();
   });
+
+  it("spawns construction dust and coastal water splash particles", () => {
+    const scene = new THREE.Scene();
+    const particles = createParticles(scene);
+
+    expect(() => {
+      particles.spawnConstructionDust({ x: 26, z: -16 }, 8);
+      particles.spawnWaterSplash({ x: -48.5, z: 96 }, 10);
+      for (let i = 0; i < 15; i++) {
+        particles.update(dummyState, false, 0.04);
+      }
+    }).not.toThrow();
+
+    particles.dispose();
+  });
 });

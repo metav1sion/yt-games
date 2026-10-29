@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-10-29T02:22:53.577Z",
+  "timestamp": "2026-10-29T02:36:47.678Z",
   "url": "http://127.0.0.1:4173",
   "viewports": [
     {
       "name": "desktop",
       "width": 1280,
       "height": 800,
-      "loadMs": 45,
+      "loadMs": 125,
       "screenshot": "desktop-1280x800.png",
       "errors": []
     },
@@ -14,7 +14,7 @@
       "name": "mobile-portrait",
       "width": 390,
       "height": 844,
-      "loadMs": 39,
+      "loadMs": 44,
       "screenshot": "mobile-portrait-390x844.png",
       "errors": []
     },
@@ -22,7 +22,7 @@
       "name": "mobile-landscape",
       "width": 844,
       "height": 390,
-      "loadMs": 40,
+      "loadMs": 39,
       "screenshot": "mobile-landscape-844x390.png",
       "errors": []
     }

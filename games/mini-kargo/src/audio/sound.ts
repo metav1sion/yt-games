@@ -1038,6 +1038,71 @@ export function createSound() {
         noise.start(at);
       } catch {}
     },
+    constructionDrill() {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      try {
+        const at = ctx.currentTime;
+        // Pnömatik kırıcı / kompresör: 18Hz ritmik darbe serisi (4 vuruş)
+        for (let i = 0; i < 4; i++) {
+          const t = at + i * 0.055;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(75, t);
+          osc.frequency.exponentialRampToValueAtTime(35, t + 0.04);
+          gain.gain.setValueAtTime(0.09, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.045);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.05);
+        }
+      } catch {}
+    },
+    teaSpoonClink() {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      try {
+        const at = ctx.currentTime;
+        // İnce belli çay bardağı içinde pirinç çay kaşığı çınlaması (2600Hz & 3400Hz harmonikleri)
+        const notes = [2600, 3400];
+        notes.forEach((freq, idx) => {
+          const t = at + idx * 0.035;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(freq, t);
+          gain.gain.setValueAtTime(0.12, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.25);
+        });
+      } catch {}
+    },
+    fishingReel() {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      try {
+        const at = ctx.currentTime;
+        // Olta makarası tıkırtısı (hızlı klik sesleri)
+        for (let i = 0; i < 3; i++) {
+          const t = at + i * 0.04;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(1100 + i * 150, t);
+          gain.gain.setValueAtTime(0.07, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.025);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.03);
+        }
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

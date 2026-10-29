@@ -173,6 +173,25 @@ body {
   0% { transform: scale(1); box-shadow: 0 0 8px rgba(0, 206, 201, 0.5); }
   100% { transform: scale(1.04); box-shadow: 0 0 16px rgba(116, 185, 255, 0.85); }
 }
+.tea-pill {
+  background: linear-gradient(135deg, #c0392b, #e74c3c);
+  color: #ffffff;
+  border: 1px solid #f39c12;
+  border-radius: 30px;
+  padding: 10px 14px;
+  font-size: 10px;
+  letter-spacing: 1.1px;
+  font-weight: 850;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 0 14px rgba(231, 76, 60, 0.65);
+  animation: teaPulse 1.2s infinite alternate ease-in-out;
+}
+@keyframes teaPulse {
+  0% { transform: scale(1); box-shadow: 0 0 8px rgba(231, 76, 60, 0.5); }
+  100% { transform: scale(1.04); box-shadow: 0 0 16px rgba(243, 156, 18, 0.85); }
+}
 .nitro-track.supercharged #nitro-fill {
   background: linear-gradient(90deg, #00f0ff, #2ed573);
   box-shadow: 0 0 12px rgba(0, 240, 255, 0.85);

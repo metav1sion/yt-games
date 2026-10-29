@@ -45,32 +45,38 @@
   - `src/scene/gas-station.test.ts` (3 tests) — 3D canopy, dual pump islands, 24/7 store, rotating wash bay foam rollers, Selim Usta NPC, horn reaction, and colliders
   - `src/scene/urban-fauna.test.ts` (6 tests) — Seagulls, piazza pigeons, neighborhood cats, Karabaş the Anatolian Shepherd, head tracking, horn reactions, and dynamic pet treat feeding interactions
   - `src/scene/particles.test.ts` (10 tests) — Money stream, confetti, drift, nitro, sparks, crash smoke, landing dust, puddle splash, EV sparks, wash foam spray, car shine sparkles, and floating heart particles
+  - `src/game/road-work.test.ts` (6 tests) — Road work state initialization, zone detection, safe speed passing reward (+15 ₺ & +1 rep), speeding violation warning, worker greeting on honk, and beacon flasher intervals
+  - `src/scene/road-work.test.ts` (2 tests) — 3D hazard zone hierarchy, excavation trench, amber flasher tower with PointLight, safety cones, A-frame barricades, municipal worker NPCs (Kadir Usta & Murat Usta), speech bubbles, and colliders
+  - `src/game/seaside-life.test.ts` (5 tests) — Seaside cafe dwell timer, 1s tea serving threshold, 20s tea buff duration, reputation bonus, fisherman reel sound on honk, and cafe greeting
+  - `src/scene/seaside-life.test.ts` (2 tests) — 3D tea garden deck, pergola columns, red/white canvas awning, tables with wicker stools, saucers with tulip glasses, copper samovar counter, Tea Master Rıza Dayı, fishing NPCs (Salih Reis & Kemal Ağabey), moored wooden rowboats with wave physics, and non-blocking colliders
+  - `src/scene/particles.test.ts` (11 tests) — Money stream, confetti, drift, nitro, sparks, crash smoke, landing dust, puddle splash, EV sparks, wash foam spray, car shine sparkles, floating hearts, construction dust, and coastal water splash
+  - `src/scene/world.test.ts` (18 tests) — Road connectivity, delivery zone clearance, boulevard clearance, district traffic & pedestrian paths, night factor emissive modulation, integrated traffic lights, bus stops, gas station, road work hazards, and seaside life
   - `tests/e2e/mini-kargo-e2e.test.ts` (242 tests) — Opaque-box E2E tests covering features F01–F21 across Tiers 1–4
-  - **Total**: 50 test files, 709 passed, 0 failed.
+  - **Total**: 54 test files, 726 passed, 0 failed.
 
 ## Browser Automation & Visual QA (Playwright)
 - **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser`
-- **Execution Date**: 2026-10-29 (Sprint 14 Verification — Gas Station, Car Wash & Street Fauna Pet Feeding)
+- **Execution Date**: 2026-10-29 (Sprint 15 Verification — Road Work Hazards, Flasher Tower, Municipal Crew & Seaside Marina Boardwalk Life)
 - **Viewports Tested**:
   1. **Desktop (1280x800)**:
      - Shift start button click: PASS
      - 3D WebGL canvas initialization: PASS
-     - HUD, minimap, topbar time pill (`☀️ ÖĞLE`), weather pill (`🌤️ AÇIK`), radio pill (`📻 RADYO: KAPALI`), supercharge pill (`⚡ SÜPER ŞARJ`), snack buff pill (`🥨 ENERJİ`), wash buff pill (`✨ PIRIL PIRIL`): PASS
+     - HUD, minimap, topbar time pill (`☀️ ÖĞLE`), weather pill (`🌤️ AÇIK`), radio pill (`📻 RADYO: KAPALI`), supercharge pill (`⚡ SÜPER ŞARJ`), snack buff pill (`🥨 ENERJİ`), wash buff pill (`✨ PIRIL PIRIL`), tea buff pill (`☕ TAZE ÇAY`): PASS
      - Keyboard driving controls (W, A, D, Arrow keys), Horn (`H` key), and Radio toggle (`R` key): PASS
-     - Sanayi/Çarşı cross-artery Gas Station with illuminated cantilever canopy ("⛽ MİNİ PETROL · 7/24"), dual pump islands with digital LED readouts, 24/7 convenience store with attendant Selim Usta, and drive-through car wash with rotating foam rollers: VERIFIED
-     - Street fauna feeding interactions (Güneş cats, Karabaş the Anatolian Shepherd, and Piazza pigeons) with purring audio, heart particles, and gratitude speech bubbles: VERIFIED
+     - Sanayi southern artery Road Work Hazard Zone with asphalt excavation trench, rubble piles, flashing amber warning tower, retroreflective cones, A-frame chevron barricades, and municipal crew (Kadir Usta & Murat Usta): VERIFIED
+     - Sahil Şeridi "☕ Yalı Çay Bahçesi" with pergola posts, canvas awning, tables with tulip glasses of hot tea, copper samovar counter, Tea Master Rıza Dayı, pier fishing anglers (Salih Reis & Kemal Ağabey), and moored wooden rowboats ("Meltem" & "Poyraz") bobbing on waves: VERIFIED
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png`
   2. **Mobile Portrait (390x844)**:
      - Responsive canvas & UI scaling: PASS
      - Touch joystick, drift, nitro & dedicated horn button (`📢 KORNA`): PASS
-     - Topbar radio equalizer pill touch interaction & wash buff pill: PASS
+     - Topbar radio equalizer pill touch interaction, wash buff pill & tea buff pill: PASS
      - Company sheet "🏆 Başarılar & Garaj" tab and livery applicator: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-portrait-390x844.png`
   3. **Mobile Landscape (844x390)**:
      - Landscape canvas & control separation: PASS
-     - Minimap (with gas station `⛽` icon) and action buttons isolated: PASS
+     - Minimap (with gas station `⛽`, road work `🚧`, and tea cafe `☕` icons) and action buttons isolated: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-landscape-844x390.png`
 

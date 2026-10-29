@@ -17,6 +17,8 @@ import { createDeliveryStations, type DeliveryStationsView } from "./delivery-st
 import { createTrafficLights, type TrafficLightsView } from "./traffic-lights";
 import { createBusStops, type BusStopsView } from "./bus-stops";
 import { createGasStationView, type GasStationView } from "./gas-station";
+import { createRoadWorkView, type RoadWorkView } from "./road-work";
+import { createSeasideLifeView, type SeasideLifeView } from "./seaside-life";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
@@ -25,6 +27,8 @@ export type { DeliveryStationsView } from "./delivery-stations";
 export type { TrafficLightsView } from "./traffic-lights";
 export type { BusStopsView } from "./bus-stops";
 export type { GasStationView } from "./gas-station";
+export type { RoadWorkView } from "./road-work";
+export type { SeasideLifeView } from "./seaside-life";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -39,6 +43,8 @@ export type World = {
   trafficLights: TrafficLightsView;
   busStops: BusStopsView;
   gasStation: GasStationView;
+  roadWork: RoadWorkView;
+  seasideLife: SeasideLifeView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -76,6 +82,16 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   const gasStation = createGasStationView();
   group.add(gasStation.group);
   ctx.baseObstacles.push(...gasStation.obstacles);
+
+  // Dinamik Yol Bakım Şantiyesi (T38)
+  const roadWork = createRoadWorkView();
+  group.add(roadWork.group);
+  ctx.baseObstacles.push(...roadWork.obstacles);
+
+  // Sahil Çay Bahçesi & İskele Balıkçıları (T39)
+  const seasideLife = createSeasideLifeView();
+  group.add(seasideLife.group);
+  ctx.baseObstacles.push(...seasideLife.obstacles);
 
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;
@@ -145,6 +161,8 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     trafficLights,
     busStops,
     gasStation,
+    roadWork,
+    seasideLife,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);

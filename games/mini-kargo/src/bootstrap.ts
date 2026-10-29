@@ -47,6 +47,16 @@ import { createPitstopState, stepPitstop } from "./game/pitstop";
 import { createStreetVendorsView } from "./scene/street-vendors";
 import { createStreetVendorState, stepStreetVendors, consumeFaunaTreat } from "./game/street-vendors";
 import { createGasStationState, stepGasStation } from "./game/gas-station";
+import {
+  createRoadWorkState,
+  updateRoadWork,
+  triggerRoadWorkHonk,
+} from "./game/road-work";
+import {
+  createSeasideLifeState,
+  updateSeasideLife,
+  triggerSeasideHonk,
+} from "./game/seaside-life";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -99,6 +109,8 @@ export async function startGame(app: HTMLElement) {
   const world = createWorld();
   scene.add(world.group);
   let gasStationState = createGasStationState();
+  let roadWorkState = createRoadWorkState();
+  let seasideLifeState = createSeasideLifeState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -539,6 +551,8 @@ export async function startGame(app: HTMLElement) {
       urbanFauna.onHonk(vehicle.position);
       world.busStops.onHonk(vehicle.position);
       world.gasStation.onPlayerHonk(vehicle.position);
+      triggerRoadWorkHonk(roadWorkState, vehicle.position);
+      triggerSeasideHonk(seasideLifeState, vehicle.position, sound, particles);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -823,6 +837,8 @@ export async function startGame(app: HTMLElement) {
           world.busStops.onHonk(vehicle.position);
           streetVendorsView.onPlayerHonk();
           world.gasStation.onPlayerHonk(vehicle.position);
+          triggerRoadWorkHonk(roadWorkState, vehicle.position);
+          triggerSeasideHonk(seasideLifeState, vehicle.position, sound, particles);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -970,6 +986,61 @@ export async function startGame(app: HTMLElement) {
           atmoState.isNightOrDusk,
         );
         hud.setCleanBuff(gasStationState.isClean, gasStationState.cleanBuffTimer);
+
+        // Dinamik Yol Bakım Şantiyesi Simülasyonu (T38)
+        const rwRes = updateRoadWork(
+          roadWorkState,
+          vehicle.position,
+          currentSpeed,
+          dt,
+          sound,
+          particles,
+        );
+        if (rwRes.safePassAwarded) {
+          progression = {
+            ...progression,
+            money: progression.money + rwRes.rewardMoney,
+            reputation: progression.reputation + rwRes.rewardReputation,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          if (rwRes.toastMessage) hud.showToast(rwRes.toastMessage, 3200);
+        }
+        world.roadWork.update(
+          dt,
+          roadWorkState.flasherActive,
+          roadWorkState.speechText,
+          atmoState.isNightOrDusk,
+        );
+
+        // Sahil Çay Bahçesi & İskele Balıkçıları Simülasyonu (T39)
+        const slRes = updateSeasideLife(
+          seasideLifeState,
+          vehicle.position,
+          currentSpeed,
+          dt,
+          sound,
+          particles,
+        );
+        if (slRes.teaServed) {
+          progression = {
+            ...progression,
+            reputation: progression.reputation + slRes.rewardReputation,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          if (slRes.toastMessage) hud.showToast(slRes.toastMessage, 3200);
+        }
+        hud.setTeaBuff(seasideLifeState.teaBuffTimer > 0, seasideLifeState.teaBuffTimer);
+        world.seasideLife.update(
+          dt,
+          seasideLifeState.speechText,
+          seasideLifeState.fisherSpeechText,
+          atmoState.isNightOrDusk,
+        );
 
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,

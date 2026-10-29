@@ -182,8 +182,23 @@
   - Çarşı Meydan Pigeons: Feeding with simit crumbs prevents scatter; pigeons gather around vehicle, peck happily, display speech bubble ("🐦 Guk guk! Çıtır simit ziyafeti! 🥨"), and award +5 ₺ & +1 reputation.
   - Tested in `src/game/street-vendors.test.ts`, `src/scene/urban-fauna.test.ts`, and `src/scene/particles.test.ts`.
 
+- [x] **T38 — Dynamic Traffic Incidents & Road Construction Hazards**:
+  - Implemented `createRoadWorkView` (`src/scene/road-work.ts`) at Sanayi southern artery (X: 26, Z: -16) featuring closed-lane asphalt excavation trench, rubble heaps, flashing hazard warning tower with alternating amber LED beacon (PointLight with night boost), 4 retroreflective cones, and 2 timber A-frame barricades.
+  - Animated municipal road crew NPCs: Kadir Usta waving STOP/SLOW paddle with custom callouts and greeting honks; Murat Usta operating pneumatic jackhammer with vibration and stone pulverization dust (`spawnConstructionDust`).
+  - Implemented `src/game/road-work.ts` with "Dikkatli Şantiye Geçişi" bonus awarding +15 ₺ and +1 reputation for passing through the bottleneck safely without reckless speeding or collisions.
+  - Radar minimap hazard icon (`🚧`).
+  - Tested in `src/game/road-work.test.ts` and `src/scene/road-work.test.ts`.
+
+- [x] **T39 — Seaside Marina Boardwalk Cafe & Fishing NPCs**:
+  - Implemented `createSeasideLifeView` (`src/scene/seaside-life.ts`) featuring "☕ Yalı Çay Bahçesi" (X: -60, Z: 83.2) with elevated timber deck, pergola posts, red-and-white canvas awning, 3 round tables with woven wicker stools, saucers with tulip glasses of hot tea, copper samovar counter, and Tea Master Rıza Dayı with swinging suspension tea tray.
+  - 1-second pitstop at tea garden awards +1 reputation, clinking teaspoon audio (`sound.teaSpoonClink()`), and 20-second "Tavşan Kanı Çay" buff (`#tea-pill`) improving vehicle steering stability and fatigue.
+  - Boardwalk pier fishing life: Salih Reis (X: -48.5, Z: 96.0) with 2.8m carbon rod, floating bobber, bait bucket, rod tugging, and reel sound (`sound.fishingReel()`) with splash particles (`spawnWaterSplash`); Kemal Ağabey on folding canvas stool.
+  - Moored clinker-built wooden rowboats ("Meltem" & "Poyraz") bobbing harmonically with wave roll, pitch, and heave.
+  - Radar minimap cafe icon (`☕`).
+  - Tested in `src/game/seaside-life.test.ts` and `src/scene/seaside-life.test.ts`.
+
 ## Active / Next Tasks
-- [ ] **T38 — Dynamic Traffic Incidents & Road Construction Hazards**: Temporary maintenance work zones in Sanayi with blinking yellow hazard beacons, orange cones, detour barriers, and roadside maintenance crew NPCs.
-- [ ] **T39 — Seaside Marina Boardwalk Cafe & Fishing NPCs**: Detailed recreational boardwalk along Sahil pier with fishing rod anglers, seaside tea garden with tulip glasses, and moored wooden rowboats.
+- [ ] **T40 — Dynamic Weather Day-to-Night Thunderstorm & Lightning Flash System**: Emergent summer thunderstorms with volumetric heavy rain, distant procedural rolling thunder audio, dynamic sky flash illumination, and wet puddle expansion.
+- [ ] **T41 — Grand Sahil Ferris Wheel & Amusement Pier Attraction**: Animated revolving Ferris wheel with illuminated gondolas on the coastal breakwater.
 - [ ] **T11 — Player Hands-on Playtesting & Feedback**: Solicit user evaluation on subjective driving feel, district ambiance, and gameplay pacing.
 - [ ] **T12 — Future YouTube Playables SDK Preparation**: (Pending explicit user instruction) integrate YouTube Playables SDK hooks when ready for distribution.

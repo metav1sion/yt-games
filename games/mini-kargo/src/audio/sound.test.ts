@@ -146,6 +146,9 @@ describe("audio system", () => {
       sound.streetSnack();
       sound.fuelPump();
       sound.carWash();
+      sound.constructionDrill();
+      sound.teaSpoonClink();
+      sound.fishingReel();
     }).not.toThrow();
 
     sound.dispose();
