@@ -2021,6 +2021,104 @@ export function createSound() {
         };
       } catch {}
     },
+    coppersmith(vol = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      const volume = Math.max(0, Math.min(1, vol));
+      if (volume <= 0.02) return;
+      try {
+        const at = ctx.currentTime;
+        radio.duck(0.4, 0.95);
+
+        // 1. Birinci Çekiç Vuruşu (Tık) - Bakır tavlama ve kalıp darbesi
+        const strike1Osc = ctx.createOscillator();
+        const strike1Gain = ctx.createGain();
+        strike1Osc.type = "triangle";
+        strike1Osc.frequency.setValueAtTime(1180, at);
+        strike1Osc.frequency.exponentialRampToValueAtTime(740, at + 0.12);
+
+        strike1Gain.gain.setValueAtTime(0.001, at);
+        strike1Gain.gain.linearRampToValueAtTime(0.26 * volume, at + 0.015);
+        strike1Gain.gain.exponentialRampToValueAtTime(0.0001, at + 0.14);
+
+        strike1Osc.connect(strike1Gain);
+        strike1Gain.connect(ctx.destination);
+        strike1Osc.start(at);
+        strike1Osc.stop(at + 0.16);
+        strike1Osc.onended = () => {
+          strike1Osc.disconnect();
+          strike1Gain.disconnect();
+        };
+
+        // 2. İkinci Ritmik Çekiç Çınlaması (Çınnn!) - Parlak metalik rezonans ve pirinç çan tınısı
+        const t2 = at + 0.16;
+        const strike2Osc = ctx.createOscillator();
+        const strike2Filter = ctx.createBiquadFilter();
+        const strike2Gain = ctx.createGain();
+
+        strike2Osc.type = "sine";
+        strike2Osc.frequency.setValueAtTime(1420, t2);
+        strike2Osc.frequency.exponentialRampToValueAtTime(1260, t2 + 0.38);
+
+        strike2Filter.type = "bandpass";
+        strike2Filter.frequency.setValueAtTime(1380, t2);
+        strike2Filter.Q.setValueAtTime(6.0, t2);
+
+        strike2Gain.gain.setValueAtTime(0.001, t2);
+        strike2Gain.gain.linearRampToValueAtTime(0.32 * volume, t2 + 0.012);
+        strike2Gain.gain.exponentialRampToValueAtTime(0.0001, t2 + 0.42);
+
+        strike2Osc.connect(strike2Filter);
+        strike2Filter.connect(strike2Gain);
+        strike2Gain.connect(ctx.destination);
+        strike2Osc.start(t2);
+        strike2Osc.stop(t2 + 0.45);
+        strike2Osc.onended = () => {
+          strike2Osc.disconnect();
+          strike2Filter.disconnect();
+          strike2Gain.disconnect();
+        };
+
+        // 3. Yüksek Harmonik Bakır Tınısı (2840 Hz ince bakır şerbetliği çınlaması)
+        const harmOsc = ctx.createOscillator();
+        const harmGain = ctx.createGain();
+        harmOsc.type = "sine";
+        harmOsc.frequency.setValueAtTime(2840, t2);
+
+        harmGain.gain.setValueAtTime(0.001, t2);
+        harmGain.gain.linearRampToValueAtTime(0.12 * volume, t2 + 0.01);
+        harmGain.gain.exponentialRampToValueAtTime(0.0001, t2 + 0.35);
+
+        harmOsc.connect(harmGain);
+        harmGain.connect(ctx.destination);
+        harmOsc.start(t2);
+        harmOsc.stop(t2 + 0.38);
+        harmOsc.onended = () => {
+          harmOsc.disconnect();
+          harmGain.disconnect();
+        };
+
+        // 4. Örs Kütüğü Tok Ahşap/Demir Taban Sesi (220 Hz tok darbe)
+        const anvilOsc = ctx.createOscillator();
+        const anvilGain = ctx.createGain();
+        anvilOsc.type = "triangle";
+        anvilOsc.frequency.setValueAtTime(220, at);
+        anvilOsc.frequency.exponentialRampToValueAtTime(90, at + 0.09);
+
+        anvilGain.gain.setValueAtTime(0.001, at);
+        anvilGain.gain.linearRampToValueAtTime(0.20 * volume, at + 0.01);
+        anvilGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.11);
+
+        anvilOsc.connect(anvilGain);
+        anvilGain.connect(ctx.destination);
+        anvilOsc.start(at);
+        anvilOsc.stop(at + 0.13);
+        anvilOsc.onended = () => {
+          anvilOsc.disconnect();
+          anvilGain.disconnect();
+        };
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

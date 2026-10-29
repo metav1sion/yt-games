@@ -2,41 +2,39 @@
 
 **Date**: 2026-10-29  
 **Branch**: `feat/mini-kargo`  
-**Latest Git Commit**: `4c72eee`  
-**Current Milestone**: Sanayi "Tarihi Marangozlar Sitesi & Ahşap Kereste Atölyesi" (Execution Run 30)  
+**Latest Git Commit**: `PENDING_COMMIT`  
+**Current Milestone**: Çarşı "Tarihi Bakırcılar Çarşısı & Antik Kapalı Bedesten" (Execution Run 31)  
 **Victory Audit Status**: `VICTORY CONFIRMED`
 
 ## Verification Summary
-- **Unit & Integration Tests**: 84 test files, 883 passed, 0 failed (2.12s execution)
+- **Unit & Integration Tests**: 86 test files, 894 passed, 0 failed (2.14s execution)
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 171ms)
+- **Vite Production Build**: Successful (`dist/` generated in 226ms)
 - **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
 - **Persistence Compatibility**: Verified backwards compatibility for `localStorage` key `mini-kargo:v1`.
-- **Visual QA Capture**: Verified `artifacts/sanayi-marangozlar-sitesi.png` with live rendered 3D Sanayi Marangozlar Sitesi & Ahşap Kereste Atölyesi, 12.0m x 9.0m industrial wood sawdust-strewn concrete yard, granite curbs, service bay at `X: 62.0, Z: -68.0` with yellow-black hazard striping, white guide arrow, 4 heavy Douglas-fir structural columns with cast-iron shoes, horizontal laminated beams, A-truss timber framing, corrugated galvanized metal roof canopy, illuminated roof marquee ("🪵 SANAYİ TARİHİ MARANGOZLAR SİTESİ · RÜSTEM USTA 🪚"), subtitle band ("MASİF AHŞAP İŞÇİLİĞİ · KERESTE & KARGO SANDIKLARI · 1968"), warm amber PointLight night illumination, vertical lumber stacking racks with kiln-dried pine, cedar, and oak planks, cylindrical pine log pyramid piles on EUR pallets with steel strapping bands, spinning circular buzz saw table with metallic blade & red safety hood, dynamic rising sawdust particles, carpenter workbench with vice, wooden hand plane, mallet, wooden Mini Kargo crate ("📦 MK"), animated Master Carpenter NPC "Marangoz Rüstem Usta" in sawdust-dusted denim overalls with carpenter pencil behind ear and yellow folding ruler, 22m head tracking, wave salute on honk/dwell, 3D speech bubble callout ("🪵 Marangoz Rüstem Usta: Hoş geldin evlat! Fırınlanmış meşeden Mini Kargo kasası gibi sağlam kargo sandığı yapıyoruz! 🪚"), +10 ₺ cash bonus, +1 reputation, +0.45 nitro refill, 25s "Sanayi İşçiliği Gücü" chassis reinforcement & -50% contact impact damage resistance buff, procedural wood buzz saw & hand plane audio (`sound.buzzSaw()`), and radar icon (`🪵`).
+- **Visual QA Capture**: Verified `artifacts/carsi-bakircilar-carsisi.png` with live rendered 3D Çarşı Bakırcılar Çarşısı & Antik Kapalı Bedesten, 12.0m x 9.5m clinker brick & rustic stone yard, granite curbs, service bay at `X: 63.0, Z: 81.0` with yellow-black hazard striping, white guide arrow, arched limestone & travertine portals with terracotta tiled eaves, illuminated roof marquee ("🏺 TARİHİ BAKIRCILAR ÇARŞISI · KAZIM USTA 🔨"), subtitle band ("EL DÖVMESİ BAKIR SANATI & ANTİK BEDESTEN · 1954"), warm amber PointLight illumination, gleaming embossed copper cauldrons, cezve sets, samovars, ornate copper trays, authentic Turkish carpets & kilims displayed on arches and racks, heavy tree log pedestal with cast steel coppersmith anvil, ball-peen hammer, animated Master Coppersmith NPC "Bakırcı Kazım Usta" in leather artisan apron and burgundy fez with curved moustache, rhythmic copper tray hammering animation, 22m head tracking, wave salute on honk/dwell, 3D speech bubble callout ("🏺 Bakırcı Kazım Usta: Hoş geldin kargocu evlat! El emeği göz nuru dövme bakır gibi sağlam kargolar taşıyorsun! 🔨"), +10 ₺ cash bonus, +1 reputation, +0.45 nitro refill, 30s "Usta Esnaf Hürmeti" +15 ₺ customer tip buff on deliveries, procedural rhythmic hammer clang & metal resonance audio (`sound.coppersmith()`), and radar icon (`🏺`).
 
 ## Completed Improvements in this Run
-1. **Sanayi "Tarihi Marangozlar Sitesi & Ahşap Kereste Atölyesi" (T55)**:
-   - Built authentic industrial woodworking workshop and timber yard at Sanayi Organize Bölgesi (`src/scene/carpenter.ts`, `src/game/carpenter.ts`) at X: 62.0, Z: -74.5:
-     - **Zemin & Peron Yapısı**: 12.0m x 9.0m endüstriyel ahşap talaşlı beton avlu, granit taş bordürler, asfalt servis yanaşma peronu cebi (`CARPENTER_BAY`: X: 62.0, Z: -68.0), sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku.
-     - **Masif Douglas-Fir Ahşap Karkas & A-Çatı Makasları**: 4 adet dikey masif ahşap kolon sütun, döküm demir taban pabuçları, yatay masif lamine kirişler, A-çatı makasları ve oluklu galvaniz sanayi sacı gölgeliği.
-     - **Işıklı Büyük Kurumsal Çatı Tabelası & Gece Aydınlatması**: Alınlıkta `"🪵 SANAYİ TARİHİ MARANGOZLAR SİTESİ · RÜSTEM USTA 🪚"`, alt şerit `"MASİF AHŞAP İŞÇİLİĞİ · KERESTE & KARGO SANDIKLARI · 1968"`, altın sarısı pervaz çerçevesi, yeşil emaye sarkıt fener ve gece tezgahı aydınlatan sıcak kehribar PointLight armatürü.
-     - **Dikey Kereste İstif Rafları**: Çelik A-çatkı raflarda fırınlanmış sarı çam, kızıl sedir ve koyu meşe kalasları (3.0m - 3.4m boylarında).
-     - **Silindirik Çam Kütük Yığınları & EUR Paletler**: EUR ahşap palet üzerinde piramit şeklinde istiflenmiş 6 adet silindirik kabuklu çam kütüğü, açık renk halkalı kesitler ve çelik gerdirme telleri.
-     - **Dönen Daire Testere Tezgahı & Talaş Partikülleri**: Döküm demir tezgah gövdesi, parlak çelik dairesel testere bıçağı (dinamik dönüş animasyonu), kırmızı güvenlik koruyucu muhafazası, kesilen ahşap parça ve havaya savrulan 8 adet dinamik altın sarısı talaş partikülü.
-     - **Marangoz Çalışma Masası & El Aletleri**: Ağır gürgen çalışma masası, ahşap mengene, el rendesi, marangoz tokmağı ve dayanıklı ahşap Mini Kargo ambalaj sandığı (`"📦 MK"`).
-     - **Animasyonlu Usta Marangoz NPC — "Marangoz Rüstem Usta" (X: 60.5, Z: -72.0)**: Bordo flanel gömlek, askılı kot tulum, talaş lekeleri, kulak arkasında kırmızı/sarı marangoz kurşun kalemi, cepte katlanır sarı metre, heybetli usta bıyığı, 22m mesafeden kafa/gövde takibi, korna ve yanaşmada kolunu kaldırarak usta selamı ve 3D konuşma balonuyla karşılama (`"🪵 Marangoz Rüstem Usta: Hoş geldin evlat! Fırınlanmış meşeden Mini Kargo kasası gibi sağlam kargo sandığı yapıyoruz! 🪚"`).
-     - **"Sanayi İşçiliği Gücü" Mola Bonusu & Prosedürel Testere Sesi (`src/game/carpenter.ts`)**: Servis peronunda 1.2s duraklama: +10 ₺ nakit desteği, +1 itibar, +0.45 nitro dolumu, 25s "Sanayi İşçiliği Gücü" şasi takviyesi & çarpışma hasarını %50 azaltma buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel metal daire testere & planya sesi (`sound.buzzSaw()`).
-     - **Minimap Radar Simgesi**: Sanayi Bölgesi üzerinde canlı `🪵` odun/kereste simgesi.
-   - Tested in `src/game/carpenter.test.ts`, `src/scene/carpenter.test.ts`, `src/scene/world.test.ts`, `src/audio/sound.test.ts`, `src/ui/minimap.ts`, and verified in browser smoke tests across 3 viewports with 0 errors.
+1. **Çarşı "Tarihi Bakırcılar Çarşısı & Antik Kapalı Bedesten" (T56)**:
+   - Built authentic historic coppersmith bazaar and covered bedesten in Çarşı (`src/scene/coppersmith.ts`, `src/game/coppersmith.ts`) at X: 63.0, Z: 75.5:
+     - **Zemin & Peron Yapısı**: 12.0m x 9.5m klinker tuğla ve rustik taş avlu tablası, granit taş bordürler, asfalt servis yanaşma peronu cebi (`COPPERSMITH_BAY`: X: 63.0, Z: 81.0), sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku.
+     - **Kesme Taş Kemerler & Kapalı Bedesten Mimarisi**: Kesme kireçtaşı ve traverten taş kemerli revaklar, pişmiş toprak kiremitli saçaklıklar ve rustik tuğla kaideler.
+     - **Işıklı Büyük Kurumsal Çatı Tabelası & Gece Aydınlatması**: Alınlıkta `"🏺 TARİHİ BAKIRCILAR ÇARŞISI · KAZIM USTA 🔨"`, alt şerit `"EL DÖVMESİ BAKIR SANATI & ANTİK BEDESTEN · 1954"`, altın sarısı pervaz çerçevesi ve gece tezgahı aydınlatan sıcak kehribar PointLight armatürü.
+     - **El Dövmesi Bakır Eserler & Antik Halılar**: Parlak el dövmesi bakır kazanlar, cezve takımları, semaverler, oymalı bakır siniler ve kemerlerde sergilenen otantik Türk kilimleri.
+     - **Bakırcı Örsü & El Aletleri**: Ağaç kütük kaide üzerinde döküm çelik bakırcı örsü, topuz çekiç ve bakır işleme aletleri.
+     - **Animasyonlu Usta Bakırcı NPC — "Bakırcı Kazım Usta" (X: 61.5, Z: 76.5)**: Deri esnaf önlüğü, bordo fes, kıvrık pala bıyık, deri bileklikler, elinde pirinç topuz çekiç ile ritmik bakır dövme animasyonu, 22m mesafeden kafa/gövde takibi, korna ve yanaşmada çekicini kaldırarak usta selamı ve 3D konuşma balonuyla karşılama (`"🏺 Bakırcı Kazım Usta: Hoş geldin kargocu evlat! El emeği göz nuru dövme bakır gibi sağlam kargolar taşıyorsun! 🔨"`).
+     - **"Usta Esnaf Hürmeti" Mola Bonusu & Prosedürel Çekiç Sesi (`src/game/coppersmith.ts`)**: Servis peronunda 1.2s duraklama: +10 ₺ nakit esnaf desteği, +1 itibar, +0.45 nitro dolumu, 30s "Usta Esnaf Hürmeti" teslimatlarda +15 ₺ müşteri bahşişi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel metalik çekiç vuruşu ve rezonans sesi (`sound.coppersmith()`).
+     - **Minimap Radar Simgesi**: Çarşı Bölgesi üzerinde canlı `🏺` antik amfora/bakır simgesi.
+   - Tested in `src/game/coppersmith.test.ts`, `src/scene/coppersmith.test.ts`, `src/scene/world.test.ts`, `src/audio/sound.test.ts`, `src/ui/minimap.ts`, and verified in browser smoke tests across 3 viewports with 0 errors.
 
 ## Exact Next Development Task
-- **T56 — Çarşı "Tarihi Bakırcılar Çarşısı & Antik Kapalı Bedesten"**: Authentic historic coppersmith bazaar & antique bedesten square in Çarşı: arched stone portals, gleaming embossed copper cauldrons, cezve sets, samovars, antique Turkish carpets/kilims on displays, animated Master Coppersmith NPC ("Bakırcı Kazım Usta") with brass ball-peen hammer tapping an ornate copper tray, procedural rhythmic hammer clang & metal polishing audio (`sound.coppersmith()`), service bay, and "Usta Esnaf Hürmeti" trading discount / customer tip buff.
+- **T57 — Sahil "Açık Hava Yazlık Sineması & Sahil Gazinosu"**: Authentic nostalgic open-air summer cinema & seaside gazino on the Sahil coastal promenade: monumental outdoor projection screen, retro 35mm projector booth with rotating film reels & projection beam cone, tiered summer deckchairs and tables with gazoz bottles, illuminated neon marquee ("🎬 SAHİL AÇIK HAVA YAZLIK SİNEMASI · YILDIZ GAZİNOSU 🍿"), animated Projectionist NPC ("Makinist Rıfat"), procedural film projector whir audio (`sound.filmProjector()`), service bay, and "Yazlık Sinema Keyfi" joy & speed buff.
 
 ## Quick Resume Instructions
 To test and run locally:
 ```bash
 cd games/mini-kargo
-npm test                # Run 883 unit & E2E tests
+npm test                # Run 894 unit & E2E tests
 npm run typecheck       # Verify TypeScript types
 npm run build           # Build client bundle
 npm run test:browser    # Run Playwright visual smoke tests

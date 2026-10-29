@@ -386,5 +386,8 @@ describe("district traffic lanes", () => {
     expect(world.carpenter).toBeDefined();
     expect(world.carpenter.obstacles.length).toBeGreaterThan(0);
     expect(world.carpenter.group.name).toBe("carpenter-view");
+    expect(world.coppersmith).toBeDefined();
+    expect(world.coppersmith.obstacles.length).toBeGreaterThan(0);
+    expect(world.coppersmith.group.name).toBe("coppersmith-view");
   });
 });

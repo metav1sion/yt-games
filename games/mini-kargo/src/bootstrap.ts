@@ -141,6 +141,12 @@ import {
   triggerCarpenterHonk,
   RUSTEM_USTA_POS,
 } from "./game/carpenter";
+import {
+  createCoppersmithState,
+  updateCoppersmith,
+  triggerCoppersmithHonk,
+  KAZIM_USTA_POS,
+} from "./game/coppersmith";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -210,6 +216,7 @@ export async function startGame(app: HTMLElement) {
   let lighthouseState = createLighthouseState();
   let marketState = createMarketState();
   let carpenterState = createCarpenterState();
+  let coppersmithState = createCoppersmithState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -305,6 +312,7 @@ export async function startGame(app: HTMLElement) {
       getLighthouseState: () => lighthouseState,
       getMarketState: () => marketState,
       getCarpenterState: () => carpenterState,
+      getCoppersmithState: () => coppersmithState,
     };
   }
   const fleet = createCourierFleet({
@@ -708,6 +716,8 @@ export async function startGame(app: HTMLElement) {
       world.market.onPlayerHonk(vehicle.position);
       triggerCarpenterHonk(carpenterState, vehicle.position);
       world.carpenter.onPlayerHonk(vehicle.position);
+      triggerCoppersmithHonk(coppersmithState, vehicle.position);
+      world.coppersmith.onPlayerHonk(vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -1031,6 +1041,8 @@ export async function startGame(app: HTMLElement) {
       world.market.onPlayerHonk(vehicle.position);
       triggerCarpenterHonk(carpenterState, vehicle.position);
       world.carpenter.onPlayerHonk(vehicle.position);
+      triggerCoppersmithHonk(coppersmithState, vehicle.position);
+      world.coppersmith.onPlayerHonk(vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -1742,6 +1754,41 @@ export async function startGame(app: HTMLElement) {
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
 
+        // Çarşı "Tarihi Bakırcılar Çarşısı & Antik Kapalı Bedesten" (T56)
+        const coppersmithRes = updateCoppersmith(
+          coppersmithState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (coppersmithRes.hammerSoundTriggered) {
+          sound.coppersmith();
+        }
+        if (coppersmithRes.awardedCoppersmithBonus) {
+          sound.coppersmith(1.1);
+          const maxNitro =
+            (1 + (progression.upgrades.nitro ?? 0) * (TUNING.nitroMaxBonus ?? 0.25)) *
+            (vehicle.supercharged ? 1.25 : 1.0);
+          vehicle.nitro = Math.min(maxNitro, vehicle.nitro + 0.45);
+          progression = {
+            ...progression,
+            money: progression.money + coppersmithRes.cashBonus,
+            reputation: progression.reputation + coppersmithRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          particles.spawnMoneyStream(KAZIM_USTA_POS, vehicle.position);
+          hud.showToast("🏺 USTA ESNAF HÜRMETİ! +10 ₺ (+1 İtibar, Bahşiş Bereketi & Nitro)", 3500);
+        }
+        world.coppersmith.update(
+          dt,
+          coppersmithState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
         );
@@ -1813,6 +1860,16 @@ export async function startGame(app: HTMLElement) {
           if (tipBonus > 0) {
             sound.customerTip();
             hud.showToast(`💵 MÜŞTERİ BAHŞİŞİ! +${tipBonus} ₺`, 2800);
+          }
+
+          if (coppersmithState.buffTimer > 0) {
+            const artisanBonus = 15;
+            progression = {
+              ...progression,
+              money: progression.money + artisanBonus,
+            };
+            sound.customerTip();
+            hud.showToast(`🏺 USTA ESNAF HÜRMETİ BAHŞİŞİ! +${artisanBonus} ₺`, 3000);
           }
 
           if (delivery.lastReward?.safeBonus && delivery.lastReward.safeBonus > 0) {
@@ -1998,6 +2055,12 @@ export async function startGame(app: HTMLElement) {
         world.carpenter.update(
           dt,
           carpenterState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+        world.coppersmith.update(
+          dt,
+          coppersmithState,
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );

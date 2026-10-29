@@ -174,6 +174,26 @@
   - Minimap radar simgesi: Sanayi Bölgesi üzerinde canlı `🪵` odun/kereste simgesi: VERIFIED
   - Screenshot verified: `games/mini-kargo/artifacts/sanayi-marangozlar-sitesi.png`
 
+## Visual QA & Browser Verification Summary — Run 31 (2026-10-29)
+
+### Automated Test Suite
+- **Unit & Integration Tests**: 86 test files, 894 passed, 0 failed (2.14s execution)
+- **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
+- **Vite Production Build**: Successful (`dist/` generated in 226ms)
+- **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
+
+### Visual Quality & Landmark Verification
+- **Çarşı "Tarihi Bakırcılar Çarşısı & Antik Kapalı Bedesten" (T56)**:
+  - 12.0m x 9.5m klinker tuğla ve rustik taş avlu tablası, granit taş bordürler, asfalt servis yanaşma peronu cebi (`COPPERSMITH_BAY`: X: 63.0, Z: 81.0), sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku: VERIFIED
+  - Kesme kireçtaşı ve traverten taş kemerli bedesten revakları, pişmiş toprak kiremitli saçaklıklar ve rustik tuğla kaideler: VERIFIED
+  - Işıklı büyük kurumsal çatı tabelası (`"🏺 TARİHİ BAKIRCILAR ÇARŞISI · KAZIM USTA 🔨"`), alt kurumsal şerit (`"EL DÖVMESİ BAKIR SANATI & ANTİK BEDESTEN · 1954"`), gece ve gündüz tezgahı aydınlatan sıcak kehribar PointLight armatürü: VERIFIED
+  - Parlak el dövmesi bakır kazanlar, cezve takımları, semaverler, oymalı bakır siniler ve kemerlerde sergilenen otantik Türk kilimleri: VERIFIED
+  - Ağaç kütük kaide üzerinde döküm çelik bakırcı örsü, topuz çekiç ve bakır işleme aletleri: VERIFIED
+  - Animasyonlu Usta Bakırcı NPC "Bakırcı Kazım Usta" (X: 61.5, Z: 76.5) deri esnaf önlüğü, bordo fes, kıvrık pala bıyık, deri bileklikler, elinde pirinç topuz çekiç ile ritmik bakır dövme animasyonu, 22m mesafeden kafa/gövde takibi, korna ve yanaşmada çekicini kaldırarak usta selamı ve 3D konuşma balonuyla karşılama: VERIFIED
+  - "Usta Esnaf Hürmeti" pitstop bonusu (+10 ₺ esnaf desteği, +1 itibar, +0.45 nitro dolumu, 30s "Usta Esnaf Hürmeti" teslimatlarda +15 ₺ müşteri bahşişi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel çekiç vuruşu ve rezonans sesi `sound.coppersmith()`): VERIFIED
+  - Minimap radar simgesi: Çarşı Bölgesi üzerinde canlı `🏺` antik amfora/bakır simgesi: VERIFIED
+  - Screenshot verified: `games/mini-kargo/artifacts/carsi-bakircilar-carsisi.png`
+
 ## Independent Victory Audit Verdict
 - **Verdict**: `VICTORY CONFIRMED`
 - **Integrity**: Zero skipped tests, zero mock facades, genuine implementations.

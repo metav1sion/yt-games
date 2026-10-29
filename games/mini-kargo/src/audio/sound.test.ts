@@ -118,6 +118,7 @@ describe("audio system", () => {
     sound.fogHorn(1.0);
     sound.marketScale(1.0);
     sound.buzzSaw(1.0);
+    sound.coppersmith(1.0);
     sound.setDistrict("coastal");
     sound.setRadioStation("cozy_chill");
     expect(sound.getRadioStation()).toBe("cozy_chill");

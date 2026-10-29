@@ -498,3 +498,22 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
   - Askılı kot tulum, flanel iş gömleği, talaş tozu lekeleri, kulak arkasında marangoz kurşun kalemi, cepte katlanır sarı metre, heybetli usta bıyığı ve deri eldivenler.
   - 22m mesafeden kafa/gövde takibi, korna ve yanaşmada kolunu kaldırarak usta selamı ve 3D konuşma balonu (`"🪵 Marangoz Rüstem Usta: Hoş geldin evlat! Fırınlanmış meşeden Mini Kargo kasası gibi sağlam kargo sandığı yapıyoruz! 🪚"`).
   - "Sanayi İşçiliği Gücü" pitstop bonusu: +10 ₺ nakit desteği, +1 itibar, +0.45 nitro dolumu, 25s şasi takviyesi & çarpışma darbe hasarını %50 azaltma buff'ı, altın konfeti & para akışı ve prosedürel testere sesi (`sound.buzzSaw()`). Minimap radarda `🪵`.
+
+---
+
+## 19. Çarşı "Tarihi Bakırcılar Çarşısı & Antik Kapalı Bedesten" (T56)
+- **Konum ve Mimari Yapı (`createCoppersmithView` & `src/game/coppersmith.ts`)**:
+  - Konum: X: 63.0, Z: 75.5 (Tarihi Çarşı Bölgesi, Doğu Z: 84 Sokağı kuzey bordürü).
+  - 12.0m x 9.5m klinker tuğla ve rustik taş avlu tablası, granit taş bordürler, asfalt servis yanaşma peronu (`COPPERSMITH_BAY`: X: 63.0, Z: 81.0).
+  - Sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku.
+  - Kesme kireçtaşı ve traverten taş kemerli bedesten revakları (arched stone portals), pişmiş toprak kiremitli saçaklıklar.
+  - Işıklı büyük kurumsal çatı tabelası (`"🏺 TARİHİ BAKIRCILAR ÇARŞISI · KAZIM USTA 🔨"`), alt kurumsal şerit (`"EL DÖVMESİ BAKIR SANATI & ANTİK BEDESTEN · 1954"`), gece ve gündüz tezgahı aydınlatan sıcak kehribar PointLight armatürü.
+  - Parlak el dövmesi bakır kazanlar, cezve takımları, semaverler ve oymalı bakır siniler.
+  - Taş kemerlerde ve askılarda sergilenen otantik el dokuması Türk kilimleri ve halıları.
+  - Ağaç kütük kaide üzerinde döküm çelik bakırcı örsü, topuz çekiç ve bakır işleme aletleri.
+- **Usta Bakırcı NPC ("Bakırcı Kazım Usta") & Esnaf Hürmeti Bonusu**:
+  - Deri esnaf önlüğü, bordo kadife fes, heybetli kıvrık pala bıyık, deri bileklikler.
+  - Elinde pirinç topuz çekiç ile örsteki bakır tepsiyi ritmik dövme / tıklatma animasyonu.
+  - 22m mesafeden kafa/gövde takibi, korna ve yanaşmada çekicini kaldırarak usta selamı ve 3D konuşma balonu (`"🏺 Bakırcı Kazım Usta: Hoş geldin kargocu evlat! El emeği göz nuru dövme bakır gibi sağlam kargolar taşıyorsun! 🔨"`).
+  - "Usta Esnaf Hürmeti" pitstop bonusu: +10 ₺ nakit esnaf desteği, +1 itibar, +0.45 nitro dolumu, 30s "Usta Esnaf Hürmeti" müşteri teslimatlarında +15 ₺ esnaf bahşişi buff'ı, altın konfeti & para akışı ve prosedürel çekiç vuruşu & metalik rezonans sesi (`sound.coppersmith()`). Minimap radarda `🏺`.
+

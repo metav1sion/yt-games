@@ -326,6 +326,9 @@ export function createMinimap(
 
     const carpenterPos = worldToMinimap(62.0, -74.5, size, bounds);
     ctx.fillText("🪵", carpenterPos.x, carpenterPos.y);
+
+    const coppersmithPos = worldToMinimap(63.0, 75.5, size, bounds);
+    ctx.fillText("🏺", coppersmithPos.x, coppersmithPos.y);
     ctx.restore();
 
     // 6. AKTİF HEDEF GÖSTERGESİ (Nabız animasyonu)
