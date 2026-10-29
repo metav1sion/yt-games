@@ -94,4 +94,41 @@ describe("urban fauna system (T24)", () => {
     fauna.dispose();
     expect(fauna.group.children.length).toBe(0);
   });
+
+  it("supports feeding interactions with cats, Karabaş and pigeons when treat is available", () => {
+    const mockSound = {
+      catPurr: vi.fn(),
+      dogBark: vi.fn(),
+    };
+    const fauna = createUrbanFauna(mockSound);
+
+    // 1. Kedi yakınında (X: -42.8, Z: -57.5) durunca tespit
+    const catProx = fauna.checkFeedingProximity({ x: -42.0, z: -57.0 }, 0.5, true);
+    expect(catProx).not.toBeNull();
+    expect(catProx?.animalType).toBe("cat");
+
+    // Besleme işlemi
+    const catFeedRes = fauna.feedAnimal("cat", { x: -42.0, z: -57.0 });
+    expect(catFeedRes.repBonus).toBe(1);
+    expect(mockSound.catPurr).toHaveBeenCalled();
+
+    // 2. Karabaş yakınında (X: -44, Z: 18) durunca tespit
+    const dogProx = fauna.checkFeedingProximity({ x: -43.5, z: 18.0 }, 0.4, true);
+    expect(dogProx).not.toBeNull();
+    expect(dogProx?.animalType).toBe("dog");
+
+    const dogFeedRes = fauna.feedAnimal("dog");
+    expect(dogFeedRes.repBonus).toBe(1);
+    expect(mockSound.dogBark).toHaveBeenCalled();
+
+    // 3. Meydan güvercinleri yakınında (X: 50, Z: 50)
+    const pigeonProx = fauna.checkFeedingProximity({ x: 50.5, z: 50.5 }, 0.5, true);
+    expect(pigeonProx).not.toBeNull();
+    expect(pigeonProx?.animalType).toBe("pigeons");
+
+    const pigeonFeedRes = fauna.feedAnimal("pigeons");
+    expect(pigeonFeedRes.cashBonus).toBe(5);
+
+    fauna.dispose();
+  });
 });

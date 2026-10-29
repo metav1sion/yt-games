@@ -937,6 +937,107 @@ export function createSound() {
         osc.stop(at + 0.3);
       } catch {}
     },
+    catPurr() {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      try {
+        const at = ctx.currentTime;
+        radio.duck(0.4, 0.6);
+
+        // Kedi mırıltısı: Titreşimli derin rezonans (42Hz)
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(42, at);
+
+        gain.gain.setValueAtTime(0.08, at);
+        gain.gain.exponentialRampToValueAtTime(0.001, at + 0.55);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(at);
+        osc.stop(at + 0.6);
+      } catch {}
+    },
+    fuelPump() {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      try {
+        const at = ctx.currentTime;
+        radio.duck(0.4, 0.5);
+
+        // 1. Düşük frekanslı pompa akış vuruşu (65Hz)
+        const pumpOsc = ctx.createOscillator();
+        const pumpGain = ctx.createGain();
+        pumpOsc.type = "sine";
+        pumpOsc.frequency.setValueAtTime(65, at);
+        pumpOsc.frequency.exponentialRampToValueAtTime(110, at + 0.12);
+        pumpGain.gain.setValueAtTime(0.12, at);
+        pumpGain.gain.exponentialRampToValueAtTime(0.001, at + 0.2);
+        pumpOsc.connect(pumpGain);
+        pumpGain.connect(ctx.destination);
+        pumpOsc.start(at);
+        pumpOsc.stop(at + 0.22);
+
+        // 2. Akaryakıt pompası klasik çift mekanik çan çınlaması (1318Hz & 1760Hz)
+        const bellNotes = [1318, 1760];
+        bellNotes.forEach((freq, idx) => {
+          const t = at + 0.08 + idx * 0.08;
+          const bellOsc = ctx.createOscillator();
+          const bellGain = ctx.createGain();
+          bellOsc.type = "triangle";
+          bellOsc.frequency.setValueAtTime(freq, t);
+          bellGain.gain.setValueAtTime(0.15, t);
+          bellGain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+          bellOsc.connect(bellGain);
+          bellGain.connect(ctx.destination);
+          bellOsc.start(t);
+          bellOsc.stop(t + 0.28);
+        });
+      } catch {}
+    },
+    carWash() {
+      if (!context || !enabled || paused || context.state !== "running") return;
+      try {
+        const at = context.currentTime;
+        radio.duck(0.35, 0.8);
+
+        // 1. Dönen köpüklü fırça vınlaması (180Hz yumuşak rezonans)
+        const brushOsc = context.createOscillator();
+        const brushGain = context.createGain();
+        brushOsc.type = "sine";
+        brushOsc.frequency.setValueAtTime(160, at);
+        brushOsc.frequency.linearRampToValueAtTime(220, at + 0.25);
+        brushOsc.frequency.linearRampToValueAtTime(150, at + 0.55);
+        brushGain.gain.setValueAtTime(0.08, at);
+        brushGain.gain.exponentialRampToValueAtTime(0.001, at + 0.6);
+        brushOsc.connect(brushGain);
+        brushGain.connect(context.destination);
+        brushOsc.start(at);
+        brushOsc.stop(at + 0.62);
+
+        // 2. Tazyikli su jeti püskürmesi (Bant geçiren gürültü patlaması)
+        const bufferSize = Math.floor(context.sampleRate * 0.45);
+        const noiseBuffer = context.createBuffer(1, bufferSize, context.sampleRate);
+        const data = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+        }
+        const noise = context.createBufferSource();
+        noise.buffer = noiseBuffer;
+        const filter = context.createBiquadFilter();
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(1400, at);
+        filter.Q.setValueAtTime(1.8, at);
+        const nGain = context.createGain();
+        nGain.gain.setValueAtTime(0.12, at);
+        nGain.gain.exponentialRampToValueAtTime(0.001, at + 0.45);
+        noise.connect(filter);
+        filter.connect(nGain);
+        nGain.connect(context.destination);
+        noise.start(at);
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   createStreetVendorState,
   stepStreetVendors,
+  consumeFaunaTreat,
   DEFAULT_STREET_VENDORS,
   SNACK_HOLD_TIME,
   SNACK_COOLDOWN,
@@ -101,5 +102,25 @@ describe("Traditional Turkish Street Vendors Mechanics", () => {
     expect(result.event?.vendor.id).toBe("kestane_sahil");
     expect(result.state.totalSnacksPurchased).toBe(1);
     expect(result.state.energyBuffTimer).toBe(SNACK_ENERGY_DURATION);
+    expect(result.state.availableTreats).toBe(2);
+  });
+
+  it("accumulates and consumes fauna pet treats", () => {
+    let state = createStreetVendorState();
+    expect(state.availableTreats).toBe(0);
+
+    const simitVendor = DEFAULT_STREET_VENDORS.find((v) => v.id === "simit_carsi")!;
+    const res = stepStreetVendors(state, simitVendor.position, 0.2, 50, SNACK_HOLD_TIME + 0.1);
+    state = res.state;
+    expect(state.availableTreats).toBe(2);
+
+    const afterConsume = consumeFaunaTreat(state);
+    expect(afterConsume.availableTreats).toBe(1);
+
+    const afterConsume2 = consumeFaunaTreat(afterConsume);
+    expect(afterConsume2.availableTreats).toBe(0);
+
+    const afterConsume3 = consumeFaunaTreat(afterConsume2);
+    expect(afterConsume3.availableTreats).toBe(0);
   });
 });

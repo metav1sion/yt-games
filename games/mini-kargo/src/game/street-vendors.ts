@@ -69,6 +69,7 @@ export type StreetVendorState = {
   totalSnacksPurchased: number;
   lastPurchasedVendorId: StreetVendorId | null;
   energyBuffTimer: number; // Sokak lezzeti enerji buff süresi (sn)
+  availableTreats: number; // Sokak hayvanlarına verilebilecek atıştırmalık/simit ikramı sayısı
 };
 
 export type StreetVendorEvent =
@@ -99,6 +100,7 @@ export function createStreetVendorState(): StreetVendorState {
     totalSnacksPurchased: 0,
     lastPurchasedVendorId: null,
     energyBuffTimer: 0,
+    availableTreats: 0,
   };
 }
 
@@ -115,6 +117,7 @@ export function stepStreetVendors(
   let energyBuffTimer = state.energyBuffTimer;
   let totalSnacksPurchased = state.totalSnacksPurchased;
   let lastPurchasedVendorId = state.lastPurchasedVendorId;
+  let availableTreats = state.availableTreats || 0;
   let activeVendorId: StreetVendorId | null = null;
   let event: StreetVendorEvent | undefined;
 
@@ -148,6 +151,7 @@ export function stepStreetVendors(
           totalSnacksPurchased += 1;
           lastPurchasedVendorId = vendor.id;
           energyBuffTimer = SNACK_ENERGY_DURATION;
+          availableTreats = Math.min(6, (state.availableTreats || 0) + 2);
           event = { type: "snack_purchased", vendor };
           break;
         }
@@ -167,7 +171,15 @@ export function stepStreetVendors(
       totalSnacksPurchased,
       lastPurchasedVendorId,
       energyBuffTimer,
+      availableTreats,
     },
     event,
+  };
+}
+
+export function consumeFaunaTreat(state: StreetVendorState): StreetVendorState {
+  return {
+    ...state,
+    availableTreats: Math.max(0, (state.availableTreats || 0) - 1),
   };
 }

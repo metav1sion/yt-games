@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { box, cylinder, mat } from "./world-kit";
+import { box, cylinder, label, mat } from "./world-kit";
 import type { Vec2 } from "../game/types";
 
 export type UrbanFaunaStats = {
@@ -9,11 +9,28 @@ export type UrbanFaunaStats = {
   dogs: number;
 };
 
+export type AnimalTarget = "cat" | "dog" | "pigeons";
+
+export type FeedingInteraction = {
+  animalType: AnimalTarget;
+  name: string;
+  position: Vec2;
+  repBonus: number;
+  cashBonus: number;
+  message: string;
+};
+
 export type UrbanFauna = {
   group: THREE.Group;
   update(dt: number, playerPos: Vec2, playerSpeed?: number): void;
   onHonk(playerPos: Vec2): void;
   getFaunaStats(): UrbanFaunaStats;
+  checkFeedingProximity(
+    playerPos: Vec2,
+    playerSpeed: number,
+    hasTreat: boolean,
+  ): FeedingInteraction | null;
+  feedAnimal(animalType: AnimalTarget, playerPos?: Vec2): FeedingInteraction;
   dispose(): void;
 };
 
@@ -52,11 +69,14 @@ type CatState = {
   group: THREE.Group;
   headPivot: THREE.Group;
   tailPivot: THREE.Group;
+  name: string;
   x: number;
   y: number;
   z: number;
   baseYaw: number;
   meowCooldown: number;
+  fedTimer: number;
+  bubble: THREE.Object3D;
   seed: number;
 };
 
@@ -64,17 +84,21 @@ type DogState = {
   group: THREE.Group;
   headPivot: THREE.Group;
   tailPivot: THREE.Group;
+  name: string;
   x: number;
   y: number;
   z: number;
   baseYaw: number;
   barkCooldown: number;
+  fedTimer: number;
+  bubble: THREE.Object3D;
 };
 
 interface FaunaSound {
   seagullCry?(): void;
   pigeonScatter?(): void;
   catMeow?(): void;
+  catPurr?(): void;
   dogBark?(): void;
 }
 
@@ -219,11 +243,11 @@ export function createUrbanFauna(sound?: FaunaSound): UrbanFauna {
   const cats: CatState[] = [];
   const catConfigs = [
     // Tekir (Turuncu tekir) - Ev 1 bahçe çiti üzeri
-    { x: -42.8, y: 0.92, z: -57.5, yaw: 0.4, coat: "#e67e22", chest: "#f39c12", seed: 0 },
+    { name: "Tekir", x: -42.8, y: 0.92, z: -57.5, yaw: 0.4, coat: "#e67e22", chest: "#f39c12", seed: 0 },
     // Duman (Siyah-beyaz smokin kedi) - Ev 2 ön çimliği
-    { x: -26.0, y: 0.08, z: -36.5, yaw: -0.6, coat: "#2d3436", chest: "#ffffff", seed: 1 },
+    { name: "Duman", x: -26.0, y: 0.08, z: -36.5, yaw: -0.6, coat: "#2d3436", chest: "#ffffff", seed: 1 },
     // Zeytin (Alaca kedi) - Mahalle giriş taş duvarı
-    { x: -48.2, y: 0.45, z: -15.5, yaw: 1.57, coat: "#d35400", chest: "#fad390", seed: 2 },
+    { name: "Zeytin", x: -48.2, y: 0.45, z: -15.5, yaw: 1.57, coat: "#d35400", chest: "#fad390", seed: 2 },
   ];
 
   for (const cfg of catConfigs) {
@@ -260,16 +284,26 @@ export function createUrbanFauna(sound?: FaunaSound): UrbanFauna {
     box(cGroup, [0.05, 0.07, 0.06], [-0.06, 0.035, -0.12], "#ffffff");
     box(cGroup, [0.05, 0.07, 0.06], [0.06, 0.035, -0.12], "#ffffff");
 
+    // Beslenme Sevgi Konuşma Balonu
+    const bubble = label(`😻 ${cfg.name}: Mırrr... 💕`, "#ffffff", "#e84393");
+    bubble.scale.set(1.4, 0.35, 1);
+    bubble.position.set(0, 0.52, 0);
+    bubble.visible = false;
+    cGroup.add(bubble);
+
     group.add(cGroup);
     cats.push({
       group: cGroup,
       headPivot,
       tailPivot,
+      name: cfg.name,
       x: cfg.x,
       y: cfg.y,
       z: cfg.z,
       baseYaw: cfg.yaw,
       meowCooldown: 0,
+      fedTimer: 0,
+      bubble,
       seed: cfg.seed,
     });
   }
@@ -326,6 +360,13 @@ export function createUrbanFauna(sound?: FaunaSound): UrbanFauna {
   box(dogGroup, [0.08, 0.12, 0.14], [-0.09, 0.06, -0.16], "#d3a268");
   box(dogGroup, [0.08, 0.12, 0.14], [0.09, 0.06, -0.16], "#d3a268");
 
+  // Karabaş Beslenme & Sadakat Konuşma Balonu
+  const dogBubble = label("🐶 Karabaş: Hav hav! Teşekkürler! 🦴", "#ffffff", "#27ae60");
+  dogBubble.scale.set(1.9, 0.45, 1);
+  dogBubble.position.set(0, 1.25, 0.8);
+  dogBubble.visible = false;
+  dogHouseGroup.add(dogBubble);
+
   dogHouseGroup.add(dogGroup);
   group.add(dogHouseGroup);
 
@@ -333,12 +374,23 @@ export function createUrbanFauna(sound?: FaunaSound): UrbanFauna {
     group: dogGroup,
     headPivot: dogHeadPivot,
     tailPivot: dogTailPivot,
+    name: "Karabaş",
     x: -44.0,
     y: 0,
     z: 18.0,
     baseYaw: Math.PI / 2,
     barkCooldown: 0,
+    fedTimer: 0,
+    bubble: dogBubble,
   };
+
+  // Meydan Güvercinleri Simit Yemlenme Balonu
+  const pigeonBubble = label("🐦 Guk guk! Çıtır simit ziyafeti! 🥨", "#ffffff", "#3498db");
+  pigeonBubble.scale.set(2.2, 0.5, 1);
+  pigeonBubble.position.set(50.0, 1.6, 50.0);
+  pigeonBubble.visible = false;
+  group.add(pigeonBubble);
+  let pigeonsFedTimer = 0;
 
   let globalTime = 0;
 
@@ -454,8 +506,14 @@ export function createUrbanFauna(sound?: FaunaSound): UrbanFauna {
       // 3. Güneş Mahallesi kedileri (baş takibi & kuyruk)
       for (const cat of cats) {
         cat.meowCooldown -= dt;
-        // Kuyruk salınımı
-        cat.tailPivot.rotation.y = Math.sin(globalTime * 2.4 + cat.seed) * 0.42;
+        if (cat.fedTimer > 0) {
+          cat.fedTimer -= dt;
+          cat.bubble.visible = true;
+          cat.tailPivot.rotation.y = Math.sin(globalTime * 8.0) * 0.55;
+        } else {
+          cat.bubble.visible = false;
+          cat.tailPivot.rotation.y = Math.sin(globalTime * 2.4 + cat.seed) * 0.42;
+        }
 
         const distToPlayer = Math.hypot(playerPos.x - cat.x, playerPos.z - cat.z);
         if (distToPlayer < 12.0) {
@@ -469,8 +527,8 @@ export function createUrbanFauna(sound?: FaunaSound): UrbanFauna {
             dt * 5.0,
           );
 
-          // Yakın duruşta miyavlama
-          if (distToPlayer < 3.8 && cat.meowCooldown <= 0) {
+          // Yakın duruşta miyavlama (beslenmemişse)
+          if (distToPlayer < 3.8 && cat.meowCooldown <= 0 && cat.fedTimer <= 0) {
             cat.meowCooldown = 8.0;
             sound?.catMeow?.();
           }
@@ -485,8 +543,22 @@ export function createUrbanFauna(sound?: FaunaSound): UrbanFauna {
 
       // 4. Sanayi bekçi köpeği Karabaş
       dog.barkCooldown -= dt;
-      // Dostane kuyruk sallama
-      dog.tailPivot.rotation.y = Math.sin(globalTime * 3.8) * 0.48;
+      if (dog.fedTimer > 0) {
+        dog.fedTimer -= dt;
+        dog.bubble.visible = true;
+        dog.tailPivot.rotation.y = Math.sin(globalTime * 14.0) * 0.85;
+      } else {
+        dog.bubble.visible = false;
+        dog.tailPivot.rotation.y = Math.sin(globalTime * 3.8) * 0.48;
+      }
+
+      // 5. Meydan Güvercinleri Simit Yemlenme Balonu
+      if (pigeonsFedTimer > 0) {
+        pigeonsFedTimer -= dt;
+        pigeonBubble.visible = true;
+      } else {
+        pigeonBubble.visible = false;
+      }
 
       const distToDog = Math.hypot(playerPos.x - dog.x, playerPos.z - dog.z);
       if (distToDog < 14.0) {
@@ -500,7 +572,7 @@ export function createUrbanFauna(sound?: FaunaSound): UrbanFauna {
         );
 
         // Hızlı geçişte uyarı havlaması
-        if (distToDog < 6.5 && playerSpeed > 4.5 && dog.barkCooldown <= 0) {
+        if (distToDog < 6.5 && playerSpeed > 4.5 && dog.barkCooldown <= 0 && dog.fedTimer <= 0) {
           dog.barkCooldown = 5.0;
           sound?.dogBark?.();
         }
@@ -553,6 +625,115 @@ export function createUrbanFauna(sound?: FaunaSound): UrbanFauna {
         pigeons: pigeons.length,
         cats: cats.length,
         dogs: 1,
+      };
+    },
+
+    checkFeedingProximity(
+      playerPos: Vec2,
+      playerSpeed: number,
+      hasTreat: boolean,
+    ): FeedingInteraction | null {
+      if (playerSpeed > 1.4 || !hasTreat) return null;
+
+      // 1. Kediler (Güneş Mahallesi)
+      for (const cat of cats) {
+        const dist = Math.hypot(playerPos.x - cat.x, playerPos.z - cat.z);
+        if (dist <= 3.8 && cat.fedTimer <= 0) {
+          return {
+            animalType: "cat",
+            name: cat.name,
+            position: { x: cat.x, z: cat.z },
+            repBonus: 1,
+            cashBonus: 0,
+            message: `🐾 ${cat.name} Sevildi & Beslendi! (+1 İtibar)`,
+          };
+        }
+      }
+
+      // 2. Karabaş (Sanayi Girişi)
+      const distDog = Math.hypot(playerPos.x - dog.x, playerPos.z - dog.z);
+      if (distDog <= 4.8 && dog.fedTimer <= 0) {
+        return {
+          animalType: "dog",
+          name: "Karabaş",
+          position: { x: dog.x, z: dog.z },
+          repBonus: 1,
+          cashBonus: 0,
+          message: "🦴 Karabaş Beslendi! Sadık Dost Koruması Aktif (+1 İtibar)",
+        };
+      }
+
+      // 3. Meydan Güvercinleri (Çarşı Meydanı)
+      const distPiazza = Math.hypot(playerPos.x - 50.0, playerPos.z - 50.0);
+      if (distPiazza <= 7.0 && pigeonsFedTimer <= 0) {
+        return {
+          animalType: "pigeons",
+          name: "Meydan Güvercinleri",
+          position: { x: 50.0, z: 50.0 },
+          repBonus: 1,
+          cashBonus: 5,
+          message: "🥨 Meydan Güvercinleri Simitle Yemlendi! (+5 ₺ & +1 İtibar)",
+        };
+      }
+
+      return null;
+    },
+
+    feedAnimal(animalType: AnimalTarget, playerPos?: Vec2): FeedingInteraction {
+      if (animalType === "cat") {
+        let targetCat = cats[0];
+        if (playerPos) {
+          let minDist = Infinity;
+          for (const c of cats) {
+            const d = Math.hypot(playerPos.x - c.x, playerPos.z - c.z);
+            if (d < minDist) {
+              minDist = d;
+              targetCat = c;
+            }
+          }
+        }
+        targetCat.fedTimer = 4.5;
+        targetCat.bubble.visible = true;
+        sound?.catPurr?.();
+        return {
+          animalType: "cat",
+          name: targetCat.name,
+          position: { x: targetCat.x, z: targetCat.z },
+          repBonus: 1,
+          cashBonus: 0,
+          message: `🐾 ${targetCat.name} Sevildi & Beslendi! (+1 İtibar)`,
+        };
+      }
+
+      if (animalType === "dog") {
+        dog.fedTimer = 5.0;
+        dog.bubble.visible = true;
+        sound?.dogBark?.();
+        return {
+          animalType: "dog",
+          name: "Karabaş",
+          position: { x: dog.x, z: dog.z },
+          repBonus: 1,
+          cashBonus: 0,
+          message: "🦴 Karabaş Beslendi! Sadık Dost Koruması Aktif (+1 İtibar)",
+        };
+      }
+
+      // pigeons
+      pigeonsFedTimer = 5.0;
+      pigeonBubble.visible = true;
+      for (const p of pigeons) {
+        p.state = "idle";
+        p.curY = 0.04;
+        p.peckTimer = 0;
+      }
+      return {
+        animalType: "pigeons",
+        name: "Meydan Güvercinleri",
+        position: { x: 50.0, z: 50.0 },
+        repBonus: 1,
+        cashBonus: 5,
+        message: "🥨 Meydan Güvercinleri Simitle Yemlendi! (+5 ₺ & +1 İtibar)",
       };
     },
 

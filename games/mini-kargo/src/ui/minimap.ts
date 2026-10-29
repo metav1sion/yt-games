@@ -259,6 +259,15 @@ export function createMinimap(
     ctx.strokeRect(dp.x - 2.5, dp.y - 2.5, 5, 5);
     ctx.restore();
 
+    // 5.5. AKARYAKIT İSTASYONU & OTO YIKAMA (⛽)
+    ctx.save();
+    const gsp = worldToMinimap(64, -9, size, bounds);
+    ctx.font = "8px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("⛽", gsp.x, gsp.y);
+    ctx.restore();
+
     // 6. AKTİF HEDEF GÖSTERGESİ (Nabız animasyonu)
     if (phase !== "result") {
       ctx.save();

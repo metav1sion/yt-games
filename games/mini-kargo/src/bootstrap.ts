@@ -45,7 +45,8 @@ import { createPuddlesView } from "./scene/puddles";
 import { createPitstopView } from "./scene/pitstop";
 import { createPitstopState, stepPitstop } from "./game/pitstop";
 import { createStreetVendorsView } from "./scene/street-vendors";
-import { createStreetVendorState, stepStreetVendors } from "./game/street-vendors";
+import { createStreetVendorState, stepStreetVendors, consumeFaunaTreat } from "./game/street-vendors";
+import { createGasStationState, stepGasStation } from "./game/gas-station";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -97,6 +98,9 @@ export async function startGame(app: HTMLElement) {
   let streetVendorsState = createStreetVendorState();
   const world = createWorld();
   scene.add(world.group);
+  let gasStationState = createGasStationState();
+  let carShineTimer = 0;
+  let feedHoldTimer = 0;
   const marker = createMarkers();
   scene.add(marker.group);
   const traffic = createTraffic();
@@ -534,6 +538,7 @@ export async function startGame(app: HTMLElement) {
       sound.carHorn();
       urbanFauna.onHonk(vehicle.position);
       world.busStops.onHonk(vehicle.position);
+      world.gasStation.onPlayerHonk(vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -817,6 +822,7 @@ export async function startGame(app: HTMLElement) {
           urbanFauna.onHonk(vehicle.position);
           world.busStops.onHonk(vehicle.position);
           streetVendorsView.onPlayerHonk();
+          world.gasStation.onPlayerHonk(vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -877,6 +883,93 @@ export async function startGame(app: HTMLElement) {
         }
         streetVendorsView.update(dt, streetVendorsState, vehicle.position);
         hud.setSnackBuff(streetVendorsState.energyBuffTimer > 0, streetVendorsState.energyBuffTimer);
+
+        // Sokak Hayvanlarını Besleme & Sevme Etkileşimi (T37)
+        if (streetVendorsState.availableTreats > 0 && currentSpeed < 1.4) {
+          const feedProx = urbanFauna.checkFeedingProximity(
+            vehicle.position,
+            currentSpeed,
+            true,
+          );
+          if (feedProx) {
+            feedHoldTimer += dt;
+            if (feedHoldTimer >= 0.7) {
+              feedHoldTimer = 0;
+              streetVendorsState = consumeFaunaTreat(streetVendorsState);
+              const feedRes = urbanFauna.feedAnimal(feedProx.animalType, vehicle.position);
+              particles.spawnHeartParticles(feedProx.position, 14);
+              if (feedRes.repBonus > 0 || feedRes.cashBonus > 0) {
+                progression = {
+                  ...progression,
+                  reputation: progression.reputation + feedRes.repBonus,
+                  money: progression.money + feedRes.cashBonus,
+                };
+                storage.save({ ...progression, soundEnabled });
+                companySheet.update(progression);
+                hud.update(delivery, progression, soundEnabled);
+              }
+              hud.showToast(feedRes.message, 3500);
+            }
+          } else {
+            feedHoldTimer = 0;
+          }
+        } else {
+          feedHoldTimer = 0;
+        }
+
+        // Akaryakıt İstasyonu & Otomatik Oto Yıkama Tüneli Simülasyonu (T36)
+        const gasRes = stepGasStation(
+          gasStationState,
+          vehicle.position,
+          currentSpeed,
+          dt,
+        );
+        gasStationState = gasRes.state;
+        if (gasRes.event) {
+          if (gasRes.event.type === "fuel_completed") {
+            sound.fuelPump();
+            const maxNitro = (1 + (progression.upgrades.nitro ?? 0) * (TUNING.nitroMaxBonus ?? 0.25)) * (vehicle.supercharged ? 1.25 : 1.0);
+            vehicle.nitro = maxNitro;
+            contactDamage.reset();
+            progression = {
+              ...progression,
+              reputation: progression.reputation + gasRes.event.repBonus,
+            };
+            storage.save({ ...progression, soundEnabled });
+            companySheet.update(progression);
+            hud.update(delivery, progression, soundEnabled);
+            hud.showToast("⛽ DEPO FULLEDİ & ARAÇ BAKIMI TAMAMLANDI! (+1 İtibar)", 3500);
+          } else if (gasRes.event.type === "wash_started") {
+            sound.carWash();
+            particles.spawnWashSpray(vehicle.position, 22);
+          } else if (gasRes.event.type === "wash_active") {
+            particles.spawnWashSpray(vehicle.position, 6);
+          } else if (gasRes.event.type === "wash_completed") {
+            progression = {
+              ...progression,
+              money: progression.money + gasRes.event.cashBonus,
+            };
+            storage.save({ ...progression, soundEnabled });
+            companySheet.update(progression);
+            hud.update(delivery, progression, soundEnabled);
+            particles.spawnConfetti(vehicle.position);
+            hud.showToast("✨ PIRIL PIRIL OTO YIKAMA! +10 ₺ Bahşiş Bonusu", 3500);
+          }
+        }
+        if (gasStationState.isClean) {
+          carShineTimer += dt;
+          if (carShineTimer >= 0.35) {
+            carShineTimer = 0;
+            particles.spawnCarShine(vehicle.position, 1);
+          }
+        }
+        world.gasStation.update(
+          dt,
+          gasStationState,
+          vehicle.position,
+          atmoState.isNightOrDusk,
+        );
+        hud.setCleanBuff(gasStationState.isClean, gasStationState.cleanBuffTimer);
 
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,

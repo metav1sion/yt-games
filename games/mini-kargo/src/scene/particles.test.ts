@@ -164,4 +164,19 @@ describe("particles system", () => {
 
     particles.dispose();
   });
+
+  it("spawns wash spray foam and car shine sparkles during and after car wash", () => {
+    const scene = new THREE.Scene();
+    const particles = createParticles(scene);
+
+    expect(() => {
+      particles.spawnWashSpray({ x: 58, z: -9 }, 20);
+      particles.spawnCarShine({ x: 58, z: -9 }, 4);
+      for (let i = 0; i < 20; i++) {
+        particles.update(dummyState, false, 0.04);
+      }
+    }).not.toThrow();
+
+    particles.dispose();
+  });
 });

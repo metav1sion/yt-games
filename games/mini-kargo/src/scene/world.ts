@@ -16,6 +16,7 @@ import { buildCityBuildings } from "./city-buildings";
 import { createDeliveryStations, type DeliveryStationsView } from "./delivery-stations";
 import { createTrafficLights, type TrafficLightsView } from "./traffic-lights";
 import { createBusStops, type BusStopsView } from "./bus-stops";
+import { createGasStationView, type GasStationView } from "./gas-station";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
@@ -23,6 +24,7 @@ export type { CargoRacksView } from "./cargo-racks";
 export type { DeliveryStationsView } from "./delivery-stations";
 export type { TrafficLightsView } from "./traffic-lights";
 export type { BusStopsView } from "./bus-stops";
+export type { GasStationView } from "./gas-station";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -36,6 +38,7 @@ export type World = {
   deliveryStations: DeliveryStationsView;
   trafficLights: TrafficLightsView;
   busStops: BusStopsView;
+  gasStation: GasStationView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -68,6 +71,11 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   const { chimneySmokes } = buildIndustrialDistrict(ctx);
   const { lighthouse, marinaBoats } = buildCoastalDistrict(ctx);
   buildCityBuildings(ctx);
+
+  // Akaryakıt İstasyonu & Oto Yıkama (T36)
+  const gasStation = createGasStationView();
+  group.add(gasStation.group);
+  ctx.baseObstacles.push(...gasStation.obstacles);
 
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;
@@ -136,6 +144,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     deliveryStations,
     trafficLights,
     busStops,
+    gasStation,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);

@@ -12,11 +12,14 @@ export type ParticleSystem = {
   spawnLandingDust(pos: Vec2 | THREE.Vector3, speed?: number): void;
   spawnPuddleSplash(pos: Vec2 | THREE.Vector3, speed?: number, heading?: number): void;
   spawnElectricSparks(pos: Vec2 | THREE.Vector3, count?: number): void;
+  spawnWashSpray(pos: Vec2 | THREE.Vector3, count?: number): void;
+  spawnCarShine(pos: Vec2 | THREE.Vector3, count?: number): void;
+  spawnHeartParticles(pos: Vec2 | THREE.Vector3, count?: number): void;
 };
 
 const MAX_PARTICLES = 450;
 
-type ParticleType = "dust" | "nitro" | "money" | "confetti" | "spark" | "smoke" | "puddle_splash" | "electric";
+type ParticleType = "dust" | "nitro" | "money" | "confetti" | "spark" | "smoke" | "puddle_splash" | "electric" | "wash_spray" | "shine" | "heart";
 
 type Particle = {
   active: boolean;
@@ -140,6 +143,29 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
     new THREE.Color("#54a0ff"), // Şimşek mavisi
     new THREE.Color("#2ed573"), // Yeşil eko enerji
     new THREE.Color("#ffffff"), // Akkor ark beyazı
+  ];
+
+  const WASH_COLORS = [
+    new THREE.Color("#ffffff"), // Köpük beyazı
+    new THREE.Color("#e0f7fa"), // Sabun açık mavi
+    new THREE.Color("#80deea"), // Deterjan turkuaz
+    new THREE.Color("#00e5ff"), // Parlak su akış
+    new THREE.Color("#b2ebf2"), // Banyo köpüğü
+  ];
+
+  const SHINE_COLORS = [
+    new THREE.Color("#ffffff"), // Kristal beyaz ışıltı
+    new THREE.Color("#fff9c4"), // İpeksi altın parıltı
+    new THREE.Color("#ffd700"), // Yıldız sarısı
+    new THREE.Color("#64ffda"), // Parlak turkuaz pırıltı
+  ];
+
+  const HEART_COLORS = [
+    new THREE.Color("#ff4757"), // Canlı kırmızı kalp
+    new THREE.Color("#ff6b81"), // Gül pembesi
+    new THREE.Color("#ff78cb"), // Şeker pembesi
+    new THREE.Color("#ffffff"), // Saf sevgi beyazı
+    new THREE.Color("#ffa502"), // Sıcak sarımsı pembe
   ];
 
   function spawnDust(x: number, y: number, z: number, forwardX: number, forwardZ: number) {
@@ -443,6 +469,92 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
     }
   }
 
+  function spawnWashSpray(pos: Vec2 | THREE.Vector3, count = 16) {
+    const px = "x" in pos ? pos.x : 0;
+    const py = "y" in pos ? (pos as THREE.Vector3).y : 0.8;
+    const pz = "z" in pos ? pos.z : 0;
+
+    for (let k = 0; k < count; k++) {
+      const p = particles[head];
+      p.active = true;
+      p.type = "wash_spray";
+      p.pos.set(
+        px + (Math.random() - 0.5) * 1.6,
+        py + (Math.random() - 0.5) * 0.8,
+        pz + (Math.random() - 0.5) * 1.6,
+      );
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 2.0 + Math.random() * 2.8;
+      p.vel.set(
+        Math.cos(angle) * speed,
+        1.0 + Math.random() * 2.4,
+        Math.sin(angle) * speed,
+      );
+      p.age = 0;
+      p.maxLife = 0.35 + Math.random() * 0.25;
+      p.startScale = 0.16 + Math.random() * 0.14;
+      p.endScale = 0.05;
+      p.color.copy(WASH_COLORS[Math.floor(Math.random() * WASH_COLORS.length)]);
+      head = (head + 1) % MAX_PARTICLES;
+    }
+  }
+
+  function spawnCarShine(pos: Vec2 | THREE.Vector3, count = 2) {
+    const px = "x" in pos ? pos.x : 0;
+    const py = "y" in pos ? (pos as THREE.Vector3).y : 0.6;
+    const pz = "z" in pos ? pos.z : 0;
+
+    for (let k = 0; k < count; k++) {
+      const p = particles[head];
+      p.active = true;
+      p.type = "shine";
+      p.pos.set(
+        px + (Math.random() - 0.5) * 1.2,
+        py + Math.random() * 0.5,
+        pz + (Math.random() - 0.5) * 1.2,
+      );
+      p.vel.set(
+        (Math.random() - 0.5) * 0.4,
+        0.6 + Math.random() * 0.8,
+        (Math.random() - 0.5) * 0.4,
+      );
+      p.age = 0;
+      p.maxLife = 0.45 + Math.random() * 0.3;
+      p.startScale = 0.08 + Math.random() * 0.1;
+      p.endScale = 0.02;
+      p.color.copy(SHINE_COLORS[Math.floor(Math.random() * SHINE_COLORS.length)]);
+      head = (head + 1) % MAX_PARTICLES;
+    }
+  }
+
+  function spawnHeartParticles(pos: Vec2 | THREE.Vector3, count = 10) {
+    const px = "x" in pos ? pos.x : 0;
+    const py = "y" in pos ? (pos as THREE.Vector3).y : 0.6;
+    const pz = "z" in pos ? pos.z : 0;
+
+    for (let k = 0; k < count; k++) {
+      const p = particles[head];
+      p.active = true;
+      p.type = "heart";
+      p.pos.set(
+        px + (Math.random() - 0.5) * 0.8,
+        py + Math.random() * 0.4,
+        pz + (Math.random() - 0.5) * 0.8,
+      );
+      p.vel.set(
+        (Math.random() - 0.5) * 0.6,
+        1.2 + Math.random() * 1.0,
+        (Math.random() - 0.5) * 0.6,
+      );
+      p.age = 0;
+      p.maxLife = 0.6 + Math.random() * 0.4;
+      p.startScale = 0.14 + Math.random() * 0.08;
+      p.endScale = 0.04;
+      p.color.copy(HEART_COLORS[Math.floor(Math.random() * HEART_COLORS.length)]);
+      head = (head + 1) % MAX_PARTICLES;
+    }
+  }
+
   function reset() {
     for (let i = 0; i < MAX_PARTICLES; i++) {
       particles[i].active = false;
@@ -609,6 +721,35 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
             p.vel.set(0, 0, 0);
           }
           currentScale = THREE.MathUtils.lerp(p.startScale, p.endScale, t);
+        } else if (p.type === "wash_spray") {
+          // Yıkama köpük ve su jeti: Hızlı fışkırıp yere düşer
+          p.vel.y -= 8.0 * dt;
+          p.vel.x *= Math.exp(-2.2 * dt);
+          p.vel.z *= Math.exp(-2.2 * dt);
+
+          p.pos.x += p.vel.x * dt;
+          p.pos.y += p.vel.y * dt;
+          p.pos.z += p.vel.z * dt;
+
+          if (p.pos.y < 0.04) {
+            p.pos.y = 0.04;
+            p.vel.set(0, 0, 0);
+          }
+          currentScale = THREE.MathUtils.lerp(p.startScale, p.endScale, t);
+        } else if (p.type === "shine") {
+          // Temiz araba parıltısı: Yavaşça yükselir ve pırıldar
+          p.pos.x += p.vel.x * dt;
+          p.pos.y += p.vel.y * dt;
+          p.pos.z += p.vel.z * dt;
+          const pulse = Math.sin(t * Math.PI);
+          currentScale = p.startScale * (1 + 0.8 * pulse);
+        } else if (p.type === "heart") {
+          // Sevgi / kalp partikülleri: Hafif salınımla yukarı yükselir
+          p.vel.y *= Math.exp(-0.8 * dt);
+          p.pos.x += (p.vel.x + Math.sin(t * 10) * 0.3) * dt;
+          p.pos.y += p.vel.y * dt;
+          p.pos.z += (p.vel.z + Math.cos(t * 10) * 0.3) * dt;
+          currentScale = THREE.MathUtils.lerp(p.startScale, p.endScale, t);
         } else {
           // dust ve nitro
           p.pos.x += p.vel.x * dt;
@@ -642,6 +783,9 @@ export function createParticles(scene: THREE.Scene): ParticleSystem {
     spawnLandingDust,
     spawnPuddleSplash,
     spawnElectricSparks,
+    spawnWashSpray,
+    spawnCarShine,
+    spawnHeartParticles,
     reset,
     dispose() {
       reset();

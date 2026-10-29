@@ -154,6 +154,25 @@ body {
   gap: 6px;
   box-shadow: 0 0 12px rgba(230, 126, 34, 0.5);
 }
+.wash-pill {
+  background: linear-gradient(135deg, #00cec9, #0984e3);
+  color: #ffffff;
+  border: 1px solid #74b9ff;
+  border-radius: 30px;
+  padding: 10px 14px;
+  font-size: 10px;
+  letter-spacing: 1.1px;
+  font-weight: 850;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 0 14px rgba(0, 206, 201, 0.65);
+  animation: washPulse 1.2s infinite alternate ease-in-out;
+}
+@keyframes washPulse {
+  0% { transform: scale(1); box-shadow: 0 0 8px rgba(0, 206, 201, 0.5); }
+  100% { transform: scale(1.04); box-shadow: 0 0 16px rgba(116, 185, 255, 0.85); }
+}
 .nitro-track.supercharged #nitro-fill {
   background: linear-gradient(90deg, #00f0ff, #2ed573);
   box-shadow: 0 0 12px rgba(0, 240, 255, 0.85);

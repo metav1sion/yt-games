@@ -102,6 +102,11 @@ describe("audio system", () => {
     sound.courierBeep();
     sound.puddleSplash(6.5);
     sound.customerTip();
+    sound.chargerHum(0.5);
+    sound.chargeComplete();
+    sound.streetSnack();
+    sound.fuelPump();
+    sound.carWash();
     sound.setDistrict("coastal");
     sound.setRadioStation("cozy_chill");
     expect(sound.getRadioStation()).toBe("cozy_chill");
@@ -139,6 +144,8 @@ describe("audio system", () => {
       sound.chargerHum(0.7);
       sound.chargeComplete();
       sound.streetSnack();
+      sound.fuelPump();
+      sound.carWash();
     }).not.toThrow();
 
     sound.dispose();
