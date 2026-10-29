@@ -127,26 +127,26 @@
 - **Execution Date**: 2026-10-29 (Execution Run 28 Verification — Sahil "Tarihi Deniz Feneri & Kıyı Kurtarma Rıhtımı" T53)
 - **Automated Tests**: 80 test files, 859 passed, 0 failed
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 166ms)
+- **Vite Production Build**: Successful (`dist/` generated in 168ms)
 - **Viewports Tested**:
   1. **Desktop (1280x800)**:
      - Shift start button click: PASS
      - 3D WebGL canvas initialization: PASS
-     - HUD, minimap, topbar time pill, weather pill, radio pill, supercharge pill, lighthouse buff pill: PASS
+     - HUD, minimap, topbar time pill, weather pill, radio pill, supercharge pill, market buff pill: PASS
      - Keyboard driving controls (W, A, D, Arrow keys), Horn (`H` key), and Radio toggle (`R` key): PASS
-     - Sahil "Tarihi Deniz Feneri & Kıyı Kurtarma Rıhtımı" (T53): Historic conical red-and-white spiraled lighthouse tower (15m), breakwater octagonal plinth, granite riprap boulders in water, stone causeway walkway, timber door with "1884" plaka, observation windows, maritime signal flags line, cast-iron gallery balcony, glass lantern room with Fresnel lens, warm PointLight and rotating sweeping searchlight beam, verdigris copper dome with brass sailing ship weathervane finial, service bay at `X: -28.0, Z: 82.0` with Compass Rose pavement mosaic, historic bronze monument plaque, lifebuoy rescue station, mooring bollards, animated NPC "Fenerci Rıza Kaptan" with yellow oilskin slicker, peaked captain's visor cap, pos bıyık, brass maritime tripod telescope with horizon scan animation, 26m head tracking, wave & dual-arm salute on honk/dwell, 3D speech bubble callout ("⚓ Fenerci Rıza Kaptan: Heyy gidi deniz kurdu! Fenerin ışığı pruvana rehber olsun! 🌊"), +10 ₺, +1 rep, +0.45 nitro, 25s "Fener Rehberliği" buff, procedural nautical foghorn (`sound.fogHorn()`), and radar icon (`🗼`): VERIFIED
+     - Güneş Mahallesi "Geleneksel Mahalle Semt Pazarı & Taze Manav Tezgahları" (T54): 12.6m x 9.0m stone paved market square, granite curbs, service bay at `X: -72.0, Z: -52.5` with yellow-black hazard striping, white guide arrow, 3 authentic wooden stalls with striped canopies (yellow/white, red/white, green/white), scalloped valance fringes, illuminated roof marquee ("🍉 GÜNEŞ MAHALLESİ SEMT PAZARI · CEMİL DAYI 🍋"), warm PointLight night illumination, tiered crates with fresh Mediterranean produce (tomatoes with green calyx, oranges, lemons, eggplants, peppers, cucumbers, parsley bunches), giant watermelon and melon pyramid on Euro-pallet with sliced red watermelon wedge, vintage hanging balance scale with brass pans & weights, chalkboard price easel ("🍅 DOMATES: 15₺ | 🍋 LİMON: 20₺..."), animated Market Vendor NPC "Pazarcı Cemil Dayı" in flat cap, striped shirt, and apron holding fresh lemon, 22m head tracking, wave & dual-arm salute on honk/dwell, 3D speech bubble callout ("🍉 Pazarcı Cemil Dayı: Gel vatandaş geeel! Çiftlikten taze çıktı..."), +10 ₺, +1 rep, +0.45 nitro, 25s "Taze Pazar Bereketi" buff, procedural market scale clink audio (`sound.marketScale()`), and radar icon (`🧺`): VERIFIED
      - Console errors: 0
-     - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png` and `games/mini-kargo/artifacts/sahil-tarihi-deniz-feneri.png`
+     - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png` and `games/mini-kargo/artifacts/gunes-semt-pazari.png`
   2. **Mobile Portrait (390x844)**:
      - Responsive canvas & UI scaling: PASS
      - Touch joystick, drift, nitro & dedicated horn button (`📢 KORNA`): PASS
-     - Topbar radio equalizer pill touch interaction, lighthouse buff pill: PASS
+     - Topbar radio equalizer pill touch interaction, market buff pill: PASS
      - Company sheet "🏆 Başarılar & Garaj" tab and livery applicator: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-portrait-390x844.png`
   3. **Mobile Landscape (844x390)**:
      - Landscape canvas & control separation: PASS
-     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, fishing harbour `🐟`, auto repair workshop `🔧`, grocery store `🏪`, coffeehouse `🎲`, ice cream stand `🍦`, restaurant `🍲`, school `🏫`, bakery `🥖`, and lighthouse `🗼` icons) and action buttons isolated: PASS
+     - Minimap (with gas station `⛽`, road work `🚧`, tea cafe `☕`, ferris wheel `🎡`, tram `🚋`, freight train `🚂`, community park `🌳`, fishing harbour `🐟`, auto repair workshop `🔧`, grocery store `🏪`, coffeehouse `🎲`, ice cream stand `🍦`, restaurant `🍲`, school `🏫`, bakery `🥖`, lighthouse `🗼`, and market `🧺` icons) and action buttons isolated: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-landscape-844x390.png`
 

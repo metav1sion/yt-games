@@ -380,5 +380,8 @@ describe("district traffic lanes", () => {
     expect(world.lighthouse).toBeDefined();
     expect(world.lighthouse.obstacles.length).toBeGreaterThan(0);
     expect(world.lighthouse.group.name).toBe("lighthouse-view");
+    expect(world.market).toBeDefined();
+    expect(world.market.obstacles.length).toBeGreaterThan(0);
+    expect(world.market.group.name).toBe("market-view");
   });
 });

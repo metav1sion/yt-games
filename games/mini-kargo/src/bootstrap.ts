@@ -129,6 +129,12 @@ import {
   triggerLighthouseHonk,
   RIZA_KAPTAN_POS,
 } from "./game/lighthouse";
+import {
+  createMarketState,
+  updateMarket,
+  triggerMarketHonk,
+  CEMIL_DAYI_POS,
+} from "./game/market";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -196,6 +202,7 @@ export async function startGame(app: HTMLElement) {
   let schoolState = createSchoolState();
   let bakeryState = createBakeryState();
   let lighthouseState = createLighthouseState();
+  let marketState = createMarketState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -284,6 +291,7 @@ export async function startGame(app: HTMLElement) {
       getSchoolState: () => schoolState,
       getBakeryState: () => bakeryState,
       getLighthouseState: () => lighthouseState,
+      getMarketState: () => marketState,
     };
   }
   const fleet = createCourierFleet({
@@ -683,6 +691,8 @@ export async function startGame(app: HTMLElement) {
       world.bakery.onPlayerHonk(vehicle.position);
       triggerLighthouseHonk(lighthouseState, vehicle.position);
       world.lighthouse.onPlayerHonk(vehicle.position);
+      triggerMarketHonk(marketState, vehicle.position);
+      world.market.onPlayerHonk(vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -1002,6 +1012,8 @@ export async function startGame(app: HTMLElement) {
       world.bakery.onPlayerHonk(vehicle.position);
       triggerLighthouseHonk(lighthouseState, vehicle.position);
       world.lighthouse.onPlayerHonk(vehicle.position);
+      triggerMarketHonk(marketState, vehicle.position);
+      world.market.onPlayerHonk(vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -1643,6 +1655,41 @@ export async function startGame(app: HTMLElement) {
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
 
+        // Güneş Mahallesi "Geleneksel Mahalle Semt Pazarı & Taze Manav Tezgahları" (T54)
+        const marketRes = updateMarket(
+          marketState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (marketRes.scaleSoundTriggered) {
+          sound.marketScale();
+        }
+        if (marketRes.awardedMarketBonus) {
+          sound.marketScale(1.1);
+          const maxNitro =
+            (1 + (progression.upgrades.nitro ?? 0) * (TUNING.nitroMaxBonus ?? 0.25)) *
+            (vehicle.supercharged ? 1.25 : 1.0);
+          vehicle.nitro = Math.min(maxNitro, vehicle.nitro + 0.45);
+          progression = {
+            ...progression,
+            money: progression.money + marketRes.cashBonus,
+            reputation: progression.reputation + marketRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          particles.spawnMoneyStream(CEMIL_DAYI_POS, vehicle.position);
+          hud.showToast("🍉 TAZE PAZAR BEREKETİ! +10 ₺ (+1 İtibar, Canlılık & Nitro)", 3500);
+        }
+        world.market.update(
+          dt,
+          marketState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
         );
@@ -1889,6 +1936,12 @@ export async function startGame(app: HTMLElement) {
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
+        world.market.update(
+          dt,
+          marketState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
       }
       if (started) {
         const here = districtAt(vehicle.position.x, vehicle.position.z);
@@ -2117,6 +2170,7 @@ export async function startGame(app: HTMLElement) {
       world.school.dispose();
       world.bakery.dispose();
       world.lighthouse.dispose();
+      world.market.dispose();
       renderer.dispose();
     },
     { once: true },

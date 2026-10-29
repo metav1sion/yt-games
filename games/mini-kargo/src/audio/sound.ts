@@ -1927,6 +1927,68 @@ export function createSound() {
         }
       } catch {}
     },
+    marketScale(vol = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      const volume = Math.max(0, Math.min(1, vol));
+      if (volume <= 0.02) return;
+      try {
+        const at = ctx.currentTime;
+        radio.duck(0.4, 0.85);
+
+        // 1. Pirinç pazar terazisi kefesi & gram ağırlığı vuruşları (çınlama & tıkırtı)
+        const strikes = [
+          { delay: 0.00, freq: 2093.0, dur: 0.28, gain: 0.32 * volume, type: "sine" as OscillatorType },
+          { delay: 0.00, freq: 3136.0, dur: 0.16, gain: 0.20 * volume, type: "triangle" as OscillatorType },
+          { delay: 0.09, freq: 2637.0, dur: 0.22, gain: 0.28 * volume, type: "sine" as OscillatorType },
+          { delay: 0.18, freq: 3951.0, dur: 0.14, gain: 0.18 * volume, type: "triangle" as OscillatorType },
+          { delay: 0.26, freq: 1760.0, dur: 0.35, gain: 0.25 * volume, type: "sine" as OscillatorType },
+        ];
+
+        for (const s of strikes) {
+          const sAt = at + s.delay;
+          const osc = ctx.createOscillator();
+          osc.type = s.type;
+          osc.frequency.setValueAtTime(s.freq, sAt);
+          osc.frequency.exponentialRampToValueAtTime(s.freq * 0.96, sAt + s.dur);
+
+          const g = ctx.createGain();
+          g.gain.setValueAtTime(0.001, sAt);
+          g.gain.linearRampToValueAtTime(s.gain, sAt + 0.015);
+          g.gain.exponentialRampToValueAtTime(0.0001, sAt + s.dur);
+
+          osc.connect(g);
+          g.connect(ctx.destination);
+
+          osc.start(sAt);
+          osc.stop(sAt + s.dur + 0.02);
+          osc.onended = () => {
+            osc.disconnect();
+            g.disconnect();
+          };
+        }
+
+        // 2. Mekanik denge kolu ve terazi rezonansı
+        const armOsc = ctx.createOscillator();
+        armOsc.type = "sine";
+        armOsc.frequency.setValueAtTime(880, at);
+        armOsc.frequency.exponentialRampToValueAtTime(659, at + 0.32);
+
+        const armGain = ctx.createGain();
+        armGain.gain.setValueAtTime(0.001, at);
+        armGain.gain.linearRampToValueAtTime(0.18 * volume, at + 0.03);
+        armGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.38);
+
+        armOsc.connect(armGain);
+        armGain.connect(ctx.destination);
+        armOsc.start(at);
+        armOsc.stop(at + 0.40);
+        armOsc.onended = () => {
+          armOsc.disconnect();
+          armGain.disconnect();
+        };
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

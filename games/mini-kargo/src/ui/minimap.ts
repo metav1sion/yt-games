@@ -320,6 +320,9 @@ export function createMinimap(
 
     const fenerPos = worldToMinimap(-28.0, 91.0, size, bounds);
     ctx.fillText("🗼", fenerPos.x, fenerPos.y);
+
+    const marketPos = worldToMinimap(-72.0, -58.5, size, bounds);
+    ctx.fillText("🧺", marketPos.x, marketPos.y);
     ctx.restore();
 
     // 6. AKTİF HEDEF GÖSTERGESİ (Nabız animasyonu)
