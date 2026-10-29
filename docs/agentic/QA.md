@@ -39,34 +39,38 @@
   - `tests/stress/adversarial_simulation.test.ts` (22 tests) — Simulation stress tests
   - `src/game/pitstop.test.ts` (6 tests) — EV quick-charger pad proximity, charge speed thresholds, 1.5s charge duration, 25s supercharge buff timer & events
   - `src/scene/pitstop.test.ts` (1 test) — 3D EV charging pad mesh hierarchy, kiosk displays, status LEDs, and disposal
-  - `src/game/street-vendors.test.ts` (6 tests) — Simitçi & Kestaneci proximity interaction, 5₺ purchase cost, cooldown timers, reputation bonus & 15s energy buff
+  - `src/game/street-vendors.test.ts` (7 tests) — Simitçi & Kestaneci proximity interaction, 5₺ purchase cost, cooldown timers, reputation bonus, 15s energy buff, pet treats accumulation & consumption
   - `src/scene/street-vendors.test.ts` (1 test) — 3D street cart models, glass showcases, umbrellas, vendor NPCs, horn interaction & disposal
+  - `src/game/gas-station.test.ts` (6 tests) — Gas station fuel pump proximity & hold timers, full tank completion, wash bay detection, car wash cycle, 30s clean buff duration & cash tip bonus
+  - `src/scene/gas-station.test.ts` (3 tests) — 3D canopy, dual pump islands, 24/7 store, rotating wash bay foam rollers, Selim Usta NPC, horn reaction, and colliders
+  - `src/scene/urban-fauna.test.ts` (6 tests) — Seagulls, piazza pigeons, neighborhood cats, Karabaş the Anatolian Shepherd, head tracking, horn reactions, and dynamic pet treat feeding interactions
+  - `src/scene/particles.test.ts` (10 tests) — Money stream, confetti, drift, nitro, sparks, crash smoke, landing dust, puddle splash, EV sparks, wash foam spray, car shine sparkles, and floating heart particles
   - `tests/e2e/mini-kargo-e2e.test.ts` (242 tests) — Opaque-box E2E tests covering features F01–F21 across Tiers 1–4
-  - **Total**: 48 test files, 697 passed, 0 failed.
+  - **Total**: 50 test files, 709 passed, 0 failed.
 
 ## Browser Automation & Visual QA (Playwright)
 - **Tool**: `scripts/browser-smoke.cjs` via `npm run test:browser`
-- **Execution Date**: 2026-10-29 (Sprint 13 Verification — Logistics Depot EV Quick-Charger & Street Vendors)
+- **Execution Date**: 2026-10-29 (Sprint 14 Verification — Gas Station, Car Wash & Street Fauna Pet Feeding)
 - **Viewports Tested**:
   1. **Desktop (1280x800)**:
      - Shift start button click: PASS
      - 3D WebGL canvas initialization: PASS
-     - HUD, minimap, topbar time pill (`☀️ ÖĞLE`), weather pill (`🌤️ AÇIK`), radio pill (`📻 RADYO: KAPALI`), supercharge pill (`⚡ SÜPER ŞARJ`), snack buff pill (`🥨 ENERJİ`): PASS
+     - HUD, minimap, topbar time pill (`☀️ ÖĞLE`), weather pill (`🌤️ AÇIK`), radio pill (`📻 RADYO: KAPALI`), supercharge pill (`⚡ SÜPER ŞARJ`), snack buff pill (`🥨 ENERJİ`), wash buff pill (`✨ PIRIL PIRIL`): PASS
      - Keyboard driving controls (W, A, D, Arrow keys), Horn (`H` key), and Radio toggle (`R` key): PASS
-     - Logistics Depot EV Quick-Charger pad with cyan inductive ring and kiosk status LEDs: VERIFIED
-     - Çarşı Simitçi Hasan Usta & Sahil Kestaneci Recep Usta authentic 3D carts, NPC waving & street snacks: VERIFIED
+     - Sanayi/Çarşı cross-artery Gas Station with illuminated cantilever canopy ("⛽ MİNİ PETROL · 7/24"), dual pump islands with digital LED readouts, 24/7 convenience store with attendant Selim Usta, and drive-through car wash with rotating foam rollers: VERIFIED
+     - Street fauna feeding interactions (Güneş cats, Karabaş the Anatolian Shepherd, and Piazza pigeons) with purring audio, heart particles, and gratitude speech bubbles: VERIFIED
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/desktop-1280x800.png`
   2. **Mobile Portrait (390x844)**:
      - Responsive canvas & UI scaling: PASS
      - Touch joystick, drift, nitro & dedicated horn button (`📢 KORNA`): PASS
-     - Topbar radio equalizer pill touch interaction & buff pills: PASS
+     - Topbar radio equalizer pill touch interaction & wash buff pill: PASS
      - Company sheet "🏆 Başarılar & Garaj" tab and livery applicator: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-portrait-390x844.png`
   3. **Mobile Landscape (844x390)**:
      - Landscape canvas & control separation: PASS
-     - Minimap and action buttons isolated: PASS
+     - Minimap (with gas station `⛽` icon) and action buttons isolated: PASS
      - Console errors: 0
      - Screenshot: `games/mini-kargo/artifacts/mobile-landscape-844x390.png`
 

@@ -2,44 +2,47 @@
 
 **Date**: 2026-10-29  
 **Branch**: `feat/mini-kargo`  
-**Latest Git Commit**: `0a7ea75`  
-**Current Milestone**: Logistics EV Quick-Charger Pitstop & Traditional Turkish Street Vendors (Execution Run 13)  
+**Latest Git Commit**: `844252b`  
+**Current Milestone**: Interactive Gas Station, Car Wash & Street Fauna Pet Feeding (Execution Run 14)  
 **Victory Audit Status**: `VICTORY CONFIRMED`
 
 ## Verification Summary
-- **Unit & Integration Tests**: 48 test files, 697 passed, 0 failed (1.27s execution)
+- **Unit & Integration Tests**: 50 test files, 709 passed, 0 failed (1.20s execution)
 - **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
-- **Vite Production Build**: Successful (`dist/` generated in 146ms)
+- **Vite Production Build**: Successful (`dist/` generated in 149ms)
 - **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
 - **Persistence Compatibility**: Verified backwards compatibility for `localStorage` key `mini-kargo:v1`.
 
 ## Completed Improvements in this Run
-1. **Logistics Depot EV Quick-Charger & Fuel Pitstop (T34)**:
-   - Implemented `createPitstopView` (`src/scene/pitstop.ts`) featuring twin EV rapid charging kiosks with cyan/green LED status halos, flexible conduits, charging nozzle holsters, ground inductive power ring (`#00f0ff`), and hazard safety borders.
-   - Implemented `src/game/pitstop.ts` managing charging proximity, rapid 1.5s charge progress, and 25-second Supercharge overdrive buff (+25% top speed, +30% acceleration, infinite nitro boost).
-   - Added electric arc / recharge spark physics in `src/scene/particles.ts` (`spawnSuperchargeEnergy`).
-   - Synthesized procedural rising Web Audio charge hum (`sound.chargerHum`) and 4-note ascending futuristic completion arpeggio (`sound.chargeComplete`).
-   - Added real-time glowing HUD supercharge pill (`#supercharge-pill`) and pulsing cyan/green nitro track styling.
-   - Tested in `src/game/pitstop.test.ts`, `src/scene/pitstop.test.ts`, `src/game/vehicle.test.ts`, `src/scene/particles.test.ts`, and `src/audio/sound.test.ts`.
+1. **Interactive Gas Station & Convenience Store with Wash Bay (T36)**:
+   - Built full-service highway gas station at the Sanayi/Çarşı cross-artery (X: 64, Z: -9) facing the main boulevard:
+     - **Forecourt Concrete Slab**: 18m x 11.5m paved apron with yellow entrance/exit directional chevrons, white drive lanes, and safety curbs.
+     - **Overhead Illuminated Cantilever Canopy**: 12.8m x 8.2m canopy at Y: 4.2m with crimson/yellow brand fascia ("⛽ MİNİ PETROL · 7/24"), 4 tubular steel columns with yellow/black crash guard bollards, and 6 recessed downlight spotlights with dynamic night emissive boost.
+     - **Twin Dual-Sided Fuel Dispenser Islands**: Raised concrete curbed islands with stainless steel rails, digital backlit cyan LED price readouts, flexible rubber hoses with green (Euro Diesel) & blue (Kurşunsuz 95) nozzles, overhead fire extinguisher, and floating radial progress ring.
+     - **24/7 Convenience Store ("Mini Market & Cafe")**: Glass storefront with warm interior illumination, roof fascia sign ("🏪 MİNİ MARKET · 24s AÇIK"), curbside Air & Water tower ("Hava & Su"), A-frame chalkboard menu ("☕ ÇAY & KAHVE"), and animated attendant NPC Selim Usta who waves and greets drivers.
+     - **Automated Vehicle Wash Bay ("Oto Yıkama")**: Drive-through portal with overhead neon marquee ("🚿 OTO YIKAMA"), twin vertical blue/cyan rotating foam rollers, top horizontal yellow rotating roller, and high-pressure water spray jet nozzles.
+   - **Simulation & Gameplay (`src/game/gas-station.ts`)**:
+     - Fuel service: 1.2s stationary stop fills nitro to 100%, repairs contact damage wear, awards +1 reputation maintenance bonus, and plays procedural pump flow & double chime bell audio (`sound.fuelPump()`).
+     - Car wash: Driving through wash bay spins rollers, sprays frothy bubbly foam particles (`spawnWashSpray`), plays foaming water swish audio (`sound.carWash()`), awards 30-second "Pırıl Pırıl" clean buff with sparkling car shine particles (`spawnCarShine`), +10 ₺ cash tip bonus, and glowing HUD wash pill (`#wash-pill`).
+     - Minimap icon: ⛽ marker on radar.
+   - Tested in `src/game/gas-station.test.ts` and `src/scene/gas-station.test.ts`.
 
-2. **Traditional Turkish Street Vendors — Simitçi & Kestaneci (T35)**:
-   - Implemented `createStreetVendorsView` (`src/scene/street-vendors.ts`) placing authentic Turkish street pushcarts:
-     - **Simitçi Hasan Usta** (Çarşı Meydanı - X: 42, Z: 47): Classic red wheeled pushcart, brass spokes, glass display case with tiered golden baked sesame simits, top wicker tray, red/white parasol umbrella, and apron/kasket NPC.
-     - **Kestaneci & Mısır Recep Usta** (Sahil Kordonu - X: -44, Z: 83.2): Deep crimson metal street cart with brass trim, charcoal roasting grill with glowing embers and scored chestnuts, steaming yellow sweet corn cauldron with animated steam puffs, and striped umbrella.
-   - Interactive NPC animations: vendors turn and wave their arm when player approaches or honks (`onPlayerHonk`), displaying cozy 3D speech bubble callouts (`"🥨 Taze çıtır simit!"`, `"🌰 Kestane kebap yemesi sevap!"`).
-   - Street snack purchase mechanic in `src/game/street-vendors.ts`: 1-second stop awards fresh street snack for 5 ₺, granting +1 reputation, instant +0.45 nitro refill, and 15-second "Sokak Lezzeti Enerjisi" buff (`#snack-pill`).
-   - Synthesized crispy snack crunch & coin chime in `sound.streetSnack()` and golden snack sparkle particles (`spawnSnackCrunch`).
-   - Tested in `src/game/street-vendors.test.ts` and `src/scene/street-vendors.test.ts`.
+2. **Dynamic Street Fauna Snack Feeding & Petting (T37)**:
+   - Connected Turkish street snacks to living animal interaction: purchasing fresh simits (Çarşı) or hot chestnuts (Sahil) awards pet snack treats in `StreetVendorState.availableTreats`.
+   - **Güneş Mahallesi Street Cats (Tekir, Duman, Zeytin)**: Stopping near a cat with treats feeds and pets them; cat stands up, purrs rhythmically with synthesized deep resonance (`sound.catPurr()`), kneads tail, displays speech bubble callout ("😻 Tekir: Mırrr... 💕"), spawns floating pink/red heart particles (`spawnHeartParticles`), and awards +1 reputation.
+   - **Sanayi Anatolian Shepherd (Karabaş)**: Stopping near Karabaş outside his kennel feeds him; Karabaş wags his tail with rapid joy, barks happily (`sound.dogBark()`), displays speech bubble ("🐶 Karabaş: Hav hav! Teşekkürler! 🦴"), spawns heart particles, and awards +1 reputation plus "Sadık Dost Koruması".
+   - **Çarşı Meydan Pigeons**: Feeding pigeons with simit crumbs prevents panic flight; pigeons gather at ground level around vehicle, display speech bubble ("🐦 Guk guk! Çıtır simit ziyafeti! 🥨"), and award +5 ₺ & +1 reputation.
+   - Tested in `src/game/street-vendors.test.ts`, `src/scene/urban-fauna.test.ts`, and `src/scene/particles.test.ts`.
 
 ## Exact Next Development Task
-- **T36 — Interactive Gas Station & Convenience Store**: Sanayi/Çarşı junction full-service fuel stop with overhead canopy, fuel pumps, glowing convenience store interior, and vehicle wash bay.
-- **T37 — Dynamic Street Fauna Snack Feeding & Petting**: Interactive feeding of street cats in Güneş and Karabaş in Sanayi using purchased street snacks.
+- **T38 — Dynamic Traffic Incidents & Road Construction Hazards**: Temporary maintenance work zones in Sanayi with blinking yellow hazard beacons, orange cones, detour barriers, and roadside maintenance crew NPCs.
+- **T39 — Seaside Marina Boardwalk Cafe & Fishing NPCs**: Detailed recreational boardwalk along Sahil pier with fishing rod anglers, seaside tea garden with tulip glasses, and moored wooden rowboats.
 
 ## Quick Resume Instructions
 To test and run locally:
 ```bash
 cd games/mini-kargo
-npm test                # Run 697 unit & E2E tests
+npm test                # Run 709 unit & E2E tests
 npm run typecheck       # Verify TypeScript types
 npm run build           # Build client bundle
 npm run test:browser    # Run Playwright visual smoke tests

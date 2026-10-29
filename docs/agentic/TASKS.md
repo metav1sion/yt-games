@@ -167,8 +167,23 @@
   - Synthesized crispy snack crunch & coin chime in `sound.streetSnack()`.
   - Tested in `src/game/street-vendors.test.ts` and `src/scene/street-vendors.test.ts`.
 
+- [x] **T36 — Interactive Gas Station & Convenience Store with Wash Bay**:
+  - Implemented `createGasStationView` (`src/scene/gas-station.ts`) at the Sanayi/Çarşı cross-artery (X: 64, Z: -9) with 18m forecourt apron, 12.8m illuminated cantilever canopy, 6 recessed spotlights, dual pump islands with digital LED readouts, green/blue nozzles, and safety colliders.
+  - 24/7 Convenience Store with glass storefront, glowing interior, roof fascia sign ("🏪 MİNİ MARKET · 24s AÇIK"), Air & Water tower, cafe easel, and attendant NPC Selim Usta with vehicle tracking and waving animations.
+  - Automated drive-through car wash tunnel ("🚿 OTO YIKAMA") with twin vertical blue/cyan rotating foam rollers, top horizontal yellow roller, and high-pressure spray jets.
+  - Implemented `src/game/gas-station.ts`: 1.2s fuel stop refuels nitro to 100%, resets collision wear, awards +1 reputation, and plays procedural pump flow & double bell chime (`sound.fuelPump()`); driving through wash bay spins rollers, sprays frothy foam particles (`spawnWashSpray`), plays foaming water swish (`sound.carWash()`), and grants 30-second "Pırıl Pırıl" clean buff (`#wash-pill`) with glistening star sparkles (`spawnCarShine`) and +10 ₺ cash tip.
+  - Radar minimap gas station marker icon (`⛽`).
+  - Tested in `src/game/gas-station.test.ts` and `src/scene/gas-station.test.ts`.
+
+- [x] **T37 — Dynamic Street Fauna Snack Feeding & Petting**:
+  - Connected Turkish street snacks to street animal interactions: purchasing snacks awards pet snack treats in `StreetVendorState.availableTreats`.
+  - Güneş Mahallesi Street Cats (Tekir, Duman, Zeytin): Approaching slowly with treats triggers feeding & petting; cat kneads tail, purrs with synthesized deep resonance (`sound.catPurr()`), shows floating heart speech bubble ("😻 Tekir: Mırrr... 💕"), spawns floating heart particles (`spawnHeartParticles`), and awards +1 reputation.
+  - Sanayi Anatolian Shepherd (Karabaş): Stopping near kennel feeds Karabaş; he wags tail joyfully, barks happily (`sound.dogBark()`), shows speech bubble ("🐶 Karabaş: Hav hav! Teşekkürler! 🦴"), spawns heart particles, and awards +1 reputation & "Sadık Dost Koruması".
+  - Çarşı Meydan Pigeons: Feeding with simit crumbs prevents scatter; pigeons gather around vehicle, peck happily, display speech bubble ("🐦 Guk guk! Çıtır simit ziyafeti! 🥨"), and award +5 ₺ & +1 reputation.
+  - Tested in `src/game/street-vendors.test.ts`, `src/scene/urban-fauna.test.ts`, and `src/scene/particles.test.ts`.
+
 ## Active / Next Tasks
-- [ ] **T36 — Interactive Gas Station & Convenience Store**: Sanayi/Çarşı junction full-service fuel stop with overhead canopy, fuel pumps, glowing convenience store interior, and vehicle wash bay.
-- [ ] **T37 — Dynamic Street Fauna Snack Feeding & Petting**: Interactive feeding of street cats in Güneş and Karabaş the Anatolian Shepherd in Sanayi using purchased street snacks for heartwarming animations and reputation.
+- [ ] **T38 — Dynamic Traffic Incidents & Road Construction Hazards**: Temporary maintenance work zones in Sanayi with blinking yellow hazard beacons, orange cones, detour barriers, and roadside maintenance crew NPCs.
+- [ ] **T39 — Seaside Marina Boardwalk Cafe & Fishing NPCs**: Detailed recreational boardwalk along Sahil pier with fishing rod anglers, seaside tea garden with tulip glasses, and moored wooden rowboats.
 - [ ] **T11 — Player Hands-on Playtesting & Feedback**: Solicit user evaluation on subjective driving feel, district ambiance, and gameplay pacing.
 - [ ] **T12 — Future YouTube Playables SDK Preparation**: (Pending explicit user instruction) integrate YouTube Playables SDK hooks when ready for distribution.
