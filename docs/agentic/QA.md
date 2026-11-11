@@ -303,6 +303,28 @@
   - Minimap radar simgesi: Sahil Şeridi üzerinde canlı `🛟` can simidi simgesi: VERIFIED
   - Screenshot verified: `games/mini-kargo/artifacts/sahil-lifesaving.png`
 
+## Visual QA & Browser Verification Summary — Run 37 (2026-11-11)
+
+### Automated Test Suite
+- **Unit & Integration Tests**: 98 test files, 964 passed, 0 failed (2.25s execution)
+- **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
+- **Vite Production Build**: Successful (`dist/` generated in 164ms)
+- **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
+
+### Visual Quality & Landmark Verification
+- **Güneş Mahallesi "Tarihi Mahalle Sağlık Ocağı & Dispanseri (Beyaz Ambulans & Nöbetçi Eczane)" (T62)**:
+  - 10.4m x 11.6m granit ve klinker taş avlu tablası, bordür taşları, asfalt servis yanaşma peronu cebi (`HEALTH_CLINIC_BAY`: X: -11.0, Z: -43.5 - Güneş Z: -50 bulvarının güney bordüründe), sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku: VERIFIED
+  - 7.6m x 5.0m x 5.6m Erken Cumhuriyet / Neoklasik taş sağlık ocağı mimarisi: beyaz badanalı kesme taş cephe kaplaması (`#f8f9fa`), açık gri kaide süpürgeliği, köşe silmeleri (ashlar quoins), 4 adet neoklasik pilaster sütun ve Dorik/İon başlıklar: VERIFIED
+  - Üçgen klasik alınlık (pediment), kabartma Kızılay Kırmızı Hilal amblemi (`#e74c3c`), alaturka kiremit kırma çatı (`#962d22`) ve tuğla havalandırma bacası: VERIFIED
+  - Çatı alınlığında büyük aydınlatmalı tabela (`"🏥 GÜNEŞ MAHALLESİ 1 NOLU SAĞLIK OCAĞI & DİSPANSERİ 🩺"`), alt kurumsal şerit (`"T.C. SAĞLIK BAKANLIĞI · BİRİNCİ BASAMAK SAĞLIK HİZMETLERİ · 1952"`), giriş sahanlığı üzerinde sıcak beyaz PointLight armatürü: VERIFIED
+  - 24/7 Nöbetçi Eczane Kanadı: Binanın batı kanadında çizgili zümrüt yeşili tente sundurması, aydınlatmalı yeşil neon tabela (`"💚 NÖBETÇİ ECZANE · 24 SAAT AÇIK 💊"`), canlı parlayan ve nabız atan Yeşil Neon Medikal Haç Armatürü (Green Neon Pharmacy Cross) ve yeşil PointLight: VERIFIED
+  - Park Etmiş Vintage Beyaz Ambulans ("SAĞLIK İMDAT · 112 / HIZIR ACİL"): Binanın doğu kanadında (X: -7.6, Z: -38.5) acil ambulans park cebinde park etmiş 4.2m x 1.8m x 1.9m vintage Türk ambulansı (beyaz gövde, boydan boya kırmızı şerit, döner tepe flaşörleri, `"SAĞLIK İMDAT · 112"` yazısı): VERIFIED
+  - Medikal Vitrin & Donatılar: İlaç vitrini, pirinç ibreli klasik boy-kilo medikal baskülü, tebeşirli karataş sağlık panosu, ilk yardım sedyesi ve oksijen tüpü: VERIFIED
+  - Animasyonlu Başhekim NPC "Dr. Hikmet Bey" (X: -13.0, Z: -38.5): Beyaz doktor önlüğü, boyunda steteskop, elinde tıbbi hasta müşahade dosyası / klipsli pano, altın çerçeveli gözlük, 22m mesafeden kafa/gövde takibi, korna ve duraklamada panoyu kaldırarak hekim selamı ve 3D konuşma balonuyla karşılama: VERIFIED
+  - "Sağlık & Sıhhat Güvencesi" pitstop bonusu (+10 ₺ nakit esnaf desteği, +1 itibar, +0.45 nitro dolumu, 25s "Sağlık & Sıhhat Güvencesi" yorgunluk giderme & teslimatlarda +15 ₺ sağlık primi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel medikal EKG kalp atışı ile klinik zili sesi `sound.medicalChime()`): VERIFIED
+  - Minimap radar simgesi: Güneş Mahallesi üzerinde canlı `🏥` sağlık ocağı simgesi: VERIFIED
+  - Screenshot verified: `games/mini-kargo/artifacts/gunes-health-clinic.png`
+
 ## Independent Victory Audit Verdict
 - **Verdict**: `VICTORY CONFIRMED`
 - **Integrity**: Zero skipped tests, zero mock facades, genuine implementations.

@@ -124,6 +124,7 @@ describe("audio system", () => {
     sound.powerHammer(1.0);
     sound.turkishCoffee(1.0);
     sound.lifeboatWinch(1.0);
+    sound.medicalChime(1.0);
     sound.setDistrict("coastal");
     sound.setRadioStation("cozy_chill");
     expect(sound.getRadioStation()).toBe("cozy_chill");
@@ -281,6 +282,18 @@ describe("audio system", () => {
     expect(() => {
       sound.postStamp(1.0);
       sound.postStamp(0.5);
+    }).not.toThrow();
+
+    sound.dispose();
+  });
+
+  it("plays medical vital monitor cardiac pulse and clinic chime sound without throwing", async () => {
+    const sound = createSound();
+    await sound.unlock();
+
+    expect(() => {
+      sound.medicalChime(1.0);
+      sound.medicalChime(0.5);
     }).not.toThrow();
 
     sound.dispose();

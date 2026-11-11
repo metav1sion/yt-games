@@ -40,6 +40,7 @@ import { createPostOfficeView, type PostOfficeView } from "./post-office";
 import { createFoundryView, type FoundryView } from "./foundry";
 import { createTurkishCoffeeView, type TurkishCoffeeView } from "./turkish-coffee";
 import { createLifesavingView, type LifesavingView } from "./lifesaving";
+import { createHealthClinicView, type HealthClinicView } from "./health-clinic";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
@@ -71,6 +72,7 @@ export type { PostOfficeView } from "./post-office";
 export type { FoundryView } from "./foundry";
 export type { TurkishCoffeeView } from "./turkish-coffee";
 export type { LifesavingView } from "./lifesaving";
+export type { HealthClinicView } from "./health-clinic";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -108,6 +110,7 @@ export type World = {
   foundry: FoundryView;
   turkishCoffee: TurkishCoffeeView;
   lifesaving: LifesavingView;
+  healthClinic: HealthClinicView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -261,6 +264,11 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   group.add(lifesaving.group);
   ctx.baseObstacles.push(...lifesaving.obstacles);
 
+  // Güneş Mahallesi "Tarihi Mahalle Sağlık Ocağı & Dispanseri (Beyaz Ambulans & Nöbetçi Eczane)" (T62)
+  const healthClinic = createHealthClinicView();
+  group.add(healthClinic.group);
+  ctx.baseObstacles.push(...healthClinic.obstacles);
+
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;
   const unlockedSet = new Set<DistrictId>(["sunny"]);
@@ -352,6 +360,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     foundry,
     turkishCoffee,
     lifesaving,
+    healthClinic,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);

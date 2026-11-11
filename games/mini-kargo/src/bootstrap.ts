@@ -177,6 +177,12 @@ import {
   triggerLifesavingHonk,
   SUKRU_KAPTAN_POS,
 } from "./game/lifesaving";
+import {
+  createHealthClinicState,
+  updateHealthClinic,
+  triggerHealthClinicHonk,
+  DR_HIKMET_POS,
+} from "./game/health-clinic";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -252,6 +258,7 @@ export async function startGame(app: HTMLElement) {
   let foundryState = createFoundryState();
   let turkishCoffeeState = createTurkishCoffeeState();
   let lifesavingState = createLifesavingState();
+  let healthClinicState = createHealthClinicState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -353,6 +360,7 @@ export async function startGame(app: HTMLElement) {
       getFoundryState: () => foundryState,
       getTurkishCoffeeState: () => turkishCoffeeState,
       getLifesavingState: () => lifesavingState,
+      getHealthClinicState: () => healthClinicState,
     };
   }
   const fleet = createCourierFleet({
@@ -768,6 +776,8 @@ export async function startGame(app: HTMLElement) {
       world.turkishCoffee.onPlayerHonk(vehicle.position);
       triggerLifesavingHonk(lifesavingState, vehicle.position);
       world.lifesaving.onPlayerHonk(vehicle.position);
+      triggerHealthClinicHonk(healthClinicState, vehicle.position);
+      world.healthClinic.onPlayerHonk(vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -1103,6 +1113,8 @@ export async function startGame(app: HTMLElement) {
       world.turkishCoffee.onPlayerHonk(vehicle.position);
       triggerLifesavingHonk(lifesavingState, vehicle.position);
       world.lifesaving.onPlayerHonk(vehicle.position);
+      triggerHealthClinicHonk(healthClinicState, vehicle.position);
+      world.healthClinic.onPlayerHonk(vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -2019,6 +2031,40 @@ export async function startGame(app: HTMLElement) {
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
+        // Güneş Mahallesi "Tarihi Mahalle Sağlık Ocağı & Dispanseri" (T62)
+        const healthClinicRes = updateHealthClinic(
+          healthClinicState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (healthClinicRes.soundTriggered) {
+          sound.medicalChime();
+        }
+        if (healthClinicRes.awardedHealthClinicBonus) {
+          sound.medicalChime(1.2);
+          const maxNitro =
+            (1 + (progression.upgrades.nitro ?? 0) * (TUNING.nitroMaxBonus ?? 0.25)) *
+            (vehicle.supercharged ? 1.25 : 1.0);
+          vehicle.nitro = Math.min(maxNitro, vehicle.nitro + 0.45);
+          progression = {
+            ...progression,
+            money: progression.money + healthClinicRes.cashBonus,
+            reputation: progression.reputation + healthClinicRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          particles.spawnMoneyStream(DR_HIKMET_POS, vehicle.position);
+          hud.showToast("🏥 SAĞLIK & SIHHAT GÜVENCESİ! +10 ₺ (+1 İtibar, Sağlık Ocağı Molası & Nitro)", 3500);
+        }
+        world.healthClinic.update(
+          dt,
+          healthClinicState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
 
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
@@ -2151,6 +2197,16 @@ export async function startGame(app: HTMLElement) {
             };
             sound.customerTip();
             hud.showToast(`🛟 KIYI EMNİYETİ PRİMİ! +${rescueBonus} ₺`, 3000);
+          }
+
+          if (healthClinicState.buffTimer > 0) {
+            const healthBonus = 15;
+            progression = {
+              ...progression,
+              money: progression.money + healthBonus,
+            };
+            sound.customerTip();
+            hud.showToast(`🏥 SAĞLIK & SIHHAT PRİMİ! +${healthBonus} ₺`, 3000);
           }
 
           if (delivery.lastReward?.safeBonus && delivery.lastReward.safeBonus > 0) {
@@ -2372,6 +2428,12 @@ export async function startGame(app: HTMLElement) {
         world.lifesaving.update(
           dt,
           lifesavingState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+        world.healthClinic.update(
+          dt,
+          healthClinicState,
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
@@ -2611,6 +2673,7 @@ export async function startGame(app: HTMLElement) {
       world.foundry.dispose();
       world.turkishCoffee.dispose();
       world.lifesaving.dispose();
+      world.healthClinic.dispose();
       renderer.dispose();
     },
     { once: true },

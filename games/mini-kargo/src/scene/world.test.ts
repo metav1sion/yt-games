@@ -404,5 +404,8 @@ describe("district traffic lanes", () => {
     expect(world.lifesaving).toBeDefined();
     expect(world.lifesaving.obstacles.length).toBeGreaterThan(0);
     expect(world.lifesaving.group.name).toBe("lifesaving-view");
+    expect(world.healthClinic).toBeDefined();
+    expect(world.healthClinic.obstacles.length).toBeGreaterThan(0);
+    expect(world.healthClinic.group.name).toBe("health-clinic-view");
   });
 });

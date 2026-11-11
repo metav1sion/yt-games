@@ -87,6 +87,17 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
   - **Animasyonlu Başpostacı NPC — "Postacı Kemal Efendi" (X: -11.5, Z: -85.5)**: Lacivert PTT postacı üniforması, sarı biyeli yakalar ve kollar, altın düğmeler, sarı şeritli lacivert kasket, omuzda deri mektup çantası, elinde mühürlü ekspres kargo zarfı ve teslimat çizelgesi. 22m mesafeden kafa/gövde takibi, korna ve duraklamada zarfı havaya kaldırarak selamlama ve 3D konuşma balonuyla karşılama (`"🏤 Postacı Kemal: Selam kargocu dostum! Bak bu ekspres kargolar sana emanet, damgalar basıldı yola çık hazır! 📬"`).
   - **"Ekspres Posta Güvencesi" Mola Bonusu & Prosedürel Posta Damgası Sesi (`src/game/post-office.ts`)**: Servis peronunda 1.2s duraklama: +10 ₺ nakit desteği, +1 itibar, +0.45 nitro dolumu, 25s "Ekspres Posta Güvencesi" teslimatlarda +15 ₺ ekspres posta primi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel posta kaşesi tok sesi ile telgraf tıkırtısı (`sound.postStamp()`).
   - **Minimap Radar Simgesi**: Güneş Mahallesi üzerinde canlı `🏤` postane simgesi.
+- **Güneş Mahallesi "Tarihi Mahalle Sağlık Ocağı & Dispanseri (Beyaz Ambulans & Nöbetçi Eczane)" (`createHealthClinicView` - T62)**: Situated along the southern curb of the Güneş Central Boulevard (Z: -50) at X: -11.0, Z: -34.0:
+  - **Avlu Tablası ve Yanaşma Peronu**: 10.4m x 11.6m granit ve klinker taş avlu tablası, bordür taşları, asfalt servis yanaşma peronu cebi (`HEALTH_CLINIC_BAY`: X: -11.0, Z: -43.5), sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku.
+  - **Erken Cumhuriyet / Neoklasik Taş Sağlık Ocağı Mimarisi**: 7.6m genişlik x 5.0m yükseklik x 5.6m derinlik. Beyaz badanalı kesme taş cephe kaplaması (`#f8f9fa`), açık gri kaide süpürgeliği, köşe silmeleri (ashlar quoins), 4 adet neoklasik pilaster sütun ve Dorik/İon başlıklar.
+  - **Üçgen Alınlık & Kızılay Kırmızı Hilal Rölyefi**: Üçgen klasik alınlık (pediment), kabartma Kızılay Kırmızı Hilal amblemi (`#e74c3c`), kiremit kırma çatı (`#962d22`) ve tuğla havalandırma bacası.
+  - **Aydınlatmalı Tabela ve Kurumsal Amblem**: Çatı alınlığında büyük aydınlatmalı tabela (`"🏥 GÜNEŞ MAHALLESİ 1 NOLU SAĞLIK OCAĞI & DİSPANSERİ 🩺"`), alt kurumsal şerit (`"T.C. SAĞLIK BAKANLIĞI · BİRİNCİ BASAMAK SAĞLIK HİZMETLERİ · 1952"`), giriş kemeri üzerinde sıcak beyaz PointLight armatürü.
+  - **24/7 Nöbetçi Eczane Kanadı (On-Duty Pharmacy Wing)**: Binanın batı kanadında çizgili zümrüt yeşili tente sundurması, aydınlatmalı yeşil neon tabela (`"💚 NÖBETÇİ ECZANE · 24 SAAT AÇIK 💊"`), canlı parlayan ve nabız atan Yeşil Neon Medikal Haç Armatürü (Green Neon Pharmacy Cross) ve yeşil PointLight.
+  - **Park Etmiş Vintage Beyaz Ambulans ("SAĞLIK İMDAT · 112 / HIZIR ACİL")**: Binanın doğu kanadında (X: -7.6, Z: -38.5) acil ambulans park cebinde park etmiş 4.2m x 1.8m x 1.9m vintage Türk ambulansı (beyaz gövde, boydan boya kırmızı şerit, döner tepe flaşörleri, `"SAĞLIK İMDAT · 112"` yazısı).
+  - **Medikal Vitrin & Donatılar**: İlaç vitrini, pirinç ibreli klasik boy-kilo medikal baskülü, tebeşirli karataş sağlık panosu, ilk yardım sedyesi ve oksijen tüpü.
+  - **Animasyonlu Başhekim NPC — "Dr. Hikmet Bey" (X: -13.0, Z: -38.5)**: Beyaz doktor önlüğü, boyunda steteskop, elinde tıbbi hasta müşahade dosyası / klipsli pano, altın çerçeveli gözlük. 22m mesafeden kafa/gövde takibi, korna ve duraklamada panoyu kaldırarak hekim selamı ve 3D konuşma balonuyla karşılama (`"🏥 Dr. Hikmet Bey: Hoş geldin kargocu evlat! Yollar yorar, tansiyonuna dikkat et, sıhhatin her şeyden mühim! 🩺"`).
+  - **"Sağlık & Sıhhat Güvencesi" Mola Bonusu & Prosedürel Klinik Çanı / EKG Sesi (`src/game/health-clinic.ts`)**: Servis peronunda 1.2s duraklama: +10 ₺ nakit esnaf desteği, +1 itibar, +0.45 nitro dolumu, 25s "Sağlık & Sıhhat Güvencesi" yorgunluk giderme & teslimatlarda +15 ₺ sağlık primi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel medikal EKG kalp atışı ile klinik zili sesi (`sound.medicalChime()`).
+  - **Minimap Radar Simgesi**: Güneş Mahallesi üzerinde canlı `🏥` sağlık ocağı simgesi.
 - **Road & Traffic**: Calm residential streets, cul-de-sacs, residential speed bumps, pedestrian crosswalks, and an unblocked stunt jump ramp (`ramp_sunny_depot` at X=-50, Z=-22) equipped with high-visibility reflector bollards.
 - **Soundscape**: Soft summer breeze whisper, rustling trees, and cheerful morning bird chirps.
 - **Key Delivery Points**: 4 residential house front porches and garden gates with clear driveways.
@@ -630,5 +641,61 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
   - 22m mesafeden kafa/gövde takibi, korna ve duraklamada çekicini havaya kaldırarak heybetli usta selamı ve 3D konuşma balonuyla karşılama (`"⚒️ Demirci Hamdi Usta: Hoş geldin kargocu evlat! Sıcak çelik örste dövülür, kargo kasası döküm demir gibi sağlam olmalı! 🔥"`).
   - "Sanayi Çeliği Dayanıklılığı" pitstop bonusu: Servis peronunda 1.2s duraklama: +10 ₺ nakit desteği, +1 itibar, +0.45 nitro dolumu, 25s "Sanayi Çeliği Dayanıklılığı" araç şasi zırhı (%50 temas hasarı indirimi) & teslimatlarda +15 ₺ sanayi primi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel şahmerdan tok darbesi, pnömatik tıslama ve parlak örs çınlaması sesi (`sound.powerHammer()`).
   - Minimap radar simgesi: Sanayi Bölgesi üzerinde canlı `⚒️` demirci örsü/çekiç simgesi.
+
+---
+
+## 23. Çarşı "Tarihi Türk Kahvecisi & Közde Kahve / Lokum İmalathanesi" (T60)
+- **Konum ve Mimari Yapı (`createTurkishCoffeeView` & `src/game/turkish-coffee.ts`)**:
+  - Konum: X: 37.0, Z: 75.5 (Çarşı Bölgesi, Z: 84 güney sokağının kuzey bordürü).
+  - 12.0m x 9.6m klinker tuğla ve kesme kireçtaşı avlu tablası, granit taş bordürler, asfalt servis yanaşma peronu cebi (`TURKISH_COFFEE_BAY`: X: 37.0, Z: 81.0).
+  - Otantik Osmanlı revaklı taş köşk mimarisi (8.6m x 4.8m x 5.4m), kesme kireçtaşı cephe kaplaması, pişmiş toprak kaide süpürgeliği, köşe silmeleri, 3 adet sivri Osmanlı taş kemeri (pointed arches), 4 adet yivli mermer sütun, mukarnaslı başlıklar ve alaturka kiremit kırma çatı.
+  - Pirinç/bakır kubbe ve tepede hilalli pirinç alem finiali.
+  - Alınlıkta büyük ışıklı kurumsal tabela (`"☕ TARİHİ ÇARŞI TÜRK KAHVECİSİ · TAHSİN EFENDİ 🍬"`), alt kurumsal şerit (`"KÖZDE TÜRK KAHVESİ · DİBEK & ANTEP DUBLE LOKUMU · 1908"`), altın sarısı pervaz çerçevesi ve gece yanan sıcak kehribar PointLight armatürü.
+  - Közde kahve mangalı & bakır kum ocağı: ağır dövme bakır mangal teknesi, kızgın kor kömürleri, sıcak kavurma kumu yatağı, termal alev ışığı (PointLight), 4 adet el dövmesi bakır cezve, köpüren kahve kreması ve yükselen kahve aroması partikülleri.
+  - Yemen ve Dibek kahve çuvalları ("50 KG"), bazalt taşı tarihi dibek ve gürgen tokmak, dönen pirinç manuel kahve el değirmeni.
+  - Ahşap ve cam vitrinde pudra şekerli Antep fıstıklı ve güllü lokum küpleri, tebeşirli karataş A-şövale fiyat listesi, dövme bakır sunum tepsisi ve porselen fincanlar.
+- **Usta Kahveci NPC ("Kahveci Tahsin Efendi" - X: 35.5, Z: 76.8) & Kırk Yıllık Hatır Bonusu**:
+  - Beyaz gömlek, altın sırmalı bordo kadife cepken yelek, ipek kırmızı bel kuşağı, siyah püsküllü bordo fes, heybetli pos bıyık ve pirinç kahve tepsisi.
+  - 22m mesafeden kafa/gövde takibi, korna ve duraklamada kolunu kaldırarak usta selamı ve 3D konuşma balonuyla karşılama (`"☕ Kahveci Tahsin Efendi: Hoş geldin kargocu dostum! Közde kahvemiz pişti, bir fincanın kırk yıl hatırı vardır! 🍬"`).
+  - "Kırk Yıllık Hatır" pitstop bonusu: Servis peronunda 1.2s duraklama: +10 ₺ nakit esnaf ikramı, +1 itibar, +0.45 nitro dolumu, 25s teslimatlarda +15 ₺ müşteri bahşişi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel kahve çekirdeği kavrulma çıtırtısı ile bakır cezve çınlama sesi (`sound.turkishCoffee()`).
+  - Minimap radar simgesi: Çarşı Bölgesi üzerinde canlı `☕` kahve fincanı simgesi.
+
+---
+
+## 24. Sahil "Tarihi Kıyı Tahlisiye & Deniz Kurtarma İstasyonu (Can Kurtarma Botu & Kıyı Gözetleme Kulesi)" (T61)
+- **Konum ve Mimari Yapı (`createLifesavingView` & `src/game/lifesaving.ts`)**:
+  - Konum: X: -68.0, Z: 89.0 (Sahil Şeridi, Sahil Kordon Yolu Z: 80 güney bordürü).
+  - 13.0m x 11.0m yıpranmış ahşap sedir güverte ve granit taş kaide, döküm çelik palamar babaları, halat kangalları, su altı dolfen kazıkları, asfalt servis yanaşma cebi (`LIFESAVING_BAY`: X: -68.0, Z: 80.5).
+  - Tarihi tahlisiye kayıkhane binası (8.4m x 5.2m x 5.0m): 1.8m rustik granit/kireçtaşı taş kaide duvarları, üst kat yatay ahşap lambri kaplama, kırma galvaniz/kiremit çatı, çatı fenerliği ve paratoner, geniş çift kanatlı raylı bot hangarı kapısı.
+  - Aydınlatmalı büyük kurumsal tabela (`"🛟 TARİHİ KIYI TAHLİSİYE & CAN KURTARMA ⚓"`), alt kurumsal şerit (`"T.C. KIYI EMNİYETİ GENEL MÜDÜRLÜĞÜ · 1928"`), gece peronu aydınlatan sıcak PointLight ve asılı ferforje gemici feneri.
+  - 14° açıyla doğrudan turkuaz denize inen 9.5m ahşap ve beton kızak rampası, çift döküm çelik tren rayı, tekerlekli çelik bot taşıyıcı beşik (rail slipway carriage), döküm dişli vinç tamburu, dönen krank kolu ve gergin çelik çekme halatı.
+  - Tarihi çift başlı can kurtarma botu — "TAHLİSİYE-1" (X: -68.0, Z: 91.5): 6.4m gövde boyu, canlı tahlisiye turuncusu ve beyaz Kıyı Emniyeti gövde boyası (`"⚓ TAHLİSİYE-1 · CAN KURTARMA 🛟"`), lacivert omurga, ahşap oturaklar, yedek kürekler, palamar halatları, pruva projektörü ve dalga salınım fiziği.
+  - Yükseltilmiş ahşap kıyı gözetleme kulesi (X: -63.5, Z: 87.0): 4 masif ahşap ayak üzerinde 4.4m yükseklikte ahşap seyir güvertesi ve güvenlik balüstradı, piramidal kırmızı kiremit çatı, pirinç rüzgar gülü, denizci gözetleme dürbünü, arama projektörü ve salınan pirinç Sis Çanı (Maritime Fog Bell).
+  - Can kurtarma donatım rafları: 4 adet turuncu-beyaz reflektörlü can simidi, paslı döküm çapa, katranlı urgan makaraları ve ilk yardım teçhizat sandığı (`"🚑 İLK YARDIM · TAHLİSİYE"`).
+- **Baş Tahlisiyeci NPC ("Tahlisiye Reisi Şükrü Kaptan" - X: -65.5, Z: 85.5) & Kıyı Emniyeti Güvencesi Bonusu**:
+  - Turuncu-lacivert Kıyı Emniyeti marin montu, sarı çizmeler, beyaz kaptan kasketi, gür beyaz denizci sakalı, elinde pirinç denizci megafonu.
+  - 22m mesafeden kafa/gövde takibi, korna ve duraklamada megafonunu havaya kaldırarak usta selamı ve 3D konuşma balonuyla karşılama (`"🛟 Tahlisiye Reisi Şükrü Kaptan: Selam kargocu evlat! Kıyı Emniyeti 7/24 nöbette, fırtına kopsa da yolun açık olsun! 🌊"`).
+  - "Kıyı Emniyeti Güvencesi" pitstop bonusu: Servis peronunda 1.2s duraklama: +10 ₺ nakit esnaf desteği, +1 itibar, +0.45 nitro dolumu, 25s suda kızaklama (hydroplane) bağışıklığı ve teslimatlarda +15 ₺ kurtarma primi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel rezonanslı pirinç sis çanı ile dişli vinç mandalı tıkırtısı sesi (`sound.lifeboatWinch()`).
+  - Minimap radar simgesi: Sahil Şeridi üzerinde canlı `🛟` can simidi simgesi.
+
+---
+
+## 25. Güneş Mahallesi "Tarihi Mahalle Sağlık Ocağı & Dispanseri (Beyaz Ambulans & Nöbetçi Eczane)" (T62)
+- **Konum ve Mimari Yapı (`createHealthClinicView` & `src/game/health-clinic.ts`)**:
+  - Konum: X: -11.0, Z: -34.0 (Güneş Mahallesi, Z: -50 bulvarının güney bordürü).
+  - 10.4m x 11.6m granit ve klinker taş avlu tablası, bordür taşları, asfalt servis yanaşma peronu cebi (`HEALTH_CLINIC_BAY`: X: -11.0, Z: -43.5).
+  - Sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku.
+  - Erken Cumhuriyet / Neoklasik taş sağlık ocağı mimarisi (7.6m genişlik x 5.0m yükseklik x 5.6m derinlik), beyaz badanalı kesme taş cephe kaplaması (`#f8f9fa`), açık gri kaide süpürgeliği, köşe silmeleri (ashlar quoins), 4 adet neoklasik pilaster sütun ve Dorik/İon başlıklar.
+  - Üçgen klasik alınlık (pediment), kabartma Kızılay Kırmızı Hilal amblemi (`#e74c3c`), kiremit kırma çatı (`#962d22`) ve tuğla havalandırma bacası.
+  - Aydınlatmalı büyük kurumsal tabela (`"🏥 GÜNEŞ MAHALLESİ 1 NOLU SAĞLIK OCAĞI & DİSPANSERİ 🩺"`), alt kurumsal şerit (`"T.C. SAĞLIK BAKANLIĞI · BİRİNCİ BASAMAK SAĞLIK HİZMETLERİ · 1952"`), giriş sahanlığı üzerinde sıcak beyaz PointLight armatürü.
+  - 24/7 Nöbetçi Eczane Kanadı: Binanın batı kanadında çizgili zümrüt yeşili tente sundurması, aydınlatmalı yeşil neon tabela (`"💚 NÖBETÇİ ECZANE · 24 SAAT AÇIK 💊"`), canlı parlayan ve nabız atan Yeşil Neon Medikal Haç Armatürü (Green Neon Pharmacy Cross) ve yeşil PointLight.
+  - Park Etmiş Vintage Beyaz Ambulans ("SAĞLIK İMDAT · 112 / HIZIR ACİL"): Binanın doğu kanadında (X: -7.6, Z: -38.5) acil ambulans park cebinde park etmiş 4.2m x 1.8m x 1.9m vintage Türk ambulansı (beyaz gövde, boydan boya kırmızı şerit, döner tepe flaşörleri, `"SAĞLIK İMDAT · 112"` yazısı).
+  - Medikal Vitrin & Donatılar: İlaç vitrini, pirinç ibreli klasik boy-kilo medikal baskülü, tebeşirli karataş sağlık panosu, ilk yardım sedyesi ve oksijen tüpü.
+- **Başhekim NPC ("Dr. Hikmet Bey" - X: -13.0, Z: -38.5) & Sağlık & Sıhhat Güvencesi Bonusu**:
+  - Beyaz doktor önlüğü, boyunda steteskop, elinde tıbbi hasta müşahade dosyası / klipsli pano, altın çerçeveli gözlük.
+  - 22m mesafeden kafa/gövde takibi, korna ve duraklamada panoyu kaldırarak hekim selamı ve 3D konuşma balonuyla karşılama (`"🏥 Dr. Hikmet Bey: Hoş geldin kargocu evlat! Yollar yorar, tansiyonuna dikkat et, sıhhatin her şeyden mühim! 🩺"`).
+  - "Sağlık & Sıhhat Güvencesi" pitstop bonusu: Servis peronunda 1.2s duraklama: +10 ₺ nakit esnaf desteği, +1 itibar, +0.45 nitro dolumu, 25s "Sağlık & Sıhhat Güvencesi" yorgunluk giderme & teslimatlarda +15 ₺ sağlık primi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel medikal EKG kalp atışı ile klinik zili sesi (`sound.medicalChime()`).
+  - Minimap radar simgesi: Güneş Mahallesi üzerinde canlı `🏥` sağlık ocağı simgesi.
+
 
 

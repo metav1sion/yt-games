@@ -2554,6 +2554,69 @@ export function createSound() {
         });
       } catch {}
     },
+    medicalChime(vol = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      const volume = Math.max(0, Math.min(1, vol));
+      if (volume <= 0.02) return;
+      try {
+        const at = ctx.currentTime;
+
+        // 1. Hassas Medikal EKG Kalp Ritmi / Vital Monitör Çift Bip Sinyali (Cardiac vital monitor pulse blips)
+        const pulses = [
+          { freq: 880, start: 0.0, dur: 0.12 },
+          { freq: 1174.66, start: 0.16, dur: 0.18 },
+        ];
+        pulses.forEach((p) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const t = at + p.start;
+
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(p.freq, t);
+
+          gain.gain.setValueAtTime(0.001, t);
+          gain.gain.linearRampToValueAtTime(0.20 * volume, t + 0.003);
+          gain.gain.exponentialRampToValueAtTime(0.0001, t + p.dur);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(t);
+          osc.stop(t + p.dur + 0.02);
+          osc.onended = () => {
+            osc.disconnect();
+            gain.disconnect();
+          };
+        });
+
+        // 2. Sıcak ve Rezonanslı Sağlık Ocağı / Dispanser Melodik Çanı (Warm clinic reception chime arpeggio - C major)
+        const chordFrequencies = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
+        chordFrequencies.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const delay = 0.36 + idx * 0.055;
+          const t = at + delay;
+
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(freq, t);
+
+          gain.gain.setValueAtTime(0.001, t);
+          gain.gain.linearRampToValueAtTime((0.16 / (idx * 0.4 + 1)) * volume, t + 0.004);
+          gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.65);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.70);
+          osc.onended = () => {
+            osc.disconnect();
+            gain.disconnect();
+          };
+        });
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },
