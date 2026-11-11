@@ -401,5 +401,8 @@ describe("district traffic lanes", () => {
     expect(world.turkishCoffee).toBeDefined();
     expect(world.turkishCoffee.obstacles.length).toBeGreaterThan(0);
     expect(world.turkishCoffee.group.name).toBe("turkish-coffee-view");
+    expect(world.lifesaving).toBeDefined();
+    expect(world.lifesaving.obstacles.length).toBeGreaterThan(0);
+    expect(world.lifesaving.group.name).toBe("lifesaving-view");
   });
 });

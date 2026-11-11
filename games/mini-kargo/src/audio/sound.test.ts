@@ -123,6 +123,7 @@ describe("audio system", () => {
     sound.postStamp(1.0);
     sound.powerHammer(1.0);
     sound.turkishCoffee(1.0);
+    sound.lifeboatWinch(1.0);
     sound.setDistrict("coastal");
     sound.setRadioStation("cozy_chill");
     expect(sound.getRadioStation()).toBe("cozy_chill");

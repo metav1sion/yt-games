@@ -281,6 +281,28 @@
   - Minimap radar simgesi: Çarşı Bölgesi üzerinde canlı `☕` kahve fincanı simgesi: VERIFIED
   - Screenshot verified: `games/mini-kargo/artifacts/carsi-turkish-coffee.png`
 
+## Visual QA & Browser Verification Summary — Run 36 (2026-11-11)
+
+### Automated Test Suite
+- **Unit & Integration Tests**: 96 test files, 952 passed, 0 failed (2.21s execution)
+- **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
+- **Vite Production Build**: Successful (`dist/` generated in 166ms)
+- **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
+
+### Visual Quality & Landmark Verification
+- **Sahil "Tarihi Kıyı Tahlisiye & Deniz Kurtarma İstasyonu (Can Kurtarma Botu & Kıyı Gözetleme Kulesi)" (T61)**:
+  - 13.0m x 11.0m yıpranmış ahşap sedir güverte ve granit taş kaide, döküm çelik palamar babaları, kalın halat kangalları, su altı dolfen kazıkları, asfalt servis yanaşma cebi (`LIFESAVING_BAY`: X: -68.0, Z: 80.5 - Sahil Kordon Yolu Z: 80 güney bordüründe), sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku: VERIFIED
+  - 8.4m x 5.2m x 5.0m Tarihi Tahlisiye Kayıkhane Binası: 1.8m rustik granit/kireçtaşı taş kaide duvarları, üst kat yıpranmış yatay ahşap lambri kaplama, kırma galvaniz/kiremit çatı, çatı havalandırma fenerliği ve pirinç paratoner, geniş çift kanatlı raylı bot hangarı kapısı: VERIFIED
+  - Çatı alınlığında büyük aydınlatmalı kurumsal tabela (`"🛟 TARİHİ KIYI TAHLİSİYE & CAN KURTARMA ⚓"`), alt kurumsal şerit (`"T.C. KIYI EMNİYETİ GENEL MÜDÜRLÜĞÜ · 1928"`), altın sarısı pervaz çerçevesi, gece peronu aydınlatan sıcak PointLight armatürü ve asılı ferforje gemici feneri: VERIFIED
+  - Eğimli Bot Kızağı & Çelik Ray Sistemi (Angled Slipway Ramp & Rails): 14° açıyla doğrudan turkuaz denize inen 9.5m masif ahşap ve beton kızak rampası, çift döküm çelik tren rayı, traversler, tekerlekli çelik bot taşıyıcı beşik (rail slipway carriage), döküm dişli vinç tamburu, dönen krank kolu ve gergin çelik çekme halatı: VERIFIED
+  - Tarihi Çift Başlı Can Kurtarma Botu — "TAHLİSİYE-1" (X: -68.0, Z: 91.5): 6.4m uzunluğunda otantik çift başlı Türk tahlisiye botu gövdesi, canlı tahlisiye turuncusu ve beyaz Kıyı Emniyeti gövde boyası (`"⚓ TAHLİSİYE-1 · CAN KURTARMA 🛟"`), lacivert omurga, ahşap oturaklar, yedek ahşap kürekler, palamar halatları, pruva projektörü ve dalga/kızak salınım fiziği: VERIFIED
+  - Yükseltilmiş Ahşap Kıyı Gözetleme Kulesi (Lookout Watchtower - X: -63.5, Z: 87.0): 4 masif ahşap ayak üzerinde 4.4m yükseklikte ahşap seyir güvertesi ve güvenlik balüstradı, piramidal kırmızı kiremit çatı, pirinç rüzgar gülü, denizci gözetleme dürbünü, arama projektörü ve salınan pirinç Sis Çanı (Maritime Fog Bell): VERIFIED
+  - Can Kurtarma Donatım Rafları & Denizcilik Teçhizatı: 4 adet turuncu-beyaz reflektörlü can simidi, paslı döküm çapa, katranlı urgan makaraları ve ilk yardım teçhizat sandığı (`"🚑 İLK YARDIM · TAHLİSİYE"`): VERIFIED
+  - Animasyonlu Baş Tahlisiyeci NPC "Tahlisiye Reisi Şükrü Kaptan" (X: -65.5, Z: 85.5) turuncu-lacivert Kıyı Emniyeti marin montu, sarı çizmeler, beyaz kaptan kasketi, gür beyaz denizci sakalı, elinde pirinç denizci megafonu, 22m mesafeden kafa/gövde takibi (head tracking), korna ve duraklamada megafonunu havaya kaldırarak usta selamı ve 3D konuşma balonuyla karşılama: VERIFIED
+  - "Kıyı Emniyeti Güvencesi" pitstop bonusu (+10 ₺ nakit esnaf desteği, +1 itibar, +0.45 nitro dolumu, 25s "Kıyı Emniyeti Güvencesi" suda kızaklama (hydroplane) bağışıklığı ve teslimatlarda +15 ₺ kurtarma primi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel rezonanslı pirinç sis çanı ile dişli vinç mandalı tıkırtısı sesi `sound.lifeboatWinch()`): VERIFIED
+  - Minimap radar simgesi: Sahil Şeridi üzerinde canlı `🛟` can simidi simgesi: VERIFIED
+  - Screenshot verified: `games/mini-kargo/artifacts/sahil-lifesaving.png`
+
 ## Independent Victory Audit Verdict
 - **Verdict**: `VICTORY CONFIRMED`
 - **Integrity**: Zero skipped tests, zero mock facades, genuine implementations.

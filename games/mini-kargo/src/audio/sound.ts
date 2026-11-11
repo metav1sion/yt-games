@@ -2484,6 +2484,76 @@ export function createSound() {
         };
       } catch {}
     },
+    lifeboatWinch(vol = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      const volume = Math.max(0, Math.min(1, vol));
+      if (volume <= 0.02) return;
+      try {
+        const at = ctx.currentTime;
+
+        // 1. Kıyı Emniyeti Denizci Sis Çanı Tınısı (Maritime brass fog bell harmonic chimes)
+        const bellHarmonics = [880, 1320, 1760, 2640];
+        bellHarmonics.forEach((freq, idx) => {
+          const bellOsc = ctx.createOscillator();
+          const bellGain = ctx.createGain();
+
+          bellOsc.type = idx === 0 ? "triangle" : "sine";
+          bellOsc.frequency.setValueAtTime(freq, at);
+
+          bellGain.gain.setValueAtTime(0.001, at);
+          bellGain.gain.linearRampToValueAtTime((0.18 / (idx + 1)) * volume, at + 0.003);
+          bellGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.55 + idx * 0.05);
+
+          bellOsc.connect(bellGain);
+          bellGain.connect(ctx.destination);
+
+          bellOsc.start(at);
+          bellOsc.stop(at + 0.62);
+          bellOsc.onended = () => {
+            bellOsc.disconnect();
+            bellGain.disconnect();
+          };
+        });
+
+        // 2. Slipway Bot Kızağı Ağır Çelik Vinç Mandalı Tıkırtısı (Ratchet winch pawl clicks)
+        const clickTimes = [0.06, 0.14, 0.22];
+        clickTimes.forEach((delay, clickIdx) => {
+          const clickTime = at + delay;
+          const clickBuffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.04), ctx.sampleRate);
+          const clickData = clickBuffer.getChannelData(0);
+          for (let i = 0; i < clickData.length; i++) {
+            const decay = 1 - i / clickData.length;
+            clickData[i] = (Math.random() * 2 - 1) * decay;
+          }
+
+          const clickSource = ctx.createBufferSource();
+          clickSource.buffer = clickBuffer;
+
+          const clickFilter = ctx.createBiquadFilter();
+          clickFilter.type = "bandpass";
+          clickFilter.frequency.setValueAtTime(2400 + clickIdx * 300, clickTime);
+          clickFilter.Q.setValueAtTime(3.5, clickTime);
+
+          const clickGain = ctx.createGain();
+          clickGain.gain.setValueAtTime(0.001, clickTime);
+          clickGain.gain.linearRampToValueAtTime(0.22 * volume, clickTime + 0.002);
+          clickGain.gain.exponentialRampToValueAtTime(0.0001, clickTime + 0.038);
+
+          clickSource.connect(clickFilter);
+          clickFilter.connect(clickGain);
+          clickGain.connect(ctx.destination);
+
+          clickSource.start(clickTime);
+          clickSource.stop(clickTime + 0.04);
+          clickSource.onended = () => {
+            clickSource.disconnect();
+            clickFilter.disconnect();
+            clickGain.disconnect();
+          };
+        });
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

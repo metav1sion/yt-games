@@ -39,6 +39,7 @@ import { createCinemaView, type CinemaView } from "./cinema";
 import { createPostOfficeView, type PostOfficeView } from "./post-office";
 import { createFoundryView, type FoundryView } from "./foundry";
 import { createTurkishCoffeeView, type TurkishCoffeeView } from "./turkish-coffee";
+import { createLifesavingView, type LifesavingView } from "./lifesaving";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
@@ -69,6 +70,7 @@ export type { CinemaView } from "./cinema";
 export type { PostOfficeView } from "./post-office";
 export type { FoundryView } from "./foundry";
 export type { TurkishCoffeeView } from "./turkish-coffee";
+export type { LifesavingView } from "./lifesaving";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -105,6 +107,7 @@ export type World = {
   postOffice: PostOfficeView;
   foundry: FoundryView;
   turkishCoffee: TurkishCoffeeView;
+  lifesaving: LifesavingView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -253,6 +256,11 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   group.add(turkishCoffee.group);
   ctx.baseObstacles.push(...turkishCoffee.obstacles);
 
+  // Sahil "Tarihi Kıyı Tahlisiye & Deniz Kurtarma İstasyonu" (T61)
+  const lifesaving = createLifesavingView();
+  group.add(lifesaving.group);
+  ctx.baseObstacles.push(...lifesaving.obstacles);
+
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;
   const unlockedSet = new Set<DistrictId>(["sunny"]);
@@ -343,6 +351,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     postOffice,
     foundry,
     turkishCoffee,
+    lifesaving,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);
