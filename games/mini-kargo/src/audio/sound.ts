@@ -2617,6 +2617,98 @@ export function createSound() {
         });
       } catch {}
     },
+    latheMachine(vol = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      const volume = Math.max(0, Math.min(1, vol));
+      if (volume <= 0.02) return;
+      try {
+        const at = ctx.currentTime;
+
+        // 1. Yüksek Devirli Torna Aynası & Metal Kesme Uğultusu (High-speed spinning lathe chuck & cutting hum)
+        const latheOsc = ctx.createOscillator();
+        const latheFilter = ctx.createBiquadFilter();
+        const latheGain = ctx.createGain();
+
+        latheOsc.type = "sawtooth";
+        latheOsc.frequency.setValueAtTime(420, at);
+        latheOsc.frequency.exponentialRampToValueAtTime(780, at + 0.35);
+        latheOsc.frequency.exponentialRampToValueAtTime(540, at + 0.70);
+
+        latheFilter.type = "bandpass";
+        latheFilter.frequency.setValueAtTime(1250, at);
+        latheFilter.Q.setValueAtTime(4.5, at);
+
+        latheGain.gain.setValueAtTime(0.001, at);
+        latheGain.gain.linearRampToValueAtTime(0.18 * volume, at + 0.04);
+        latheGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.75);
+
+        latheOsc.connect(latheFilter);
+        latheFilter.connect(latheGain);
+        latheGain.connect(ctx.destination);
+
+        latheOsc.start(at);
+        latheOsc.stop(at + 0.78);
+        latheOsc.onended = () => {
+          latheOsc.disconnect();
+          latheFilter.disconnect();
+          latheGain.disconnect();
+        };
+
+        // 2. Ağır Hidrolik Eksantrik Pres Tok Darbesi (Heavy hydraulic stamp thump - 85Hz -> 38Hz)
+        const stampOsc = ctx.createOscillator();
+        const stampGain = ctx.createGain();
+
+        stampOsc.type = "sine";
+        stampOsc.frequency.setValueAtTime(85, at + 0.22);
+        stampOsc.frequency.exponentialRampToValueAtTime(38, at + 0.42);
+
+        stampGain.gain.setValueAtTime(0.001, at + 0.22);
+        stampGain.gain.linearRampToValueAtTime(0.35 * volume, at + 0.23);
+        stampGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.55);
+
+        stampOsc.connect(stampGain);
+        stampGain.connect(ctx.destination);
+
+        stampOsc.start(at + 0.22);
+        stampOsc.stop(at + 0.58);
+        stampOsc.onended = () => {
+          stampOsc.disconnect();
+          stampGain.disconnect();
+        };
+
+        // 3. Pnömatik/Hidrolik Basınç Tahliye Tıslaması (Hydraulic fluid / pneumatic valve release hiss)
+        const bufLen = Math.floor(ctx.sampleRate * 0.45);
+        const noiseBuf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+        const ch = noiseBuf.getChannelData(0);
+        for (let i = 0; i < bufLen; i++) ch[i] = Math.random() * 2 - 1;
+
+        const noiseSrc = ctx.createBufferSource();
+        noiseSrc.buffer = noiseBuf;
+
+        const hissFilter = ctx.createBiquadFilter();
+        hissFilter.type = "bandpass";
+        hissFilter.frequency.setValueAtTime(2600, at + 0.24);
+        hissFilter.Q.setValueAtTime(2.2, at + 0.24);
+
+        const hissGain = ctx.createGain();
+        hissGain.gain.setValueAtTime(0.001, at + 0.24);
+        hissGain.gain.linearRampToValueAtTime(0.16 * volume, at + 0.26);
+        hissGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.65);
+
+        noiseSrc.connect(hissFilter);
+        hissFilter.connect(hissGain);
+        hissGain.connect(ctx.destination);
+
+        noiseSrc.start(at + 0.24);
+        noiseSrc.stop(at + 0.68);
+        noiseSrc.onended = () => {
+          noiseSrc.disconnect();
+          hissFilter.disconnect();
+          hissGain.disconnect();
+        };
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

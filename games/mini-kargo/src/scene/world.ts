@@ -41,6 +41,7 @@ import { createFoundryView, type FoundryView } from "./foundry";
 import { createTurkishCoffeeView, type TurkishCoffeeView } from "./turkish-coffee";
 import { createLifesavingView, type LifesavingView } from "./lifesaving";
 import { createHealthClinicView, type HealthClinicView } from "./health-clinic";
+import { createLatheWorkshopView, type LatheWorkshopView } from "./lathe-workshop";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
@@ -73,6 +74,7 @@ export type { FoundryView } from "./foundry";
 export type { TurkishCoffeeView } from "./turkish-coffee";
 export type { LifesavingView } from "./lifesaving";
 export type { HealthClinicView } from "./health-clinic";
+export type { LatheWorkshopView } from "./lathe-workshop";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -111,6 +113,7 @@ export type World = {
   turkishCoffee: TurkishCoffeeView;
   lifesaving: LifesavingView;
   healthClinic: HealthClinicView;
+  latheWorkshop: LatheWorkshopView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -269,6 +272,11 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   group.add(healthClinic.group);
   ctx.baseObstacles.push(...healthClinic.obstacles);
 
+  // Sanayi "Tarihi Makine, Torna & Freze İmalathanesi (Torna Aynası & Pres Tezgahı — Torna Ustası Necati Usta)" (T63)
+  const latheWorkshop = createLatheWorkshopView();
+  group.add(latheWorkshop.group);
+  ctx.baseObstacles.push(...latheWorkshop.obstacles);
+
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;
   const unlockedSet = new Set<DistrictId>(["sunny"]);
@@ -361,6 +369,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     turkishCoffee,
     lifesaving,
     healthClinic,
+    latheWorkshop,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);

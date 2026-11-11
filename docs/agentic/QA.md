@@ -325,6 +325,28 @@
   - Minimap radar simgesi: Güneş Mahallesi üzerinde canlı `🏥` sağlık ocağı simgesi: VERIFIED
   - Screenshot verified: `games/mini-kargo/artifacts/gunes-health-clinic.png`
 
+## Visual QA & Browser Verification Summary — Run 38 (2026-11-11)
+
+### Automated Test Suite
+- **Unit & Integration Tests**: 100 test files, 976 passed, 0 failed (2.65s execution)
+- **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
+- **Vite Production Build**: Successful (`dist/` generated in 162ms)
+- **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
+
+### Visual Quality & Landmark Verification
+- **Sanayi "Tarihi Makine, Torna & Freze İmalathanesi (Torna Aynası & Pres Tezgahı — Torna Ustası Necati Usta)" (T63)**:
+  - 11.6m x 7.6m endüstriyel beton avlu tablası, döküm yağ lekeleri, çevre bordür taşları, asfalt servis yanaşma peronu cebi (`LATHE_WORKSHOP_BAY`: X: 40.0, Z: -52.8 - Sanayi Z: -50 bulvarının kuzey bordüründe), sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku: VERIFIED
+  - 4 adet ağır çelik I-kolon taşıyıcı sütun, kafes kirişler, çapraz rüzgar gergileri, oluklu sac arka ve yan paneller, galvaniz sac çatı, çatı mahya havalandırma fenerliği ve egzoz bacası (güney cephe kameraya tamamen açık): VERIFIED
+  - Çatı alınlığında büyük aydınlatmalı tabela (`"⚙️ SANAYİ TORNA & FREZE · NECATİ USTA 🔩"`), alt kurumsal şerit (`"HASSAS TALAŞLI İMALAT · HİDROLİK PRES · 1964"`), altın-sarı pervaz çerçevesi ve gece atölyeyi aydınlatan sıcak kehribar PointLight armatürü: VERIFIED
+  - Ağır Sanayi Üniversal Torna Tezgahı: dökme demir torna gövdesi, çift prizmatik kızak yatağı, fener mili hız kolları, mantar acil durdurma butonu, dönen 3-ayaklı torna aynası, aynaya bağlı tornalanan parlak krom çelik mil, gezer punta ve el çarkı, araba ve karbür torna kalemi, boyuna vida mili, dinamik titreşen kıvrık mavi çelik talaşları: VERIFIED
+  - Ağır Hidrolik Eksantrik Pres Tezgahı: güvenlik kırmızısı döküm çelik C-gövde, üst hidrolik silindir ve yüksek basınç hortumları, alt kalıp tablası, ritmik basma animasyonlu hidrolik koç kafası, zımba takımı, basınç manometresi ve çift el emniyet butonları: VERIFIED
+  - Dikey Freze Tezgahı & 5 Çekmeceli Takım Dolabı: freze gövdesi, iş mili, T-kanallı hareketli tabla ve el çarkları; 5 çekmeceli lacivert metal takım dolabı, krom kulplar, kumpas, mikrometre ve ağır döküm çelik tezgah mengenesi: VERIFIED
+  - Hammadde Rafları, Mamul Dişliler & Sevkiyat Sandığı: konsol kollu profil/çubuk rafı (krom miller, pirinç çubuklar, bronz borular), ahşap EUR palet üzerinde işlenmiş dişli çarklar ve mühürlü "MK MAKİNE" sandığı: VERIFIED
+  - Animasyonlu Usta Tornacı NPC "Tornacı Necati Usta" (X: 37.8, Z: -54.6): lacivert iş tulumu, torna gözlüğü, silme bezi, elinde parlak krom İngiliz anahtarı, 22m mesafeden kafa/gövde takibi, korna ve duraklamada kolunu kaldırarak usta selamı ve 3D konuşma balonuyla karşılama (`"⚙️ Necati Usta: Hoş geldin evlat! Binde bir milim hassasiyetle işleriz! 🔩"`): VERIFIED
+  - "Sanayi Hassasiyeti & Torna Ayarı" pitstop bonusu (+10 ₺ nakit esnaf desteği, +1 itibar, +0.45 nitro dolumu, 25s "Sanayi Hassasiyeti & Torna Ayarı" nitro/çeviklik & teslimatlarda +15 ₺ hassasiyet primi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel yüksek hızlı torna mili dönme vızıltısı ile hidrolik pres vuruşu ve basınç tıslama sesi `sound.latheMachine()`): VERIFIED
+  - Minimap radar simgesi: Sanayi Bölgesi üzerinde canlı `⚙️` çark simgesi: VERIFIED
+  - Screenshot verified: `games/mini-kargo/artifacts/sanayi-lathe-workshop.png`
+
 ## Independent Victory Audit Verdict
 - **Verdict**: `VICTORY CONFIRMED`
 - **Integrity**: Zero skipped tests, zero mock facades, genuine implementations.

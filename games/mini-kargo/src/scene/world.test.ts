@@ -407,5 +407,8 @@ describe("district traffic lanes", () => {
     expect(world.healthClinic).toBeDefined();
     expect(world.healthClinic.obstacles.length).toBeGreaterThan(0);
     expect(world.healthClinic.group.name).toBe("health-clinic-view");
+    expect(world.latheWorkshop).toBeDefined();
+    expect(world.latheWorkshop.obstacles.length).toBeGreaterThan(0);
+    expect(world.latheWorkshop.group.name).toBe("lathe-workshop-view");
   });
 });

@@ -697,5 +697,25 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
   - "Sağlık & Sıhhat Güvencesi" pitstop bonusu: Servis peronunda 1.2s duraklama: +10 ₺ nakit esnaf desteği, +1 itibar, +0.45 nitro dolumu, 25s "Sağlık & Sıhhat Güvencesi" yorgunluk giderme & teslimatlarda +15 ₺ sağlık primi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel medikal EKG kalp atışı ile klinik zili sesi (`sound.medicalChime()`).
   - Minimap radar simgesi: Güneş Mahallesi üzerinde canlı `🏥` sağlık ocağı simgesi.
 
+---
+
+## 26. Sanayi "Tarihi Makine, Torna & Freze İmalathanesi (Torna Aynası & Pres Tezgahı — Torna Ustası Necati Usta)" (T63)
+- **Konum ve Mimari Yapı (`createLatheWorkshopView` & `src/game/lathe-workshop.ts`)**:
+  - Konum: X: 40.0, Z: -58.0 (Sanayi Organize Sanayi Bölgesi, Z: -50 bulvarının kuzey bordüründe, Bereket Sanayi Lokantası'nın hemen doğusunda).
+  - 11.6m x 7.6m endüstriyel beton avlu tablası, döküm yağ lekeleri, çevre bordür taşları, asfalt servis yanaşma peronu cebi (`LATHE_WORKSHOP_BAY`: X: 40.0, Z: -52.8).
+  - Sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku.
+  - Ağır çelik konstrüksiyon atölye sundurması: 4 adet ağır çelik I-kolon taşıyıcı sütun (`#2c3e50`), kafes kirişler, çapraz rüzgar gergileri, oluklu sac arka ve yan güvenlik panelleri, galvaniz sac çatı, çatı mahya havalandırma fenerliği ve egzoz bacası. Güney cephe (+Z, kameraya ve yola doğru) tamamen açıktır.
+  - Çatı alınlığında büyük aydınlatmalı kurumsal tabela (`"⚙️ SANAYİ TORNA & FREZE · NECATİ USTA 🔩"`), alt kurumsal şerit (`"HASSAS TALAŞLI İMALAT · HİDROLİK PRES · 1964"`), altın-sarı pervaz çerçevesi ve gece atölyeyi aydınlatan sıcak kehribar PointLight armatürü.
+  - Ağır Sanayi Üniversal Torna Tezgahı (Universal Metal Lathe Machine): Dökme demir torna gövdesi, çift prizmatik kızak yatağı, fener mili devir kolları, mantar acil durdurma butonu, dönen 3-ayaklı torna aynası, aynaya bağlı tornalanan parlak çelik mil, gezer punta ve konik el çarkı, araba ve karbür torna kalemi, boyuna vida mili, dinamik titreşen kıvrık mavi çelik talaşları.
+  - Ağır Hidrolik Eksantrik Pres Tezgahı (Heavy Hydraulic Press): Güvenlik kırmızısı döküm çelik C-gövde, üst hidrolik silindir ve yüksek basınç hortumları, alt kalıp tablası, ritmik basma animasyonlu hidrolik koç kafası, zımba takımı, basınç manometresi ve çift el emniyet butonları.
+  - Dikey Freze Tezgahı & 5 Çekmeceli Takım Dolabı: Freze gövdesi, dikey iş mili, hareketli T-kanallı tabla ve el çarkları; 5 çekmeceli lacivert metal takım dolabı, krom kulplar, kumpas, mikrometre ve döküm mengene.
+  - Hammadde Rafları, Mamul Dişliler & Sevkiyat Sandığı: Konsol kollu profil/çubuk rafı (krom miller, sarı pirinç çubuklar, bronz borular), ahşap EUR palet üzerinde işlenmiş dişli çarklar ve mühürlü "MK MAKİNE" sandığı.
+- **Usta Tornacı NPC ("Tornacı Necati Usta" - X: 37.8, Z: -54.6) & Sanayi Hassasiyeti & Torna Ayarı Bonusu**:
+  - Lacivert iş tulumu, koruyucu torna gözlüğü, kıvrık kollar, belde yağlı silme bezi, elinde parlak krom İngiliz anahtarı.
+  - 22m mesafeden kafa/gövde takibi, korna ve duraklamada kolunu kaldırarak usta selamı ve 3D konuşma balonuyla karşılama (`"⚙️ Necati Usta: Hoş geldin evlat! Binde bir milim hassasiyetle işleriz! 🔩"`).
+  - "Sanayi Hassasiyeti & Torna Ayarı" pitstop bonusu: Servis peronunda 1.2s duraklama: +10 ₺ nakit esnaf desteği, +1 itibar, +0.45 nitro dolumu, 25s "Sanayi Hassasiyeti & Torna Ayarı" nitro/çeviklik & teslimatlarda +15 ₺ hassasiyet primi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel yüksek hızlı torna mili dönme vızıltısı ile hidrolik pres vuruşu ve basınç tıslama sesi (`sound.latheMachine()`).
+  - Minimap radar simgesi: Sanayi Bölgesi üzerinde canlı `⚙️` çark simgesi.
+
+
 
 

@@ -347,6 +347,9 @@ export function createMinimap(
 
     const healthClinicPos = worldToMinimap(-11.0, -34.0, size, bounds);
     ctx.fillText("🏥", healthClinicPos.x, healthClinicPos.y);
+
+    const latheWorkshopPos = worldToMinimap(40.0, -58.0, size, bounds);
+    ctx.fillText("⚙️", latheWorkshopPos.x, latheWorkshopPos.y);
     ctx.restore();
 
     // 6. AKTİF HEDEF GÖSTERGESİ (Nabız animasyonu)

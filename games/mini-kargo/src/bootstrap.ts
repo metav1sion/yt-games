@@ -183,6 +183,12 @@ import {
   triggerHealthClinicHonk,
   DR_HIKMET_POS,
 } from "./game/health-clinic";
+import {
+  createLatheWorkshopState,
+  updateLatheWorkshop,
+  triggerLatheWorkshopHonk,
+  NECATI_USTA_POS,
+} from "./game/lathe-workshop";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -259,6 +265,7 @@ export async function startGame(app: HTMLElement) {
   let turkishCoffeeState = createTurkishCoffeeState();
   let lifesavingState = createLifesavingState();
   let healthClinicState = createHealthClinicState();
+  let latheWorkshopState = createLatheWorkshopState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -361,6 +368,7 @@ export async function startGame(app: HTMLElement) {
       getTurkishCoffeeState: () => turkishCoffeeState,
       getLifesavingState: () => lifesavingState,
       getHealthClinicState: () => healthClinicState,
+      getLatheWorkshopState: () => latheWorkshopState,
     };
   }
   const fleet = createCourierFleet({
@@ -778,6 +786,8 @@ export async function startGame(app: HTMLElement) {
       world.lifesaving.onPlayerHonk(vehicle.position);
       triggerHealthClinicHonk(healthClinicState, vehicle.position);
       world.healthClinic.onPlayerHonk(vehicle.position);
+      triggerLatheWorkshopHonk(latheWorkshopState, vehicle.position);
+      world.latheWorkshop.onPlayerHonk(vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -1115,6 +1125,8 @@ export async function startGame(app: HTMLElement) {
       world.lifesaving.onPlayerHonk(vehicle.position);
       triggerHealthClinicHonk(healthClinicState, vehicle.position);
       world.healthClinic.onPlayerHonk(vehicle.position);
+      triggerLatheWorkshopHonk(latheWorkshopState, vehicle.position);
+      world.latheWorkshop.onPlayerHonk(vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -2065,6 +2077,40 @@ export async function startGame(app: HTMLElement) {
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
+        // Sanayi "Tarihi Makine, Torna & Freze İmalathanesi" (T63)
+        const latheRes = updateLatheWorkshop(
+          latheWorkshopState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (latheRes.soundTriggered) {
+          sound.latheMachine();
+        }
+        if (latheRes.awardedLatheBonus) {
+          sound.latheMachine(1.2);
+          const maxNitro =
+            (1 + (progression.upgrades.nitro ?? 0) * (TUNING.nitroMaxBonus ?? 0.25)) *
+            (vehicle.supercharged ? 1.25 : 1.0);
+          vehicle.nitro = Math.min(maxNitro, vehicle.nitro + 0.45);
+          progression = {
+            ...progression,
+            money: progression.money + latheRes.cashBonus,
+            reputation: progression.reputation + latheRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          particles.spawnMoneyStream(NECATI_USTA_POS, vehicle.position);
+          hud.showToast("⚙️ SANAYİ HASSASİYETİ & TORNA AYARI! +10 ₺ (+1 İtibar, Torna Molası & Nitro)", 3500);
+        }
+        world.latheWorkshop.update(
+          dt,
+          latheWorkshopState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
 
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
@@ -2207,6 +2253,16 @@ export async function startGame(app: HTMLElement) {
             };
             sound.customerTip();
             hud.showToast(`🏥 SAĞLIK & SIHHAT PRİMİ! +${healthBonus} ₺`, 3000);
+          }
+
+          if (latheWorkshopState.buffTimer > 0) {
+            const latheBonus = 15;
+            progression = {
+              ...progression,
+              money: progression.money + latheBonus,
+            };
+            sound.customerTip();
+            hud.showToast(`⚙️ SANAYİ HASSASİYETİ PRİMİ! +${latheBonus} ₺`, 3000);
           }
 
           if (delivery.lastReward?.safeBonus && delivery.lastReward.safeBonus > 0) {
@@ -2434,6 +2490,12 @@ export async function startGame(app: HTMLElement) {
         world.healthClinic.update(
           dt,
           healthClinicState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+        world.latheWorkshop.update(
+          dt,
+          latheWorkshopState,
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
@@ -2674,6 +2736,7 @@ export async function startGame(app: HTMLElement) {
       world.turkishCoffee.dispose();
       world.lifesaving.dispose();
       world.healthClinic.dispose();
+      world.latheWorkshop.dispose();
       renderer.dispose();
     },
     { once: true },
