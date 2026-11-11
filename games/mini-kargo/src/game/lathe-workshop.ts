@@ -37,10 +37,10 @@ export type LatheWorkshopEvent = {
 };
 
 export const NECATI_USTA_CALLOUTS = [
-  "⚙️ Necati Usta: Hoş geldin evlat! Binde bir milim hassasiyetle işleriz! 🔩",
-  "⏱️ Necati Usta: Çarklar döner, torna işler! Yolun açık olsun! ⚙️",
-  "🔩 Necati Usta: Pres bastı, mikrometreyle ölçüldü! Çelik gibi teslimat! 📏",
-  "🌟 Necati Usta: Torna aynası senin için dönüyor, gazla kaptan! 🚀",
+  "⚙️ Tornacı Necati Usta: Hoş geldin evlat! Binde bir milim hassasiyetle işleriz! 🔩",
+  "⏱️ Tornacı Necati Usta: Çarklar döner, torna işler! Yolun açık olsun! ⚙️",
+  "🔩 Tornacı Necati Usta: Pres bastı, mikrometreyle ölçüldü! Çelik gibi teslimat! 📏",
+  "🌟 Tornacı Necati Usta: Torna aynası senin için dönüyor, gazla kaptan! 🚀",
 ];
 
 export function createLatheWorkshopState(): LatheWorkshopState {

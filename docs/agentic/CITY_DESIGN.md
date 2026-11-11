@@ -716,6 +716,26 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
   - "Sanayi Hassasiyeti & Torna Ayarı" pitstop bonusu: Servis peronunda 1.2s duraklama: +10 ₺ nakit esnaf desteği, +1 itibar, +0.45 nitro dolumu, 25s "Sanayi Hassasiyeti & Torna Ayarı" nitro/çeviklik & teslimatlarda +15 ₺ hassasiyet primi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel yüksek hızlı torna mili dönme vızıltısı ile hidrolik pres vuruşu ve basınç tıslama sesi (`sound.latheMachine()`).
   - Minimap radar simgesi: Sanayi Bölgesi üzerinde canlı `⚙️` çark simgesi.
 
+---
+
+## 27. Çarşı "Tarihi Baharatçı, Aktar & Lokman Hekim Şifahanesi (Aktar İdris Efendi)" (T64)
+- **Konum ve Mimari Yapı (`createHerbalistView` & `src/game/herbalist.ts`)**:
+  - Konum: X: 24.5, Z: 42.0 (Çarşı Bölgesi, Z: 50 bulvarının kuzey bordüründe, ana giriş meydanı ve kestirme sokağın kesişiminde).
+  - 11.8m x 8.4m klinker tuğla ve kesme kireçtaşı avlu tablası (`#ded2be`, `#8d6e63`), çevre granit bordür taşları (`#5d4037`), asfalt servis yanaşma peronu cebi (`HERBALIST_BAY`: X: 24.5, Z: 47.2).
+  - Sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku.
+  - Otantik Osmanlı Taş & Ahşap Dükkan Mimarisi: Kesme kireçtaşı ve klinker tuğla ana gövde (8.4m x 4.8m x 4.9m), cephede çift sivri Osmanlı taş kemeri (pointed stone arches), mukarnaslı mermer söveler ve sütunlar (`#f5f0e6`), geleneksel ahşap cumbalı saçaklık, oyma payandalar ve alaturka kiremit kırma sundurma çatı (`#a04000`).
+  - Çatı alınlığında büyük aydınlatmalı kurumsal tabela (`"🌿 TARİHİ ÇARŞI AKTARI & ŞİFAHANESİ · İDRİS EFENDİ 🧪"`), alt kurumsal şerit (`"LOKMAN HEKİM ŞİFALI BİTKİLERİ · BAHARAT & DOĞAL MACUNLAR · 1892"`), altın-sarı koruyucu pervaz çerçevesi, gece dükkanı aydınlatan sıcak kehribar PointLight armatürü ve asılı ferforje pirinç kandil.
+  - Renkli Baharat Piramitleri & Çuvalları: Masif ceviz ahşap tezgah üzerinde 4 adet konik renkli baharat tepesi: Antep İpek Pul Biberi & Sumak (`#c0392b`), Zerdeçal & Safran (`#f39c12`), Dağ Kekiği & Nane (`#27ae60`), Tatlı Toz Biber & Kimyon (`#d35400`), pirinç kaseler, ahşap baharat kürekleri, tezgah önünde yerde sıralı 3 adet rustik jüt çuval (`"İPEK PUL BİBER"`, `"KİMYON & TARÇIN"`, `"HİNT SAFRANI"`).
+  - Kurutulmuş Biber, Patlıcan & Bamya Dizileri: Ahşap saçaklardan asılı sallanan geleneksel kurutulmuş kırmızı acı biber dizileri, kuru dolmalık patlıcan oyuntuları, sarımsak ve dağ kekiği demetleri.
+  - Lokman Hekim Şifahane Cam Eczacı Kavanozları & Ahşap Aktar Dolabı: Duvara dayalı 12 çekmeceli pirinç kulplu geleneksel ceviz aktar dolabı, cam vitrinde sıralı amber, zümrüt ve safir şifa tentür kavanozları (`#e65100`, `#1b5e20`, `#0d47a1`, `#b71c1c`).
+  - Kollu Pirinç Denge Terazisi & Ağırlıklar: Tezgah üzerinde döküm pirinç denge terazisi, asılı pirinç kefeler ve pirinç gramaj ağırlıkları seti.
+  - Ritmik Animasyonlu Bronz Havan & Havaneli: Dökme bronz havan, içinde ezilen şifalı bitkiler, ritmik öğütme animasyonu yapan dövme bronz havaneli ve yükselen aromatik şifa buharı / bitki partikülleri.
+- **Usta Aktar NPC ("Aktar İdris Efendi" - X: 22.8, Z: 43.6) & Aktar Şifası & Bitkisel Zindelik Bonusu**:
+  - Koyu kahve pantolon, beyaz yakasız gömlek, altın sırmalı zümrüt yeşili kadife cepken yelek (`#1e8449`), ipek kırmızı kuşak, bordo fes, bilge ak sakal, yuvarlak tel gözlükler, elinde taze nane demeti.
+  - 22m mesafeden kafa/gövde takibi, korna ve duraklamada kolunu kaldırarak bilge selamı ve 3D konuşma balonuyla karşılama (`"🌿 Aktar İdris Efendi: Hoş geldin evlat! Lokman Hekim şifasıyla dertlere deva, kargoya can katarız! 🧪"`).
+  - "Aktar Şifası & Bitkisel Zindelik" pitstop bonusu: Servis peronunda 1.2s duraklama: +10 ₺ nakit esnaf desteği, +1 itibar, +0.45 nitro dolumu, 25s "Aktar Şifası & Bitkisel Zindelik" nitro/çeviklik & teslimatlarda +15 ₺ şifalı bahşiş primi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel dökme bronz havan çınlaması ile taze bitki ezilme ve öğütme çıtırtısı sesi (`sound.spiceMortar()`).
+  - Minimap radar simgesi: Çarşı Bölgesi üzerinde canlı `🌿` şifahane / aktar simgesi.
+
 
 
 

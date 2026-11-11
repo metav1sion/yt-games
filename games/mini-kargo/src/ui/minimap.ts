@@ -350,6 +350,9 @@ export function createMinimap(
 
     const latheWorkshopPos = worldToMinimap(40.0, -58.0, size, bounds);
     ctx.fillText("⚙️", latheWorkshopPos.x, latheWorkshopPos.y);
+
+    const herbalistPos = worldToMinimap(24.5, 42.0, size, bounds);
+    ctx.fillText("🌿", herbalistPos.x, herbalistPos.y);
     ctx.restore();
 
     // 6. AKTİF HEDEF GÖSTERGESİ (Nabız animasyonu)

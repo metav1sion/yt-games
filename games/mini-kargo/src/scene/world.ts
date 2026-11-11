@@ -42,6 +42,7 @@ import { createTurkishCoffeeView, type TurkishCoffeeView } from "./turkish-coffe
 import { createLifesavingView, type LifesavingView } from "./lifesaving";
 import { createHealthClinicView, type HealthClinicView } from "./health-clinic";
 import { createLatheWorkshopView, type LatheWorkshopView } from "./lathe-workshop";
+import { createHerbalistView, type HerbalistView } from "./herbalist";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
@@ -75,6 +76,7 @@ export type { TurkishCoffeeView } from "./turkish-coffee";
 export type { LifesavingView } from "./lifesaving";
 export type { HealthClinicView } from "./health-clinic";
 export type { LatheWorkshopView } from "./lathe-workshop";
+export type { HerbalistView } from "./herbalist";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -114,6 +116,7 @@ export type World = {
   lifesaving: LifesavingView;
   healthClinic: HealthClinicView;
   latheWorkshop: LatheWorkshopView;
+  herbalist: HerbalistView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -277,6 +280,11 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   group.add(latheWorkshop.group);
   ctx.baseObstacles.push(...latheWorkshop.obstacles);
 
+  // Çarşı "Tarihi Baharatçı, Aktar & Lokman Hekim Şifahanesi (Aktar İdris Efendi)" (T64)
+  const herbalist = createHerbalistView();
+  group.add(herbalist.group);
+  ctx.baseObstacles.push(...herbalist.obstacles);
+
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;
   const unlockedSet = new Set<DistrictId>(["sunny"]);
@@ -370,6 +378,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     lifesaving,
     healthClinic,
     latheWorkshop,
+    herbalist,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);

@@ -311,4 +311,16 @@ describe("audio system", () => {
 
     sound.dispose();
   });
+
+  it("plays bronze mortar clink and herbal grinding crunch sound without throwing", async () => {
+    const sound = createSound();
+    await sound.unlock();
+
+    expect(() => {
+      sound.spiceMortar(1.0);
+      sound.spiceMortar(0.5);
+    }).not.toThrow();
+
+    sound.dispose();
+  });
 });

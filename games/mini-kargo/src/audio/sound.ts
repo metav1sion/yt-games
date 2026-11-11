@@ -2709,6 +2709,72 @@ export function createSound() {
         };
       } catch {}
     },
+    spiceMortar(vol = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      const volume = Math.max(0, Math.min(1, vol));
+      if (volume <= 0.02) return;
+      try {
+        const at = ctx.currentTime;
+
+        // 1. Ağır Dökme Bronz Havan Çınlaması & Metalik Rezonans (Bronze mortar ring & harmonic chime)
+        const bronzePitches = [1420, 2180, 2940];
+        bronzePitches.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(freq, at);
+
+          gain.gain.setValueAtTime(0.001, at);
+          gain.gain.linearRampToValueAtTime((0.18 / (idx * 0.5 + 1)) * volume, at + 0.003);
+          gain.gain.exponentialRampToValueAtTime(0.0001, at + 0.55);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(at);
+          osc.stop(at + 0.60);
+          osc.onended = () => {
+            osc.disconnect();
+            gain.disconnect();
+          };
+        });
+
+        // 2. Taze Şifalı Bitki / Baharat Ezilme ve Öğütme Çıtırtısı (Herbal crushing & grinding crunch noise burst)
+        const bufferSize = Math.floor(ctx.sampleRate * 0.35);
+        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.12));
+        }
+
+        const noiseSrc = ctx.createBufferSource();
+        noiseSrc.buffer = noiseBuffer;
+
+        const noiseFilter = ctx.createBiquadFilter();
+        noiseFilter.type = "bandpass";
+        noiseFilter.frequency.setValueAtTime(1800, at);
+        noiseFilter.Q.setValueAtTime(3.2, at);
+
+        const noiseGain = ctx.createGain();
+        noiseGain.gain.setValueAtTime(0.001, at);
+        noiseGain.gain.linearRampToValueAtTime(0.22 * volume, at + 0.01);
+        noiseGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.32);
+
+        noiseSrc.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(ctx.destination);
+
+        noiseSrc.start(at);
+        noiseSrc.stop(at + 0.35);
+        noiseSrc.onended = () => {
+          noiseSrc.disconnect();
+          noiseFilter.disconnect();
+          noiseGain.disconnect();
+        };
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

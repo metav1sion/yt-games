@@ -189,6 +189,12 @@ import {
   triggerLatheWorkshopHonk,
   NECATI_USTA_POS,
 } from "./game/lathe-workshop";
+import {
+  createHerbalistState,
+  updateHerbalist,
+  triggerHerbalistHonk,
+  IDRIS_EFENDI_POS,
+} from "./game/herbalist";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -266,6 +272,7 @@ export async function startGame(app: HTMLElement) {
   let lifesavingState = createLifesavingState();
   let healthClinicState = createHealthClinicState();
   let latheWorkshopState = createLatheWorkshopState();
+  let herbalistState = createHerbalistState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -369,6 +376,7 @@ export async function startGame(app: HTMLElement) {
       getLifesavingState: () => lifesavingState,
       getHealthClinicState: () => healthClinicState,
       getLatheWorkshopState: () => latheWorkshopState,
+      getHerbalistState: () => herbalistState,
     };
   }
   const fleet = createCourierFleet({
@@ -788,6 +796,8 @@ export async function startGame(app: HTMLElement) {
       world.healthClinic.onPlayerHonk(vehicle.position);
       triggerLatheWorkshopHonk(latheWorkshopState, vehicle.position);
       world.latheWorkshop.onPlayerHonk(vehicle.position);
+      triggerHerbalistHonk(herbalistState, vehicle.position);
+      world.herbalist.onPlayerHonk(vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -1127,6 +1137,8 @@ export async function startGame(app: HTMLElement) {
       world.healthClinic.onPlayerHonk(vehicle.position);
       triggerLatheWorkshopHonk(latheWorkshopState, vehicle.position);
       world.latheWorkshop.onPlayerHonk(vehicle.position);
+      triggerHerbalistHonk(herbalistState, vehicle.position);
+      world.herbalist.onPlayerHonk(vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -2111,6 +2123,40 @@ export async function startGame(app: HTMLElement) {
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
+        // Çarşı "Tarihi Baharatçı, Aktar & Lokman Hekim Şifahanesi" (T64)
+        const herbalRes = updateHerbalist(
+          herbalistState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (herbalRes.soundTriggered) {
+          sound.spiceMortar();
+        }
+        if (herbalRes.awardedHerbalBonus) {
+          sound.spiceMortar(1.2);
+          const maxNitro =
+            (1 + (progression.upgrades.nitro ?? 0) * (TUNING.nitroMaxBonus ?? 0.25)) *
+            (vehicle.supercharged ? 1.25 : 1.0);
+          vehicle.nitro = Math.min(maxNitro, vehicle.nitro + 0.45);
+          progression = {
+            ...progression,
+            money: progression.money + herbalRes.cashBonus,
+            reputation: progression.reputation + herbalRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          particles.spawnMoneyStream(IDRIS_EFENDI_POS, vehicle.position);
+          hud.showToast("🌿 AKTAR ŞİFASI & BİTKİSEL ZİNDELİK! +10 ₺ (+1 İtibar, Şifahane Molası & Nitro)", 3500);
+        }
+        world.herbalist.update(
+          dt,
+          herbalistState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
 
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
@@ -2263,6 +2309,16 @@ export async function startGame(app: HTMLElement) {
             };
             sound.customerTip();
             hud.showToast(`⚙️ SANAYİ HASSASİYETİ PRİMİ! +${latheBonus} ₺`, 3000);
+          }
+
+          if (herbalistState.buffTimer > 0) {
+            const herbalBonus = 15;
+            progression = {
+              ...progression,
+              money: progression.money + herbalBonus,
+            };
+            sound.customerTip();
+            hud.showToast(`🌿 AKTAR ŞİFASI PRİMİ! +${herbalBonus} ₺`, 3000);
           }
 
           if (delivery.lastReward?.safeBonus && delivery.lastReward.safeBonus > 0) {
@@ -2496,6 +2552,12 @@ export async function startGame(app: HTMLElement) {
         world.latheWorkshop.update(
           dt,
           latheWorkshopState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+        world.herbalist.update(
+          dt,
+          herbalistState,
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
@@ -2737,6 +2799,7 @@ export async function startGame(app: HTMLElement) {
       world.lifesaving.dispose();
       world.healthClinic.dispose();
       world.latheWorkshop.dispose();
+      world.herbalist.dispose();
       renderer.dispose();
     },
     { once: true },

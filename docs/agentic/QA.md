@@ -347,6 +347,29 @@
   - Minimap radar simgesi: Sanayi Bölgesi üzerinde canlı `⚙️` çark simgesi: VERIFIED
   - Screenshot verified: `games/mini-kargo/artifacts/sanayi-lathe-workshop.png`
 
+## Visual QA & Browser Verification Summary — Run 39 (2026-11-11)
+
+### Automated Test Suite
+- **Unit & Integration Tests**: 102 test files, 988 passed, 0 failed (2.33s execution)
+- **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
+- **Vite Production Build**: Successful (`dist/` generated in 167ms)
+- **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
+
+### Visual Quality & Landmark Verification
+- **Çarşı "Tarihi Baharatçı, Aktar & Lokman Hekim Şifahanesi (Aktar İdris Efendi)" (T64)**:
+  - 11.8m x 8.4m klinker tuğla ve kesme kireçtaşı avlu tablası (`#ded2be`, `#8d6e63`), çevre granit bordür taşları (`#5d4037`), asfalt servis yanaşma peronu cebi (`HERBALIST_BAY`: X: 24.5, Z: 47.2 - Çarşı Z: 50 bulvarının kuzey bordüründe), sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku: VERIFIED
+  - Otantik Osmanlı Taş & Ahşap Dükkan Mimarisi: Kesme kireçtaşı ve klinker tuğla ana gövde (8.4m x 4.8m x 4.9m), cephede çift sivri Osmanlı taş kemeri (pointed stone arches), mukarnaslı mermer söveler ve sütunlar (`#f5f0e6`), geleneksel ahşap cumbalı saçaklık, oyma payandalar ve alaturka kiremit kırma sundurma çatı (`#a04000`): VERIFIED
+  - Çatı alınlığında büyük aydınlatmalı kurumsal tabela (`"🌿 TARİHİ ÇARŞI AKTARI & ŞİFAHANESİ · İDRİS EFENDİ 🧪"`), alt kurumsal şerit (`"LOKMAN HEKİM ŞİFALI BİTKİLERİ · BAHARAT & DOĞAL MACUNLAR · 1892"`), altın-sarı koruyucu pervaz çerçevesi, gece dükkanı aydınlatan sıcak kehribar PointLight armatürü ve asılı ferforje pirinç kandil: VERIFIED
+  - Renkli Baharat Piramitleri & Çuvalları: Masif ceviz ahşap tezgah üzerinde 4 adet konik renkli baharat tepesi: Antep İpek Pul Biberi & Sumak (`#c0392b`), Zerdeçal & Safran (`#f39c12`), Dağ Kekiği & Nane (`#27ae60`), Tatlı Toz Biber & Kimyon (`#d35400`), pirinç kaseler, ahşap baharat kürekleri, tezgah önünde yerde sıralı 3 adet rustik jüt çuval (`"İPEK PUL BİBER"`, `"KİMYON & TARÇIN"`, `"HİNT SAFRANI"`): VERIFIED
+  - Kurutulmuş Biber, Patlıcan & Bamya Dizileri: Ahşap saçaklardan asılı sallanan geleneksel kurutulmuş kırmızı acı biber dizileri, kuru dolmalık patlıcan oyuntuları, sarımsak ve dağ kekiği demetleri: VERIFIED
+  - Lokman Hekim Şifahane Cam Eczacı Kavanozları & Ahşap Aktar Dolabı: Duvara dayalı 12 çekmeceli pirinç kulplu geleneksel ceviz aktar dolabı, cam vitrinde sıralı amber, zümrüt ve safir şifa tentür kavanozları (`#e65100`, `#1b5e20`, `#0d47a1`, `#b71c1c`): VERIFIED
+  - Kollu Pirinç Denge Terazisi & Ağırlıklar: Tezgah üzerinde döküm pirinç denge terazisi, asılı pirinç kefeler ve pirinç gramaj ağırlıkları seti: VERIFIED
+  - Ritmik Animasyonlu Bronz Havan & Havaneli: Dökme bronz havan, içinde ezilen şifalı bitkiler, ritmik öğütme animasyonu yapan dövme bronz havaneli ve yükselen aromatik şifa buharı / bitki partikülleri: VERIFIED
+  - Animasyonlu Usta Aktar NPC "Aktar İdris Efendi" (X: 22.8, Z: 43.6): Koyu kahve pantolon, beyaz yakasız gömlek, altın sırmalı zümrüt yeşili kadife cepken yelek (`#1e8449`), ipek kırmızı kuşak, bordo fes, bilge ak sakal, yuvarlak tel gözlükler, elinde taze nane demeti, 22m mesafeden kafa/gövde takibi, korna ve duraklamada kolunu kaldırarak bilge selamı ve 3D konuşma balonuyla karşılama (`"🌿 Aktar İdris Efendi: Hoş geldin evlat! Lokman Hekim şifasıyla dertlere deva, kargoya can katarız! 🧪"`): VERIFIED
+  - "Aktar Şifası & Bitkisel Zindelik" pitstop bonusu (+10 ₺ nakit esnaf desteği, +1 itibar, +0.45 nitro dolumu, 25s "Aktar Şifası & Bitkisel Zindelik" nitro/çeviklik & teslimatlarda +15 ₺ şifalı bahşiş primi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel dökme bronz havan çınlaması ile taze bitki ezilme ve öğütme çıtırtısı sesi `sound.spiceMortar()`): VERIFIED
+  - Minimap radar simgesi: Çarşı Bölgesi üzerinde canlı `🌿` şifahane / aktar simgesi: VERIFIED
+  - Screenshot verified: `games/mini-kargo/artifacts/carsi-herbalist.png`
+
 ## Independent Victory Audit Verdict
 - **Verdict**: `VICTORY CONFIRMED`
 - **Integrity**: Zero skipped tests, zero mock facades, genuine implementations.

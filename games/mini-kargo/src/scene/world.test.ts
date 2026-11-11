@@ -410,5 +410,8 @@ describe("district traffic lanes", () => {
     expect(world.latheWorkshop).toBeDefined();
     expect(world.latheWorkshop.obstacles.length).toBeGreaterThan(0);
     expect(world.latheWorkshop.group.name).toBe("lathe-workshop-view");
+    expect(world.herbalist).toBeDefined();
+    expect(world.herbalist.obstacles.length).toBeGreaterThan(0);
+    expect(world.herbalist.group.name).toBe("herbalist-view");
   });
 });
