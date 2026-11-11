@@ -332,6 +332,9 @@ export function createMinimap(
 
     const cinemaPos = worldToMinimap(-26.0, 42.0, size, bounds);
     ctx.fillText("🎬", cinemaPos.x, cinemaPos.y);
+
+    const postOfficePos = worldToMinimap(-14.0, -92.0, size, bounds);
+    ctx.fillText("🏤", postOfficePos.x, postOfficePos.y);
     ctx.restore();
 
     // 6. AKTİF HEDEF GÖSTERGESİ (Nabız animasyonu)

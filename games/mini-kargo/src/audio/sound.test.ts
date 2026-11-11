@@ -119,6 +119,8 @@ describe("audio system", () => {
     sound.marketScale(1.0);
     sound.buzzSaw(1.0);
     sound.coppersmith(1.0);
+    sound.filmProjector(1.0);
+    sound.postStamp(1.0);
     sound.setDistrict("coastal");
     sound.setRadioStation("cozy_chill");
     expect(sound.getRadioStation()).toBe("cozy_chill");
@@ -264,6 +266,18 @@ describe("audio system", () => {
     expect(() => {
       sound.filmProjector(1.0);
       sound.filmProjector(0.5);
+    }).not.toThrow();
+
+    sound.dispose();
+  });
+
+  it("plays postal stamp thud and telegraph click sound without throwing", async () => {
+    const sound = createSound();
+    await sound.unlock();
+
+    expect(() => {
+      sound.postStamp(1.0);
+      sound.postStamp(0.5);
     }).not.toThrow();
 
     sound.dispose();

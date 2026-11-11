@@ -76,6 +76,17 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
   - **Animasyonlu Pazarcı Esnafı NPC — "Pazarcı Cemil Dayı" (X: -70.5, Z: -55.8)**: Kadife kasket (flat cap), çizgili pazarcı gömleği, cepli esnaf önlüğü, pos bıyık, elinde taze sarı narenciye tutma pozu, 22m mesafeden oyuncu aracına kafa/gövde takibi (head tracking), korna ve duraklamada iki kolunu havaya kaldırarak coşkuyla selamlama ve 3D konuşma balonuyla karşılama (`"🍉 Pazarcı Cemil Dayı: Gel vatandaş geeel! Çiftlikten taze çıktı, sulu sulu domatesler, kütür kütür karpuzlar! 🍋"`).
   - **"Taze Pazar Bereketi" Mola Bonusu & Prosedürel Pazar Terazisi Sesi (`src/game/market.ts`)**: Servis peronunda 1.2s duraklama: +10 ₺ nakit bahşiş/esnaf desteği, +1 itibar, +0.45 nitro dolumu, 25s "Taze Pazar Bereketi" çeviklik, zindelik ve nitro buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel pirinç kefe çınlaması ile terazi rezonansı sesi (`sound.marketScale()`).
   - **Minimap Radar Simgesi**: Güneş Mahallesi üzerinde canlı `🧺` pazar sepeti simgesi.
+- **Güneş Mahallesi "Tarihi Mahalle Postanesi & Kargo Dağıtım Şubesi (PTT)" (`createPostOfficeView` - T58)**: Situated along the northern curb of North Boulevard (Z: -80) at X: -14.0, Z: -92.0:
+  - **Avlu Tablası ve Yanaşma Peronu**: 14.0m x 11.4m klinker tuğla ve granit taş avlu tablası, bordür taşları, asfalt servis yanaşma peronu cebi (`POST_OFFICE_BAY`: X: -14.0, Z: -83.5), sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku.
+  - **Erken Cumhuriyet / Neoklasik Taş Postane Mimarisi**: 9.6m genişlik x 5.2m yükseklik x 6.4m derinlik. Sıcak traverten / kesme kireçtaşı cephe kaplaması (`#f5f0e6`), koyu gri taş kaide süpürgeliği, köşe silmeleri (ashlar quoins), 4 adet neoklasik pilaster sütun ve İon/Dorik sütun başlıkları.
+  - **Giriş Portali & Kırma Çatı**: Basamaklı taş giriş sahanlığı, masif koyu meşe çift kanatlı giriş kapısı, pirinç kapı kolları, kemerli taş kapı sövesi, simetrik kemerli pencereler, masif kiremit kırma çatı (`#962d22`), taş friz silmesi ve kiremit tuğla baca.
+  - **Aydınlatmalı Tabela ve Kurumsal Amblem**: Çatı alınlığında büyük aydınlatmalı sarı-lacivert kurumsal tabela (`"🏤 GÜNEŞ MAHALLESİ TARİHİ POSTANESİ · PTT 📬"`), alt kurumsal şerit (`"T.C. POSTA VE TELGRAF TEŞKİLATI · KURULUŞ 1840 · DAĞITIM ŞUBESİ"`), giriş kemeri üzerinde pirinç döküm Posta Güvercini & Borazan rölyefi ve gece cepheyi aydınlatan sıcak kehribar PointLight armatürü.
+  - **Nostaljik Pirinç Mektup Mazgalları & Sarı Posta Kutusu**: Cephe duvarında pirinç döküm mektup atma yuvaları (`"ŞEHİR İÇİ"`, `"ŞEHİRLER ARASI"`, `"TELGRAF & APS"`), kaldırım kenarında klasik nostaljik sarı silindirik döküm PTT posta kutusu.
+  - **Park Etmiş 2 Adet Resmi PTT Posta Dağıtım Mopedi**: Binanın batı kanadında park etmiş 2 adet nostaljik kırmızı-sarı PTT moped motosikleti (kırmızı gövde, çift sarı heybe kargo çantası, ön tel sepet ve minyatür `"PTT DAĞITIM"` plakası).
+  - **Donatılar**: Döküm çelik mekanik paket kantar baskülü, mühürlü ahşap koli sandıkları, porselen izolatörlü ahşap telgraf direği.
+  - **Animasyonlu Başpostacı NPC — "Postacı Kemal Efendi" (X: -11.5, Z: -85.5)**: Lacivert PTT postacı üniforması, sarı biyeli yakalar ve kollar, altın düğmeler, sarı şeritli lacivert kasket, omuzda deri mektup çantası, elinde mühürlü ekspres kargo zarfı ve teslimat çizelgesi. 22m mesafeden kafa/gövde takibi, korna ve duraklamada zarfı havaya kaldırarak selamlama ve 3D konuşma balonuyla karşılama (`"🏤 Postacı Kemal: Selam kargocu dostum! Bak bu ekspres kargolar sana emanet, damgalar basıldı yola çık hazır! 📬"`).
+  - **"Ekspres Posta Güvencesi" Mola Bonusu & Prosedürel Posta Damgası Sesi (`src/game/post-office.ts`)**: Servis peronunda 1.2s duraklama: +10 ₺ nakit desteği, +1 itibar, +0.45 nitro dolumu, 25s "Ekspres Posta Güvencesi" teslimatlarda +15 ₺ ekspres posta primi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel posta kaşesi tok sesi ile telgraf tıkırtısı (`sound.postStamp()`).
+  - **Minimap Radar Simgesi**: Güneş Mahallesi üzerinde canlı `🏤` postane simgesi.
 - **Road & Traffic**: Calm residential streets, cul-de-sacs, residential speed bumps, pedestrian crosswalks, and an unblocked stunt jump ramp (`ramp_sunny_depot` at X=-50, Z=-22) equipped with high-visibility reflector bollards.
 - **Soundscape**: Soft summer breeze whisper, rustling trees, and cheerful morning bird chirps.
 - **Key Delivery Points**: 4 residential house front porches and garden gates with clear driveways.
@@ -529,4 +540,43 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
   - Elinde pirinç topuz çekiç ile örsteki bakır tepsiyi ritmik dövme / tıklatma animasyonu.
   - 22m mesafeden kafa/gövde takibi, korna ve yanaşmada çekicini kaldırarak usta selamı ve 3D konuşma balonu (`"🏺 Bakırcı Kazım Usta: Hoş geldin kargocu evlat! El emeği göz nuru dövme bakır gibi sağlam kargolar taşıyorsun! 🔨"`).
   - "Usta Esnaf Hürmeti" pitstop bonusu: +10 ₺ nakit esnaf desteği, +1 itibar, +0.45 nitro dolumu, 30s "Usta Esnaf Hürmeti" müşteri teslimatlarında +15 ₺ esnaf bahşişi buff'ı, altın konfeti & para akışı ve prosedürel çekiç vuruşu & metalik rezonans sesi (`sound.coppersmith()`). Minimap radarda `🏺`.
+
+---
+
+## 20. Sahil "Açık Hava Yazlık Sineması & Sahil Gazinosu" (T57)
+- **Konum ve Mimari Yapı (`createCinemaView` & `src/game/cinema.ts`)**:
+  - Konum: X: -26.0, Z: 42.0 (Sahil Şeridi, Güney Bulvarı Z: 50 kuzey bordürü).
+  - 14.0m x 10.5m kumtaşı ve deniz kumu avlu tablası, rustik bordür taşları, asfalt servis yanaşma peronu (`CINEMA_BAY`: X: -26.0, Z: 47.2).
+  - Devasa anıtsal açık hava projeksiyon perdesi (8.2m x 4.8m Art-Deco taş kuleler, altın pervazlar, kırmızı kadife tiyatro saçaklığı ve 6.8m x 3.6m yansıtıcı perde tuvali).
+  - Yükseltilmiş retro 35mm makinist kulesi (ahşap direkler üzerinde sedir güverte, yeşil ahşap lambri kabin, oluklu metal çatı ve sürekli dönen çift pirinç film makaraları).
+  - Çapraz hacimsel projeksiyon ışık huzmesi (volumetric cone with additive blending and dynamic micro-flicker).
+  - Kademeli nostaljik şezlonglar, beyaz örtülü gazino masaları, yeşil gazoz şişeleri, ayçekirdeği tabakları ve patlamış mısır kutuları.
+  - Avlu üzerinde asılı 8 renkli küre yazlık ampul kordonları (festoon lights).
+  - Yüksek ışıklı neon giriş takı (`"🎬 SAHİL AÇIK HAVA YAZLIK SİNEMASI · YILDIZ GAZİNOSU 🍿"`), alt şerit (`"HER AKŞAM İKİ FİLM BİRDEN · AİLELERE MAHSUSTUR · 1968"`), nostaljik ahşap bilet gişesi (`"🎟️ BİLET: 15₺ 🍿"`) ve A-şövale tebeşirli film afişi (`"BU AKŞAM: NEŞELİ GÜNLER & SELVİ BOYLUM"`).
+- **Makinist NPC ("Makinist Rıfat") & Yazlık Sinema Keyfi Bonusu**:
+  - Kasket, askılı lacivert pantolon, beyaz gömlek, bıyık ve elinde pirinç 35mm film makarası.
+  - 22m mesafeden kafa/gövde takibi, korna ve yanaşmada makarasını kaldırarak selamlama ve 3D konuşma balonu (`"🎬 Makinist Rıfat: Hoş geldin kargocu dostum! İki film birden makaralar dönüyor, taze patlamış mısırını al geç! 🍿"`).
+  - "Yazlık Sinema Keyfi" pitstop bonusu: +10 ₺ nakit esnaf desteği, +1 itibar, +0.45 nitro dolumu, 25s teslimatlarda +15 ₺ sinema neşesi bahşişi buff'ı, altın konfeti & para akışı ve prosedürel 35mm projektör sesi (`sound.filmProjector()`). Minimap radarda `🎬`.
+
+---
+
+## 21. Güneş Mahallesi "Tarihi Mahalle Postanesi & Kargo Dağıtım Şubesi (PTT)" (T58)
+- **Konum ve Mimari Yapı (`createPostOfficeView` & `src/game/post-office.ts`)**:
+  - Konum: X: -14.0, Z: -92.0 (Güneş Mahallesi Kuzey Bulvarı Z: -80 kuzey bordürü).
+  - 14.0m x 11.4m klinker tuğla ve granit taş avlu tablası, bordür taşları, asfalt servis yanaşma peronu cebi (`POST_OFFICE_BAY`: X: -14.0, Z: -83.5).
+  - Sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku.
+  - 9.6m x 5.2m x 6.4m Erken Cumhuriyet / Neoklasik kesme kireçtaşı ve sıcak traverten cephe, koyu gri kaide süpürgeliği, köşe silmeleri (ashlar quoins).
+  - 4 adet neoklasik pilaster sütun, İon/Dorik sütun başlıkları, basamaklı sahanlık ve kemerli söveli masif koyu meşe giriş kapısı.
+  - Simetrik kemerli vitray pencereler, masif kiremit kırma çatı (`#962d22`), taş korniş, friz silmesi ve kiremit tuğla baca.
+  - Çatı alınlığında büyük aydınlatmalı sarı-lacivert kurumsal tabela (`"🏤 GÜNEŞ MAHALLESİ TARİHİ POSTANESİ · PTT 📬"`), alt kurumsal şerit (`"T.C. POSTA VE TELGRAF TEŞKİLATI · KURULUŞ 1840 · DAĞITIM ŞUBESİ"`).
+  - Giriş kemeri üzerinde pirinç döküm Posta Güvercini & Borazan rölyefi ve gece cepheyi aydınlatan sıcak kehribar PointLight armatürü.
+  - Cephe duvarında 3 adet nostaljik pirinç mektup atma mazgalı (`"ŞEHİR İÇİ"`, `"ŞEHİRLER ARASI"`, `"TELGRAF & APS"`).
+  - Kaldırım kenarında klasik nostaljik sarı silindirik PTT posta kutusu.
+  - Batı kanadında park etmiş 2 adet nostaljik kırmızı-sarı PTT dağıtım mopedi (çift sarı heybe kargo çantası, ön tel sepet ve minyatür `"PTT DAĞITIM"` plakası).
+  - Döküm çelik mekanik paket kantar baskülü, ahşap Mini Kargo / PTT mühürlü koli sandıkları, seramik porselen izolatörlü ahşap telgraf direği.
+- **Başpostacı NPC ("Postacı Kemal Efendi") & Ekspres Posta Güvencesi Bonusu**:
+  - Lacivert PTT postacı üniforması, sarı biyeler, altın düğmeler, sarı şeritli kasket, omuzda deri mektup çantası, elinde mühürlü ekspres kargo zarfı ve teslimat çizelgesi.
+  - 22m mesafeden kafa/gövde takibi, korna ve duraklamada zarfı havaya kaldırarak selamlama ve 3D konuşma balonuyla karşılama (`"🏤 Postacı Kemal: Selam kargocu dostum! Bak bu ekspres kargolar sana emanet, damgalar basıldı yola çık hazır! 📬"`).
+  - "Ekspres Posta Güvencesi" pitstop bonusu: +10 ₺ nakit esnaf desteği, +1 itibar, +0.45 nitro dolumu, 25s teslimatlarda +15 ₺ ekspres posta primi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel posta kaşesi tok sesi ile telgraf tıkırtısı (`sound.postStamp()`). Minimap radarda `🏤`.
+
 

@@ -2211,6 +2211,99 @@ export function createSound() {
         };
       } catch {}
     },
+    postStamp(vol = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      const volume = Math.max(0, Math.min(1, vol));
+      if (volume <= 0.02) return;
+      try {
+        const at = ctx.currentTime;
+
+        // 1. Posta Istampa / Mühür Tok Darbesi (Resonant stamp thud)
+        const thudOsc = ctx.createOscillator();
+        const thudFilter = ctx.createBiquadFilter();
+        const thudGain = ctx.createGain();
+
+        thudOsc.type = "sine";
+        thudOsc.frequency.setValueAtTime(160, at);
+        thudOsc.frequency.exponentialRampToValueAtTime(55, at + 0.08);
+
+        thudFilter.type = "lowpass";
+        thudFilter.frequency.setValueAtTime(420, at);
+        thudFilter.Q.setValueAtTime(2.5, at);
+
+        thudGain.gain.setValueAtTime(0.001, at);
+        thudGain.gain.linearRampToValueAtTime(0.35 * volume, at + 0.004);
+        thudGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.12);
+
+        thudOsc.connect(thudFilter);
+        thudFilter.connect(thudGain);
+        thudGain.connect(ctx.destination);
+
+        thudOsc.start(at);
+        thudOsc.stop(at + 0.14);
+        thudOsc.onended = () => {
+          thudOsc.disconnect();
+          thudFilter.disconnect();
+          thudGain.disconnect();
+        };
+
+        // 2. Sert Istampa Mekanik Çıt / Tok Çarpması (Transient slap)
+        const snapOsc = ctx.createOscillator();
+        const snapFilter = ctx.createBiquadFilter();
+        const snapGain = ctx.createGain();
+
+        snapOsc.type = "triangle";
+        snapOsc.frequency.setValueAtTime(1200, at);
+        snapOsc.frequency.exponentialRampToValueAtTime(350, at + 0.025);
+
+        snapFilter.type = "bandpass";
+        snapFilter.frequency.setValueAtTime(1600, at);
+        snapFilter.Q.setValueAtTime(3.0, at);
+
+        snapGain.gain.setValueAtTime(0.001, at);
+        snapGain.gain.linearRampToValueAtTime(0.22 * volume, at + 0.002);
+        snapGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.035);
+
+        snapOsc.connect(snapFilter);
+        snapFilter.connect(snapGain);
+        snapGain.connect(ctx.destination);
+
+        snapOsc.start(at);
+        snapOsc.stop(at + 0.04);
+        snapOsc.onended = () => {
+          snapOsc.disconnect();
+          snapFilter.disconnect();
+          snapGain.disconnect();
+        };
+
+        // 3. İki Hızlı Telgraf Anahtarı Tıkırtısı (2 rapid telegraph morse clicks)
+        const clicks = [0.09, 0.15];
+        clicks.forEach((offset, idx) => {
+          const t = at + offset;
+          const clickOsc = ctx.createOscillator();
+          const clickGain = ctx.createGain();
+
+          clickOsc.type = "sine";
+          clickOsc.frequency.setValueAtTime(idx === 0 ? 1980 : 2340, t);
+          clickOsc.frequency.exponentialRampToValueAtTime(1200, t + 0.016);
+
+          clickGain.gain.setValueAtTime(0.001, t);
+          clickGain.gain.linearRampToValueAtTime(0.16 * volume, t + 0.002);
+          clickGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.022);
+
+          clickOsc.connect(clickGain);
+          clickGain.connect(ctx.destination);
+
+          clickOsc.start(t);
+          clickOsc.stop(t + 0.025);
+          clickOsc.onended = () => {
+            clickOsc.disconnect();
+            clickGain.disconnect();
+          };
+        });
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

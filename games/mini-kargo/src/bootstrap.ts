@@ -153,6 +153,12 @@ import {
   triggerCinemaHonk,
   RIFAT_POS,
 } from "./game/cinema";
+import {
+  createPostOfficeState,
+  updatePostOffice,
+  triggerPostOfficeHonk,
+  KEMAL_POS,
+} from "./game/post-office";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -224,6 +230,7 @@ export async function startGame(app: HTMLElement) {
   let carpenterState = createCarpenterState();
   let coppersmithState = createCoppersmithState();
   let cinemaState = createCinemaState();
+  let postOfficeState = createPostOfficeState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -321,6 +328,7 @@ export async function startGame(app: HTMLElement) {
       getCarpenterState: () => carpenterState,
       getCoppersmithState: () => coppersmithState,
       getCinemaState: () => cinemaState,
+      getPostOfficeState: () => postOfficeState,
     };
   }
   const fleet = createCourierFleet({
@@ -728,6 +736,8 @@ export async function startGame(app: HTMLElement) {
       world.coppersmith.onPlayerHonk(vehicle.position);
       triggerCinemaHonk(cinemaState, vehicle.position);
       world.cinema.onPlayerHonk(vehicle.position);
+      triggerPostOfficeHonk(postOfficeState, vehicle.position);
+      world.postOffice.onPlayerHonk(vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -1055,6 +1065,8 @@ export async function startGame(app: HTMLElement) {
       world.coppersmith.onPlayerHonk(vehicle.position);
       triggerCinemaHonk(cinemaState, vehicle.position);
       world.cinema.onPlayerHonk(vehicle.position);
+      triggerPostOfficeHonk(postOfficeState, vehicle.position);
+      world.postOffice.onPlayerHonk(vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -1835,6 +1847,40 @@ export async function startGame(app: HTMLElement) {
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
+        // Güneş Mahallesi "Tarihi Mahalle Postanesi & Kargo Dağıtım Şubesi (PTT)" (T58)
+        const postOfficeRes = updatePostOffice(
+          postOfficeState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (postOfficeRes.stampSoundTriggered) {
+          sound.postStamp();
+        }
+        if (postOfficeRes.awardedPostOfficeBonus) {
+          sound.postStamp(1.2);
+          const maxNitro =
+            (1 + (progression.upgrades.nitro ?? 0) * (TUNING.nitroMaxBonus ?? 0.25)) *
+            (vehicle.supercharged ? 1.25 : 1.0);
+          vehicle.nitro = Math.min(maxNitro, vehicle.nitro + 0.45);
+          progression = {
+            ...progression,
+            money: progression.money + postOfficeRes.cashBonus,
+            reputation: progression.reputation + postOfficeRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          particles.spawnMoneyStream(KEMAL_POS, vehicle.position);
+          hud.showToast("🏤 EKSPRES POSTA GÜVENCESİ! +10 ₺ (+1 İtibar, PTT Molası & Nitro)", 3500);
+        }
+        world.postOffice.update(
+          dt,
+          postOfficeState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
 
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
@@ -1927,6 +1973,16 @@ export async function startGame(app: HTMLElement) {
             };
             sound.customerTip();
             hud.showToast(`🎬 YAZLIK SİNEMA NEŞESİ BAHŞİŞİ! +${cinemaBonus} ₺`, 3000);
+          }
+
+          if (postOfficeState.buffTimer > 0) {
+            const postBonus = 15;
+            progression = {
+              ...progression,
+              money: progression.money + postBonus,
+            };
+            sound.customerTip();
+            hud.showToast(`🏤 EKSPRES POSTA PRİMİ! +${postBonus} ₺`, 3000);
           }
 
           if (delivery.lastReward?.safeBonus && delivery.lastReward.safeBonus > 0) {
@@ -2124,6 +2180,12 @@ export async function startGame(app: HTMLElement) {
         world.cinema.update(
           dt,
           cinemaState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+        world.postOffice.update(
+          dt,
+          postOfficeState,
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );

@@ -216,6 +216,28 @@
   - Minimap radar simgesi: Sahil Şeridi üzerinde canlı `🎬` sinema klaket simgesi: VERIFIED
   - Screenshot verified: `games/mini-kargo/artifacts/sahil-yazlik-sinemasi.png`
 
+## Visual QA & Browser Verification Summary — Run 33 (2026-11-11)
+
+### Automated Test Suite
+- **Unit & Integration Tests**: 90 test files, 918 passed, 0 failed (2.46s execution)
+- **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
+- **Vite Production Build**: Successful (`dist/` generated in 173ms)
+- **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
+
+### Visual Quality & Landmark Verification
+- **Güneş Mahallesi "Tarihi Mahalle Postanesi & Kargo Dağıtım Şubesi (PTT)" (T58)**:
+  - 14.0m x 11.4m klinker tuğla ve granit taş avlu tablası, bordür taşları, asfalt servis yanaşma peronu cebi (`POST_OFFICE_BAY`: X: -14.0, Z: -83.5 - Kuzey Bulvarı Z: -80 kuzey bordüründe), sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku: VERIFIED
+  - 9.6m x 5.2m x 6.4m Erken Cumhuriyet / Neoklasik kesme kireçtaşı ve sıcak traverten cephe, koyu gri kaide süpürgeliği, köşe silmeleri (ashlar quoins), 4 adet neoklasik pilaster sütun ve İon/Dorik sütun başlıkları: VERIFIED
+  - Basamaklı taş giriş sahanlığı, kemerli söveli masif koyu meşe çift kanatlı giriş kapısı, pirinç kapı kolları, simetrik kemerli vitray pencereler, masif kiremit kırma çatı (`#962d22`), taş friz silmesi ve tuğla baca: VERIFIED
+  - Çatı alınlığında büyük aydınlatmalı sarı-lacivert kurumsal tabela (`"🏤 GÜNEŞ MAHALLESİ TARİHİ POSTANESİ · PTT 📬"`), alt kurumsal şerit (`"T.C. POSTA VE TELGRAF TEŞKİLATI · KURULUŞ 1840 · DAĞITIM ŞUBESİ"`), giriş kemeri üzerinde pirinç döküm Posta Güvercini & Borazan rölyefi ve gece cepheyi aydınlatan sıcak kehribar PointLight armatürü: VERIFIED
+  - Cephe duvarında 3 adet nostaljik pirinç mektup atma mazgalı (`"ŞEHİR İÇİ"`, `"ŞEHİRLER ARASI"`, `"TELGRAF & APS"`), kaldırım kenarında klasik nostaljik sarı silindirik döküm PTT posta kutusu: VERIFIED
+  - Batı kanadında park etmiş 2 adet nostaljik kırmızı-sarı PTT dağıtım mopedi (çift sarı heybe kargo çantası, ön tel sepet ve minyatür `"PTT DAĞITIM"` plakası): VERIFIED
+  - Döküm çelik mekanik paket kantar baskülü, ahşap Mini Kargo / PTT mühürlü koli sandıkları, seramik porselen izolatörlü ahşap telgraf direği: VERIFIED
+  - Animasyonlu Başpostacı NPC "Postacı Kemal Efendi" (X: -11.5, Z: -85.5) lacivert PTT postacı üniforması, sarı biyeler, altın düğmeler, sarı şeritli kasket, omuzda deri mektup çantası, elinde mühürlü ekspres kargo zarfı ve teslimat çizelgesi, 22m mesafeden kafa/gövde takibi, korna ve duraklamada zarfı havaya kaldırarak selamlama ve 3D konuşma balonuyla karşılama: VERIFIED
+  - "Ekspres Posta Güvencesi" pitstop bonusu (+10 ₺ nakit desteği, +1 itibar, +0.45 nitro dolumu, 25s teslimatlarda +15 ₺ ekspres posta primi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel posta kaşesi tok sesi ile telgraf tıkırtısı `sound.postStamp()`): VERIFIED
+  - Minimap radar simgesi: Güneş Mahallesi üzerinde canlı `🏤` postane simgesi: VERIFIED
+  - Screenshot verified: `games/mini-kargo/artifacts/gunes-post-office.png`
+
 ## Independent Victory Audit Verdict
 - **Verdict**: `VICTORY CONFIRMED`
 - **Integrity**: Zero skipped tests, zero mock facades, genuine implementations.

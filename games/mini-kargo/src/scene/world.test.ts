@@ -392,5 +392,8 @@ describe("district traffic lanes", () => {
     expect(world.cinema).toBeDefined();
     expect(world.cinema.obstacles.length).toBeGreaterThan(0);
     expect(world.cinema.group.name).toBe("cinema-view");
+    expect(world.postOffice).toBeDefined();
+    expect(world.postOffice.obstacles.length).toBeGreaterThan(0);
+    expect(world.postOffice.group.name).toBe("post-office-view");
   });
 });
