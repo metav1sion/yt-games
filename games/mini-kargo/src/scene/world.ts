@@ -37,6 +37,7 @@ import { createCarpenterView, type CarpenterView } from "./carpenter";
 import { createCoppersmithView, type CoppersmithView } from "./coppersmith";
 import { createCinemaView, type CinemaView } from "./cinema";
 import { createPostOfficeView, type PostOfficeView } from "./post-office";
+import { createFoundryView, type FoundryView } from "./foundry";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
@@ -65,6 +66,7 @@ export type { CarpenterView } from "./carpenter";
 export type { CoppersmithView } from "./coppersmith";
 export type { CinemaView } from "./cinema";
 export type { PostOfficeView } from "./post-office";
+export type { FoundryView } from "./foundry";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -99,6 +101,7 @@ export type World = {
   coppersmith: CoppersmithView;
   cinema: CinemaView;
   postOffice: PostOfficeView;
+  foundry: FoundryView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -237,6 +240,11 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   group.add(postOffice.group);
   ctx.baseObstacles.push(...postOffice.obstacles);
 
+  // Sanayi "Demirciler ve Dökümcüler Sanayi Sitesi & Sıcak Dövme Haddehanesi" (T59)
+  const foundry = createFoundryView();
+  group.add(foundry.group);
+  ctx.baseObstacles.push(...foundry.obstacles);
+
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;
   const unlockedSet = new Set<DistrictId>(["sunny"]);
@@ -325,6 +333,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     coppersmith,
     cinema,
     postOffice,
+    foundry,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);

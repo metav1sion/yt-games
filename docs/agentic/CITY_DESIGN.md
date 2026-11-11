@@ -205,6 +205,16 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
   - **Animasyonlu Aşçı NPC — "Aşçı Hakkı Usta" (X: 28.5, Z: -53.6)**: Yüksek beyaz aşçı kepi, çift düğmeli aşçı ceketi, kırmızı boyun fuları, beyaz önlük, siyah kumaş pantolon, pala bıyık, elinde uzun çelik döner bıçağı tutar. Ritmik döner kesme animasyonu, oyuncu aracına 20m mesafeden yönelen baş/gövde takibi, korna ve duraklamada coşkulu el sallama ve 3D konuşma balonuyla karşılama (`"🍲 Aşçı Hakkı Usta: Gel kaptan geeel! Kuru fasulye fırından yeni çıktı, pilav tane tane! 🍚"`).
   - **"Sanayi Tabldot Menüsü" Mola Bonusu & Kepçe Sesi**: Servis peronunda 1.2 saniye duraklama: +10 ₺ nakit bahşiş, +1 itibar, +0.45 nitro dolumu, 25s "Sanayi Tabldot Zindeliği" güç ve hızlanma buff'ı, altın konfeti/para akışı, 35s soğuma ve prosedürel çelik kepçe tıkırtısı ve sıcak yemek cızırtısı (`sound.soupLadle()`).
   - **Radar Minimap İkonu**: `🍲` sembolü ile haritada gerçek zamanlı gösterilir.
+- **Sanayi "Demirciler ve Dökümcüler Sanayi Sitesi & Sıcak Dövme Haddehanesi" (`createFoundryView` - T59)**: Situated in the industrial sector at X: 37.5, Z: -75.0 (facing South towards service road Z: -66):
+  - **Atölye Tablası ve Yanaşma Peronu**: 12.0m x 9.2m cüruflu beton tablası, antrasit bordür taşları, asfalt servis yanaşma peronu cebi (`FOUNDRY_BAY`: X: 37.5, Z: -68.0), sarı-siyah emniyet bordürleri, beyaz peron sınırları ve beyaz zemin yön oku.
+  - **Ağır Çelik Haddehane Sundurması**: 4 adet çelik I-kolon, taban flanşları, kafes kirişler, çapraz rüzgar gergileri, oluklu galvaniz sanayi çatısı, duman tahliye fenerliği/lüveri ve egzoz külahı.
+  - **Aydınlatmalı Tabela ve Gece Işığı**: Çatı alınlığında büyük tabela (`"⚒️ DEMİRCİLER VE DÖKÜMCÜLER SİTESİ · HAMDİ USTA 🔥"`), alt şerit (`"SICAK DÖVME ÇELİK · İNDÜKSİYON OCAĞI & HADDEHANE · 1958"`), altın pervaz ve termal turuncu PointLight.
+  - **Kok Kömürü Eritme Ocağı**: Refrakter tuğla silindirik kaide, çelik çemberler, konik duman davlumbazı, akkor kızgın lav yatağı ve nabız atan alev ışığı.
+  - **Pnömatik Havalı Şahmerdan (Power Hammer)**: Döküm gövde, üst hava silindiri, örs kaidesi, üzerinde dövülen akkor kızıl kütük, hareketli pnömatik şahmerdan tokmağı (ritmik dikey vuruş animasyonu) ve çarpma anında saçılan altın sarısı akkor kıvılcım partikülleri.
+  - **Donatılar**: Palet üzerinde piramit istiflenmiş dökme demir pik külçeleri, turuncu A-çerçeve inşaat demiri rafı, meşe kütük kaideli dövme örsü, ahşap su soğutma teknesi ve mühürlü MK ağır çelik kasası.
+  - **Animasyonlu Usta Demirci NPC — "Demirci Hamdi Usta" (X: 36.0, Z: -72.5)**: Deri demirci önlüğü, dökümcü koruyucu gözlüğü, dövme maşası ucunda akkor kütük ve elinde dövme çekici. 22m mesafeden kafa/gövde takibi, korna ve duraklamada çekici kaldırarak usta selamı ve 3D konuşma balonuyla karşılama (`"⚒️ Demirci Hamdi Usta: Hoş geldin kargocu evlat! Sıcak çelik örste dövülür, kargo kasası döküm demir gibi sağlam olmalı! 🔥"`).
+  - **"Sanayi Çeliği Dayanıklılığı" Mola Bonusu & Şahmerdan Sesi**: Servis peronunda 1.2s duraklama: +10 ₺ nakit esnaf desteği, +1 itibar, +0.45 nitro dolumu, 25s "Sanayi Çeliği Dayanıklılığı" şasi zırhı (%50 temas hasarı indirimi) & teslimatlarda +15 ₺ sanayi primi buff'ı, altın konfeti/para akışı, 35s soğuma ve prosedürel şahmerdan tok darbesi, hava tıslaması ve örs çınlaması sesi (`sound.powerHammer()`).
+  - **Minimap Radar Simgesi**: Sanayi Bölgesi üzerinde canlı `⚒️` demirci örsü/çekiç simgesi.
 - **Environmental Activity**: Factory smokestacks and crane diesel generator actively vent animated rising steam/smoke plumes (`buildFactoryChimneySmoke`).
 - **Architecture**: Large warehouse complexes, cargo depots, repair garages, crane rigs, elevated steel pipe corridors, transformer substation, and heavy storage yards.
 - **Road & Traffic**: Wide truck lanes, concrete barrier curbs, industrial jump ramps, forklift traffic lanes, breakable wooden crates.
@@ -578,5 +588,25 @@ The Mini Kargo map is organized into four interconnected, stylistically distinct
   - Lacivert PTT postacı üniforması, sarı biyeler, altın düğmeler, sarı şeritli kasket, omuzda deri mektup çantası, elinde mühürlü ekspres kargo zarfı ve teslimat çizelgesi.
   - 22m mesafeden kafa/gövde takibi, korna ve duraklamada zarfı havaya kaldırarak selamlama ve 3D konuşma balonuyla karşılama (`"🏤 Postacı Kemal: Selam kargocu dostum! Bak bu ekspres kargolar sana emanet, damgalar basıldı yola çık hazır! 📬"`).
   - "Ekspres Posta Güvencesi" pitstop bonusu: +10 ₺ nakit esnaf desteği, +1 itibar, +0.45 nitro dolumu, 25s teslimatlarda +15 ₺ ekspres posta primi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel posta kaşesi tok sesi ile telgraf tıkırtısı (`sound.postStamp()`). Minimap radarda `🏤`.
+
+---
+
+## 22. Sanayi "Demirciler ve Dökümcüler Sanayi Sitesi & Sıcak Dövme Haddehanesi" (T59)
+- **Konum ve Mimari Yapı (`createFoundryView` & `src/game/foundry.ts`)**:
+  - Konum: X: 37.5, Z: -75.0 (Sanayi Bölgesi, Z: -66 ara sokağının kuzey bordürü).
+  - 12.0m x 9.2m endüstriyel cüruflu beton avlu tablası, antrasit bordür taşları, asfalt servis yanaşma peronu cebi (`FOUNDRY_BAY`: X: 37.5, Z: -68.0).
+  - Sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku.
+  - Ağır çelik konstrüksiyon haddehane ve dökümhane sundurması (4 adet çelik I-kolon, taban ankraj flanşları, kafes kirişler ve rüzgar çaprazları).
+  - Oluklu sanayi galvaniz sacı çatısı (`#46515a`), çatı duman tahliye fenerliği/lüveri ve havalandırma egzoz bacası külahı.
+  - Çatı alınlığında büyük aydınlatmalı kurumsal sanayi tabelası (`"⚒️ DEMİRCİLER VE DÖKÜMCÜLER SİTESİ · HAMDİ USTA 🔥"`), alt şerit (`"SICAK DÖVME ÇELİK · İNDÜKSİYON OCAĞI & HADDEHANE · 1958"`), altın pervaz ve gece/gündüz termal turuncu PointLight aydınlatması.
+  - Kızgın kok kömürü eritme ocağı / indüksiyon potası (refrakter tuğla gövde, çelik çemberler, konik çelik duman külahı, akkor kor lav yatağı ve nabız atan termal alev ışığı).
+  - Pnömatik havalı şahmerdan (power hammer / drop forge): Ağır döküm çelik C-gövde, üst hava silindiri ve boruları, dövme örs bloğu, üzerinde akkor kızgın dövülen çelik kütük, hareketli pnömatik şahmerdan tokmağı (ritmik dikey vuruş animasyonu) ve darbe anında etrafa saçılan akkor kıvılcım partikülleri.
+  - Donatılar: Ahşap palet üzerinde piramit istiflenmiş ham dökme demir pik külçeleri, turuncu A-çerçeve inşaat demiri ve ağır çelik I-profil rafı, meşe kütük kaideli çift boynuzlu dövme örsü, ahşap su verme soğutma teknesi ve mühürlü MK ağır çelik sevkiyat sandığı.
+- **Usta Demirci NPC ("Demirci Hamdi Usta" - X: 36.0, Z: -72.5) & Sanayi Çeliği Dayanıklılığı Bonusu**:
+  - Gri tulum/atlet üzerine kalın ayrık paça kahverengi deri demirci önlüğü, dökümcü koruyucu gözlüğü (safety goggles), pirinç kemer tokası, kır saçlar ve heybetli pos bıyık.
+  - Sol elinde tuttuğu çelik dövme maşası ucunda kor haldeki kızıl çelik kütük, sağ elinde dövme çekici.
+  - 22m mesafeden kafa/gövde takibi, korna ve duraklamada çekicini havaya kaldırarak heybetli usta selamı ve 3D konuşma balonuyla karşılama (`"⚒️ Demirci Hamdi Usta: Hoş geldin kargocu evlat! Sıcak çelik örste dövülür, kargo kasası döküm demir gibi sağlam olmalı! 🔥"`).
+  - "Sanayi Çeliği Dayanıklılığı" pitstop bonusu: Servis peronunda 1.2s duraklama: +10 ₺ nakit desteği, +1 itibar, +0.45 nitro dolumu, 25s "Sanayi Çeliği Dayanıklılığı" araç şasi zırhı (%50 temas hasarı indirimi) & teslimatlarda +15 ₺ sanayi primi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel şahmerdan tok darbesi, pnömatik tıslama ve parlak örs çınlaması sesi (`sound.powerHammer()`).
+  - Minimap radar simgesi: Sanayi Bölgesi üzerinde canlı `⚒️` demirci örsü/çekiç simgesi.
 
 

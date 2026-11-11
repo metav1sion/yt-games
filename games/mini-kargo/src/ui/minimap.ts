@@ -335,6 +335,9 @@ export function createMinimap(
 
     const postOfficePos = worldToMinimap(-14.0, -92.0, size, bounds);
     ctx.fillText("🏤", postOfficePos.x, postOfficePos.y);
+
+    const foundryPos = worldToMinimap(37.5, -75.0, size, bounds);
+    ctx.fillText("⚒️", foundryPos.x, foundryPos.y);
     ctx.restore();
 
     // 6. AKTİF HEDEF GÖSTERGESİ (Nabız animasyonu)

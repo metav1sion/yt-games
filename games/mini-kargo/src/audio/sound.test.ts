@@ -121,6 +121,7 @@ describe("audio system", () => {
     sound.coppersmith(1.0);
     sound.filmProjector(1.0);
     sound.postStamp(1.0);
+    sound.powerHammer(1.0);
     sound.setDistrict("coastal");
     sound.setRadioStation("cozy_chill");
     expect(sound.getRadioStation()).toBe("cozy_chill");

@@ -134,9 +134,9 @@ export function buildIndustrialDistrict(ctx: WorldContext) {
     homes.push({ x: p.x, z: p.z + 7.0 });
   });
 
-  // Su kulesi: sanayi bölgesinin silüeti
-  ctx.addModel(group, "industrial/water-tower", 38, -62, 6);
-  baseObstacles.push({ minX: 36.5, maxX: 39.5, minZ: -63.5, maxZ: -60.5 });
+  // Su kulesi: sanayi bölgesinin silüeti (Batı giriş aksı)
+  ctx.addModel(group, "industrial/water-tower", 14, -62, 6);
+  baseObstacles.push({ minX: 12.5, maxX: 15.5, minZ: -63.5, maxZ: -60.5 });
 
   // =========================================================================
   // 5. Sanayi Sokak Mobilyaları & Otopark Araçları

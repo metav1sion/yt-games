@@ -2304,6 +2304,99 @@ export function createSound() {
         });
       } catch {}
     },
+    powerHammer(vol = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      const volume = Math.max(0, Math.min(1, vol));
+      if (volume <= 0.02) return;
+      try {
+        const at = ctx.currentTime;
+
+        // 1. Ağır Şahmerdan Tok Darbesi (Deep drop hammer punch / kick)
+        const punchOsc = ctx.createOscillator();
+        const punchFilter = ctx.createBiquadFilter();
+        const punchGain = ctx.createGain();
+
+        punchOsc.type = "sine";
+        punchOsc.frequency.setValueAtTime(85, at);
+        punchOsc.frequency.exponentialRampToValueAtTime(28, at + 0.16);
+
+        punchFilter.type = "lowpass";
+        punchFilter.frequency.setValueAtTime(320, at);
+        punchFilter.Q.setValueAtTime(2.0, at);
+
+        punchGain.gain.setValueAtTime(0.001, at);
+        punchGain.gain.linearRampToValueAtTime(0.42 * volume, at + 0.005);
+        punchGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.22);
+
+        punchOsc.connect(punchFilter);
+        punchFilter.connect(punchGain);
+        punchGain.connect(ctx.destination);
+
+        punchOsc.start(at);
+        punchOsc.stop(at + 0.24);
+        punchOsc.onended = () => {
+          punchOsc.disconnect();
+          punchFilter.disconnect();
+          punchGain.disconnect();
+        };
+
+        // 2. Pnömatik Hava Tıslaması (Pneumatic valve air release whoosh)
+        const hissBuffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.08), ctx.sampleRate);
+        const hissData = hissBuffer.getChannelData(0);
+        for (let i = 0; i < hissData.length; i++) {
+          hissData[i] = (Math.random() * 2 - 1) * (1 - i / hissData.length);
+        }
+        const hissSource = ctx.createBufferSource();
+        hissSource.buffer = hissBuffer;
+        const hissFilter = ctx.createBiquadFilter();
+        hissFilter.type = "bandpass";
+        hissFilter.frequency.setValueAtTime(2200, at);
+        hissFilter.frequency.exponentialRampToValueAtTime(750, at + 0.07);
+        hissFilter.Q.setValueAtTime(2.2, at);
+
+        const hissGain = ctx.createGain();
+        hissGain.gain.setValueAtTime(0.001, at);
+        hissGain.gain.linearRampToValueAtTime(0.25 * volume, at + 0.004);
+        hissGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.075);
+
+        hissSource.connect(hissFilter);
+        hissFilter.connect(hissGain);
+        hissGain.connect(ctx.destination);
+
+        hissSource.start(at);
+        hissSource.stop(at + 0.08);
+        hissSource.onended = () => {
+          hissSource.disconnect();
+          hissFilter.disconnect();
+          hissGain.disconnect();
+        };
+
+        // 3. Parlak Dövme Çelik Örs Rezonansı (Metallic anvil ring harmonics)
+        const ringFrequencies = [1760, 3520];
+        ringFrequencies.forEach((freq, idx) => {
+          const ringOsc = ctx.createOscillator();
+          const ringGain = ctx.createGain();
+
+          ringOsc.type = "sine";
+          ringOsc.frequency.setValueAtTime(freq, at);
+
+          ringGain.gain.setValueAtTime(0.001, at);
+          ringGain.gain.linearRampToValueAtTime((0.18 / (idx + 1)) * volume, at + 0.003);
+          ringGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.35 + idx * 0.05);
+
+          ringOsc.connect(ringGain);
+          ringGain.connect(ctx.destination);
+
+          ringOsc.start(at);
+          ringOsc.stop(at + 0.42);
+          ringOsc.onended = () => {
+            ringOsc.disconnect();
+            ringGain.disconnect();
+          };
+        });
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

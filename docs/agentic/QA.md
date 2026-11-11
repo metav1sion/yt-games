@@ -238,6 +238,27 @@
   - Minimap radar simgesi: Güneş Mahallesi üzerinde canlı `🏤` postane simgesi: VERIFIED
   - Screenshot verified: `games/mini-kargo/artifacts/gunes-post-office.png`
 
+## Visual QA & Browser Verification Summary — Run 34 (2026-11-11)
+
+### Automated Test Suite
+- **Unit & Integration Tests**: 92 test files, 929 passed, 0 failed (2.17s execution)
+- **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
+- **Vite Production Build**: Successful (`dist/` generated in 162ms)
+- **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
+
+### Visual Quality & Landmark Verification
+- **Sanayi "Demirciler ve Dökümcüler Sanayi Sitesi & Sıcak Dövme Haddehanesi" (T59)**:
+  - 12.0m x 9.2m endüstriyel cüruflu beton avlu tablası, antrasit bordür taşları, asfalt servis yanaşma peronu cebi (`FOUNDRY_BAY`: X: 37.5, Z: -68.0 - Sanayi ara sokağı Z: -66 kuzey bordüründe), sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku: VERIFIED
+  - 4 adet ağır çelik I-kolon sütun, taban ankraj flanşları, kafes kirişler, çapraz rüzgar gergileri, oluklu galvaniz sanayi sacı çatısı (`#46515a`), çatı duman tahliye fenerliği/lüveri ve egzoz külahı: VERIFIED
+  - Çatı alınlığında 12° öne eğimli büyük aydınlatmalı kurumsal tabela (`"⚒️ DEMİRCİLER VE DÖKÜMCÜLER SİTESİ · HAMDİ USTA 🔥"`), alt şerit (`"SICAK DÖVME ÇELİK · İNDÜKSİYON OCAĞI & HADDEHANE · 1958"`), altın sarısı pervaz ve termal turuncu PointLight armatürü (`#ff6b1a`): VERIFIED
+  - Refrakter tuğla eritme ocağı / indüksiyon potası, çelik bağlama çemberleri, konik duman davlumbazı külahı, akkor kor lav yatağı ve nabız atan alev ışığı (PointLight): VERIFIED
+  - Pnömatik havalı şahmerdan (power hammer): C-gövde, üst hava silindiri ve boruları, örs kaidesi, üzerinde dövülen akkor kızıl kütük, hareketli pnömatik şahmerdan tokmağı (ritmik dikey vuruş animasyonu) ve darbe anında saçılan altın sarısı akkor kıvılcım partikülleri: VERIFIED
+  - Donatılar: Ahşap palet üzerinde piramit istiflenmiş dökme demir pik külçeleri, turuncu A-çerçeve inşaat demiri rafı, meşe kütük kaideli çift boynuzlu dövme örsü, ahşap su verme teknesi ve mühürlü MK ağır çelik kasası: VERIFIED
+  - Animasyonlu Usta Demirci NPC "Demirci Hamdi Usta" (X: 36.0, Z: -72.5) kalın deri önlük, dökümcü koruyucu gözlüğü, dövme maşası ucunda kor kütük ve elinde dövme çekici, 22m mesafeden kafa/gövde takibi, korna ve duraklamada çekici havaya kaldırarak heybetli usta selamı ve 3D konuşma balonuyla karşılama: VERIFIED
+  - "Sanayi Çeliği Dayanıklılığı" pitstop bonusu (+10 ₺ nakit esnaf desteği, +1 itibar, +0.45 nitro dolumu, 25s "Sanayi Çeliği Dayanıklılığı" şasi zırhı %50 temas hasarı indirimi & teslimatlarda +15 ₺ sanayi primi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel şahmerdan tok darbesi, hava tıslaması ve örs çınlaması sesi `sound.powerHammer()`): VERIFIED
+  - Minimap radar simgesi: Sanayi Bölgesi üzerinde canlı `⚒️` demirci örsü/çekiç simgesi: VERIFIED
+  - Screenshot verified: `games/mini-kargo/artifacts/sanayi-foundry.png`
+
 ## Independent Victory Audit Verdict
 - **Verdict**: `VICTORY CONFIRMED`
 - **Integrity**: Zero skipped tests, zero mock facades, genuine implementations.

@@ -159,6 +159,12 @@ import {
   triggerPostOfficeHonk,
   KEMAL_POS,
 } from "./game/post-office";
+import {
+  createFoundryState,
+  updateFoundry,
+  triggerFoundryHonk,
+  HAMDI_USTA_POS,
+} from "./game/foundry";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -231,6 +237,7 @@ export async function startGame(app: HTMLElement) {
   let coppersmithState = createCoppersmithState();
   let cinemaState = createCinemaState();
   let postOfficeState = createPostOfficeState();
+  let foundryState = createFoundryState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -329,6 +336,7 @@ export async function startGame(app: HTMLElement) {
       getCoppersmithState: () => coppersmithState,
       getCinemaState: () => cinemaState,
       getPostOfficeState: () => postOfficeState,
+      getFoundryState: () => foundryState,
     };
   }
   const fleet = createCourierFleet({
@@ -738,6 +746,8 @@ export async function startGame(app: HTMLElement) {
       world.cinema.onPlayerHonk(vehicle.position);
       triggerPostOfficeHonk(postOfficeState, vehicle.position);
       world.postOffice.onPlayerHonk(vehicle.position);
+      triggerFoundryHonk(foundryState, vehicle.position);
+      world.foundry.onPlayerHonk(vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -1067,6 +1077,8 @@ export async function startGame(app: HTMLElement) {
       world.cinema.onPlayerHonk(vehicle.position);
       triggerPostOfficeHonk(postOfficeState, vehicle.position);
       world.postOffice.onPlayerHonk(vehicle.position);
+      triggerFoundryHonk(foundryState, vehicle.position);
+      world.foundry.onPlayerHonk(vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -1881,11 +1893,45 @@ export async function startGame(app: HTMLElement) {
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
+        // Sanayi "Demirciler ve Dökümcüler Sanayi Sitesi & Sıcak Dövme Haddehanesi" (T59)
+        const foundryRes = updateFoundry(
+          foundryState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (foundryRes.hammerSoundTriggered) {
+          sound.powerHammer();
+        }
+        if (foundryRes.awardedFoundryBonus) {
+          sound.powerHammer(1.2);
+          const maxNitro =
+            (1 + (progression.upgrades.nitro ?? 0) * (TUNING.nitroMaxBonus ?? 0.25)) *
+            (vehicle.supercharged ? 1.25 : 1.0);
+          vehicle.nitro = Math.min(maxNitro, vehicle.nitro + 0.45);
+          progression = {
+            ...progression,
+            money: progression.money + foundryRes.cashBonus,
+            reputation: progression.reputation + foundryRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          particles.spawnMoneyStream(HAMDI_USTA_POS, vehicle.position);
+          hud.showToast("⚒️ SANAYİ ÇELİĞİ DAYANIKLILIĞI! +10 ₺ (+1 İtibar, Haddehane Molası & Zırh)", 3500);
+        }
+        world.foundry.update(
+          dt,
+          foundryState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
 
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
         );
-        const effectiveImpact = carpenterState.buffTimer > 0 ? impact * 0.5 : impact;
+        const effectiveImpact = (carpenterState.buffTimer > 0 || foundryState.buffTimer > 0) ? impact * 0.5 : impact;
         if (impact > 0.15) {
           sound.metalCrash();
           // Çarpışma noktasından kıvılcım patlaması ve kaza dumanı
@@ -1983,6 +2029,16 @@ export async function startGame(app: HTMLElement) {
             };
             sound.customerTip();
             hud.showToast(`🏤 EKSPRES POSTA PRİMİ! +${postBonus} ₺`, 3000);
+          }
+
+          if (foundryState.buffTimer > 0) {
+            const foundryBonus = 15;
+            progression = {
+              ...progression,
+              money: progression.money + foundryBonus,
+            };
+            sound.customerTip();
+            hud.showToast(`⚒️ SANAYİ ÇELİĞİ PRİMİ! +${foundryBonus} ₺`, 3000);
           }
 
           if (delivery.lastReward?.safeBonus && delivery.lastReward.safeBonus > 0) {
@@ -2186,6 +2242,12 @@ export async function startGame(app: HTMLElement) {
         world.postOffice.update(
           dt,
           postOfficeState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+        world.foundry.update(
+          dt,
+          foundryState,
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
