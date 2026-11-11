@@ -38,6 +38,7 @@ import { createCoppersmithView, type CoppersmithView } from "./coppersmith";
 import { createCinemaView, type CinemaView } from "./cinema";
 import { createPostOfficeView, type PostOfficeView } from "./post-office";
 import { createFoundryView, type FoundryView } from "./foundry";
+import { createTurkishCoffeeView, type TurkishCoffeeView } from "./turkish-coffee";
 
 export { box, cylinder, label } from "./world-kit";
 export type { DistrictBarrier } from "./district-barriers";
@@ -67,6 +68,7 @@ export type { CoppersmithView } from "./coppersmith";
 export type { CinemaView } from "./cinema";
 export type { PostOfficeView } from "./post-office";
 export type { FoundryView } from "./foundry";
+export type { TurkishCoffeeView } from "./turkish-coffee";
 export { buildCityBuildings, CITY_BUILDINGS_CATALOG } from "./city-buildings";
 
 export type World = {
@@ -102,6 +104,7 @@ export type World = {
   cinema: CinemaView;
   postOffice: PostOfficeView;
   foundry: FoundryView;
+  turkishCoffee: TurkishCoffeeView;
   unlockedDistricts: Set<DistrictId>;
   isDistrictUnlocked(districtId: DistrictId): boolean;
   update(
@@ -245,6 +248,11 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
   group.add(foundry.group);
   ctx.baseObstacles.push(...foundry.obstacles);
 
+  // Çarşı "Tarihi Türk Kahvecisi & Közde Kahve / Lokum İmalathanesi" (T60)
+  const turkishCoffee = createTurkishCoffeeView();
+  group.add(turkishCoffee.group);
+  ctx.baseObstacles.push(...turkishCoffee.obstacles);
+
   const barriers = buildDistrictBarriers(group);
   const baseObstacles = ctx.baseObstacles;
   const unlockedSet = new Set<DistrictId>(["sunny"]);
@@ -334,6 +342,7 @@ export function createWorld(assets: Pick<AssetManager, "cloneModel"> = assetMana
     cinema,
     postOffice,
     foundry,
+    turkishCoffee,
     unlockedDistricts: unlockedSet,
     isDistrictUnlocked(districtId: DistrictId) {
       return unlockedSet.has(districtId);

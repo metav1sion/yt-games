@@ -398,5 +398,8 @@ describe("district traffic lanes", () => {
     expect(world.foundry).toBeDefined();
     expect(world.foundry.obstacles.length).toBeGreaterThan(0);
     expect(world.foundry.group.name).toBe("foundry-view");
+    expect(world.turkishCoffee).toBeDefined();
+    expect(world.turkishCoffee.obstacles.length).toBeGreaterThan(0);
+    expect(world.turkishCoffee.group.name).toBe("turkish-coffee-view");
   });
 });

@@ -165,6 +165,12 @@ import {
   triggerFoundryHonk,
   HAMDI_USTA_POS,
 } from "./game/foundry";
+import {
+  createTurkishCoffeeState,
+  updateTurkishCoffee,
+  triggerTurkishCoffeeHonk,
+  TAHSIN_EFENDI_POS,
+} from "./game/turkish-coffee";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -238,6 +244,7 @@ export async function startGame(app: HTMLElement) {
   let cinemaState = createCinemaState();
   let postOfficeState = createPostOfficeState();
   let foundryState = createFoundryState();
+  let turkishCoffeeState = createTurkishCoffeeState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -337,6 +344,7 @@ export async function startGame(app: HTMLElement) {
       getCinemaState: () => cinemaState,
       getPostOfficeState: () => postOfficeState,
       getFoundryState: () => foundryState,
+      getTurkishCoffeeState: () => turkishCoffeeState,
     };
   }
   const fleet = createCourierFleet({
@@ -748,6 +756,8 @@ export async function startGame(app: HTMLElement) {
       world.postOffice.onPlayerHonk(vehicle.position);
       triggerFoundryHonk(foundryState, vehicle.position);
       world.foundry.onPlayerHonk(vehicle.position);
+      triggerTurkishCoffeeHonk(turkishCoffeeState, vehicle.position);
+      world.turkishCoffee.onPlayerHonk(vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -1079,6 +1089,8 @@ export async function startGame(app: HTMLElement) {
       world.postOffice.onPlayerHonk(vehicle.position);
       triggerFoundryHonk(foundryState, vehicle.position);
       world.foundry.onPlayerHonk(vehicle.position);
+      triggerTurkishCoffeeHonk(turkishCoffeeState, vehicle.position);
+      world.turkishCoffee.onPlayerHonk(vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -1927,6 +1939,40 @@ export async function startGame(app: HTMLElement) {
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
+        // Çarşı "Tarihi Türk Kahvecisi & Közde Kahve / Lokum İmalathanesi" (T60)
+        const turkishCoffeeRes = updateTurkishCoffee(
+          turkishCoffeeState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (turkishCoffeeRes.coffeeSoundTriggered) {
+          sound.turkishCoffee();
+        }
+        if (turkishCoffeeRes.awardedTurkishCoffeeBonus) {
+          sound.turkishCoffee(1.2);
+          const maxNitro =
+            (1 + (progression.upgrades.nitro ?? 0) * (TUNING.nitroMaxBonus ?? 0.25)) *
+            (vehicle.supercharged ? 1.25 : 1.0);
+          vehicle.nitro = Math.min(maxNitro, vehicle.nitro + 0.45);
+          progression = {
+            ...progression,
+            money: progression.money + turkishCoffeeRes.cashBonus,
+            reputation: progression.reputation + turkishCoffeeRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          particles.spawnMoneyStream(TAHSIN_EFENDI_POS, vehicle.position);
+          hud.showToast("☕ KIRK YILLIK HATIR! +10 ₺ (+1 İtibar, Közde Kahve & Lokum Molası)", 3500);
+        }
+        world.turkishCoffee.update(
+          dt,
+          turkishCoffeeState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
 
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
@@ -2039,6 +2085,16 @@ export async function startGame(app: HTMLElement) {
             };
             sound.customerTip();
             hud.showToast(`⚒️ SANAYİ ÇELİĞİ PRİMİ! +${foundryBonus} ₺`, 3000);
+          }
+
+          if (turkishCoffeeState.buffTimer > 0) {
+            const coffeeBonus = 15;
+            progression = {
+              ...progression,
+              money: progression.money + coffeeBonus,
+            };
+            sound.customerTip();
+            hud.showToast(`☕ KIRK YILLIK HATIR PRİMİ! +${coffeeBonus} ₺`, 3000);
           }
 
           if (delivery.lastReward?.safeBonus && delivery.lastReward.safeBonus > 0) {
@@ -2248,6 +2304,12 @@ export async function startGame(app: HTMLElement) {
         world.foundry.update(
           dt,
           foundryState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+        world.turkishCoffee.update(
+          dt,
+          turkishCoffeeState,
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );

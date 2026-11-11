@@ -338,6 +338,9 @@ export function createMinimap(
 
     const foundryPos = worldToMinimap(37.5, -75.0, size, bounds);
     ctx.fillText("⚒️", foundryPos.x, foundryPos.y);
+
+    const turkishCoffeePos = worldToMinimap(37.0, 75.5, size, bounds);
+    ctx.fillText("☕", turkishCoffeePos.x, turkishCoffeePos.y);
     ctx.restore();
 
     // 6. AKTİF HEDEF GÖSTERGESİ (Nabız animasyonu)

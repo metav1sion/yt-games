@@ -259,6 +259,28 @@
   - Minimap radar simgesi: Sanayi Bölgesi üzerinde canlı `⚒️` demirci örsü/çekiç simgesi: VERIFIED
   - Screenshot verified: `games/mini-kargo/artifacts/sanayi-foundry.png`
 
+## Visual QA & Browser Verification Summary — Run 35 (2026-11-11)
+
+### Automated Test Suite
+- **Unit & Integration Tests**: 94 test files, 940 passed, 0 failed (2.65s execution)
+- **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
+- **Vite Production Build**: Successful (`dist/` generated in 180ms)
+- **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
+
+### Visual Quality & Landmark Verification
+- **Çarşı "Tarihi Türk Kahvecisi & Közde Kahve / Lokum İmalathanesi" (T60)**:
+  - 12.0m x 9.6m klinker tuğla ve kesme kireçtaşı avlu tablası, granit bordür taşları, asfalt servis yanaşma peronu cebi (`TURKISH_COFFEE_BAY`: X: 37.0, Z: 81.0 - Çarşı güney sokağı Z: 84 kuzey bordüründe), sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku: VERIFIED
+  - 8.6m x 4.8m x 5.4m Otantik Osmanlı Revaklı Taş Köşk mimarisi: kesme kireçtaşı cephe kaplaması (`#f5f0e6`), rustik pişmiş toprak kaide süpürgeliği (`#a04000`), köşe silmeleri (ashlar quoins `#d7ccc8`), 3 adet sivri Osmanlı taş kemeri, 4 adet yivli mermer sütun (`#ecf0f1`), mukarnaslı sütun başlıkları ve alaturka kiremit kırma çatı (`#a04000`): VERIFIED
+  - Çatı merkezinde silindirik kasnak üzerinde yükselen pirinç/bakır kubbe (`#d4af37`) ve hilalli pirinç alem finiali (`#f39c12`): VERIFIED
+  - Çatı alınlığında 12° öne eğimli büyük kurumsal aydınlatmalı tabela (`"☕ TARİHİ ÇARŞI TÜRK KAHVECİSİ · TAHSİN EFENDİ 🍬"`), alt şerit (`"KÖZDE TÜRK KAHVESİ · DİBEK & ANTEP DUBLE LOKUMU · 1908"`), altın sarısı pervaz çerçevesi, gece cepheyi aydınlatan sıcak kehribar PointLight armatürü ve asılı pirinç kafesli kandil: VERIFIED
+  - Közde Kahve Mangalı & Bakır Kum Ocağı: dövme bakır mangal teknesi (`#b87333`), kızgın kor kömürleri, sıcak kavurma kumu yatağı (`#c0392b`, `#ff5722`), ocağın içinde nabız atan termal alev ışığı (PointLight), 4 adet uzun saplı el dövmesi bakır cezve, köpüren kahve kreması ve gökyüzüne süzülen dinamik buhar partikülleri: VERIFIED
+  - İstiflenmiş jüt kahve çuvalları (`"YEMEN KAHVESİ · 50 KG"` ve `"DİBEK KAHVESİ · 50 KG"`), bazalt taşı tarihi oyma dibek ve gürgen tokmak, dönen krank kollu pirinç manuel kahve el değirmeni: VERIFIED
+  - Antep fıstıklı ve güllü duble lokum ahşap vitrini, pudra şekerli lokum küpleri, tebeşirli karataş A-frame fiyat listesi şövalesi, ahşap masa üzerinde bakır tepsi ve dantelli altın zarflı porselen fincanlar: VERIFIED
+  - Animasyonlu Usta Kahveci NPC "Kahveci Tahsin Efendi" (X: 35.5, Z: 76.8) koyu lacivert pantolon, beyaz gömlek, altın sırmalı bordo kadife cepken yelek (`#800000`), ipek kırmızı bel kuşağı, siyah püsküllü bordo fes, heybetli bıyık, pirinç kahve servis tepsisi ve fincanlar, 22m mesafeden kafa/gövde takibi, korna ve duraklamada kolunu kaldırarak usta selamı ve 3D konuşma balonuyla karşılama: VERIFIED
+  - "Kırk Yıllık Hatır" pitstop bonusu (+10 ₺ nakit esnaf ikramı, +1 itibar, +0.45 nitro dolumu, 25s "Kırk Yıllık Hatır" teslimatlarda +15 ₺ müşteri bahşişi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel kahve çekirdeği kavrulma çıtırtısı, sıcak kum cızırtısı ve bakır cezve çınlama sesi `sound.turkishCoffee()`): VERIFIED
+  - Minimap radar simgesi: Çarşı Bölgesi üzerinde canlı `☕` kahve fincanı simgesi: VERIFIED
+  - Screenshot verified: `games/mini-kargo/artifacts/carsi-turkish-coffee.png`
+
 ## Independent Victory Audit Verdict
 - **Verdict**: `VICTORY CONFIRMED`
 - **Integrity**: Zero skipped tests, zero mock facades, genuine implementations.

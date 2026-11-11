@@ -2397,6 +2397,93 @@ export function createSound() {
         });
       } catch {}
     },
+    turkishCoffee(vol = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      const volume = Math.max(0, Math.min(1, vol));
+      if (volume <= 0.02) return;
+      try {
+        const at = ctx.currentTime;
+
+        // 1. Közde Kahve Cızırtısı & Kavurma Çıtırtısı (Hot sand & bean roasting crackle)
+        const crackleBuffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.16), ctx.sampleRate);
+        const crackleData = crackleBuffer.getChannelData(0);
+        for (let i = 0; i < crackleData.length; i++) {
+          const decay = 1 - i / crackleData.length;
+          const microPop = Math.random() > 0.88 ? (Math.random() * 2 - 1) * 1.5 : (Math.random() * 2 - 1) * 0.35;
+          crackleData[i] = microPop * decay;
+        }
+        const crackleSource = ctx.createBufferSource();
+        crackleSource.buffer = crackleBuffer;
+        const crackleFilter = ctx.createBiquadFilter();
+        crackleFilter.type = "bandpass";
+        crackleFilter.frequency.setValueAtTime(3600, at);
+        crackleFilter.Q.setValueAtTime(2.8, at);
+
+        const crackleGain = ctx.createGain();
+        crackleGain.gain.setValueAtTime(0.001, at);
+        crackleGain.gain.linearRampToValueAtTime(0.24 * volume, at + 0.008);
+        crackleGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.155);
+
+        crackleSource.connect(crackleFilter);
+        crackleFilter.connect(crackleGain);
+        crackleGain.connect(ctx.destination);
+
+        crackleSource.start(at);
+        crackleSource.stop(at + 0.16);
+        crackleSource.onended = () => {
+          crackleSource.disconnect();
+          crackleFilter.disconnect();
+          crackleGain.disconnect();
+        };
+
+        // 2. Dövme Bakır Cezve Çınlaması & Dokunuş Tınısı (Brass/copper cezve metallic harmonic chimes)
+        const cezveChimes = [1680, 2520, 3360];
+        cezveChimes.forEach((freq, idx) => {
+          const chimeOsc = ctx.createOscillator();
+          const chimeGain = ctx.createGain();
+
+          chimeOsc.type = "sine";
+          chimeOsc.frequency.setValueAtTime(freq, at + 0.02 * idx);
+
+          const startAt = at + 0.02 * idx;
+          chimeGain.gain.setValueAtTime(0.001, startAt);
+          chimeGain.gain.linearRampToValueAtTime((0.14 / (idx + 1)) * volume, startAt + 0.004);
+          chimeGain.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.32 + idx * 0.04);
+
+          chimeOsc.connect(chimeGain);
+          chimeGain.connect(ctx.destination);
+
+          chimeOsc.start(startAt);
+          chimeOsc.stop(startAt + 0.38);
+          chimeOsc.onended = () => {
+            chimeOsc.disconnect();
+            chimeGain.disconnect();
+          };
+        });
+
+        // 3. Sıcak Kahve Köpürmesi Rezonansı (Frothy coffee brew simmer tone)
+        const foamOsc = ctx.createOscillator();
+        const foamGain = ctx.createGain();
+        foamOsc.type = "triangle";
+        foamOsc.frequency.setValueAtTime(420, at);
+        foamOsc.frequency.exponentialRampToValueAtTime(280, at + 0.22);
+
+        foamGain.gain.setValueAtTime(0.001, at);
+        foamGain.gain.linearRampToValueAtTime(0.12 * volume, at + 0.015);
+        foamGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.24);
+
+        foamOsc.connect(foamGain);
+        foamGain.connect(ctx.destination);
+
+        foamOsc.start(at);
+        foamOsc.stop(at + 0.25);
+        foamOsc.onended = () => {
+          foamOsc.disconnect();
+          foamGain.disconnect();
+        };
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

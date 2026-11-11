@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-11-11T14:46:44.905Z",
+  "timestamp": "2026-11-11T16:00:21.974Z",
   "url": "http://127.0.0.1:4173",
   "viewports": [
     {
       "name": "desktop",
       "width": 1280,
       "height": 800,
-      "loadMs": 47,
+      "loadMs": 46,
       "screenshot": "desktop-1280x800.png",
       "errors": []
     },
@@ -14,7 +14,7 @@
       "name": "mobile-portrait",
       "width": 390,
       "height": 844,
-      "loadMs": 77,
+      "loadMs": 75,
       "screenshot": "mobile-portrait-390x844.png",
       "errors": []
     },
