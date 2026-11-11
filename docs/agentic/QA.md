@@ -194,6 +194,28 @@
   - Minimap radar simgesi: Çarşı Bölgesi üzerinde canlı `🏺` antik amfora/bakır simgesi: VERIFIED
   - Screenshot verified: `games/mini-kargo/artifacts/carsi-bakircilar-carsisi.png`
 
+## Visual QA & Browser Verification Summary — Run 32 (2026-11-11)
+
+### Automated Test Suite
+- **Unit & Integration Tests**: 88 test files, 906 passed, 0 failed (2.26s execution)
+- **TypeScript Typecheck**: 0 errors (`tsc --noEmit`)
+- **Vite Production Build**: Successful (`dist/` generated in 173ms)
+- **Playwright Browser Smoke**: PASS across Desktop (1280x800), Mobile Portrait (390x844), Mobile Landscape (844x390) with 0 console errors.
+
+### Visual Quality & Landmark Verification
+- **Sahil "Açık Hava Yazlık Sineması & Sahil Gazinosu" (T57)**:
+  - 14.0m x 10.5m kumtaşı ve deniz kumu avlu tablası, rustik bordür taşları, asfalt servis yanaşma peronu cebi (`CINEMA_BAY`: X: -26.0, Z: 47.2 - Güney Bulvarı Z: 50 kuzey bordüründe), sarı-siyah bordür emniyet çizgileri, beyaz peron sınırları ve zemin beyaz kılavuz yön oku: VERIFIED
+  - 8.2m x 4.8m devasa açık hava projeksiyon perdesi, Art-Deco kesme taş kule sütunları, altın pervazlar, çelik kafes taşıyıcı iskelet, kırmızı tiyatro saçaklığı ve altın korniş, vintage sinema hoparlör boruları, 6.8m x 3.6m masif beyaz yansıtıcı perde tuvali ve dinamik perde ışık armatürü: VERIFIED
+  - Yükseltilmiş retro 35mm makinist kulesi (X: -22.2, Z: 43.2), yeşil ahşap lambri kabin, oluklu metal çatı, perdenin merkezine bakan projeksiyon mazgalı ve pirinç namlu, üstte sürekli dönen çift 35mm pirinç film makaraları: VERIFIED
+  - Çapraz hacimsel projektör ışık huzmesi (Volumetric Projection Beam Cone with additive blending, dynamic flicker and night emissive boost): VERIFIED
+  - Kademeli nostaljik şezlonglar (kırmızı-beyaz ve turkuaz-beyaz çizgili kumaşlar), beyaz örtülü yuvarlak gazino masaları, yeşil cam nostaljik gazoz şişeleri ("Çamlıca / Niğde Gazozu"), porselen kasede siyah ayçekirdeği ve çizgili patlamış mısır kutuları ("🍿"): VERIFIED
+  - Rengarenk asılı yazlık ampul kordonları (8 adet rengarenk küre ampul): VERIFIED
+  - 4.4m anıtsal giriş sütunları, kavisli neon tabela (`"🎬 SAHİL AÇIK HAVA YAZLIK SİNEMASI · YILDIZ GAZİNOSU 🍿"`), alt kurumsal şerit (`"HER AKŞAM İKİ FİLM BİRDEN · AİLELERE MAHSUSTUR · 1968"`), gece peronu aydınlatan sıcak kehribar PointLight armatürü, ahşap nostaljik bilet gişesi (`"🎟️ BİLET: 15₺ 🍿"`) ve A-şövale tebeşirli film afişi (`"BU AKŞAM: NEŞELİ GÜNLER & SELVİ BOYLUM"`): VERIFIED
+  - Animasyonlu Makinist NPC "Makinist Rıfat" (X: -28.8, Z: 46.2) nostaljik kasket, kıvrık kollu beyaz gömlek, askılı lacivert pantolon, pos bıyık, elinde tuttuğu 35mm pirinç film makarası/kutusu ile perona yanaşan araca 22m mesafeden kafa/gövde takibi, korna ve duraklamada makarayı havaya kaldırarak selamlama ve 3D konuşma balonuyla karşılama: VERIFIED
+  - "Yazlık Sinema Keyfi" pitstop bonusu (+10 ₺ esnaf desteği, +1 itibar, +0.45 nitro dolumu, 25s "Yazlık Sinema Keyfi" teslimatlarda +15 ₺ sinema neşesi bahşişi buff'ı, altın konfeti ve para akışı, 35s soğuma ve prosedürel mekanik obtüratör tıklaması, motor uğultusu ve makara hışırtısı sesi `sound.filmProjector()`): VERIFIED
+  - Minimap radar simgesi: Sahil Şeridi üzerinde canlı `🎬` sinema klaket simgesi: VERIFIED
+  - Screenshot verified: `games/mini-kargo/artifacts/sahil-yazlik-sinemasi.png`
+
 ## Independent Victory Audit Verdict
 - **Verdict**: `VICTORY CONFIRMED`
 - **Integrity**: Zero skipped tests, zero mock facades, genuine implementations.

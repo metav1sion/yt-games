@@ -147,6 +147,12 @@ import {
   triggerCoppersmithHonk,
   KAZIM_USTA_POS,
 } from "./game/coppersmith";
+import {
+  createCinemaState,
+  updateCinema,
+  triggerCinemaHonk,
+  RIFAT_POS,
+} from "./game/cinema";
 export async function startGame(app: HTMLElement) {
   try {
     await assetManager.load();
@@ -217,6 +223,7 @@ export async function startGame(app: HTMLElement) {
   let marketState = createMarketState();
   let carpenterState = createCarpenterState();
   let coppersmithState = createCoppersmithState();
+  let cinemaState = createCinemaState();
   let carShineTimer = 0;
   let feedHoldTimer = 0;
   const marker = createMarkers();
@@ -313,6 +320,7 @@ export async function startGame(app: HTMLElement) {
       getMarketState: () => marketState,
       getCarpenterState: () => carpenterState,
       getCoppersmithState: () => coppersmithState,
+      getCinemaState: () => cinemaState,
     };
   }
   const fleet = createCourierFleet({
@@ -718,6 +726,8 @@ export async function startGame(app: HTMLElement) {
       world.carpenter.onPlayerHonk(vehicle.position);
       triggerCoppersmithHonk(coppersmithState, vehicle.position);
       world.coppersmith.onPlayerHonk(vehicle.position);
+      triggerCinemaHonk(cinemaState, vehicle.position);
+      world.cinema.onPlayerHonk(vehicle.position);
       if (traffic.onPlayerHonk(vehicle.position)) {
         sound.courierBeep();
       }
@@ -1043,6 +1053,8 @@ export async function startGame(app: HTMLElement) {
       world.carpenter.onPlayerHonk(vehicle.position);
       triggerCoppersmithHonk(coppersmithState, vehicle.position);
       world.coppersmith.onPlayerHonk(vehicle.position);
+      triggerCinemaHonk(cinemaState, vehicle.position);
+      world.cinema.onPlayerHonk(vehicle.position);
           if (traffic.onPlayerHonk(vehicle.position)) {
             sound.courierBeep();
           }
@@ -1789,6 +1801,41 @@ export async function startGame(app: HTMLElement) {
           atmoState.isNightOrDusk || weatherState.isStorm,
         );
 
+        // Sahil "Açık Hava Yazlık Sineması & Sahil Gazinosu" (T57)
+        const cinemaRes = updateCinema(
+          cinemaState,
+          dt,
+          vehicle.position,
+          currentSpeed,
+        );
+        if (cinemaRes.projectorSoundTriggered) {
+          sound.filmProjector();
+        }
+        if (cinemaRes.awardedCinemaBonus) {
+          sound.filmProjector(1.2);
+          const maxNitro =
+            (1 + (progression.upgrades.nitro ?? 0) * (TUNING.nitroMaxBonus ?? 0.25)) *
+            (vehicle.supercharged ? 1.25 : 1.0);
+          vehicle.nitro = Math.min(maxNitro, vehicle.nitro + 0.45);
+          progression = {
+            ...progression,
+            money: progression.money + cinemaRes.cashBonus,
+            reputation: progression.reputation + cinemaRes.repBonus,
+          };
+          storage.save({ ...progression, soundEnabled });
+          companySheet.update(progression);
+          hud.update(delivery, progression, soundEnabled);
+          particles.spawnConfetti(vehicle.position);
+          particles.spawnMoneyStream(RIFAT_POS, vehicle.position);
+          hud.showToast("🎬 YAZLIK SİNEMA KEYFİ! +10 ₺ (+1 İtibar, Açık Hava Sineması & Nitro)", 3500);
+        }
+        world.cinema.update(
+          dt,
+          cinemaState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+
         const impact = contactDamage.update(
           [...staticContacts, ...trafficContacts, ...pedestrianContacts], dt,
         );
@@ -1870,6 +1917,16 @@ export async function startGame(app: HTMLElement) {
             };
             sound.customerTip();
             hud.showToast(`🏺 USTA ESNAF HÜRMETİ BAHŞİŞİ! +${artisanBonus} ₺`, 3000);
+          }
+
+          if (cinemaState.buffTimer > 0) {
+            const cinemaBonus = 15;
+            progression = {
+              ...progression,
+              money: progression.money + cinemaBonus,
+            };
+            sound.customerTip();
+            hud.showToast(`🎬 YAZLIK SİNEMA NEŞESİ BAHŞİŞİ! +${cinemaBonus} ₺`, 3000);
           }
 
           if (delivery.lastReward?.safeBonus && delivery.lastReward.safeBonus > 0) {
@@ -2061,6 +2118,12 @@ export async function startGame(app: HTMLElement) {
         world.coppersmith.update(
           dt,
           coppersmithState,
+          vehicle.position,
+          atmoState.isNightOrDusk || weatherState.isStorm,
+        );
+        world.cinema.update(
+          dt,
+          cinemaState,
           vehicle.position,
           atmoState.isNightOrDusk || weatherState.isStorm,
         );

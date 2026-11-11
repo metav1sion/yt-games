@@ -2119,6 +2119,98 @@ export function createSound() {
         };
       } catch {}
     },
+    filmProjector(vol = 1.0) {
+      const ctx = context;
+      if (!ctx || !enabled || paused || ctx.state !== "running") return;
+      const volume = Math.max(0, Math.min(1, vol));
+      if (volume <= 0.02) return;
+      try {
+        const at = ctx.currentTime;
+
+        // 1. 35mm Projektör Mekanik Deklanşör / Obtüratör Tıklamaları (Rhythmic shutter clatter: 4 rapid clicks)
+        for (let i = 0; i < 4; i++) {
+          const t = at + i * 0.042;
+          const clickOsc = ctx.createOscillator();
+          const clickFilter = ctx.createBiquadFilter();
+          const clickGain = ctx.createGain();
+
+          clickOsc.type = "square";
+          clickOsc.frequency.setValueAtTime(1450 + (i % 2) * 220, t);
+          clickOsc.frequency.exponentialRampToValueAtTime(750, t + 0.018);
+
+          clickFilter.type = "bandpass";
+          clickFilter.frequency.setValueAtTime(1900, t);
+          clickFilter.Q.setValueAtTime(4.2, t);
+
+          clickGain.gain.setValueAtTime(0.001, t);
+          clickGain.gain.linearRampToValueAtTime(0.18 * volume, t + 0.003);
+          clickGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.022);
+
+          clickOsc.connect(clickFilter);
+          clickFilter.connect(clickGain);
+          clickGain.connect(ctx.destination);
+
+          clickOsc.start(t);
+          clickOsc.stop(t + 0.025);
+          clickOsc.onended = () => {
+            clickOsc.disconnect();
+            clickFilter.disconnect();
+            clickGain.disconnect();
+          };
+        }
+
+        // 2. Elektrikli Projektör Motor Uğultusu (160 Hz warm projector hum)
+        const humOsc = ctx.createOscillator();
+        const humGain = ctx.createGain();
+        humOsc.type = "triangle";
+        humOsc.frequency.setValueAtTime(160, at);
+        humOsc.frequency.linearRampToValueAtTime(180, at + 0.18);
+        humOsc.frequency.linearRampToValueAtTime(155, at + 0.38);
+
+        humGain.gain.setValueAtTime(0.001, at);
+        humGain.gain.linearRampToValueAtTime(0.12 * volume, at + 0.03);
+        humGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.40);
+
+        humOsc.connect(humGain);
+        humGain.connect(ctx.destination);
+        humOsc.start(at);
+        humOsc.stop(at + 0.42);
+        humOsc.onended = () => {
+          humOsc.disconnect();
+          humGain.disconnect();
+        };
+
+        // 3. Film Makarası Dönen Dişli Hışırtısı (Filtered soft hiss & flutter)
+        const flutterOsc = ctx.createOscillator();
+        const flutterFilter = ctx.createBiquadFilter();
+        const flutterGain = ctx.createGain();
+
+        flutterOsc.type = "sawtooth";
+        flutterOsc.frequency.setValueAtTime(320, at);
+        flutterOsc.frequency.exponentialRampToValueAtTime(480, at + 0.12);
+        flutterOsc.frequency.exponentialRampToValueAtTime(240, at + 0.35);
+
+        flutterFilter.type = "bandpass";
+        flutterFilter.frequency.setValueAtTime(1100, at);
+        flutterFilter.Q.setValueAtTime(3.0, at);
+
+        flutterGain.gain.setValueAtTime(0.001, at);
+        flutterGain.gain.linearRampToValueAtTime(0.08 * volume, at + 0.02);
+        flutterGain.gain.exponentialRampToValueAtTime(0.0001, at + 0.36);
+
+        flutterOsc.connect(flutterFilter);
+        flutterFilter.connect(flutterGain);
+        flutterGain.connect(ctx.destination);
+
+        flutterOsc.start(at);
+        flutterOsc.stop(at + 0.38);
+        flutterOsc.onended = () => {
+          flutterOsc.disconnect();
+          flutterFilter.disconnect();
+          flutterGain.disconnect();
+        };
+      } catch {}
+    },
     setDistrict(districtId: DistrictId) {
       ambience.setDistrict(districtId);
     },

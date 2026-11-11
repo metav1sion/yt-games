@@ -389,5 +389,8 @@ describe("district traffic lanes", () => {
     expect(world.coppersmith).toBeDefined();
     expect(world.coppersmith.obstacles.length).toBeGreaterThan(0);
     expect(world.coppersmith.group.name).toBe("coppersmith-view");
+    expect(world.cinema).toBeDefined();
+    expect(world.cinema.obstacles.length).toBeGreaterThan(0);
+    expect(world.cinema.group.name).toBe("cinema-view");
   });
 });

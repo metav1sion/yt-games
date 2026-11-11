@@ -256,4 +256,16 @@ describe("audio system", () => {
 
     sound.dispose();
   });
+
+  it("plays 35mm film projector whir and shutter click sound without throwing", async () => {
+    const sound = createSound();
+    await sound.unlock();
+
+    expect(() => {
+      sound.filmProjector(1.0);
+      sound.filmProjector(0.5);
+    }).not.toThrow();
+
+    sound.dispose();
+  });
 });
